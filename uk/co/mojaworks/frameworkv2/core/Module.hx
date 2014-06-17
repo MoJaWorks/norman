@@ -9,7 +9,7 @@ class Module extends CoreObject
 
 	public function new() 
 	{
-		
+		super();
 	}
 		
 }

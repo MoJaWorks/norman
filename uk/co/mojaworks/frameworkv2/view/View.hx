@@ -13,7 +13,7 @@ class View<T:(DisplayObject)> extends CoreObject
 	
 	public function new() 
 	{
-		
+		super();
 	}
 	
 }
