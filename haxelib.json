@@ -1,0 +1,13 @@
+{
+  "name": "mojaworks-framework",
+  "url": "",
+  "license": "Apachev2",
+  "tags": [],
+  "description": "Internal framework used by MoJaWorks Games",
+  "version": "0.1.0",
+  "releasenote": "",
+  "contributors": ["Simon Morris"],
+  "dependencies": {
+    "openfl": ""
+  }
+}
