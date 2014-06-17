@@ -1,20 +1,17 @@
 package uk.co.mojaworks.frameworkv2.view;
 import openfl.display.DisplayObject;
-import uk.co.mojaworks.frameworkv2.core.Core;
+import uk.co.mojaworks.frameworkv2.core.CoreObject;
 
 /**
  * ...
  * @author Simon
  */
-class View<T:(DisplayObject)>
+class View<T:(DisplayObject)> extends CoreObject
 {
 	
 	public var display : T;
 	
-	var core( get, never ) : Core;
-	function get_core() : Core { return Core.instance };
-
-	public function new<T>() 
+	public function new() 
 	{
 		
 	}
