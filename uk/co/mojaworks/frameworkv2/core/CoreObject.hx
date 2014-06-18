@@ -1,4 +1,4 @@
-package uk.co.mojaworks.frameworkv2.core;
+package uk.co.mojaworks.frameworkv2.core ;
 
 /**
  * ...
