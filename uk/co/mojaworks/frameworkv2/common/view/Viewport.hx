@@ -2,8 +2,9 @@ package uk.co.mojaworks.frameworkv2.common.view ;
 
 import openfl.display.Sprite;
 import openfl.display.Stage;
+import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.common.interfaces.IGameObject;
-import uk.co.mojaworks.frameworkv2.common.view.DisplayWrapper;
+import uk.co.mojaworks.frameworkv2.common.view.Mediator;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 
 /**
@@ -11,21 +12,18 @@ import uk.co.mojaworks.frameworkv2.core.CoreObject;
  * ...
  * @author Simon
  */
-class GameViewport extends DisplayWrapper<Sprite>
+class Viewport extends Mediator<Sprite>
 {
-	var stage : Stage;
 	
-	public function new( stage : Stage ) 
+	public var rect( defailt, null ) : Rectangle;
+	
+	
+	public function new( ) 
 	{
 		super();
-		
-		this.stage = stage;
 		init();
-		
 		resize();
 	}
-	
-	/* INTERFACE uk.co.mojaworks.frameworkv2.common.interfaces.IGameObject */
 	
 	override public function init():Void 
 	{
@@ -34,14 +32,18 @@ class GameViewport extends DisplayWrapper<Sprite>
 		
 	}
 	
-	public function destroy():Void 
+	override public function destroy():Void 
 	{
 		super.destroy();
 	}
 	
-	public function step(seconds:Float):Void 
+	override public function step(seconds:Float):Void 
 	{
 		super.step(seconds);
+	}
+	
+	override public function resize() : Void {
+		
 	}
 			
 }

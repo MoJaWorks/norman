@@ -7,9 +7,9 @@ import uk.co.mojaworks.frameworkv2.core.CoreObject;
  * @author Simon
  */
 
-class DisplayWrapper<T:(DisplayObject)> extends CoreObject implements IGameObject
+class Mediator<T:(DisplayObject)> extends CoreObject implements IGameObject
 {
-	var display( default, null ) : T;
+	public var display( default, null ) : T;
 	
 	public function new() {
 		super();
@@ -29,6 +29,10 @@ class DisplayWrapper<T:(DisplayObject)> extends CoreObject implements IGameObjec
 	
 	public function step(seconds:Float):Void 
 	{
+		
+	}
+	
+	public function resize() : Void {
 		
 	}
 	

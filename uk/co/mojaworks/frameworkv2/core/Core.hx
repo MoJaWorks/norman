@@ -23,17 +23,14 @@ class Core
 	
 	public static function init( stage : Stage ) : Void {
 		instance = new Core( );
-		
 		instance.stage = stage;
-		instance.add( new Director( ) );
-		
 	}
 	
-	@:generic function get<T>( classType : Class<T> ) : T {
+	@:generic public function get<T>( classType : Class<T> ) : T {
 		return cast _modules.get( Type.getClassName( classType ) );
 	}
 	
-	function add( object : IModule ) : Void {
+	public function add( object : IModule ) : Void {
 		_modules.set( Type.getClassName(Type.getClass(object)), object );
 	}
 	
