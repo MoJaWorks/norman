@@ -3,7 +3,7 @@ package uk.co.mojaworks.frameworkv2.common.view ;
 import openfl.display.Sprite;
 import openfl.display.Stage;
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.frameworkv2.common.interfaces.IGameObject;
+import uk.co.mojaworks.frameworkv2.common.engine.IGameObject;
 import uk.co.mojaworks.frameworkv2.common.view.Mediator;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 
@@ -15,12 +15,17 @@ import uk.co.mojaworks.frameworkv2.core.CoreObject;
 class Viewport extends Mediator<Sprite>
 {
 	
-	public var rect( defailt, null ) : Rectangle;
+	public var stageRect( default, null ) : Rectangle;
+	public var displayRect( default, null ) : Rectangle;
 	
 	
 	public function new( ) 
 	{
 		super();
+		
+		stageRect = new Rectangle();
+		displayRect = new Rectangle();
+		
 		init();
 		resize();
 	}

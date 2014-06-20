@@ -1,4 +1,4 @@
-package uk.co.mojaworks.frameworkv2.common.interfaces ;
+package uk.co.mojaworks.frameworkv2.common.modules.messenger ;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 
 /**

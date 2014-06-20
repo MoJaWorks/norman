@@ -1,6 +1,6 @@
 package uk.co.mojaworks.frameworkv2.common.view;
 import openfl.display.DisplayObject;
-import uk.co.mojaworks.frameworkv2.common.interfaces.IGameObject;
+import uk.co.mojaworks.frameworkv2.common.engine.IGameObject;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 
 /**

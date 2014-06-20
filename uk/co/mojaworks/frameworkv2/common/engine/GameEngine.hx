@@ -57,7 +57,10 @@ class GameEngine extends CoreObject implements IModule
 	
 	private function resize( e : Event = null ) : Void {
 		
+		// Resize the viewport to scale everything to the screen size
 		viewport.resize();
+		
+		// Resize all windows so they can take advantage of margins
 		core.get(Director).resize();
 		
 	}

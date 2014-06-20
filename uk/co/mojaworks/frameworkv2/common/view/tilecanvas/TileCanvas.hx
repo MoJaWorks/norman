@@ -1,13 +1,14 @@
 package uk.co.mojaworks.frameworkv2.common.view.tilecanvas;
 
 import openfl.display.Sprite;
-import uk.co.mojaworks.frameworkv2.common.interfaces.IGameObject;
+import uk.co.mojaworks.frameworkv2.common.engine.IGameObject;
+import uk.co.mojaworks.frameworkv2.common.view.Mediator;
 
 /**
  * ...
  * @author Simon
  */
-class TileCanvas extends Sprite implements IGameObject
+class TileCanvas extends Mediator<Sprite>
 {
 
 	public function new() 

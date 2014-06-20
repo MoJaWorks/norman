@@ -1,5 +1,5 @@
 package uk.co.mojaworks.frameworkv2.common.modules.messenger ;
-import uk.co.mojaworks.frameworkv2.common.interfaces.IScript;
+import uk.co.mojaworks.frameworkv2.common.modules.messenger.IScript;
 import uk.co.mojaworks.frameworkv2.core.IModule;
 
 /**
