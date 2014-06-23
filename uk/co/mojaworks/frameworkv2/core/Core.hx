@@ -19,6 +19,9 @@ class Core
 	public function new( ) 
 	{
 		_modules = new Map<String, IModule>();
+		
+		var c : TestComponent = new TestComponent();
+		var d : TestComponent2 = new TestComponent2();
 	}
 	
 	public static function init( stage : Stage ) : Void {
