@@ -1,18 +1,19 @@
 package uk.co.mojaworks.frameworkv2.common.modules.messenger ;
 import uk.co.mojaworks.frameworkv2.common.modules.messenger.IScript;
-import uk.co.mojaworks.frameworkv2.core.IModule;
+import uk.co.mojaworks.frameworkv2.core.Component;
 
 /**
  * ...
  * @author Simon
  */
-class Messenger implements IModule
+class Messenger extends Component
 {
 
 	var _listeners : Map<String, Array<Class<IScript>>>;
 	
 	public function new() 
 	{
+		super();
 		_listeners = new Map<String, Array<Class<IScript>>>();
 	}
 	

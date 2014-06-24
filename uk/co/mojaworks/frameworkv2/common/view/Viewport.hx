@@ -1,23 +1,21 @@
 package uk.co.mojaworks.frameworkv2.common.view ;
 
 import openfl.display.Sprite;
-import openfl.display.Stage;
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.frameworkv2.common.engine.IGameObject;
-import uk.co.mojaworks.frameworkv2.common.view.Mediator;
-import uk.co.mojaworks.frameworkv2.core.CoreObject;
+import uk.co.mojaworks.frameworkv2.components.Display;
+import uk.co.mojaworks.frameworkv2.core.Component;
 
 /**
  * Game Viewport automatically resizes it's contents to fit inside a viewport
  * ...
  * @author Simon
  */
-class Viewport extends Mediator<Sprite>
+class Viewport extends Display
 {
 	
 	public var stageRect( default, null ) : Rectangle;
 	public var displayRect( default, null ) : Rectangle;
-	
+	public var display : Sprite;
 	
 	public function new( ) 
 	{
@@ -33,8 +31,7 @@ class Viewport extends Mediator<Sprite>
 	override public function init():Void 
 	{
 		super.init();
-		display = new Sprite();
-		
+		display = new Sprite();		
 	}
 	
 	override public function destroy():Void 
@@ -42,12 +39,12 @@ class Viewport extends Mediator<Sprite>
 		super.destroy();
 	}
 	
-	override public function step(seconds:Float):Void 
+	override public function onUpdate(seconds:Float):Void 
 	{
-		super.step(seconds);
+		super.onUpdate(seconds);
 	}
 	
-	override public function resize() : Void {
+	public function resize() : Void {
 		
 	}
 			

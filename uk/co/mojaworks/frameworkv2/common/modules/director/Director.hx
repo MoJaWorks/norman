@@ -1,31 +1,29 @@
 package uk.co.mojaworks.frameworkv2.common.modules.director ;
 
 import motion.Actuate;
-import openfl.display.Bitmap;
-import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.common.engine.GameEngine;
 import uk.co.mojaworks.frameworkv2.common.modules.director.transitions.ImmediateTransition;
-import uk.co.mojaworks.frameworkv2.core.CoreObject;
-import uk.co.mojaworks.frameworkv2.core.IModule;
+import uk.co.mojaworks.frameworkv2.core.Component;
+import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**
  * ...
  * @author Simon
  */
-class Director extends CoreObject implements IModule
+class Director extends Component
 {
 	
-	var currentScreen( default, null ) : IView<DisplayObject>;
-	var _panelStack : Array<IView<DisplayObject>>;
+	var currentScreen( default, null ) : GameObject;
+	var _panelStack : Array<GameObject>;
 	var _blocker : Sprite;
 	
 	public var root(default, null) : Sprite;
 	var _screenLayer : Sprite;
 	var _panelLayer : Sprite;
 	
-	public var currentActiveView(get, never) : IView<DisplayObject>;
+	public var currentActiveView(get, never) : GameObject;
 	
 	public function new() 
 	{
@@ -33,7 +31,7 @@ class Director extends CoreObject implements IModule
 		_panelStack = [];
 		
 		root = new Sprite();
-		
+				
 		_screenLayer = new Sprite();
 		root.addChild( _screenLayer );
 		
@@ -49,7 +47,7 @@ class Director extends CoreObject implements IModule
 	 * SCREENS
 	 */
 	
-	public function showScreen( view : IView<DisplayObject>, ?transitionType : Class<ITransition> = null, allowAnimateOut : Bool = true ) : Void {
+	public function showScreen( view : GameObject, ?transitionType : Class<ITransition> = null, allowAnimateOut : Bool = true ) : Void {
 		
 		var t : ITransition;
 		if ( transitionType != null ) t = Type.createInstance( transitionType, [] );
@@ -62,7 +60,7 @@ class Director extends CoreObject implements IModule
 	 * PANELS
 	 */
 	
-	public function showPanel( panel : IView<DisplayObject> ) : Void {
+	public function showPanel( panel : GameObject ) : Void {
 		
 		if ( _panelStack.length == 0 ) {
 			_blocker.alpha = 0;
@@ -78,7 +76,7 @@ class Director extends CoreObject implements IModule
 	}
 	
 	
-	public function hidePanel( panel : IView<DisplayObject> ) : Void {
+	public function hidePanel( panel : GameObject ) : Void {
 		
 		panel.onDeactivate();
 		
@@ -91,7 +89,7 @@ class Director extends CoreObject implements IModule
 	}
 	
 		
-	private function onPanelHidden( view : IView<DisplayObject>, isPanel : Bool  ) : Void {
+	private function onPanelHidden( view : GameObject, isPanel : Bool  ) : Void {
 		
 		// Clean up the view
 		view.destroy();
@@ -122,7 +120,7 @@ class Director extends CoreObject implements IModule
 	}
 	
 	
-	private function get_currentActiveView() : IView<DisplayObject> {
+	private function get_currentActiveView() : GameObject {
 		if ( _panelStack.length > 0 ) {
 			return _panelStack[ _panelStack.length - 1];
 		}

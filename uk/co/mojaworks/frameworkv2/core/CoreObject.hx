@@ -8,7 +8,10 @@ class CoreObject
 {
 
 	var core( get, never ) : Core;
-	function get_core() : Core { return Core.instance; };
+	
+	#if !display
+	private function get_core() : Core { return Core.instance; };
+	#end
 	
 	public function new() 
 	{

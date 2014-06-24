@@ -1,7 +1,5 @@
 package uk.co.mojaworks.frameworkv2.core ;
 import openfl.display.Stage;
-import uk.co.mojaworks.frameworkv2.core.IModule;
-import uk.co.mojaworks.frameworkv2.common.modules.director.Director;
 
 /**
  * ...
@@ -11,17 +9,13 @@ class Core
 {
 
 	public static var instance( default, null ) : Core = null;
-	
-	var _modules : Map<String, IModule>;
-	
 	public var stage( default, null ) : Stage;
+	
+	//TODO: Add viewport as sprite
+	//TODO: Add director
 		
 	public function new( ) 
 	{
-		_modules = new Map<String, IModule>();
-		
-		var c : TestComponent = new TestComponent();
-		var d : TestComponent2 = new TestComponent2();
 	}
 	
 	public static function init( stage : Stage ) : Void {
@@ -29,12 +23,6 @@ class Core
 		instance.stage = stage;
 	}
 	
-	@:generic public function get<T>( classType : Class<T> ) : T {
-		return cast _modules.get( Type.getClassName( classType ) );
-	}
 	
-	public function add( object : IModule ) : Void {
-		_modules.set( Type.getClassName(Type.getClass(object)), object );
-	}
 	
 }

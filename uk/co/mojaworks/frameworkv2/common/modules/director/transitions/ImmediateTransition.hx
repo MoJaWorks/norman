@@ -1,9 +1,9 @@
 package uk.co.mojaworks.frameworkv2.common.modules.director.transitions;
 
 import motion.Actuate;
-import openfl.display.DisplayObject;
 import openfl.display.Sprite;
 import uk.co.mojaworks.frameworkv2.common.modules.director.ITransition;
+import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**
  * ...
@@ -19,7 +19,7 @@ class ImmediateTransition implements ITransition
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.common.modules.director.ITransition */
 	
-	public function transition( parentSprite : Sprite, to:IView<DisplayObject>, from:IView<DisplayObject>, allowAnimateOut:Bool = true) 
+	public function transition( parentSprite : Sprite, to:GameObject, from:GameObject, allowAnimateOut:Bool = true) 
 	{
 		if ( from != null ) {
 			
@@ -37,7 +37,7 @@ class ImmediateTransition implements ITransition
 		} 
 	}
 	
-	private static function progressToNextScreen( parentSprite : Sprite, to:IView<DisplayObject>, from:IView<DisplayObject> ) : Void {
+	private static function progressToNextScreen( parentSprite : Sprite, to:GameObject, from:GameObject ) : Void {
 		
 		if ( from != null ) {
 			parentSprite.removeChild( from.display );

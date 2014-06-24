@@ -2,12 +2,9 @@ package uk.co.mojaworks.frameworkv2.common.engine;
 
 import openfl.display.Stage;
 import openfl.events.Event;
-import uk.co.mojaworks.frameworkv2.common.modules.director.Director;
-import uk.co.mojaworks.frameworkv2.common.modules.messenger.Messenger;
 import uk.co.mojaworks.frameworkv2.common.view.Viewport;
+import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.Core;
-import uk.co.mojaworks.frameworkv2.core.CoreObject;
-import uk.co.mojaworks.frameworkv2.core.IModule;
 
 /**
  * This class is intended to be extended and used as a root
@@ -16,7 +13,7 @@ import uk.co.mojaworks.frameworkv2.core.IModule;
  * @author Simon
  */
 
-class GameEngine extends CoreObject implements IModule
+class GameEngine extends Component
 {
 	
 	public var viewport(default, null) : Viewport;
@@ -36,9 +33,9 @@ class GameEngine extends CoreObject implements IModule
 	}
 	
 	private function addCoreModules() : Void {
-		core.add( this );
-		core.add( new Messenger() );
-		core.add( new Director() );
+		//core.add( this );
+		//core.add( new Messenger() );
+		//core.add( new Director() );
 	}
 	
 	private function createView() : Void {
@@ -47,7 +44,7 @@ class GameEngine extends CoreObject implements IModule
 		viewport = new Viewport();
 		
 		// Add the director to the viewport 
-		viewport.display.addChild( core.get(Director).root );
+		//viewport.display.addChild( core.get(Director).root );
 		
 		// Respond to any changes in orientation/size
 		core.stage.addEventListener( Event.RESIZE, resize );
@@ -61,7 +58,7 @@ class GameEngine extends CoreObject implements IModule
 		viewport.resize();
 		
 		// Resize all windows so they can take advantage of margins
-		core.get(Director).resize();
+		//core.get(Director).resize();
 		
 	}
 	
