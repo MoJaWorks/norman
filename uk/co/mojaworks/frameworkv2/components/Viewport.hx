@@ -1,4 +1,4 @@
-package uk.co.mojaworks.frameworkv2.core ;
+package uk.co.mojaworks.frameworkv2.components ;
 
 import openfl.display.Sprite;
 import openfl.geom.Rectangle;
@@ -10,13 +10,16 @@ import uk.co.mojaworks.frameworkv2.core.Component;
  * ...
  * @author Simon
  */
-class Viewport extends CoreObject
+class Viewport extends Component
 {
 	// StageRect is the scaled stage. It will be scaled and centered to match the current screen resolution
 	public var stageRect( default, null ) : Rectangle;
 	
 	// DisplayRect is the total display area including margins
 	public var displayRect( default, null ) : Rectangle;
+	
+	// DisplayRect is the total display area including margins
+	public var screenRect( default, null ) : Rectangle;
 	
 	// The scale os the stage to make it fit in the viewport
 	public var scale : Float = 1;
@@ -27,6 +30,7 @@ class Viewport extends CoreObject
 		
 		stageRect = new Rectangle();
 		displayRect = new Rectangle();
+		screenRect = new Rectangle();
 		
 	}
 	
@@ -41,13 +45,13 @@ class Viewport extends CoreObject
 		
 	public function resize() : Void {
 		
-		var targetWidth : Float = core.stage.stageWidth;
-		var targetHeight : Float = core.stage.stageHeight;
+		screenRect.width = core.stage.stageWidth;
+		screenRect.height = core.stage.stageHeight;
 		
-		scale = Math.min( targetWidth / stageRect.width, targetHeight / stageRect.height );
+		scale = Math.min( screenRect.width / stageRect.width, screenRect.height / stageRect.height );
 		
-		var x : Float = (targetWidth - (stageRect.width * scale)) * 0.5;
-		var y : Float = (targetHeight - (stageRect.height * scale)) * 0.5;
+		var x : Float = (screenRect.width - (stageRect.width * scale)) * 0.5;
+		var y : Float = (screenRect.height - (stageRect.height * scale)) * 0.5;
 		
 		stageRect.x = x / scale;
 		stageRect.y = y / scale;

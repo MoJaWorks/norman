@@ -6,7 +6,6 @@ import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.components.engine.GameEngine;
 import uk.co.mojaworks.frameworkv2.components.director.transitions.ImmediateTransition;
 import uk.co.mojaworks.frameworkv2.components.Display;
-import uk.co.mojaworks.frameworkv2.components.View;
 import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
@@ -118,7 +117,7 @@ class Director extends Component
 	
 	public function resize( ) : Void {
 		
-		var screenRect : Rectangle = core.viewport.displayRect;
+		var screenRect : Rectangle = core.root.get(Viewport).displayRect;
 		
 		// TODO: Resize the blocker
 		

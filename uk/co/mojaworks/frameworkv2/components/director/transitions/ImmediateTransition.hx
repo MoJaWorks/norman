@@ -3,7 +3,7 @@ package uk.co.mojaworks.frameworkv2.components.director.transitions ;
 import motion.Actuate;
 import openfl.display.Sprite;
 import uk.co.mojaworks.frameworkv2.components.director.ITransition;
-import uk.co.mojaworks.frameworkv2.components.View;
+import uk.co.mojaworks.frameworkv2.components.director.View;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**

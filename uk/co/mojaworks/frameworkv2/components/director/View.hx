@@ -1,4 +1,4 @@
-package uk.co.mojaworks.frameworkv2.components;
+package uk.co.mojaworks.frameworkv2.components.director ;
 
 import uk.co.mojaworks.frameworkv2.core.Component;
 

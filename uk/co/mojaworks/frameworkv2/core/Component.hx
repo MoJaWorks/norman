@@ -13,8 +13,6 @@ class Component extends CoreObject
 	private function new() 
 	{
 		super();
-		init();
-		trace("Hello from component type", getComponentType() );
 	}
 
 	public function getComponentType() : String {
@@ -32,11 +30,7 @@ class Component extends CoreObject
 	public function onRemoved( ) : Void {
 		
 	}
-	
-	public function init() : Void {
 		
-	}
-	
 	public function destroy() : Void {
 		
 	}

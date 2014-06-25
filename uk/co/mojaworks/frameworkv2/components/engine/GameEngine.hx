@@ -1,11 +1,16 @@
 package uk.co.mojaworks.frameworkv2.components.engine ;
 
+import openfl.display.DisplayObject;
+import openfl.display.OpenGLView;
 import openfl.display.Stage;
 import openfl.events.Event;
 import uk.co.mojaworks.frameworkv2.components.director.Director;
-import uk.co.mojaworks.frameworkv2.core.Viewport;
+import uk.co.mojaworks.frameworkv2.components.Viewport;
 import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.Core;
+import uk.co.mojaworks.frameworkv2.renderer.BitmapRenderer;
+import uk.co.mojaworks.frameworkv2.renderer.GLRenderer;
+import uk.co.mojaworks.frameworkv2.renderer.IRenderer;
 
 /**
  * This class is intended to be extended and used as a root
@@ -17,28 +22,41 @@ import uk.co.mojaworks.frameworkv2.core.Core;
 class GameEngine extends Component
 {
 	
+	var _renderer : IRenderer;
+	
 	public function new( stage ) 
 	{
 		super();
 		
 		initCore( stage );
-		addCoreModules();
-		createView();
+		initViewport();
+		initCoreModules();
+		initView();
+		initCanvas();
 
 	}
 	
 	private function initCore( stage : Stage ) : Void {
-		Core.init( stage, 1000, 600 );
+		Core.init( stage );
 	}
 	
-	private function addCoreModules() : Void {
+	private function initViewport( ) : Void {
+		
+		var viewport : Viewport = new Viewport();
+		viewport.init( 1000, 600 );
+		core.root.add( viewport );
+		
+	}
+	
+	private function initCoreModules() : Void {
 		
 		// Add self to core so can be retrieved by other components later
 		core.root.add( this );
+		core.root.add( new Director() );
 		
 	}
 	
-	private function createView() : Void {
+	private function initView() : Void {
 			
 		core.root.addChild( core.root.get(Director).root );
 		
@@ -51,15 +69,24 @@ class GameEngine extends Component
 	private function resize( e : Event = null ) : Void {
 		
 		// Resize the viewport to scale everything to the screen size
-		core.viewport.resize();
+		core.root.get(Viewport).resize();
 		
 		// Resize any active screens/panels
 		core.root.get(Director).resize();
 		
-		trace("Viewport is now", core.viewport.scale, core.viewport.stageRect );
+	}
+	
+	private function initCanvas( ) : Void {
 		
-		// Resize all windows so they can take advantage of margins
-		//core.get(Director).resize();
+		if ( OpenGLView.isSupported ) {
+			_renderer = new GLRenderer();
+			trace("Using GL renderer");
+		}else {
+			_renderer = new BitmapRenderer();
+			trace("Falling back to bitmap renderer");
+		}
+		
+		_renderer.init( core.root.get(Viewport).screenRect );
 		
 	}
 	

@@ -30,6 +30,8 @@ class GameObject extends CoreObject
 		_children = [];
 		parent = null;
 		
+		init();
+		
 	}
 	
 	function init() : Void {
