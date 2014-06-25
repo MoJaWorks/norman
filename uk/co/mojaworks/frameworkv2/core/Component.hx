@@ -8,7 +8,7 @@ package uk.co.mojaworks.frameworkv2.core;
 class Component extends CoreObject
 {
 	
-	public var owner : GameObject;
+	public var gameObject : GameObject;
 	
 	private function new() 
 	{

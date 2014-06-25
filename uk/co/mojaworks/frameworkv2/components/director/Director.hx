@@ -1,11 +1,14 @@
-package uk.co.mojaworks.frameworkv2.common.modules.director ;
+package uk.co.mojaworks.frameworkv2.components.director ;
 
 import motion.Actuate;
 import openfl.display.Sprite;
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.frameworkv2.common.engine.GameEngine;
-import uk.co.mojaworks.frameworkv2.common.modules.director.transitions.ImmediateTransition;
+import uk.co.mojaworks.frameworkv2.components.engine.GameEngine;
+import uk.co.mojaworks.frameworkv2.components.director.transitions.ImmediateTransition;
+import uk.co.mojaworks.frameworkv2.components.Display;
+import uk.co.mojaworks.frameworkv2.components.View;
 import uk.co.mojaworks.frameworkv2.core.Component;
+import uk.co.mojaworks.frameworkv2.core.CoreObject;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**
@@ -17,11 +20,11 @@ class Director extends Component
 	
 	var currentScreen( default, null ) : GameObject;
 	var _panelStack : Array<GameObject>;
-	var _blocker : Sprite;
+	var _blocker : GameObject;
 	
-	public var root(default, null) : Sprite;
-	var _screenLayer : Sprite;
-	var _panelLayer : Sprite;
+	public var root(default, null) : GameObject;
+	var _screenLayer : GameObject;
+	var _panelLayer : GameObject;
 	
 	public var currentActiveView(get, never) : GameObject;
 	
@@ -30,15 +33,15 @@ class Director extends Component
 		super();
 		_panelStack = [];
 		
-		root = new Sprite();
+		root = new GameObject();
 				
-		_screenLayer = new Sprite();
+		_screenLayer = new GameObject();
 		root.addChild( _screenLayer );
 		
-		_blocker = new Sprite();
+		_blocker = new GameObject();
 		root.addChild( _blocker );
 		
-		_panelLayer = new Sprite();
+		_panelLayer = new GameObject();
 		root.addChild( _panelLayer );
 		
 	}
@@ -63,24 +66,28 @@ class Director extends Component
 	public function showPanel( panel : GameObject ) : Void {
 		
 		if ( _panelStack.length == 0 ) {
-			_blocker.alpha = 0;
-			_blocker.visible = true;
-			Actuate.tween( _blocker, 0.25, { alpha: 1 } );
+			var blockerDisplay : Display = _blocker.get(Display);
+			blockerDisplay.alpha = 0;
+			blockerDisplay.visible = true;
+			Actuate.tween( blockerDisplay, 0.25, { alpha: 1 } );
 			
-			currentScreen.onDeactivate();
+			currentScreen.get(View).onDeactivate();
 		}
 		
-		panel.onShow();
-		panel.onActivate();
-		root.addChild( panel.display );
+		var panelView : View = panel.get(View);
+		panelView.onShow();
+		panelView.onActivate();
+		_panelLayer.addChild( panel );
+		_panelStack.push( panel );
 	}
 	
 	
 	public function hidePanel( panel : GameObject ) : Void {
 		
-		panel.onDeactivate();
+		var panelView : View = panel.get(View);
+		panelView.onDeactivate();
 		
-		var time : Float = panel.onHide();
+		var time : Float = panelView.onHide();
 		if ( time > 0 ) {
 			Actuate.timer( time ).onComplete( onPanelHidden, [panel, true] );
 		}else {
@@ -95,13 +102,14 @@ class Director extends Component
 		view.destroy();
 		
 		_panelStack.remove( view );
-		_panelLayer.removeChild( view.display );
+		_panelLayer.removeChild( view );
 		if ( _panelStack.length == 0 ) {
-			Actuate.tween( _blocker, 0.25, { alpha: 0 } ).onComplete( function() { _blocker.visible = false; } );
+			var blockerDisplay : Display = _blocker.get(Display);
+			Actuate.tween( blockerDisplay, 0.25, { alpha: 0 } ).onComplete( function() { blockerDisplay.visible = false; } );
 		}
 		
 		// Activate next panel in stack or screen if no more panels
-		currentActiveView.onActivate();
+		currentActiveView.get(View).onActivate();
 	}
 	
 	/**
@@ -110,13 +118,15 @@ class Director extends Component
 	
 	public function resize( ) : Void {
 		
-		var screenRect : Rectangle = core.get(GameEngine).viewport.displayRect;
+		var screenRect : Rectangle = core.viewport.displayRect;
 		
-		// Send the resize message to the stack
-		_blocker.graphics.clear();
-		_blocker.graphics.beginFill( 0, 0.7 );
-		_blocker.graphics.drawRect( screenRect.x, screenRect.y, screenRect.width, screenRect.height );
-		_blocker.graphics.endFill();
+		// TODO: Resize the blocker
+		
+		if ( currentScreen != null ) currentScreen.get(View).resize();
+		for ( view in _panelStack ) {
+			view.get(View).resize();
+		}
+		
 	}
 	
 	

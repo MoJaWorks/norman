@@ -1,5 +1,6 @@
-package uk.co.mojaworks.frameworkv2.common.modules.messenger ;
+package uk.co.mojaworks.frameworkv2.components.messenger ;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
+import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**
  * Scripts are disposable bits of code that run once and are then discarded
@@ -9,6 +10,6 @@ import uk.co.mojaworks.frameworkv2.core.CoreObject;
 interface IScript
 {
 	
-	function execute( ?param : Dynamic ) : Void;
+	function execute( object : GameObject, ?param : Dynamic ) : Void;
 	
 }

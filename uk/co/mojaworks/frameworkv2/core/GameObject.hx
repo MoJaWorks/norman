@@ -1,5 +1,6 @@
 package uk.co.mojaworks.frameworkv2.core;
-import uk.co.mojaworks.frameworkv2.common.modules.messenger.Messenger;
+import uk.co.mojaworks.frameworkv2.components.messenger.Messenger;
+import uk.co.mojaworks.frameworkv2.components.Display;
 import uk.co.mojaworks.frameworkv2.components.Transform;
 
 /**
@@ -85,6 +86,15 @@ class GameObject extends CoreObject
 	
 	public function remove( component : Component ) : Void {
 		_components.remove( component.getComponentType() );
+	}
+	
+	
+	/**
+	 * 
+	 */
+	
+	public function destroy() : Void {
+		
 	}
 		
 }

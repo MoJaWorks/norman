@@ -1,5 +1,5 @@
-package uk.co.mojaworks.frameworkv2.common.modules.messenger ;
-import uk.co.mojaworks.frameworkv2.common.modules.messenger.IScript;
+package uk.co.mojaworks.frameworkv2.components.messenger ;
+import uk.co.mojaworks.frameworkv2.components.messenger.IScript;
 import uk.co.mojaworks.frameworkv2.core.Component;
 
 /**
@@ -24,7 +24,7 @@ class Messenger extends Component
 		if ( _listeners.get(message) != null ) {
 			for ( listener in _listeners.get(message) ) {
 				var l : IScript = Type.createInstance( listener, [] );
-				l.execute( data );
+				l.execute( gameObject, data );
 			}
 		}
 	}
