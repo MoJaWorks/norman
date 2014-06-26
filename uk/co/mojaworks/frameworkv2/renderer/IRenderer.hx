@@ -9,6 +9,7 @@ import openfl.geom.Rectangle;
 interface IRenderer 
 {		
 	function init( rect : Rectangle ) : Void;
-	function render() : Void;
+	function prerender() : Void;
 	function getCanvas() : DisplayObject;
+	function resize( rect : Rectangle ) : Void;
 }

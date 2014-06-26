@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<haxelib name="openfl" />	
+	
+	<assets path="assets/shaders" rename="shaders"/>
 </project>

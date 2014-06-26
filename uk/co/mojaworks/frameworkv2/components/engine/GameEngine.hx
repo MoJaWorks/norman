@@ -87,6 +87,7 @@ class GameEngine extends Component
 		}
 		
 		_renderer.init( core.root.get(Viewport).screenRect );
+		core.stage.addChild( _renderer.getCanvas() );
 		
 	}
 	

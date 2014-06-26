@@ -21,14 +21,19 @@ class BitmapRenderer extends CoreObject implements IRenderer
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.renderer.IRenderer */
 	
-	public function render() 
+	public function prerender() 
 	{
 		
 	}
 	
+	public function resize( rect:Rectangle ) : Void {
+		_canvas.bitmapData = new BitmapData( Std.int( rect.width ), Std.int( rect.height ), true, 0 );		
+	}
+	
 	public function init(rect:Rectangle) 
 	{
-		_canvas = new Bitmap( new BitmapData( Std.int(rect.width), Std.int(rect.height), true, 0 ) );
+		_canvas = new Bitmap( );
+		resize( rect );
 	}
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.renderer.IRenderer */
