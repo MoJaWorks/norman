@@ -4,6 +4,7 @@ import openfl.display.Bitmap;
 import openfl.display.DisplayObject;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
+import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**
  * ...
@@ -21,7 +22,7 @@ class BitmapRenderer extends CoreObject implements IRenderer
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.renderer.IRenderer */
 	
-	public function render() 
+	public function render( root : GameObject ) 
 	{
 		
 	}
