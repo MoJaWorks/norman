@@ -14,7 +14,7 @@ class GameObject extends CoreObject
 	
 	// Children of an object are affected by their parent and are destroyed along with their parent
 	public var parent( default, null ) : GameObject;
-	var _children : Array<GameObject>;
+	public var children(default, null ) : Array<GameObject>;
 	
 	// Components
 	var _components : Map<String, Component>;
@@ -27,7 +27,7 @@ class GameObject extends CoreObject
 		super();
 		
 		_components = new Map<String, Component>();
-		_children = [];
+		children = [];
 		parent = null;
 		
 		init();
@@ -54,7 +54,7 @@ class GameObject extends CoreObject
 		
 		if ( object.parent != null ) object.parent.removeChild( object );
 		object.parent = this;
-		_children.push( object );
+		children.push( object );
 		
 		messenger.sendMessage( CHILD_ADDED, object );
 	}
@@ -62,7 +62,7 @@ class GameObject extends CoreObject
 	public function removeChild( object : GameObject ) : Void {
 		
 		if ( object.parent == this ) {
-			_children.remove( object );
+			children.remove( object );
 			object.parent = null;
 			messenger.sendMessage( CHILD_REMOVED, object );
 		}

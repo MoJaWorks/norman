@@ -10,6 +10,7 @@ import openfl.gl.GLProgram;
 import openfl.gl.GLShader;
 import openfl.gl.GLUniformLocation;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
+import uk.co.mojaworks.frameworkv2.core.GameObject;
 
 /**
  * ...
@@ -30,6 +31,8 @@ class GLRenderer extends CoreObject implements IRenderer
 	var _uModelViewMatrix : GLUniformLocation;
 	var _uImage0 : GLUniformLocation;
 	
+	var _rootObject : GameObject;
+	
 	public function new() 
 	{
 		super();	
@@ -37,8 +40,9 @@ class GLRenderer extends CoreObject implements IRenderer
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.renderer.IRenderer */
 	
-	public function prerender() 
+	public function render( root : GameObject ) 
 	{
+		_rootObject = root;
 		// Do nothing - this is all done in the opengl canvas' render loop
 	}
 	
@@ -93,6 +97,8 @@ class GLRenderer extends CoreObject implements IRenderer
 		
 		//rect is screenRect
 		GL.viewport( Std.int(rect.x), Std.int(rect.y), Std.int(rect.width), Std.int(rect.height) );
+		
+		
 		
 	}
 	

@@ -21,7 +21,7 @@ class BitmapRenderer extends CoreObject implements IRenderer
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.renderer.IRenderer */
 	
-	public function prerender() 
+	public function render() 
 	{
 		
 	}
