@@ -1,4 +1,4 @@
-package uk.co.mojaworks.frameworkv2.renderer;
+package uk.co.mojaworks.frameworkv2.renderer.gl ;
 
 import flash.display.BitmapData;
 import openfl.Assets;

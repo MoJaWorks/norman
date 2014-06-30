@@ -1,16 +1,12 @@
 package uk.co.mojaworks.frameworkv2.components.engine ;
 
-import openfl.display.DisplayObject;
-import openfl.display.OpenGLView;
 import openfl.display.Stage;
 import openfl.events.Event;
 import uk.co.mojaworks.frameworkv2.components.director.Director;
 import uk.co.mojaworks.frameworkv2.components.Viewport;
 import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.Core;
-import uk.co.mojaworks.frameworkv2.renderer.BitmapRenderer;
-import uk.co.mojaworks.frameworkv2.renderer.GLRenderer;
-import uk.co.mojaworks.frameworkv2.renderer.IRenderer;
+import uk.co.mojaworks.frameworkv2.renderer.Renderer;
 
 /**
  * This class is intended to be extended and used as a root
@@ -22,7 +18,7 @@ import uk.co.mojaworks.frameworkv2.renderer.IRenderer;
 class GameEngine extends Component
 {
 	
-	var _renderer : IRenderer;
+	var _renderer : Renderer;
 	
 	public function new( stage ) 
 	{
@@ -78,16 +74,9 @@ class GameEngine extends Component
 	
 	private function initCanvas( ) : Void {
 		
-		if ( OpenGLView.isSupported ) {
-			_renderer = new GLRenderer();
-			trace("Using GL renderer");
-		}else {
-			_renderer = new BitmapRenderer();
-			trace("Falling back to bitmap renderer");
-		}
-		
+		_renderer = new Renderer();		
 		_renderer.init( core.root.get(Viewport).screenRect );
-		core.stage.addChild( _renderer.getCanvas() );
+		core.stage.addChild( _renderer.getDisplayObject() );
 		
 	}
 	

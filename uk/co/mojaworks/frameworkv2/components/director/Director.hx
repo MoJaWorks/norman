@@ -5,7 +5,7 @@ import openfl.display.Sprite;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.components.engine.GameEngine;
 import uk.co.mojaworks.frameworkv2.components.director.transitions.ImmediateTransition;
-import uk.co.mojaworks.frameworkv2.components.Display;
+import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 import uk.co.mojaworks.frameworkv2.core.GameObject;

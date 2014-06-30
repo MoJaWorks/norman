@@ -1,6 +1,6 @@
 package uk.co.mojaworks.frameworkv2.core;
 import uk.co.mojaworks.frameworkv2.components.messenger.Messenger;
-import uk.co.mojaworks.frameworkv2.components.Display;
+import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.components.Transform;
 
 /**
@@ -90,6 +90,9 @@ class GameObject extends CoreObject
 		_components.remove( component.getComponentType() );
 	}
 	
+	public function has( classType : Class<T> ) : Bool {
+		return ( _components.get( Reflect.field( classType, "TYPE" ) ) != null );
+	}
 	
 	/**
 	 * 

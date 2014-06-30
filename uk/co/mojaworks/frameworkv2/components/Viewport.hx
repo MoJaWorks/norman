@@ -2,7 +2,7 @@ package uk.co.mojaworks.frameworkv2.components ;
 
 import openfl.display.Sprite;
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.frameworkv2.components.Display;
+import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.core.Component;
 
 /**

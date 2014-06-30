@@ -18,8 +18,8 @@ class Transform extends Component
 	
 	public var rotation : Float = 0;
 	
-	//public var globalTransform( get, null ) : Matrix;
-	//public var localTransform( get, null ) : Matrix;
+	public var globalTransform( default, null ) : Matrix;
+	public var localTransform( default, null ) : Matrix;
 	
 	var _isLocalDirty : Bool = true;
 	var _isGlobalDirty : Bool = true;

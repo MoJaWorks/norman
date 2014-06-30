@@ -1,4 +1,4 @@
-package uk.co.mojaworks.frameworkv2.renderer;
+package uk.co.mojaworks.frameworkv2.renderer.fallback ;
 import flash.display.BitmapData;
 import openfl.display.Bitmap;
 import openfl.display.DisplayObject;
@@ -39,7 +39,7 @@ class BitmapRenderer extends CoreObject implements IRenderer
 	
 	/* INTERFACE uk.co.mojaworks.frameworkv2.renderer.IRenderer */
 	
-	public function getCanvas():DisplayObject 
+	public function getDisplayObject():DisplayObject 
 	{
 		return _canvas;
 	}
