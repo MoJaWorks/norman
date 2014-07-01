@@ -1,5 +1,5 @@
 package uk.co.mojaworks.frameworkv2.renderer.gl ;
-import flash.geom.Matrix3D;
+import openfl.geom.Matrix3D;
 import openfl.Assets;
 import openfl.display.DisplayObject;
 import openfl.display.OpenGLView;
@@ -13,6 +13,7 @@ import openfl.gl.GLProgram;
 import openfl.gl.GLShader;
 import openfl.gl.GLTexture;
 import openfl.gl.GLUniformLocation;
+import openfl.utils.Float32Array;
 import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
 
@@ -26,62 +27,49 @@ class GLCanvas implements ICanvas
 	var _canvas : OpenGLView;
 	var _root : GameObject;
 	
-	var _imageShaderProgram : GLProgram;
-	var _fillShaderProgram : GLProgram;
+	var _imageShaderProgram : GLShaderWrapper;
+	var _fillShaderProgram : GLShaderWrapper;
+	var _currentShaderProgram : GLShaderWrapper;
 	
-	var _aVertexPosition : Int;
-	var _aTexCoord : Int;
-	var _uProjectionMatrix : GLUniformLocation;
-	var _uModelViewMatrix : GLUniformLocation;
-	var _uImage0 : GLUniformLocation;
-
+	var _vertexBuffer : GLBuffer;
+	
+	var _projectionMatrix : Matrix3D;
+	var _modelViewMatrix : Matrix3D;
+	
 	public function new() 
 	{
 		
 	}
 	
 	public function init(rect:Rectangle) 
-	{
+	{		
 		_canvas = new OpenGLView();
 		_canvas.render = _onRender;
 		
 		GL.clearColor( 0, 0, 0, 1 );
 		
+		_vertexBuffer = GL.createBuffer():
+		
 		initShaders();
+		
+		resize( rect );
 	}
 	
 	private function initShaders() : Void {
 		
-		var imageVertexShader : GLShader = GL.createShader(GL.VERTEX_SHADER);
-		GL.shaderSource(imageVertexShader, Assets.getText("shaders/main.vs.glsl"));
-		GL.compileShader(imageVertexShader);
+		_imageShaderProgram = new GLShaderWrapper( 
+			Assets.getText("shaders/image.vs.glsl"),
+			Assets.getText("shaders/image.fs.glsl"),
+			["uProjectionMatrix", "uModelViewMatrix", "uImage0"],
+			["aTexCoord", "aVertexPosition"]
+		);
 		
-		if ( GL.getShaderParameter( imageVertexShader, GL.COMPILE_STATUS ) == 0 ) {
-			trace("Could not compile vertex shader!");
-		}
-		
-		var imageFragmentShader : GLShader = GL.createShader(GL.FRAGMENT_SHADER);
-		GL.shaderSource(imageFragmentShader, Assets.getText("shaders/main.fs.glsl"));
-		GL.compileShader(imageFragmentShader);
-		
-		if ( GL.getShaderParameter( imageFragmentShader, GL.COMPILE_STATUS ) == 0 ) {
-			trace("Could not compile fragment shader!");
-		}
-		
-		_imageShaderProgram = GL.createProgram();
-		GL.attachShader( _imageShaderProgram, imageVertexShader );
-		GL.attachShader( _imageShaderProgram, imageFragmentShader );
-		GL.linkProgram(_imageShaderProgram);
-		
-		if ( GL.getProgramParameter( _shaderProgram, GL.LINK_STATUS ) == 0 ) {
-			trace("Shader link failed");
-		}
-		
-		_aVertexPosition = GL.getAttribLocation( _imageShaderProgram, "aVertexPosition" );
-		_aTexCoord = GL.getAttribLocation( _imageShaderProgram, "aTexCoord" );
-		_uProjectionMatrix = GL.getUniformLocation( _imageShaderProgram, "uProjectionMatrix" );
-		_uModelViewMatrix = GL.getUniformLocation( _imageShaderProgram, "uModelViewMatrix" );
-		_uImage0 = GL.getUniformLocation( _imageShaderProgram, "uImage0" );
+		_imageShaderProgram = new GLShaderWrapper( 
+			Assets.getText("shaders/fill.vs.glsl"),
+			Assets.getText("shaders/fill.fs.glsl"),
+			["uProjectionMatrix", "uModelViewMatrix"],
+			["aVertexColor", "aVertexPosition"] 
+		);
 		
 	}
 	
@@ -93,9 +81,12 @@ class GLCanvas implements ICanvas
 		
 		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
 		GL.clear( GL.COLOR_BUFFER_BIT );
+				
+		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, 0, rect.height, 1, -1 );
 		
 		renderLevel( _root );
 		
+		_currentShaderProgram = null;
 	}
 	
 	private function renderLevel( root : GameObject ) : Void {
@@ -123,13 +114,34 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, transform:Matrix):Void 
+	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, width:Float, height:Float, transform:Matrix):Void 
 	{
+		if ( _currentShaderProgram != _fillShaderProgram ) {
+			GL.useProgram( _fillShaderProgram );
+			GL.uniformMatrix3D( _fillShaderProgram.uniforms.get("uProjectionMatrix"), false, _projectionMatrix );
+			_currentShaderProgram = _fillShaderProgram;
+		}
+		
+		var vertices : Array<Float> = [
+			0, 0, red, green, blue, alpha,
+			0, height, red, green, blue, alpha,
+			width, 0, red, green, blue, alpha,
+			width, height, red, green, blue, alpha
+		]
+			
+		
+		_modelViewMatrix = Matrix3D.createABCD( transform.a, transform.b, transform.c, transform.d, transform.tx, transform.ty );
+		GL.uniformMatrix3D( _fillShaderProgram.uniforms.get("uModelViewMatrix"), false, _modelViewMatrix );
+		
+		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast vertices ), GL.STATIC_DRAW );
+		//GL.enableVertexAttribArray( 
 		
 	}
 	
 	public function drawImage(textureId:String, transform:Matrix, alpha:Float):Void 
 	{
+		GL.uniformMatrix3D( _imageShaderProgram.uniforms.get("uProjectionMatrix"), false, _projectionMatrix );
 		
 	}
 	

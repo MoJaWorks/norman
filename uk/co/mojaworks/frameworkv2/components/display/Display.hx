@@ -2,6 +2,7 @@ package uk.co.mojaworks.frameworkv2.components.display ;
 
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.core.Component;
+import uk.co.mojaworks.frameworkv2.renderer.ICanvas;
 
 /**
  * ...
