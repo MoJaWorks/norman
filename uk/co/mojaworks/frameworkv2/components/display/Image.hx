@@ -14,7 +14,11 @@ class Image extends Display
 	public var subTextureId : String = null;
 		
 	public var rect : Rectangle = null;
-	public var 
+	
+	// Colour multipliers
+	public var red : Float = 1;
+	public var green : Float = 1;
+	public var blue : Float = 1;
 		
 	public function new( textureId : String, subTextureId : String = null ) 
 	{
