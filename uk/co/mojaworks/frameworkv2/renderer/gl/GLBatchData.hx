@@ -8,8 +8,8 @@ import openfl.gl.GLTexture;
 class GLBatchData
 {
 
-	public var start : Float;
-	public var length : Float;
+	public var start : Int;
+	public var length : Int;
 	public var shader : GLShaderWrapper;
 	public var texture : GLTexture;
 	

@@ -37,6 +37,7 @@ class Renderer extends CoreObject {
 			trace("Falling back to bitmap renderer");
 		}
 		
+		_canvas.init( screenRect );
 		resize( screenRect );
 	}
 	

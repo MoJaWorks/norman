@@ -1,11 +1,15 @@
 package uk.co.mojaworks.frameworkv2.components.engine ;
 
+import haxe.Timer;
 import openfl.display.Stage;
 import openfl.events.Event;
 import uk.co.mojaworks.frameworkv2.components.director.Director;
+import uk.co.mojaworks.frameworkv2.components.display.Display;
+import uk.co.mojaworks.frameworkv2.components.display.Fill;
 import uk.co.mojaworks.frameworkv2.components.Viewport;
 import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.Core;
+import uk.co.mojaworks.frameworkv2.core.GameObject;
 import uk.co.mojaworks.frameworkv2.renderer.Renderer;
 
 /**
@@ -20,6 +24,9 @@ class GameEngine extends Component
 	
 	var _renderer : Renderer;
 	
+	var _lastTick : Float = 0;
+	var _elapsed : Float = 0;
+	
 	public function new( stage ) 
 	{
 		super();
@@ -29,6 +36,8 @@ class GameEngine extends Component
 		initCoreModules();
 		initView();
 		initCanvas();
+		
+		core.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
 
 	}
 	
@@ -48,6 +57,7 @@ class GameEngine extends Component
 		
 		// Add self to core so can be retrieved by other components later
 		core.root.add( this );
+		core.root.add( new Display() );
 		core.root.add( new Director() );
 		
 	}
@@ -60,6 +70,10 @@ class GameEngine extends Component
 		core.stage.addEventListener( Event.RESIZE, resize );
 		resize();
 		
+		var ent : GameObject = new GameObject();
+		ent.add( new Fill( 1, 0, 0, 1, 100, 100 ) );
+		core.root.addChild( ent );
+				
 	}
 	
 	private function resize( e : Event = null ) : Void {
@@ -78,6 +92,22 @@ class GameEngine extends Component
 		_renderer.init( core.root.get(Viewport).screenRect );
 		core.stage.addChild( _renderer.getDisplayObject() );
 		
+	}
+	
+	override public function destroy():Void 
+	{
+		super.destroy();
+		
+		core.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
+	}
+	
+	private function onEnterFrame( e : Event ) : Void {
+				
+		_elapsed = Timer.stamp() - _lastTick;
+		_lastTick = Timer.stamp();
+		
+		onUpdate( _elapsed );
+		_renderer.render( core.root );
 	}
 	
 }

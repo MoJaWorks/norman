@@ -44,7 +44,7 @@ class BitmapCanvas implements ICanvas
 		
 	}
 	
-	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, transform:Matrix):Void 
+	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, width : Float, height : Float, transform:Matrix):Void 
 	{
 		
 	}

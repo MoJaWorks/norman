@@ -82,15 +82,17 @@ class GameObject extends CoreObject
 	
 	@:generic public function add<T:(Component)>( component : T ) : T {
 		_components.set( component.getComponentType(), component );
+		component.gameObject = this;
 		component.onAdded( );
 		return cast component;
 	}
 	
 	public function remove( component : Component ) : Void {
 		_components.remove( component.getComponentType() );
+		component.gameObject = null;
 	}
 	
-	public function has( classType : Class<T> ) : Bool {
+	@:generic public function has<T:(Component)>( classType : Class<T> ) : Bool {
 		return ( _components.get( Reflect.field( classType, "TYPE" ) ) != null );
 	}
 	

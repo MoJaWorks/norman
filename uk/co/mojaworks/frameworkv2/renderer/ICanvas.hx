@@ -16,7 +16,7 @@ interface ICanvas
 	public function render( root : GameObject) : Void;
 	
 	// Drawing functions
-	public function fillRect( red : Float, green : Float, blue : Float, alpha : Float, transform : Matrix ) : Void;
+	public function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix ) : Void;
 	public function drawImage( textureId : String, transform : Matrix, alpha : Float ) : Void;
 	public function drawSubImage( textureId : String, subImageId : String, transform : Matrix, alpha : Float ) : Void;
 }

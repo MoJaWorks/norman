@@ -1,4 +1,5 @@
 package uk.co.mojaworks.frameworkv2.renderer.gl;
+import openfl.Assets;
 import openfl.gl.GL;
 import openfl.gl.GLProgram;
 import openfl.gl.GLShader;
@@ -27,7 +28,7 @@ class GLShaderWrapper
 		}
 		
 		var fs : GLShader = GL.createShader(GL.FRAGMENT_SHADER);
-		GL.shaderSource(fs, Assets.getText("shaders/main.fs.glsl"));
+		GL.shaderSource(fs, fragmentShaderSource );
 		GL.compileShader(fs);
 		
 		if ( GL.getShaderParameter( fs, GL.COMPILE_STATUS ) == 0 ) {
@@ -39,7 +40,7 @@ class GLShaderWrapper
 		GL.attachShader( program, fs );
 		GL.linkProgram(program);
 		
-		if ( GL.getProgramParameter( _shaderProgram, GL.LINK_STATUS ) == 0 ) {
+		if ( GL.getProgramParameter( program, GL.LINK_STATUS ) == 0 ) {
 			trace("Shader link failed");
 		}
 		
