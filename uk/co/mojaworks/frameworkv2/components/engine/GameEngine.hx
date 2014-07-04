@@ -71,7 +71,7 @@ class GameEngine extends Component
 		resize();
 		
 		var ent : GameObject = new GameObject();
-		ent.add( new Fill( 1, 0, 0, 1, 100, 100 ) );
+		ent.add( new Fill( 0, 1, 0, 1, 100, 100 ) );
 		core.root.addChild( ent );
 				
 	}

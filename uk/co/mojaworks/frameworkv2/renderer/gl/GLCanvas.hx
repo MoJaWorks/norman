@@ -15,6 +15,7 @@ import openfl.gl.GLShader;
 import openfl.gl.GLTexture;
 import openfl.gl.GLUniformLocation;
 import openfl.utils.Float32Array;
+import openfl.utils.Int16Array;
 import openfl.utils.UInt8Array;
 import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
@@ -80,16 +81,12 @@ class GLCanvas implements ICanvas
 		
 		_imageShader = new GLShaderWrapper( 
 			Assets.getText("shaders/image.vs.glsl"),
-			Assets.getText("shaders/image.fs.glsl"),
-			["uProjectionMatrix", "uModelViewMatrix", "uImage0"],
-			["aTexCoord", "aVertexPosition"]
+			Assets.getText("shaders/image.fs.glsl")
 		);
 		
 		_fillShader = new GLShaderWrapper( 
 			Assets.getText("shaders/fill.vs.glsl"),
-			Assets.getText("shaders/fill.fs.glsl"),
-			["uProjectionMatrix", "uModelViewMatrix"],
-			["aVertexColor", "aVertexPosition"] 
+			Assets.getText("shaders/fill.fs.glsl")
 		);
 		
 	}
@@ -123,13 +120,13 @@ class GLCanvas implements ICanvas
 		trace("Pushing to vertex buffer", _vertices );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.STATIC_DRAW );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		trace("Pushing to index buffer", _indices );
 		
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( cast _indices ), GL.STATIC_DRAW );
+		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		
 	}
@@ -164,21 +161,21 @@ class GLCanvas implements ICanvas
 		}
 		
 		var arr : Array<Point> = [
-			transform.transformPoint( new Point( 0, 0 ) ),
+			transform.transformPoint( new Point( width, height ) ),
 			transform.transformPoint( new Point( 0, height ) ),
 			transform.transformPoint( new Point( width, 0 ) ),
-			transform.transformPoint( new Point( width, height ) )
+			transform.transformPoint( new Point( 0, 0 ) )
 		];
 		
 		for ( point in arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			//_vertices.push( red );
-			//_vertices.push( green );
-			//_vertices.push( blue );
-			//_vertices.push( alpha );
+			_vertices.push( red );
+			_vertices.push( green );
+			_vertices.push( blue );
+			_vertices.push( alpha );
 			_vertices.push( 0 );
-			//_vertices.push( 0 );
+			_vertices.push( 0 );
 		}
 		
 		// Build indexes
@@ -193,7 +190,6 @@ class GLCanvas implements ICanvas
 	
 	public function drawImage(textureId:String, transform:Matrix, alpha:Float):Void 
 	{
-		GL.uniformMatrix3D( _imageShader.uniforms.get("uProjectionMatrix"), false, _projectionMatrix );
 		
 	}
 	
@@ -219,44 +215,58 @@ class GLCanvas implements ICanvas
 		
 		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		
+		var vertexAttrib : Int = -1;
+		var colorAttrib : Int = -1;
+		var texAttrib : Int = -1;
+		var uMVMatrix : GLUniformLocation;
+		var uProjectionMatrix : GLUniformLocation;
+		var uImage : GLUniformLocation;
+		
 		for ( batch in _batches ) {
 			
 			trace("Drawing batch", batch.shader, batch.start, batch.length, batch.texture );
 			
 			GL.useProgram( batch.shader.program );
 			
-			GL.enableVertexAttribArray( batch.shader.attributes["aVertexPosition"] );
+			vertexAttrib = batch.shader.getAttrib( "aVertexPosition" );
+			colorAttrib = batch.shader.getAttrib( "aVertexColor" );
+			uMVMatrix = batch.shader.getUniform( "uModelViewMatrix" );
+			uProjectionMatrix = batch.shader.getUniform( "uProjectionMatrix" );
+					
+			GL.enableVertexAttribArray( vertexAttrib );
+			GL.enableVertexAttribArray( colorAttrib );
 			
 			GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-			GL.vertexAttribPointer( batch.shader.attributes["aVertexPosition"], 3, GL.FLOAT, false, 0, 0 );
+			GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POS * 4 );
+			GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
 			
-			//if ( batch.texture == null ) {
-				//GL.enableVertexAttribArray( batch.shader.attributes["aVertexColor"] );
-				//GL.vertexAttribPointer( batch.shader.attributes["aVertexColor"], 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
-			//}else {
-				//GL.enableVertexAttribArray( batch.shader.attributes["aTexCoord"] );
-				//GL.vertexAttribPointer( batch.shader.attributes["aTexCoord"], 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
-				//
-				//GL.activeTexture(GL.TEXTURE0);
-				//GL.bindTexture( GL.TEXTURE_2D, batch.texture );
-				//GL.uniform1i( batch.shader.uniforms["uImage0"], 0 );
-			//}
+			if ( batch.texture != null ) {
+				texAttrib = batch.shader.getAttrib("aTexCoord");
+				uImage = batch.shader.getUniform( "uImage0" );
+				
+				GL.enableVertexAttribArray( texAttrib );
+				GL.vertexAttribPointer( texAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
+				
+				GL.activeTexture(GL.TEXTURE0);
+				GL.bindTexture( GL.TEXTURE_2D, batch.texture );
+				GL.uniform1i( uImage, 0 );
+			}
 			
-			//trace("Bind to uniform", batch.shader.uniforms["uProjectionMatrix"], _projectionMatrix.rawData.toArray() );
-			//trace("Bind to uniform", batch.shader.uniforms["uModelViewMatrix"], _modelViewMatrix );
-			GL.uniformMatrix3D( batch.shader.uniforms["uProjectionMatrix"], false, _projectionMatrix );
-			GL.uniformMatrix3D( batch.shader.uniforms["uModelViewMatrix"], false, _modelViewMatrix );
+			GL.uniformMatrix3D( uProjectionMatrix, false, _projectionMatrix );
+			GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
 			
-			GL.drawArrays( GL.TRIANGLE_STRIP, 0, 4 );
-			//GL.drawElements( GL.TRIANGLES, 6, GL.UNSIGNED_SHORT, 0 );
 			
-			//if ( batch.texture == null ) {
+			GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
+			GL.drawElements( GL.TRIANGLES, 6, GL.UNSIGNED_SHORT, 0 );
 			
-				GL.disableVertexAttribArray( batch.shader.attributes["aVertexColor"] );
-			//}else {
-				//GL.disableVertexAttribArray( batch.shader.attributes["aTexCoord"] );
-				//GL.bindTexture( GL.TEXTURE_2D, null );
-			//}
+			if ( batch.texture == null ) {
+			
+				GL.disableVertexAttribArray( colorAttrib );
+				GL.disableVertexAttribArray( vertexAttrib );
+			}else {
+				GL.disableVertexAttribArray( texAttrib );
+				GL.bindTexture( GL.TEXTURE_2D, null );
+			}
 		}
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );

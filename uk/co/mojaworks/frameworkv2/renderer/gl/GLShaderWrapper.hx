@@ -13,10 +13,8 @@ class GLShaderWrapper
 {
 
 	public var program : GLProgram;
-	public var uniforms : Map<String, GLUniformLocation>;
-	public var attributes : Map<String, Int>;
 	
-	public function new( vertexShaderSource : String, fragmentShaderSource : String, uniformNames : Array<String>, attributeNames : Array<String> ) 
+	public function new( vertexShaderSource : String, fragmentShaderSource : String ) 
 	{
 				
 		var vs : GLShader = GL.createShader(GL.VERTEX_SHADER);
@@ -43,17 +41,15 @@ class GLShaderWrapper
 		if ( GL.getProgramParameter( program, GL.LINK_STATUS ) == 0 ) {
 			trace("Shader link failed");
 		}
-		
-		attributes = new Map<String,Int>();
-		for ( att in attributeNames ) {
-			attributes.set( att, GL.getAttribLocation( program, att ) );
-		}
-		
-		uniforms = new Map<String,GLUniformLocation>();
-		for ( uniform in uniformNames ) {
-			uniforms.set( uniform, GL.getUniformLocation( program, uniform ) );
-		}
-		
+				
+	}
+	
+	public function getUniform( name : String ) : GLUniformLocation {
+		return GL.getUniformLocation( program, name );
+	}
+	
+	public function getAttrib( name : String ) : Int {
+		return GL.getAttribLocation( program, name );
 	}
 	
 }
