@@ -6,6 +6,7 @@ import openfl.display.BitmapData;
 import openfl.display.DisplayObject;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.renderer.ICanvas;
+import uk.co.mojaworks.frameworkv2.renderer.TextureData;
 
 /**
  * ...
@@ -49,14 +50,16 @@ class BitmapCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(textureId:String, transform:Matrix, alpha:Float):Void 
+	public function drawImage(texture:TextureData, transform:Matrix, alpha:Float, red:Float, green:Float, blue:Float):Void 
 	{
 		
 	}
 	
-	public function drawSubImage(textureId:String, subImageId:String, transform:Matrix, alpha:Float):Void 
+	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix, alpha:Float, red:Float, green:Float, blue:Float):Void 
 	{
 		
 	}
+	
+	
 	
 }

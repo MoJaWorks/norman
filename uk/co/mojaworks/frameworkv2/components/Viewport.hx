@@ -18,7 +18,7 @@ class Viewport extends Component
 	// DisplayRect is the total display area including margins
 	public var displayRect( default, null ) : Rectangle;
 	
-	// DisplayRect is the total display area including margins
+	// Screenrect is the total unscaled screen area
 	public var screenRect( default, null ) : Rectangle;
 	
 	// The scale os the stage to make it fit in the viewport
@@ -56,6 +56,8 @@ class Viewport extends Component
 		stageRect.x = x / scale;
 		stageRect.y = y / scale;
 		
+		displayRect.x = -stageRect.x;
+		displayRect.y = -stageRect.y;
 		displayRect.width = stageRect.x + stageRect.x + stageRect.width;
 		displayRect.height = stageRect.y + stageRect.y + stageRect.height;
 		

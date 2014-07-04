@@ -59,6 +59,7 @@ class GameEngine extends Component
 		core.root.add( this );
 		core.root.add( new Display() );
 		core.root.add( new Director() );
+		core.root.add( _renderer );
 		
 	}
 	
@@ -71,7 +72,7 @@ class GameEngine extends Component
 		resize();
 		
 		var ent : GameObject = new GameObject();
-		ent.add( new Fill( 0, 1, 0, 1, 100, 100 ) );
+		ent.add( new Fill( 1, 0, 0, 1, 100, 100 ) );
 		core.root.addChild( ent );
 				
 	}

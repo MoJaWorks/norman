@@ -145,7 +145,6 @@ class GLCanvas implements ICanvas
 	
 	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, width:Float, height:Float, transform:Matrix):Void 
 	{
-		
 		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
 		
@@ -188,14 +187,64 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(textureId:String, transform:Matrix, alpha:Float):Void 
+	public function drawImage( texture : TextureData, transform:Matrix, alpha:Float, red : Float, green : Float, blue : Float ):Void 
 	{
-		
+		// Just call drawSubimage with whole image as bounds
+		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, alpha, red, green, blue );
 	}
 	
-	public function drawSubImage(textureId:String, subImageId:String, transform:Matrix, alpha:Float):Void 
+	public function drawSubImage( texture : TextureData, sourceRect : Rectangle, transform:Matrix, alpha:Float, red : Float, green : Float, blue : Float ):Void 
 	{
+		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
+		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
+		var width : Float = sourceRect.width * texture.sourceBitmap.width;
+		var height : Float = sourceRect.height * texture.sourceBitmap.height;
 		
+		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.glTexture ) {
+			batch.length += 6;	
+		}else {
+			batch = new GLBatchData();
+			batch.start = _indices.length;
+			batch.length = 6;
+			batch.shader = _imageShader;
+			batch.texture = texture.glTexture;
+			_batches.push( batch );
+		}
+		
+		var pts_arr : Array<Point> = [
+			transform.transformPoint( new Point( width, height ) ),
+			transform.transformPoint( new Point( 0, height ) ),
+			transform.transformPoint( new Point( width, 0 ) ),
+			transform.transformPoint( new Point( 0, 0 ) )
+		];
+		
+		var uv_arr : Array<Float> = [
+			sourceRect.right, sourceRect.bottom,
+			sourceRect.left, sourceRect.bottom,
+			sourceRect.right, sourceRect.top,
+			sourceRect.left, sourceRect.top
+		];
+		
+		var i : Int = 0;
+		for ( point in pts_arr ) {
+			_vertices.push( point.x );
+			_vertices.push( point.y );
+			_vertices.push( red );
+			_vertices.push( green );
+			_vertices.push( blue );
+			_vertices.push( alpha );
+			_vertices.push( uv_arr[(i*2)] );
+			_vertices.push( uv_arr[(i*2)+1] );
+			i++;
+		}
+		
+		// Build indexes
+		_indices.push(0 + offset);
+		_indices.push(1 + offset);
+		_indices.push(2 + offset);
+		_indices.push(1 + offset);
+		_indices.push(3 + offset);
+		_indices.push(2 + offset);
 	}
 	
 	/**
@@ -223,8 +272,6 @@ class GLCanvas implements ICanvas
 		var uImage : GLUniformLocation;
 		
 		for ( batch in _batches ) {
-			
-			trace("Drawing batch", batch.shader, batch.start, batch.length, batch.texture );
 			
 			GL.useProgram( batch.shader.program );
 			
@@ -257,13 +304,12 @@ class GLCanvas implements ICanvas
 			
 			
 			GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-			GL.drawElements( GL.TRIANGLES, 6, GL.UNSIGNED_SHORT, 0 );
+			GL.drawElements( GL.TRIANGLES, batch.length, GL.UNSIGNED_SHORT, batch.start );
 			
-			if ( batch.texture == null ) {
-			
-				GL.disableVertexAttribArray( colorAttrib );
-				GL.disableVertexAttribArray( vertexAttrib );
-			}else {
+			GL.disableVertexAttribArray( colorAttrib );
+			GL.disableVertexAttribArray( vertexAttrib );
+		
+			if ( batch.texture != null ) {
 				GL.disableVertexAttribArray( texAttrib );
 				GL.bindTexture( GL.TEXTURE_2D, null );
 			}
@@ -273,8 +319,7 @@ class GLCanvas implements ICanvas
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		GL.useProgram( null );
 		
-		
-		trace( "Error code end", GL.getError() );
+		//trace( "Error code end", GL.getError() );
 	}
 	
 	

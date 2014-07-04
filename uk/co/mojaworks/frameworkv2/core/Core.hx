@@ -1,7 +1,5 @@
 package uk.co.mojaworks.frameworkv2.core ;
-import openfl.display.OpenGLView;
 import openfl.display.Stage;
-import uk.co.mojaworks.frameworkv2.components.director.Director;
 
 /**
  * ...

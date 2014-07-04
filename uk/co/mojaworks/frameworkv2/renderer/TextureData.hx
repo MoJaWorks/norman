@@ -15,7 +15,7 @@ class TextureData
 	public var id : String;
 	
 	// Only used for GL rendering
-	public var texture : GLTexture;
+	public var glTexture : GLTexture;
 	public var boundUnit : Int = -1;
 	
 	// This will be a parsed JSON object

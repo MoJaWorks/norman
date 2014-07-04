@@ -3,6 +3,7 @@ import openfl.display.DisplayObject;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
+import uk.co.mojaworks.frameworkv2.renderer.TextureData;
 
 /**
  * @author Simon
@@ -11,12 +12,12 @@ import uk.co.mojaworks.frameworkv2.core.GameObject;
 interface ICanvas 
 {
 	function getDisplayObject() : DisplayObject;
-	public function init( rect : Rectangle ) : Void;
-	public function resize( rect : Rectangle ) : Void;
-	public function render( root : GameObject) : Void;
+	function init( rect : Rectangle ) : Void;
+	function resize( rect : Rectangle ) : Void;
+	function render( root : GameObject) : Void;
 	
 	// Drawing functions
-	public function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix ) : Void;
-	public function drawImage( textureId : String, transform : Matrix, alpha : Float ) : Void;
-	public function drawSubImage( textureId : String, subImageId : String, transform : Matrix, alpha : Float ) : Void;
+	function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix ) : Void;
+	function drawImage(texture:TextureData, transform:Matrix, alpha:Float, red:Float, green:Float, blue:Float):Void;
+	function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix, alpha:Float, red:Float, green:Float, blue:Float):Void;
 }

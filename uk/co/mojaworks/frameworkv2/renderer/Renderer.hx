@@ -9,6 +9,8 @@ import openfl.gl.GLActiveInfo;
 import openfl.gl.GLProgram;
 import openfl.gl.GLShader;
 import openfl.gl.GLUniformLocation;
+import uk.co.mojaworks.frameworkv2.renderer.gl.GLTextureManager;
+import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.CoreObject;
 import uk.co.mojaworks.frameworkv2.core.GameObject;
 import uk.co.mojaworks.frameworkv2.renderer.fallback.BitmapCanvas;
@@ -19,9 +21,11 @@ import uk.co.mojaworks.frameworkv2.renderer.ICanvas;
  * ...
  * @author Simon
  */
-class Renderer extends CoreObject {
+class Renderer extends Component {
 
 	var _canvas : ICanvas;
+	
+	public var textureManager( default, null ) : TextureManager;
 	
 	public function new() 
 	{
@@ -31,6 +35,7 @@ class Renderer extends CoreObject {
 	public function init( screenRect : Rectangle ) : Void {
 		if ( OpenGLView.isSupported ) {
 			_canvas = new GLCanvas();
+			textureManager = new GLTextureManager();
 			trace("Using GL renderer");
 		}else {
 			_canvas = new BitmapCanvas();
