@@ -24,7 +24,6 @@ import uk.co.mojaworks.frameworkv2.renderer.ICanvas;
 class Renderer extends Component {
 
 	var _canvas : ICanvas;
-	
 	public var textureManager( default, null ) : TextureManager;
 	
 	public function new() 

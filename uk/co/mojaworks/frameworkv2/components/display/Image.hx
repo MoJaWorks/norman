@@ -17,7 +17,7 @@ class Image extends Display
 	private static var WHOLE_IMAGE : Rectangle = new Rectangle( 0, 0, 1, 1 );
 	
 	public var textureData : TextureData;
-	private var _sourceRect : Rectangle = null;
+	private var _uvRect : Rectangle = null;
 	
 	// Colour multipliers
 	public var red : Float = 1;
@@ -27,27 +27,36 @@ class Image extends Display
 	public function new( textureId : String, subTextureId : String = null ) 
 	{
 		super();	
-		this.subTextureId = subTextureId;
 		
 		var textureManager : TextureManager = core.root.get(Renderer).textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
-			textureManager.loadTexture( textureId );
+			textureData = textureManager.loadTexture( textureId );
+		}else {
+			textureData = textureManager.getTexture( textureId );
 		}
 		
+		
 		if ( subTextureId == null ) {
-			_sourceRect = WHOLE_IMAGE;
+			_uvRect = WHOLE_IMAGE;
 		}else {
-			_sourceRect = text
+			_uvRect = textureData.getUVFor( subTextureId );
 		}
+		trace("Creating image with texture data", textureData, _uvRect );
 	}
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		if ( subTextureId != null ) {
-			canvas.drawSubImage( textureData, textureData.getUVFor( subTextureId ), new Matrix(), getFinalAlpha(), red, green, blue );
-		}else {
-			canvas.drawSubImage( textureData, textureData.getUVFor( subTextureId ), new Matrix(), getFinalAlpha(), red, green, blue );
-		}
+		canvas.drawSubImage( textureData, _uvRect, new Matrix(), getFinalAlpha(), red, green, blue );
+	}
+	
+	override public function getNaturalWidth():Float 
+	{
+		return textureData.sourceBitmap.width;
+	}
+	
+	override public function getNaturalHeight():Float 
+	{
+		return textureData.sourceBitmap.height;
 	}
 	
 }

@@ -287,6 +287,9 @@ class GLCanvas implements ICanvas
 			GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POS * 4 );
 			GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
 			
+			GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+			GL.enable( GL.BLEND );
+			
 			if ( batch.texture != null ) {
 				texAttrib = batch.shader.getAttrib("aTexCoord");
 				uImage = batch.shader.getUniform( "uImage0" );
@@ -301,7 +304,6 @@ class GLCanvas implements ICanvas
 			
 			GL.uniformMatrix3D( uProjectionMatrix, false, _projectionMatrix );
 			GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
-			
 			
 			GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 			GL.drawElements( GL.TRIANGLES, batch.length, GL.UNSIGNED_SHORT, batch.start );
@@ -318,7 +320,7 @@ class GLCanvas implements ICanvas
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		GL.useProgram( null );
-		
+		GL.disable( GL.BLEND );
 		//trace( "Error code end", GL.getError() );
 	}
 	

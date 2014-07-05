@@ -1,4 +1,5 @@
 package uk.co.mojaworks.frameworkv2.core;
+import haxe.ds.StringMap;
 
 /**
  * ...
@@ -28,6 +29,10 @@ class Component extends CoreObject
 	}
 	
 	public function onRemoved( ) : Void {
+		
+	}
+	
+	public function onMessage( message : String, param : Dynamic ) : Void {
 		
 	}
 		

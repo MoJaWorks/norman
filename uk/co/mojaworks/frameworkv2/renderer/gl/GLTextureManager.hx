@@ -27,15 +27,13 @@ class GLTextureManager extends TextureManager
 		
 	}
 	
-	override public function loadTexture( assetId : String ) : Void {
+	override public function loadTexture( assetId : String ) : TextureData {
 		
-		var t_data : TextureData = new TextureData();
-		t_data.id = assetId;
-		t_data.sourceBitmap = Assets.getBitmapData( assetId );
-		t_data.spriteMap = Json.parse( Assets.getText(assetId + ".map") );
+		// Let super do its thing and build a texturedata
+		var t_data : TextureData = super.loadTexture( assetId );		
+		
+		// Create the GL texture
 		t_data.glTexture = GL.createTexture();
-		
-		// Create the texture
 		GL.bindTexture( GL.TEXTURE_2D, t_data.glTexture );
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE );
@@ -44,8 +42,7 @@ class GLTextureManager extends TextureManager
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
 		GL.bindTexture( GL.TEXTURE_2D, null );	
 		
-		// Save it for future use
-		_textures.set( assetId, t_data );
+		return t_data;
 		
 	}
 	

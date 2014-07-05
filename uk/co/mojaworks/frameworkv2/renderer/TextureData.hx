@@ -46,7 +46,7 @@ class TextureData
 		
 		var result : Rectangle = null;
 		if ( spriteMap != null ) {
-			var img : Dynamic = Reflect.field( spriteMap, subImageId );
+			var img : Dynamic = Reflect.field( spriteMap.frames, subImageId );
 			if ( img != null ) {
 				result = new Rectangle( 
 					img.frame.x / sourceBitmap.width,

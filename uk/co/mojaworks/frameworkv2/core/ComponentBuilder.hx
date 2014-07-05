@@ -20,6 +20,8 @@ class ComponentBuilder {
 		// If this subclasses Component
 		if ( parent.get().superClass != null ) {
 			
+			trace("Building component type", val );
+			
 			var id : String = parent.toString();
 			
 			// Add a static field to the class

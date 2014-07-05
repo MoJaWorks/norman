@@ -37,7 +37,8 @@ class Display extends Component
 	}
 	
 	public function render( canvas : ICanvas ) : Void {
-		//canvas.fillRect( width, height, getFinalAlpha, gameObject.transform.globalTransform );
+		// Override to render
+		// Otherwise will just behave as empty container
 	}
 
 	

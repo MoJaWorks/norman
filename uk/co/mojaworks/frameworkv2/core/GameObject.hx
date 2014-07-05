@@ -1,6 +1,5 @@
 package uk.co.mojaworks.frameworkv2.core;
 import uk.co.mojaworks.frameworkv2.components.messenger.Messenger;
-import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.components.Transform;
 
 /**
@@ -11,6 +10,8 @@ class GameObject extends CoreObject
 {
 	public static inline var CHILD_ADDED : String = "CHILD_ADDED";
 	public static inline var CHILD_REMOVED : String = "CHILD_REMOVED";
+	static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
+	static public inline var REMOVED_AS_CHILD : String = "REMOVED_AS_CHILD";
 	
 	// Children of an object are affected by their parent and are destroyed along with their parent
 	public var parent( default, null ) : GameObject;
@@ -57,6 +58,7 @@ class GameObject extends CoreObject
 		children.push( object );
 		
 		messenger.sendMessage( CHILD_ADDED, object );
+		object.messenger.sendMessage( ADDED_AS_CHILD, object );
 	}
 	
 	public function removeChild( object : GameObject ) : Void {
@@ -65,6 +67,7 @@ class GameObject extends CoreObject
 			children.remove( object );
 			object.parent = null;
 			messenger.sendMessage( CHILD_REMOVED, object );
+			object.messenger.sendMessage(REMOVED_AS_CHILD, object );
 		}
 	}
 	

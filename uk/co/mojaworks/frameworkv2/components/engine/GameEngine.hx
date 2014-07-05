@@ -6,6 +6,7 @@ import openfl.events.Event;
 import uk.co.mojaworks.frameworkv2.components.director.Director;
 import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.components.display.Fill;
+import uk.co.mojaworks.frameworkv2.components.display.Image;
 import uk.co.mojaworks.frameworkv2.components.Viewport;
 import uk.co.mojaworks.frameworkv2.core.Component;
 import uk.co.mojaworks.frameworkv2.core.Core;
@@ -34,8 +35,8 @@ class GameEngine extends Component
 		initCore( stage );
 		initViewport();
 		initCoreModules();
-		initView();
 		initCanvas();
+		initView();
 		
 		core.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
 
@@ -59,7 +60,7 @@ class GameEngine extends Component
 		core.root.add( this );
 		core.root.add( new Display() );
 		core.root.add( new Director() );
-		core.root.add( _renderer );
+		
 		
 	}
 	
@@ -72,7 +73,7 @@ class GameEngine extends Component
 		resize();
 		
 		var ent : GameObject = new GameObject();
-		ent.add( new Fill( 1, 0, 0, 1, 100, 100 ) );
+		ent.add( new Image("img/zombie.png", "zhead") );
 		core.root.addChild( ent );
 				
 	}
@@ -81,7 +82,7 @@ class GameEngine extends Component
 		
 		// Resize the viewport to scale everything to the screen size
 		core.root.get(Viewport).resize();
-		
+			
 		// Resize any active screens/panels
 		core.root.get(Director).resize();
 		
@@ -92,6 +93,7 @@ class GameEngine extends Component
 		_renderer = new Renderer();		
 		_renderer.init( core.root.get(Viewport).screenRect );
 		core.stage.addChild( _renderer.getDisplayObject() );
+		core.root.add( _renderer );
 		
 	}
 	
