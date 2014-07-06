@@ -72,9 +72,19 @@ class GameEngine extends Component
 		core.stage.addEventListener( Event.RESIZE, resize );
 		resize();
 		
+		
+		var parent : GameObject = new GameObject().add( new Display() );
+		core.root.addChild( parent );
+		
+		parent.transform.rotation = Math.PI * 0.25;
+		
 		var ent : GameObject = new GameObject();
-		ent.add( new Image("img/zombie.png", "zhead") );
-		core.root.addChild( ent );
+		var img : Image = new Image("img/zombie.png", "zhead");
+		ent.add( img );
+		parent.addChild( ent );
+		
+		ent.transform.centerPivot();
+		ent.transform.setPosition( 100, 0 );
 				
 	}
 	

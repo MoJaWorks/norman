@@ -38,7 +38,7 @@ class Fill extends Display
 	}
 	
 	override public function render( canvas : ICanvas ) : Void {
-		canvas.fillRect( red, green, blue, getFinalAlpha(), width, height, new Matrix() );
+		canvas.fillRect( red, green, blue, getFinalAlpha(), width, height, gameObject.transform.worldTransform );
 	}
 	
 	

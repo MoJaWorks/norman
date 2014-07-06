@@ -36,12 +36,12 @@ class GameObject extends CoreObject
 	}
 	
 	function init() : Void {
+				
+		messenger = new Messenger();
+		add( messenger );
 		
 		transform = new Transform();
 		add( transform );
-		
-		messenger = new Messenger();
-		add( messenger );
 		
 	}
 	
@@ -83,11 +83,11 @@ class GameObject extends CoreObject
 		return cast _components.remove( Reflect.field( classType, "TYPE" ) );
 	}
 	
-	@:generic public function add<T:(Component)>( component : T ) : T {
+	@:generic public function add<T:(Component)>( component : T ) : GameObject {
 		_components.set( component.getComponentType(), component );
 		component.gameObject = this;
 		component.onAdded( );
-		return cast component;
+		return this;
 	}
 	
 	public function remove( component : Component ) : Void {

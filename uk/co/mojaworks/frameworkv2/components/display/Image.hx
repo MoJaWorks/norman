@@ -18,6 +18,7 @@ class Image extends Display
 	
 	public var textureData : TextureData;
 	private var _uvRect : Rectangle = null;
+	private var _rect : Rectangle = null;
 	
 	// Colour multipliers
 	public var red : Float = 1;
@@ -38,25 +39,33 @@ class Image extends Display
 		
 		if ( subTextureId == null ) {
 			_uvRect = WHOLE_IMAGE;
+			_rect = new Rectangle( 0, 0, textureData.sourceBitmap.width, textureData.sourceBitmap.height );
 		}else {
 			_uvRect = textureData.getUVFor( subTextureId );
+			_rect = textureData.getRectFor( subTextureId );
 		}
-		trace("Creating image with texture data", textureData, _uvRect );
+		trace("Creating image with texture data", textureData, _uvRect, _rect );
+	}
+	
+	override public function onAdded():Void 
+	{
+		super.onAdded();
+		gameObject.transform.setPadding( _rect.x, _rect.y );
 	}
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		canvas.drawSubImage( textureData, _uvRect, new Matrix(), getFinalAlpha(), red, green, blue );
+		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.worldTransform, getFinalAlpha(), red, green, blue );
 	}
 	
 	override public function getNaturalWidth():Float 
 	{
-		return textureData.sourceBitmap.width;
+		return _rect.width;
 	}
 	
 	override public function getNaturalHeight():Float 
 	{
-		return textureData.sourceBitmap.height;
+		return _rect.height;
 	}
 	
 }

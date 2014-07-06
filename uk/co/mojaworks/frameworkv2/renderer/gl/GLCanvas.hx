@@ -117,13 +117,13 @@ class GLCanvas implements ICanvas
 		renderLevel( root );
 		
 		// Pass it to the graphics card
-		trace("Pushing to vertex buffer", _vertices );
+		//trace("Pushing to vertex buffer", _vertices );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
-		trace("Pushing to index buffer", _indices );
+		//trace("Pushing to index buffer", _indices );
 		
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
@@ -260,7 +260,6 @@ class GLCanvas implements ICanvas
 		GL.clear( GL.COLOR_BUFFER_BIT );
 		
 		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
-		_modelViewMatrix = Matrix3D.create2D( 200, 200, 1, 0 );
 		
 		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		

@@ -30,9 +30,9 @@ class TextureData
 		
 		var result : Rectangle = null;
 		if ( spriteMap != null ) {
-			var img : Dynamic = Reflect.field( spriteMap, subImageId );
+			var img : Dynamic = Reflect.field( spriteMap.frames, subImageId );
 			if ( img != null ) {
-				result = new Rectangle( img.spriteSourceSize.x, img.spriteSourceSize.y, img.spriteSourceSize.w, img.spriteSourceSize.h );
+				result = new Rectangle( img.spriteSourceSize.x, img.spriteSourceSize.y, img.sourceSize.w, img.sourceSize.h );
 			}else {
 				trace("No subimage " + subImageId + " in texture " + id );
 			}

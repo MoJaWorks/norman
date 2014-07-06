@@ -61,6 +61,15 @@ class Messenger extends Component
 		}
 	}
 	
-	//TODO: Remove listeners
+	public function removeListener( message : String, ?listener : GameObject->Dynamic->Void = null ) : Void {
+		if ( _listeners.get(message) != null ) {
+			if ( listener != null ) {
+				_listeners.get(message).remove( listener );
+			}else {
+				 //Clear all listeners for this message
+				_listeners.set(message, []);
+			}
+		}
+	}
 	
 }
