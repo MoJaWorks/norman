@@ -13,7 +13,7 @@ import uk.co.mojaworks.norman.renderer.gl.GLTextureManager;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.renderer.fallback.BitmapCanvas;
+import uk.co.mojaworks.norman.renderer.fallback.FallbackCanvas;
 import uk.co.mojaworks.norman.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.renderer.ICanvas;
 
@@ -37,7 +37,8 @@ class Renderer extends Component {
 			textureManager = new GLTextureManager();
 			trace("Using GL renderer");
 		}else {
-			_canvas = new BitmapCanvas();
+			_canvas = new FallbackCanvas();
+			textureManager = new TextureManager();
 			trace("Falling back to bitmap renderer");
 		}
 		
