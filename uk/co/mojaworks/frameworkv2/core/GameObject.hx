@@ -1,4 +1,5 @@
 package uk.co.mojaworks.frameworkv2.core;
+import uk.co.mojaworks.frameworkv2.components.display.Display;
 import uk.co.mojaworks.frameworkv2.components.messenger.Messenger;
 import uk.co.mojaworks.frameworkv2.components.Transform;
 
@@ -20,8 +21,11 @@ class GameObject extends CoreObject
 	// Components
 	var _components : Map<String, Component>;
 	
-	public var transform : Transform;
-	public var messenger : Messenger;
+	public var transform( default, null ) : Transform;
+	public var messenger( default, null ) : Messenger;
+	
+	// Display is not set by default and will be null until a display component is added
+	public var display( default, null ) : Display;
 	
 	public function new() 
 	{
@@ -79,20 +83,26 @@ class GameObject extends CoreObject
 		return cast _components.get( Reflect.field( classType, "TYPE" ) );
 	}
 	
-	@:generic public function removeByType<T:(Component)>( classType : Class<T> ) : T {
-		return cast _components.remove( Reflect.field( classType, "TYPE" ) );
+	@:generic public function removeByType<T:(Component)>( classType : Class<T> ) : GameObject {
+		var type : String = Reflect.field( classType, "TYPE" );
+		if ( type == Display.TYPE ) this.display = null;
+		_components.remove( type );
+		return this; 
 	}
 	
 	@:generic public function add<T:(Component)>( component : T ) : GameObject {
 		_components.set( component.getComponentType(), component );
+		if ( component.getComponentType() == Display.TYPE ) this.display = cast component;
 		component.gameObject = this;
 		component.onAdded( );
 		return this;
 	}
 	
-	public function remove( component : Component ) : Void {
+	public function remove( component : Component ) : GameObject {
 		_components.remove( component.getComponentType() );
+		if ( component.getComponentType() == Display.TYPE ) this.display = null;
 		component.gameObject = null;
+		return this;
 	}
 	
 	@:generic public function has<T:(Component)>( classType : Class<T> ) : Bool {

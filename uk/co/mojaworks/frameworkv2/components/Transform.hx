@@ -95,40 +95,47 @@ class Transform extends Component
 	/**
 	 * Centers the pivot based on the display
 	 */
-	public function centerPivot() : Void {
+	public function centerPivot() : Transform {
 		if ( gameObject.has(Display) ) {
 			setPivot( gameObject.get(Display).getNaturalWidth() * 0.5, gameObject.get(Display).getNaturalHeight() * 0.5 );
 		}else {
 			setPivot(0, 0);
 		}
+		
+		return this;
 	}
 	
 	/**
 	 * Convenience
 	 */
 	
-	public function setPosition( x : Float, y : Float ) {
+	public function setPosition( x : Float, y : Float ) : Transform {
 		this.x = x;
 		this.y = y;
+		return this;
 	}
 	
-	public function setScale( scale : Float ) : Void {
+	public function setScale( scale : Float ) : Transform {
 		this.scaleX = this.scaleY = scale;
+		return this;
 	}
 	
-	public function setScaleXY( scaleX : Float, scaleY : Float ) : Void {
+	public function setScaleXY( scaleX : Float, scaleY : Float ) : Transform {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
+		return this;
 	}
 	
-	public function setPivot( x : Float, y : Float ) : Void {
+	public function setPivot( x : Float, y : Float ) : Transform {
 		pivotX = x;
 		pivotY = y;
+		return this;
 	}
 	
-	public function setPadding( x : Float, y : Float ) : Void {
+	public function setPadding( x : Float, y : Float ) : Transform {
 		paddingX = x;
 		paddingY = y;
+		return this;
 	}
 	
 	/**

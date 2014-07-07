@@ -79,7 +79,7 @@ class GameEngine extends Component
 		parent.transform.rotation = Math.PI * 0.25;
 		
 		var ent : GameObject = new GameObject();
-		var img : Image = new Image("img/zombie.png", "zhead");
+		var img : Image = new Image("img/zombie.png", "zhead.png");
 		ent.add( img );
 		parent.addChild( ent );
 		
