@@ -15,8 +15,9 @@ class TextureData
 	public var id : String;
 	
 	// Only used for GL rendering
-	public var glTexture : GLTexture;
-	public var boundUnit : Int = -1;
+	#if (!flash)
+		public var glTexture : GLTexture;
+	#end
 	
 	// This will be a parsed JSON object
 	public var spriteMap : Dynamic;

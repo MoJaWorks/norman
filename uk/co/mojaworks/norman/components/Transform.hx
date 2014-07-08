@@ -81,12 +81,12 @@ class Transform extends Component
 	private function recalculateWorldTransform() : Matrix {
 		
 		recalculateLocalTransform();
+		_worldTransform.copyFrom( _localTransform );
 		
-		if ( gameObject.parent != null ) _worldTransform = gameObject.parent.transform.worldTransform;
-		else _worldTransform.identity();
-	
-		_worldTransform = _localTransform.mult( _worldTransform );
-		
+		if ( gameObject.parent != null ) {
+			_worldTransform.concat( gameObject.parent.transform.worldTransform );
+		}
+			
 		_isWorldDirty = false;
 		return worldTransform;
 		

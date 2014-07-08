@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.renderer.gl ;
+import openfl.events.Event;
 import openfl.geom.Matrix3D;
 import openfl.Assets;
 import openfl.display.DisplayObject;
@@ -18,14 +19,15 @@ import openfl.utils.Float32Array;
 import openfl.utils.Int16Array;
 import openfl.utils.UInt8Array;
 import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
 
 /**
  * ...
  * @author Simon
  */
-class GLCanvas implements ICanvas
-{
+class GLCanvas extends CoreObject implements ICanvas
+{	
 	
 	private static inline var VERTEX_SIZE : Int = 8;
 	private static inline var VERTEX_POS : Int = 0;
@@ -54,7 +56,7 @@ class GLCanvas implements ICanvas
 	
 	public function new() 
 	{
-		
+		super();
 	}
 	
 	public function init(rect:Rectangle) 
@@ -67,6 +69,8 @@ class GLCanvas implements ICanvas
 		initBuffer();
 		
 		_canvas = new OpenGLView();
+		core.stage.addEventListener( OpenGLView.CONTEXT_LOST, onContextLost );
+		core.stage.addEventListener( OpenGLView.CONTEXT_RESTORED, onContextRestored );
 		_canvas.render = _onRender;
 		
 		GL.clearColor( 0, 0, 0, 1 );
@@ -75,6 +79,18 @@ class GLCanvas implements ICanvas
 		_modelViewMatrix.identity();
 		
 		resize( rect );
+	}
+	
+	private function onContextLost( e : Event ) : Void {
+		trace("Context lost");
+		e.stopPropagation();
+	}
+	
+	private function onContextRestored( e : Event ) : Void {
+		trace("Context restored");
+		initShaders();
+		initBuffer();
+		core.root.messenger.sendMessage( OpenGLView.CONTEXT_RESTORED );
 	}
 	
 	private function initShaders() : Void {
@@ -120,13 +136,13 @@ class GLCanvas implements ICanvas
 		//trace("Pushing to vertex buffer", _vertices );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.STATIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		//trace("Pushing to index buffer", _indices );
 		
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.STATIC_DRAW );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		
 	}

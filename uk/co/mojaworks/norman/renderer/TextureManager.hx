@@ -41,4 +41,9 @@ class TextureManager extends Component
 	{
 		return _textures.get( id ) != null;
 	}
+	
+	public function restoreTextures() 
+	{
+		
+	}
 }
