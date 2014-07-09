@@ -16,14 +16,14 @@ class Fill extends Display
 	public var width( default, default ) : Float;
 	public var height( default, default ) : Float;
 	
-	public function new( red : Float, green : Float, blue : Float, alpha : Float, width : Float = 0, height : Float = 0 ) 
+	public function new( colour : Int, alpha : Float, width : Float = 0, height : Float = 0 ) 
 	{
 		
 		super();
 		
-		this.red = red;
-		this.green = green;
-		this.blue = blue;
+		this.red = (colour & 0xFF0000) >> 4;
+		this.green = (colour & 0x00FF00) >> 2;
+		this.blue = (colour & 0x0000FF);
 		this.alpha = alpha;
 		this.width = width;
 		this.height = height;

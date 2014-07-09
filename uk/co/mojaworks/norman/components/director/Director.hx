@@ -3,6 +3,7 @@ package uk.co.mojaworks.norman.components.director ;
 import motion.Actuate;
 import openfl.display.Sprite;
 import openfl.geom.Rectangle;
+import uk.co.mojaworks.norman.components.display.Fill;
 import uk.co.mojaworks.norman.components.engine.GameEngine;
 import uk.co.mojaworks.norman.components.director.transitions.ImmediateTransition;
 import uk.co.mojaworks.norman.components.display.Display;
@@ -37,7 +38,7 @@ class Director extends Component
 		_screenLayer = new GameObject();
 		root.addChild( _screenLayer );
 		
-		_blocker = new GameObject();
+		_blocker = new GameObject().add( new Fill( 0xFF0000, 1, 100, 100 ) );
 		root.addChild( _blocker );
 		
 		_panelLayer = new GameObject();

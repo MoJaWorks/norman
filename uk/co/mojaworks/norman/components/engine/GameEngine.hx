@@ -39,6 +39,8 @@ class GameEngine extends Component
 		initView();
 		
 		core.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
+		
+		onStartupComplete();
 
 	}
 	
@@ -107,13 +109,17 @@ class GameEngine extends Component
 		
 	}
 	
+	private function onStartupComplete() : Void {
+		// Override
+	}
+	
 	override public function destroy():Void 
 	{
 		super.destroy();
 		
 		core.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
 	}
-	
+		
 	private function onEnterFrame( e : Event ) : Void {
 				
 		_elapsed = Timer.stamp() - _lastTick;
