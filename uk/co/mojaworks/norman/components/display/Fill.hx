@@ -10,9 +10,10 @@ import uk.co.mojaworks.norman.renderer.ICanvas;
 class Fill extends Display
 {
 
-	public var red : Float;
-	public var green : Float;
-	public var blue : Float;
+	public var r : Float;
+	public var g : Float;
+	public var b : Float;
+	public var a : Float; // a is separate to alpha so it doesn't affect children
 	public var width( default, default ) : Float;
 	public var height( default, default ) : Float;
 	
@@ -21,12 +22,18 @@ class Fill extends Display
 		
 		super();
 		
-		this.red = (colour & 0xFF0000) >> 4;
-		this.green = (colour & 0x00FF00) >> 2;
-		this.blue = (colour & 0x0000FF);
-		this.alpha = alpha;
+		this.r = (colour & 0xFF0000) >> 4;
+		this.g = (colour & 0x00FF00) >> 2;
+		this.b = (colour & 0x0000FF);
+		this.a = alpha;
 		this.width = width;
 		this.height = height;
+	}
+	
+	public function setSize( width : Float, height : Float ) : Fill {
+		this.width = width;
+		this.height = height;
+		return this;
 	}
 	
 	override public function getNaturalWidth() : Float {
@@ -38,7 +45,7 @@ class Fill extends Display
 	}
 	
 	override public function render( canvas : ICanvas ) : Void {
-		canvas.fillRect( red, green, blue, getFinalAlpha(), width, height, gameObject.transform.worldTransform );
+		canvas.fillRect( r, g, b, getFinalAlpha() * a, width, height, gameObject.transform.worldTransform );
 	}
 	
 	

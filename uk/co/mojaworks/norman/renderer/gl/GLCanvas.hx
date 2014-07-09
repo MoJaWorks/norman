@@ -133,13 +133,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		renderLevel( root );
 		
 		// Pass it to the graphics card
-		//trace("Pushing to vertex buffer", _vertices );
+		trace("Pushing to vertex buffer", _vertices );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
-		//trace("Pushing to index buffer", _indices );
+		trace("Pushing to index buffer", _indices );
 		
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );

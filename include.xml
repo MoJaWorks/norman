@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
 	<haxelib name="openfl" />	
+	<haxelib name="openfl-stage3d" if="flash" />
 	
 	<assets path="assets/shaders" rename="shaders"/>
 </project>

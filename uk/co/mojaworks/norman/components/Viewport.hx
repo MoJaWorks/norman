@@ -21,7 +21,7 @@ class Viewport extends Component
 	// Screenrect is the total unscaled screen area
 	public var screenRect( default, null ) : Rectangle;
 	
-	// The scale os the stage to make it fit in the viewport
+	// The scale of the stage to make it fit in the viewport
 	public var scale : Float = 1;
 	
 	public function new( ) 
@@ -50,11 +50,11 @@ class Viewport extends Component
 		
 		scale = Math.min( screenRect.width / stageRect.width, screenRect.height / stageRect.height );
 		
-		var x : Float = (screenRect.width - (stageRect.width * scale)) * 0.5;
-		var y : Float = (screenRect.height - (stageRect.height * scale)) * 0.5;
+		screenRect.x = (screenRect.width - (stageRect.width * scale)) * 0.5;
+		screenRect.y = (screenRect.height - (stageRect.height * scale)) * 0.5;
 		
-		stageRect.x = x / scale;
-		stageRect.y = y / scale;
+		stageRect.x = screenRect.x / scale;
+		stageRect.y = screenRect.y / scale;
 		
 		displayRect.x = -stageRect.x;
 		displayRect.y = -stageRect.y;

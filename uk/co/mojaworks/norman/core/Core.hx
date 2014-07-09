@@ -15,12 +15,13 @@ class Core
 	
 	public function new( ) 
 	{
-		root = new GameObject();
 	}
 	
 	public static function init( stage : Stage ) : Void {
 		instance = new Core( );
 		instance.stage = stage;
+		
+		instance.root = new GameObject();
 	}
 	
 	

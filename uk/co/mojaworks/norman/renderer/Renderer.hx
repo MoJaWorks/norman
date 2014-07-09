@@ -37,7 +37,7 @@ class Renderer extends Component {
 			core.root.messenger.attachListener( OpenGLView.CONTEXT_RESTORED, onContextRestored );
 			trace("Using GL renderer");
 		#else
-			_canvas = new FallbackCanvas();
+			_canvas = new uk.co.mojaworks.norman.renderer.stage3d.Stage3DCanvas();
 			textureManager = new TextureManager();
 			trace("Falling back to bitmap renderer");
 		#end

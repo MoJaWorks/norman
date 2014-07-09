@@ -7,6 +7,7 @@ import uk.co.mojaworks.norman.components.display.Fill;
 import uk.co.mojaworks.norman.components.engine.GameEngine;
 import uk.co.mojaworks.norman.components.director.transitions.ImmediateTransition;
 import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.Viewport;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -33,15 +34,16 @@ class Director extends Component
 		super();
 		_panelStack = [];
 		
-		root = new GameObject();
+		root = new GameObject().add( new Display() );
 				
-		_screenLayer = new GameObject();
+		_screenLayer = new GameObject().add( new Display() );
 		root.addChild( _screenLayer );
 		
-		_blocker = new GameObject().add( new Fill( 0xFF0000, 1, 100, 100 ) );
+		_blocker = new GameObject().add( new Fill( 0, 0.6, 1000, 600 ) );
+		_blocker.display.visible = false;
 		root.addChild( _blocker );
 		
-		_panelLayer = new GameObject();
+		_panelLayer = new GameObject().add( new Display() );
 		root.addChild( _panelLayer );
 		
 	}
@@ -66,10 +68,9 @@ class Director extends Component
 	public function showPanel( panel : GameObject ) : Void {
 		
 		if ( _panelStack.length == 0 ) {
-			var blockerDisplay : Display = _blocker.get(Display);
-			blockerDisplay.alpha = 0;
-			blockerDisplay.visible = true;
-			Actuate.tween( blockerDisplay, 0.25, { alpha: 1 } );
+			_blocker.display.alpha = 0;
+			_blocker.display.visible = true;
+			Actuate.tween( _blocker.display, 0.25, { alpha: 1 } );
 			
 			currentScreen.get(View).onDeactivate();
 		}
@@ -104,8 +105,7 @@ class Director extends Component
 		_panelStack.remove( view );
 		_panelLayer.removeChild( view );
 		if ( _panelStack.length == 0 ) {
-			var blockerDisplay : Display = _blocker.get(Display);
-			Actuate.tween( blockerDisplay, 0.25, { alpha: 0 } ).onComplete( function() { blockerDisplay.visible = false; } );
+			Actuate.tween( _blocker.display, 0.25, { alpha: 0 } ).onComplete( function() { _blocker.display.visible = false; } );
 		}
 		
 		// Activate next panel in stack or screen if no more panels
@@ -118,9 +118,13 @@ class Director extends Component
 	
 	public function resize( ) : Void {
 		
-		var screenRect : Rectangle = core.root.get(Viewport).displayRect;
+		var viewport : Viewport = core.root.get(Viewport);
 		
-		// TODO: Resize the blocker
+		trace("Setting scale", viewport.scale );
+		
+		_blocker.transform.setPosition( -viewport.displayRect.x, -viewport.displayRect.y );
+		_blocker.get(Fill).setSize( viewport.displayRect.width, viewport.displayRect.height );
+		root.transform.setScale( viewport.scale ).setPosition( viewport.screenRect.x, viewport.screenRect.y );
 		
 		if ( currentScreen != null ) currentScreen.get(View).resize();
 		for ( view in _panelStack ) {
