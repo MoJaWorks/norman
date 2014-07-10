@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<haxelib name="openfl" />	
-	<haxelib name="openfl-stage3d" if="flash" />
-	
+	<haxelib name="openfl" />		
 	<assets path="assets/shaders" rename="shaders"/>
+	
+	<haxeflag name="-swf-lib lib/AGALAssembler.swf" />
 </project>

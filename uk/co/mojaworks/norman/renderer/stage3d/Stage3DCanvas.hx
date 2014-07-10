@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.renderer.stage3d ;
+import com.adobe.utils.AGALMiniAssembler;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
 import flash.display3D.IndexBuffer3D;
@@ -75,6 +76,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		//initShaders();
 		//initBuffer();
+		
+		new AGALMiniAssembler();
 		
 		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
 		core.stage.stage3Ds[0].requestContext3D();
