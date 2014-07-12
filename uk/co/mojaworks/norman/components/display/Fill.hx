@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
-import openfl.geom.ColorTransform;
-import openfl.geom.Matrix;
 import uk.co.mojaworks.norman.renderer.ICanvas;
+import uk.co.mojaworks.norman.utils.ColorUtils.ColourUtils;
 
 /**
  * ...
@@ -22,9 +21,9 @@ class Fill extends Display
 		
 		super();
 		
-		this.r = (colour & 0xFF0000) >> 4;
-		this.g = (colour & 0x00FF00) >> 2;
-		this.b = (colour & 0x0000FF);
+		this.r = ColourUtils.r( colour );
+		this.g = ColourUtils.g( colour );
+		this.b = ColourUtils.b( colour );
 		this.a = alpha;
 		this.width = width;
 		this.height = height;

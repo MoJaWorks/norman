@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.renderer.stage3d ;
 import com.adobe.utils.AGALMiniAssembler;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
+import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
@@ -24,6 +25,7 @@ import openfl.gl.GLUniformLocation;
 import openfl.utils.Float32Array;
 import openfl.utils.Int16Array;
 import openfl.utils.UInt8Array;
+import openfl.Vector;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -45,8 +47,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	var _batches : Array<Stage3DBatchData>;
 	
 	// A temporary array re-generated each frame with positions of all vertices
-	var _vertices:Array<Float>;
-	var _indices:Array<Int>;
+	var _vertices:Vector<Float>;
+	var _indices:Vector<UInt>;
 	var _root : GameObject;
 	
 	// The opengl view object used to reserve our spot on the display list
@@ -54,12 +56,12 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	var _rect : Rectangle;
 	
 	// Relevant shaders
-	var _imageShader : Program3D;
-	var _fillShader : Program3D;
+	var _imageShader : Stage3DShaderWrapper;
+	var _fillShader : Stage3DShaderWrapper;
 	
 	var _projectionMatrix : Matrix3D;
 	var _modelViewMatrix : Matrix3D;
-	
+		
 	
 	public function new() 
 	{
@@ -73,11 +75,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_indices = [];
 		
 		_rect = rect;
-		
-		//initShaders();
-		//initBuffer();
-		
-		new AGALMiniAssembler();
 		
 		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
 		core.stage.stage3Ds[0].requestContext3D();
@@ -94,27 +91,24 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		_context.configureBackBuffer( core.stage.stageWidth, core.stage.stageHeight, 0 );
 		
+		initShaders();
 	}
 	
-	//private function initShaders() : Void {
-		//
+	private function initShaders() : Void {
+		
 		//_imageShader = new GLShaderWrapper( 
-			//Assets.getText("shaders/image.vs.glsl"),
-			//Assets.getText("shaders/image.fs.glsl")
+			//Assets.getText("shaders/image.vs.agal"),
+			//Assets.getText("shaders/image.fs.agal")
 		//);
-		//
-		//_fillShader = new GLShaderWrapper( 
-			//Assets.getText("shaders/fill.vs.glsl"),
-			//Assets.getText("shaders/fill.fs.glsl")
-		//);
-		//
-	//}
-	
-	//private function initBuffer() : Void {
-		//_vertexBuffer = GL.createBuffer();
-		//_indexBuffer = GL.createBuffer();
-	//}
-	
+		
+		_fillShader = new Stage3DShaderWrapper( 
+			_context,
+			Assets.getText("shaders/agal/fill.vs.agal"),
+			Assets.getText("shaders/agal/fill.fs.agal")
+		);
+		
+	}
+		
 	public function resize(rect:Rectangle):Void 
 	{
 		_rect = rect;
@@ -128,6 +122,9 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	public function render( root : GameObject ) {
 		_root = root;
 		
+		// Not ready yet - come back later
+		if ( _context == null ) return;
+		
 		// Generate all buffers here
 		_vertices = [];
 		_batches = [];
@@ -139,18 +136,32 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		// Pass it to the graphics card
 		//trace("Pushing to vertex buffer", _vertices );
 		
-		//GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		//GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
-		//GL.bindBuffer( GL.ARRAY_BUFFER, null );
+		//var vertexData:Vector<Float> = [
+			//-0.3, -0.3, 0, 1, 0, 0, 	// - 1st vertex x,y,z,r,g,b 
+			//0, 0.3, 0, 0, 1, 0, 		// - 2nd vertex x,y,z,r,g,b 
+			//0.3, -0.3, 0, 0, 0, 1		// - 3rd vertex x,y,z,r,g,b
+			//];
+		_vertexBuffer = _context.createVertexBuffer( Std.int(_vertices.length / VERTEX_SIZE), VERTEX_SIZE );
+		_vertexBuffer.uploadFromVector( _vertices, 0, Std.int(_vertices.length / VERTEX_SIZE) );
 		
 		//trace("Pushing to index buffer", _indices );
 		
-		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		//GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
-		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
+		//var indexData : Vector<UInt> = new Vector<UInt>();
+		//indexData.push(0);
+		//indexData.push(1);
+		//indexData.push(2);
+		_indexBuffer = _context.createIndexBuffer( _indices.length );
+		_indexBuffer.uploadFromVector( _indices, 0, _indices.length );
 		
-		_onRender( );
+		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
+		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
+		//_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
 		
+		_context.setProgram( _fillShader.program );
+		
+		_context.clear( 0, 0, 0, 1 );
+		_context.drawTriangles( _indexBuffer );
+		_context.present();
 	}
 	
 	private function renderLevel( root : GameObject ) : Void {
@@ -191,9 +202,9 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		for ( point in arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			_vertices.push( red );
-			_vertices.push( green );
-			_vertices.push( blue );
+			_vertices.push( red / 255 );
+			_vertices.push( green / 255 );
+			_vertices.push( blue / 255 );
 			_vertices.push( alpha );
 			_vertices.push( 0 );
 			_vertices.push( 0 );

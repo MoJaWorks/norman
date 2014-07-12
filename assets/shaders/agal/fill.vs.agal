@@ -1,0 +1,2 @@
+mov op, va0
+mov v0, va1

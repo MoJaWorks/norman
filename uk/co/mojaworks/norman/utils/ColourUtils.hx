@@ -21,11 +21,11 @@ class ColourUtils
 	}
 	
 	public static function r( colour : Int ) : Int {
-		return (colour & 0xFF0000) >> 16;
+		return (colour & 0xFF0000) << 4;
 	}
 	
 	public static function g( colour : Int ) : Int {
-		return (colour & 0x00FF00) >> 8;
+		return (colour & 0x00FF00) << 2;
 	}
 	
 	public static function b( colour : Int ) : Int {

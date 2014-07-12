@@ -96,13 +96,13 @@ class GLCanvas extends CoreObject implements ICanvas
 	private function initShaders() : Void {
 		
 		_imageShader = new GLShaderWrapper( 
-			Assets.getText("shaders/image.vs.glsl"),
-			Assets.getText("shaders/image.fs.glsl")
+			Assets.getText("shaders/glsl/image.vs.glsl"),
+			Assets.getText("shaders/glsl/image.fs.glsl")
 		);
 		
 		_fillShader = new GLShaderWrapper( 
-			Assets.getText("shaders/fill.vs.glsl"),
-			Assets.getText("shaders/fill.fs.glsl")
+			Assets.getText("shaders/glsl/fill.vs.glsl"),
+			Assets.getText("shaders/glsl/fill.fs.glsl")
 		);
 		
 	}
@@ -185,9 +185,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		for ( point in arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			_vertices.push( red );
-			_vertices.push( green );
-			_vertices.push( blue );
+			_vertices.push( red / 255 );
+			_vertices.push( green / 255 );
+			_vertices.push( blue / 255 );
 			_vertices.push( alpha );
 			_vertices.push( 0 );
 			_vertices.push( 0 );

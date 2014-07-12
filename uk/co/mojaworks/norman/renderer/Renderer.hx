@@ -1,19 +1,10 @@
 package uk.co.mojaworks.norman.renderer ;
 
-import openfl.Assets;
 import openfl.display.DisplayObject;
 import openfl.display.OpenGLView;
-import openfl.events.Event;
 import openfl.geom.Rectangle;
-import openfl.gl.GL;
-import openfl.gl.GLActiveInfo;
-import openfl.gl.GLProgram;
-import openfl.gl.GLShader;
-import openfl.gl.GLUniformLocation;
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.renderer.fallback.FallbackCanvas;
 import uk.co.mojaworks.norman.renderer.ICanvas;
 
 /**
