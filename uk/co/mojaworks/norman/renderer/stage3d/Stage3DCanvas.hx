@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.renderer.stage3d ;
 import com.adobe.utils.AGALMiniAssembler;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
+import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.Program3D;
@@ -79,8 +80,9 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
 		core.stage.stage3Ds[0].requestContext3D();
 				
-		_modelViewMatrix = new Matrix3D();
-		_modelViewMatrix.identity();
+		//_modelViewMatrix = new Matrix3D();
+		//_modelViewMatrix.identity();
+		_modelViewMatrix = createOrtho( 0, Std.int(_rect.width), Std.int(_rect.height), 0, 1000, -1000 );
 		
 		resize( rect );
 	}
@@ -89,17 +91,18 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		var target : Stage3D = cast e.target;
 		_context = target.context3D;
 		
-		_context.configureBackBuffer( core.stage.stageWidth, core.stage.stageHeight, 0 );
+		_context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0 );
 		
 		initShaders();
 	}
 	
 	private function initShaders() : Void {
 		
-		//_imageShader = new GLShaderWrapper( 
-			//Assets.getText("shaders/image.vs.agal"),
-			//Assets.getText("shaders/image.fs.agal")
-		//);
+		_imageShader = new Stage3DShaderWrapper(
+			_context,
+			Assets.getText("shaders/agal/image.vs.agal"),
+			Assets.getText("shaders/agal/image.fs.agal")
+		);
 		
 		_fillShader = new Stage3DShaderWrapper( 
 			_context,
@@ -111,8 +114,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 	public function resize(rect:Rectangle):Void 
 	{
+		trace("Resize, ", rect );
 		_rect = rect;
-		if ( _context != null ) _context.configureBackBuffer( core.stage.stageWidth, core.stage.stageHeight, 0 );
+		if ( _context != null ) _context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0 );
+		_modelViewMatrix = createOrtho( 0, Std.int(_rect.width), Std.int(_rect.height), 0, 1000, -1000 );
 	}
 	
 	/***
@@ -135,33 +140,37 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		// Pass it to the graphics card
 		//trace("Pushing to vertex buffer", _vertices );
-		
-		//var vertexData:Vector<Float> = [
-			//-0.3, -0.3, 0, 1, 0, 0, 	// - 1st vertex x,y,z,r,g,b 
-			//0, 0.3, 0, 0, 1, 0, 		// - 2nd vertex x,y,z,r,g,b 
-			//0.3, -0.3, 0, 0, 0, 1		// - 3rd vertex x,y,z,r,g,b
-			//];
+
+		if ( _vertexBuffer != null ) _vertexBuffer.dispose();
 		_vertexBuffer = _context.createVertexBuffer( Std.int(_vertices.length / VERTEX_SIZE), VERTEX_SIZE );
 		_vertexBuffer.uploadFromVector( _vertices, 0, Std.int(_vertices.length / VERTEX_SIZE) );
 		
 		//trace("Pushing to index buffer", _indices );
-		
-		//var indexData : Vector<UInt> = new Vector<UInt>();
-		//indexData.push(0);
-		//indexData.push(1);
-		//indexData.push(2);
+
+		if ( _indexBuffer != null ) _indexBuffer.dispose();
 		_indexBuffer = _context.createIndexBuffer( _indices.length );
 		_indexBuffer.uploadFromVector( _indices, 0, _indices.length );
 		
 		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
 		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
-		//_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
-		
-		_context.setProgram( _fillShader.program );
+		_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _modelViewMatrix, true );
+		//_context.setVertexBufferAt( 2, null );
 		
 		_context.clear( 0, 0, 0, 1 );
-		_context.drawTriangles( _indexBuffer );
-		_context.present();
+		
+		for ( batch in _batches ) {
+			
+			if ( batch.texture != null ) {
+				_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
+				_context.setTextureAt( 0, batch.texture );
+			}else {
+				_context.setVertexBufferAt( 2, null );
+			}
+			
+			_context.setProgram( batch.shader.program );
+			_context.drawTriangles( _indexBuffer, 0, batch.length );// , batch.start, batch.length );
+			_context.present();
+		}
 	}
 	
 	private function renderLevel( root : GameObject ) : Void {
@@ -181,16 +190,16 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		var batch : Stage3DBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
 		
-		//if ( batch != null && batch.shader == _fillShader ) {
-			//batch.length += 6;	
-		//}else {
-			//batch = new GLBatchData();
-			//batch.start = _indices.length;
-			//batch.length = 6;
-			//batch.shader = _fillShader;
+		if ( batch != null && batch.shader == _fillShader ) {
+			batch.length += 2;	
+		}else {
+			batch = new Stage3DBatchData();
+			batch.start = _indices.length;
+			batch.length = 2;
+			batch.shader = _fillShader;
 			//batch.texture = null;
-			//_batches.push( batch );
-		//}
+			_batches.push( batch );
+		}
 		
 		var arr : Array<Point> = [
 			transform.transformPoint( new Point( width, height ) ),
@@ -233,16 +242,16 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		var width : Float = sourceRect.width * texture.sourceBitmap.width;
 		var height : Float = sourceRect.height * texture.sourceBitmap.height;
 		
-		//if ( batch != null && batch.shader == _imageShader && batch.texture == texture.glTexture ) {
-			//batch.length += 6;	
-		//}else {
-			//batch = new GLBatchData();
-			//batch.start = _indices.length;
-			//batch.length = 6;
-			//batch.shader = _imageShader;
-			//batch.texture = texture.glTexture;
-			//_batches.push( batch );
-		//}
+		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture ) {
+			batch.length += 2;	
+		}else {
+			batch = new Stage3DBatchData();
+			batch.start = _indices.length;
+			batch.length = 2;
+			batch.shader = _imageShader;
+			batch.texture = texture.texture;
+			_batches.push( batch );
+		}
 		
 		var pts_arr : Array<Point> = [
 			transform.transformPoint( new Point( width, height ) ),
@@ -302,81 +311,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 	}
 	 
-	private function _onRender( ) : Void {
-		
-		trace("Render Stage3D", _context);
-		
-		//GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
-		//
-		//GL.clearColor( 0, 0, 0, 1 );
-		//GL.clear( GL.COLOR_BUFFER_BIT );
-		
-		//_projectionMatrix = createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
-		
-		_context.clear( 0, 255, 0 );
-		_context.present( );
-		
-		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		
-		//var vertexAttrib : Int = -1;
-		//var colorAttrib : Int = -1;
-		//var texAttrib : Int = -1;
-		//var uMVMatrix : GLUniformLocation;
-		//var uProjectionMatrix : GLUniformLocation;
-		//var uImage : GLUniformLocation;
-		//
-		//for ( batch in _batches ) {
-			//
-			//GL.useProgram( batch.shader.program );
-			//
-			//vertexAttrib = batch.shader.getAttrib( "aVertexPosition" );
-			//colorAttrib = batch.shader.getAttrib( "aVertexColor" );
-			//uMVMatrix = batch.shader.getUniform( "uModelViewMatrix" );
-			//uProjectionMatrix = batch.shader.getUniform( "uProjectionMatrix" );
-					//
-			//GL.enableVertexAttribArray( vertexAttrib );
-			//GL.enableVertexAttribArray( colorAttrib );
-			//
-			//GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-			//GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POS * 4 );
-			//GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
-			//
-			//GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			//GL.enable( GL.BLEND );
-			//
-			//if ( batch.texture != null ) {
-				//texAttrib = batch.shader.getAttrib("aTexCoord");
-				//uImage = batch.shader.getUniform( "uImage0" );
-				//
-				//GL.enableVertexAttribArray( texAttrib );
-				//GL.vertexAttribPointer( texAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
-				//
-				//GL.activeTexture(GL.TEXTURE0);
-				//GL.bindTexture( GL.TEXTURE_2D, batch.texture );
-				//GL.uniform1i( uImage, 0 );
-			//}
-			//
-			//GL.uniformMatrix3D( uProjectionMatrix, false, _projectionMatrix );
-			//GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
-			//
-			//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-			//GL.drawElements( GL.TRIANGLES, batch.length, GL.UNSIGNED_SHORT, batch.start );
-			//
-			//GL.disableVertexAttribArray( colorAttrib );
-			//GL.disableVertexAttribArray( vertexAttrib );
-		//
-			//if ( batch.texture != null ) {
-				//GL.disableVertexAttribArray( texAttrib );
-				//GL.bindTexture( GL.TEXTURE_2D, null );
-			//}
-		//}
-		//
-		//GL.bindBuffer( GL.ARRAY_BUFFER, null );
-		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
-		//GL.useProgram( null );
-		//GL.disable( GL.BLEND );
-		//trace( "Error code end", GL.getError() );
-	}
 	
 	
 		

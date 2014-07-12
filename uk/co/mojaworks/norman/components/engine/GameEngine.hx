@@ -77,9 +77,11 @@ class GameEngine extends Component
 	}
 	
 	private function resize( e : Event = null ) : Void {
-		
+				
 		// Resize the viewport to scale everything to the screen size
 		core.root.get(Viewport).resize();
+		
+		_renderer.resize( core.root.get(Viewport).screenRect );
 			
 		// Resize any active screens/panels
 		core.root.get(Director).resize();

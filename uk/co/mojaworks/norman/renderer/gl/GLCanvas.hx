@@ -223,7 +223,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			batch.start = _indices.length;
 			batch.length = 6;
 			batch.shader = _imageShader;
-			batch.texture = texture.glTexture;
+			batch.texture = texture.texture;
 			_batches.push( batch );
 		}
 		
@@ -272,8 +272,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
 		
-		GL.clearColor( 0, 0, 0, 1 );
-		GL.clear( GL.COLOR_BUFFER_BIT );
+		//GL.clearColor( 0, 0, 0, 1 );
+		//GL.clear( GL.COLOR_BUFFER_BIT );
 		
 		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
 		
