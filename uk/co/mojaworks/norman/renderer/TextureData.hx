@@ -1,8 +1,6 @@
 package uk.co.mojaworks.norman.renderer;
 import flash.display.BitmapData;
-import flash.display3D.textures.Texture;
 import openfl.geom.Rectangle;
-import openfl.gl.GLTexture;
 
 /**
  * ...
@@ -15,11 +13,10 @@ class TextureData
 	public var sourceBitmap : BitmapData;
 	public var id : String;
 	
-	// Only used for GL rendering
 	#if (!flash)
-		public var texture : GLTexture;
+		public var texture : openfl.gl.GLTexture;
 	#else
-		public var texture : Texture;
+		public var texture : flash.display3D.textures.Texture;
 	#end
 	
 	// This will be a parsed JSON object

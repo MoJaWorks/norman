@@ -216,7 +216,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		var width : Float = sourceRect.width * texture.sourceBitmap.width;
 		var height : Float = sourceRect.height * texture.sourceBitmap.height;
 		
-		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.glTexture ) {
+		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture ) {
 			batch.length += 6;	
 		}else {
 			batch = new GLBatchData();
@@ -272,8 +272,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
 		
-		//GL.clearColor( 0, 0, 0, 1 );
-		//GL.clear( GL.COLOR_BUFFER_BIT );
+		GL.clearColor( 0, 0, 0, 1 );
+		GL.clear( GL.COLOR_BUFFER_BIT );
 		
 		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
 		
@@ -286,7 +286,17 @@ class GLCanvas extends CoreObject implements ICanvas
 		var uProjectionMatrix : GLUniformLocation;
 		var uImage : GLUniformLocation;
 		
+		var prev_blended : Bool = GL.getParameter( GL.BLEND );
+		var prev_blend_src : Int = GL.getParameter( GL.BLEND_SRC_ALPHA );
+		var prev_blend_dst : Int = GL.getParameter( GL.BLEND_DST_ALPHA );
+		
+		GL.enable( GL.BLEND );
+		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+		trace( GL.isEnabled( GL.CULL_FACE ) );
+			
 		for ( batch in _batches ) {
+			
+			trace("Drawing batch", batch.start, batch.length );
 			
 			GL.useProgram( batch.shader.program );
 			
@@ -302,8 +312,6 @@ class GLCanvas extends CoreObject implements ICanvas
 			GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POS * 4 );
 			GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
 			
-			GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			GL.enable( GL.BLEND );
 			
 			if ( batch.texture != null ) {
 				texAttrib = batch.shader.getAttrib("aTexCoord");
@@ -335,7 +343,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		GL.useProgram( null );
-		GL.disable( GL.BLEND );
+		
+		if ( !prev_blended ) {
+			GL.disable( GL.BLEND );
+		}else {
+			GL.blendFunc( prev_blend_src, prev_blend_dst );
+		}
+		//GL.disable( GL.BLEND );
 		//trace( "Error code end", GL.getError() );
 	}
 	

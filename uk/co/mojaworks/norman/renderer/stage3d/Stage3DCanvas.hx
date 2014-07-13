@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.renderer.stage3d ;
 import com.adobe.utils.AGALMiniAssembler;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
+import flash.display3D.Context3DBlendFactor;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
@@ -91,7 +92,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		var target : Stage3D = cast e.target;
 		_context = target.context3D;
 		
-		_context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0 );
+		_context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0, false );
+		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
 		
 		initShaders();
 	}
@@ -116,7 +118,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	{
 		trace("Resize, ", rect );
 		_rect = rect;
-		if ( _context != null ) _context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0 );
+		if ( _context != null ) _context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0, false );
 		_modelViewMatrix = createOrtho( 0, Std.int(_rect.width), Std.int(_rect.height), 0, 1000, -1000 );
 	}
 	
@@ -139,13 +141,13 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		renderLevel( root );
 		
 		// Pass it to the graphics card
-		//trace("Pushing to vertex buffer", _vertices );
+		trace("Pushing to vertex buffer", _vertices );
 
 		if ( _vertexBuffer != null ) _vertexBuffer.dispose();
 		_vertexBuffer = _context.createVertexBuffer( Std.int(_vertices.length / VERTEX_SIZE), VERTEX_SIZE );
 		_vertexBuffer.uploadFromVector( _vertices, 0, Std.int(_vertices.length / VERTEX_SIZE) );
 		
-		//trace("Pushing to index buffer", _indices );
+		trace("Pushing to index buffer", _indices );
 
 		if ( _indexBuffer != null ) _indexBuffer.dispose();
 		_indexBuffer = _context.createIndexBuffer( _indices.length );
@@ -154,11 +156,12 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
 		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
 		_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _modelViewMatrix, true );
-		//_context.setVertexBufferAt( 2, null );
 		
 		_context.clear( 0, 0, 0, 1 );
 		
 		for ( batch in _batches ) {
+			
+			trace("Drawing batch", batch.start, batch.length );
 			
 			if ( batch.texture != null ) {
 				_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
@@ -168,7 +171,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			}
 			
 			_context.setProgram( batch.shader.program );
-			_context.drawTriangles( _indexBuffer, 0, batch.length );// , batch.start, batch.length );
+			_context.drawTriangles( _indexBuffer, batch.start, batch.length );
 			_context.present();
 		}
 	}
@@ -197,7 +200,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			batch.start = _indices.length;
 			batch.length = 2;
 			batch.shader = _fillShader;
-			//batch.texture = null;
+			batch.texture = null;
 			_batches.push( batch );
 		}
 		
