@@ -230,7 +230,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	public function drawImage( texture : TextureData, transform:Matrix, alpha:Float, red : Float, green : Float, blue : Float ):Void 
 	{
 		// Just call drawSubimage with whole image as bounds
-		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, alpha, red, green, blue );
+		drawSubImage( texture, new Rectangle(0, 0, texture.paddingMultiplierX, texture.paddingMultiplierY), transform, alpha, red, green, blue );
 	}
 	
 	public function drawSubImage( texture : TextureData, sourceRect : Rectangle, transform:Matrix, alpha:Float, red : Float, green : Float, blue : Float ):Void 

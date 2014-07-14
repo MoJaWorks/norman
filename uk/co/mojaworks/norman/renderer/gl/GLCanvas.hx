@@ -292,7 +292,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		GL.enable( GL.BLEND );
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-		trace( GL.isEnabled( GL.CULL_FACE ) );
+		//trace( GL.isEnabled( GL.CULL_FACE ) );
+		
+		trace("Begin draw", _batches );
 			
 		for ( batch in _batches ) {
 			
