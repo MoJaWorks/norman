@@ -37,7 +37,7 @@ class Image extends Display
 		_uvRect = textureData.getUVFor( subTextureId );
 		_rect = textureData.getRectFor( subTextureId );
 			
-		trace("Creating image with texture data", textureData, _uvRect, _rect );
+		//trace("Creating image with texture data", textureData, _uvRect, _rect );
 	}
 	
 	override public function onAdded():Void 

@@ -120,7 +120,7 @@ class Director extends Component
 		
 		var viewport : Viewport = core.root.get(Viewport);
 		
-		trace("Setting scale", viewport.scale );
+		//trace("Setting scale", viewport.scale );
 		
 		_blocker.transform.setPosition( -viewport.displayRect.x, -viewport.displayRect.y );
 		_blocker.get(Fill).setSize( viewport.displayRect.width, viewport.displayRect.height );

@@ -46,7 +46,7 @@ class Transform extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		trace("OnAdded", gameObject.messenger );
+		//trace("OnAdded", gameObject.messenger );
 		gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onAddedToParent );
 	}
 	

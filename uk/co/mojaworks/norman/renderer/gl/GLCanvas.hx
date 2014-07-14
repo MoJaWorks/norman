@@ -61,6 +61,13 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	public function init(rect:Rectangle) 
 	{		
+		#if html5
+			if ( GL.__context == null ) {
+				trace("No context");
+				return;
+			}
+		#end
+		
 		_vertices = [];
 		_batches = [];
 		_indices = [];
@@ -131,6 +138,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		// Collect all of the vertex data
 		renderLevel( root );
+		
+		#if html5
+			if ( GL.__context == null ) {
+				trace("No context");
+				return;
+			}
+		#end
 		
 		// Pass it to the graphics card
 		trace("Pushing to vertex buffer", _vertices );
@@ -269,6 +283,13 @@ class GLCanvas extends CoreObject implements ICanvas
 	 */
 	
 	private function _onRender( rect : Rectangle ) : Void {
+		
+		#if html5
+			if ( GL.__context == null ) {
+				trace("No context");
+				return;
+			}
+		#end
 		
 		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
 		
