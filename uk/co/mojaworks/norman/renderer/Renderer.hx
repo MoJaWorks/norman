@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.renderer ;
 
 import openfl.display.DisplayObject;
 import openfl.display.OpenGLView;
+import openfl.events.Event;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -29,8 +30,9 @@ class Renderer extends Component {
 			trace("Using GL renderer");
 		#else
 			_canvas = new uk.co.mojaworks.norman.renderer.stage3d.Stage3DCanvas();
-			textureManager = new TextureManager();
-			trace("Falling back to bitmap renderer");
+			textureManager = new uk.co.mojaworks.norman.renderer.stage3d.Stage3DTextureManager();
+			core.root.messenger.attachListener( Event.CONTEXT3D_CREATE, onContextRestored );
+			trace("Using Stage3D renderer");
 		#end
 		
 		_canvas.init( screenRect );
@@ -38,6 +40,9 @@ class Renderer extends Component {
 	}
 	
 	public function onContextRestored( gameObject : GameObject, ?param : Dynamic = null ) : Void {
+		#if ( flash ) 
+			cast( textureManager, uk.co.mojaworks.norman.renderer.stage3d.Stage3DTextureManager ).setContext( cast( _canvas, uk.co.mojaworks.norman.renderer.stage3d.Stage3DCanvas ).getContext() );
+		#end
 		textureManager.restoreTextures();
 	}
 	

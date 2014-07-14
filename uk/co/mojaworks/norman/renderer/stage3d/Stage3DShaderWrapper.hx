@@ -19,9 +19,7 @@ class Stage3DShaderWrapper
 	public function new( context : Context3D, vertexShaderSource : String, fragmentShaderSource : String ) 
 	{
 		
-		trace("Making shaders with", vertexShaderSource, fragmentShaderSource );
-		
-		var assembler : AGALMiniAssembler = new AGALMiniAssembler(true);
+		var assembler : AGALMiniAssembler = new AGALMiniAssembler();
 		vertexShader = assembler.assemble( Context3DProgramType.VERTEX, vertexShaderSource );
 		fragmentShader = assembler.assemble( Context3DProgramType.FRAGMENT, fragmentShaderSource );
 		program = context.createProgram();

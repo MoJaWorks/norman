@@ -54,11 +54,7 @@ class GLTextureManager extends TextureManager
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
 		GL.bindTexture( GL.TEXTURE_2D, null );
 	}
-	
-	override public function getTexture( id : String ) : TextureData {
-		return _textures.get( id );
-	}
-	
+		
 	override public function restoreTextures() 
 	{
 		for ( key in _textures.keys() ) {

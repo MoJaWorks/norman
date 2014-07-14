@@ -1,32 +1,20 @@
 package uk.co.mojaworks.norman.renderer.stage3d ;
-import com.adobe.utils.AGALMiniAssembler;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DBlendFactor;
+import flash.display3D.Context3DProfile;
 import flash.display3D.Context3DProgramType;
+import flash.display3D.Context3DRenderMode;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
-import flash.display3D.Program3D;
 import flash.display3D.VertexBuffer3D;
-import openfl.events.Event;
-import openfl.geom.Matrix3D;
 import openfl.Assets;
 import openfl.display.DisplayObject;
-import openfl.display.OpenGLView;
-import openfl.geom.ColorTransform;
+import openfl.events.Event;
 import openfl.geom.Matrix;
+import openfl.geom.Matrix3D;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.geom.Rectangle;
-import openfl.gl.GL;
-import openfl.gl.GLBuffer;
-import openfl.gl.GLProgram;
-import openfl.gl.GLShader;
-import openfl.gl.GLTexture;
-import openfl.gl.GLUniformLocation;
-import openfl.utils.Float32Array;
-import openfl.utils.Int16Array;
-import openfl.utils.UInt8Array;
 import openfl.Vector;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.CoreObject;
@@ -79,7 +67,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_rect = rect;
 		
 		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
-		core.stage.stage3Ds[0].requestContext3D();
+		core.stage.stage3Ds[0].requestContext3D( );
 				
 		//_modelViewMatrix = new Matrix3D();
 		//_modelViewMatrix.identity();
@@ -94,6 +82,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		_context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0, false );
 		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
+		
+		core.root.messenger.sendMessage( Event.CONTEXT3D_CREATE );
 		
 		initShaders();
 	}
@@ -147,7 +137,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_vertexBuffer = _context.createVertexBuffer( Std.int(_vertices.length / VERTEX_SIZE), VERTEX_SIZE );
 		_vertexBuffer.uploadFromVector( _vertices, 0, Std.int(_vertices.length / VERTEX_SIZE) );
 		
-		trace("Pushing to index buffer", _indices );
+		//trace("Pushing to index buffer", _indices );
 
 		if ( _indexBuffer != null ) _indexBuffer.dispose();
 		_indexBuffer = _context.createIndexBuffer( _indices.length );
@@ -159,21 +149,26 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		_context.clear( 0, 0, 0, 1 );
 		
+		
 		for ( batch in _batches ) {
 			
 			trace("Drawing batch", batch.start, batch.length );
 			
 			if ( batch.texture != null ) {
-				_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
 				_context.setTextureAt( 0, batch.texture );
-			}else {
-				_context.setVertexBufferAt( 2, null );
+				_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
 			}
 			
 			_context.setProgram( batch.shader.program );
 			_context.drawTriangles( _indexBuffer, batch.start, batch.length );
-			_context.present();
+			
+			if ( batch.texture != null ) {
+				_context.setTextureAt( 0, null );
+				_context.setVertexBufferAt( 2, null );
+			}
 		}
+		
+		_context.present();
 	}
 	
 	private function renderLevel( root : GameObject ) : Void {
@@ -242,8 +237,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	{
 		var batch : Stage3DBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
-		var width : Float = sourceRect.width * texture.sourceBitmap.width;
-		var height : Float = sourceRect.height * texture.sourceBitmap.height;
+		var width : Float = (sourceRect.width * texture.sourceBitmap.width) / texture.paddingMultiplierX;
+		var height : Float = (sourceRect.height * texture.sourceBitmap.height) / texture.paddingMultiplierY;
 		
 		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture ) {
 			batch.length += 2;	
@@ -324,10 +319,9 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		return null;
 	}
 	
-	
-	
-	
-	
-	
+	public function getContext():Context3D 
+	{
+		return _context;
+	}
 	
 }

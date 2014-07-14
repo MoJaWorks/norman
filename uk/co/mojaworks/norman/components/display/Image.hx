@@ -14,8 +14,6 @@ import uk.co.mojaworks.norman.renderer.TextureManager;
 class Image extends Display
 {
 
-	private static var WHOLE_IMAGE : Rectangle = new Rectangle( 0, 0, 1, 1 );
-	
 	public var textureData : TextureData;
 	private var _uvRect : Rectangle = null;
 	private var _rect : Rectangle = null;
@@ -36,14 +34,9 @@ class Image extends Display
 			textureData = textureManager.getTexture( textureId );
 		}
 		
-		
-		if ( subTextureId == null ) {
-			_uvRect = WHOLE_IMAGE;
-			_rect = new Rectangle( 0, 0, textureData.sourceBitmap.width, textureData.sourceBitmap.height );
-		}else {
-			_uvRect = textureData.getUVFor( subTextureId );
-			_rect = textureData.getRectFor( subTextureId );
-		}
+		_uvRect = textureData.getUVFor( subTextureId );
+		_rect = textureData.getRectFor( subTextureId );
+			
 		trace("Creating image with texture data", textureData, _uvRect, _rect );
 	}
 	

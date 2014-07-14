@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
 import uk.co.mojaworks.norman.renderer.ICanvas;
-import uk.co.mojaworks.norman.utils.ColorUtils.ColourUtils;
+import uk.co.mojaworks.norman.utils.ColourUtils;
 
 /**
  * ...
