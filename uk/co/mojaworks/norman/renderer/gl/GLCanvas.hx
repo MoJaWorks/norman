@@ -321,6 +321,7 @@ class GLCanvas extends CoreObject implements ICanvas
 				GL.vertexAttribPointer( texAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
 				
 				GL.activeTexture(GL.TEXTURE0);
+				GL.enable( GL.TEXTURE_2D );
 				GL.bindTexture( GL.TEXTURE_2D, batch.texture );
 				GL.uniform1i( uImage, 0 );
 			}
@@ -329,7 +330,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
 			
 			GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-			GL.drawElements( GL.TRIANGLES, batch.length, GL.UNSIGNED_SHORT, batch.start );
+			GL.drawElements( GL.TRIANGLES, batch.length, GL.UNSIGNED_SHORT, batch.start * 2 );
 			
 			GL.disableVertexAttribArray( colorAttrib );
 			GL.disableVertexAttribArray( vertexAttrib );
@@ -337,6 +338,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			if ( batch.texture != null ) {
 				GL.disableVertexAttribArray( texAttrib );
 				GL.bindTexture( GL.TEXTURE_2D, null );
+				GL.disable( GL.TEXTURE_2D );
 			}
 		}
 		
