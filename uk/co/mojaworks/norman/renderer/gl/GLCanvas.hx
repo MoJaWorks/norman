@@ -36,11 +36,13 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	var _vertexBuffer : GLBuffer;
 	var _indexBuffer : GLBuffer;
+	var _stencilBuffer : GLBuffer;
 	var _batches : Array<GLBatchData>;
 	
 	// A temporary array re-generated each frame with positions of all vertices
 	var _vertices:Array<Float>;
 	var _indices:Array<Int>;
+	var _masks:Array<Float>;
 	var _root : GameObject;
 	
 	// The opengl view object used to reserve our spot on the display list
@@ -73,9 +75,10 @@ class GLCanvas extends CoreObject implements ICanvas
 		_vertices = [];
 		_batches = [];
 		_indices = [];
+		_masks = [];
 		
 		initShaders();
-		initBuffer();
+		initBuffers();
 		
 		_canvas = new OpenGLView();
 		core.stage.addEventListener( OpenGLView.CONTEXT_LOST, onContextLost );
@@ -116,9 +119,10 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 	}
 	
-	private function initBuffer() : Void {
+	private function initBuffers() : Void {
 		_vertexBuffer = GL.createBuffer();
 		_indexBuffer = GL.createBuffer();
+		_stencilBuffer = GL.createBuffer();
 	}
 	
 	public function resize(rect:Rectangle):Void 
@@ -138,6 +142,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		_batches = [];
 		_indices = [];
 		_maskStack = [];
+		_masks = [];
 		
 		// Collect all of the vertex data
 		renderLevel( root );
@@ -183,15 +188,16 @@ class GLCanvas extends CoreObject implements ICanvas
 	{
 		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
+		var mask : Array<Point> = getCurrentMask();
 		
-		if ( batch != null && batch.shader == _fillShader && batch.mask == getCurrentMask() ) {
+		if ( batch != null && batch.shader == _fillShader && batch.mask == mask ) {
 			batch.length += 6;	
 		}else {
 			batch = new GLBatchData();
 			batch.start = _indices.length;
 			batch.length = 6;
 			batch.shader = _fillShader;
-			batch.mask == getCurrentMask();
+			batch.mask = mask;
 			batch.texture = null;
 			_batches.push( batch );
 		}
@@ -352,6 +358,21 @@ class GLCanvas extends CoreObject implements ICanvas
 			
 		for ( batch in _batches ) {
 			
+			if ( batch.mask != null ) {
+				if ( batch.mask != getCurrentMask() ) {
+					GL.enable( GL.STENCIL_TEST );
+					GL.stencilFunc( GL.ALWAYS, 1, 0xFF );
+					GL.stencilOp( GL.KEEP, GL.KEEP, GL.REPLACE );
+					GL.stencilMask( 0xFF );
+					GL.clear( GL.STENCIL_BUFFER_BIT );
+					
+					GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
+					GL.drawArray( GL.TRIANGLE_STRIP, 0, 6 );
+				}
+			}else {
+				GL.disable( GL.STENCIL_TEST );
+			}
+			
 			trace("Drawing batch", batch.start, batch.length );
 			
 			GL.useProgram( batch.shader.program );
@@ -401,6 +422,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		GL.useProgram( null );
+		GL.disable(GL.STENCIL_TEST);
 		
 		if ( !prev_blended ) {
 			GL.disable( GL.BLEND );
