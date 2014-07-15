@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.renderer.gl;
+import openfl.geom.Point;
 import openfl.gl.GLTexture;
 
 /**
@@ -12,6 +13,7 @@ class GLBatchData
 	public var length : Int;
 	public var shader : GLShaderWrapper;
 	public var texture : GLTexture;
+	public var mask : Array<Point>;
 	
 	public function new() 
 	{

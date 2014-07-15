@@ -36,9 +36,17 @@ class Display extends Component
 		}
 	}
 	
+	
+	public function preRender( canvas : ICanvas ) : Void {
+		if ( clipRect != null ) canvas.pushMask( clipRect, gameObject.transform.worldTransform );
+	}
+	
 	public function render( canvas : ICanvas ) : Void {
-		// Override to render
-		// Otherwise will just behave as empty container
+		// Override to render content
+	}
+	
+	public function postRender( canvas : ICanvas ) : Void {
+		if ( clipRect != null ) canvas.popMask();
 	}
 
 	

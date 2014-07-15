@@ -53,6 +53,8 @@ class GLCanvas extends CoreObject implements ICanvas
 	var _projectionMatrix : Matrix3D;
 	var _modelViewMatrix : Matrix3D;
 	
+	var _maskStack : Array<Array<Point>>;
+	
 	
 	public function new() 
 	{
@@ -135,6 +137,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		_vertices = [];
 		_batches = [];
 		_indices = [];
+		_maskStack = [];
 		
 		// Collect all of the vertex data
 		renderLevel( root );
@@ -165,11 +168,14 @@ class GLCanvas extends CoreObject implements ICanvas
 		var display : Display = root.get(Display);
 		if ( display != null && display.visible && display.getFinalAlpha() > 0 ) {
 			
+			display.preRender( this );
 			display.render( this );
 			
 			for ( child in root.children ) {
 				renderLevel( child );
-			}			
+			}	
+			
+			display.postRender( this );
 		}
 	}
 	
@@ -178,13 +184,14 @@ class GLCanvas extends CoreObject implements ICanvas
 		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
 		
-		if ( batch != null && batch.shader == _fillShader ) {
+		if ( batch != null && batch.shader == _fillShader && batch.mask == getCurrentMask() ) {
 			batch.length += 6;	
 		}else {
 			batch = new GLBatchData();
 			batch.start = _indices.length;
 			batch.length = 6;
 			batch.shader = _fillShader;
+			batch.mask == getCurrentMask();
 			batch.texture = null;
 			_batches.push( batch );
 		}
@@ -230,7 +237,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		var width : Float = sourceRect.width * texture.sourceBitmap.width;
 		var height : Float = sourceRect.height * texture.sourceBitmap.height;
 		
-		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture ) {
+		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture && batch.mask == getCurrentMask() ) {
 			batch.length += 6;	
 		}else {
 			batch = new GLBatchData();
@@ -238,6 +245,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			batch.length = 6;
 			batch.shader = _imageShader;
 			batch.texture = texture.texture;
+			batch.mask = getCurrentMask();
 			_batches.push( batch );
 		}
 		
@@ -275,6 +283,31 @@ class GLCanvas extends CoreObject implements ICanvas
 		_indices.push(1 + offset);
 		_indices.push(3 + offset);
 		_indices.push(2 + offset);
+	}
+	
+	public function pushMask( rect : Rectangle, transform : Matrix ) : Void {
+		
+		var points : Array<Point> = [
+			transform.transformPoint( new Point( rect.x + rect.width, rect.y + rect.height ) ),
+			transform.transformPoint( new Point( rect.x, rect.y + rect.height ) ),
+			transform.transformPoint( new Point( rect.x + rect.width, rect.y ) ),
+			transform.transformPoint( new Point( rect.x, rect.y ) )
+		];
+		
+		_maskStack.push( points );
+		
+	}
+	
+	public function popMask() : Void {
+		_maskStack.pop();
+	}
+	
+	public inline function getCurrentMask() : Array<Point> {
+		if ( _maskStack.length > 0 ) {
+			return _maskStack[ _maskStack.length - 1 ];
+		}else{
+			return null;
+		}
 	}
 	
 	/**
