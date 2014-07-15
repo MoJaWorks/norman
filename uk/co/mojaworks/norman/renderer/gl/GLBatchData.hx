@@ -13,7 +13,7 @@ class GLBatchData
 	public var length : Int;
 	public var shader : GLShaderWrapper;
 	public var texture : GLTexture;
-	public var mask : Array<Point>;
+	public var mask : Int;
 	
 	public function new() 
 	{

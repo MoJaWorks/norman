@@ -55,7 +55,8 @@ class GLCanvas extends CoreObject implements ICanvas
 	var _projectionMatrix : Matrix3D;
 	var _modelViewMatrix : Matrix3D;
 	
-	var _maskStack : Array<Array<Point>>;
+	// Store the mask start index in the array
+	var _maskStack : Array<Int>;
 	
 	
 	public function new() 
@@ -101,7 +102,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	private function onContextRestored( e : Event ) : Void {
 		trace("Context restored");
 		initShaders();
-		initBuffer();
+		initBuffers();
 		core.root.messenger.sendMessage( OpenGLView.CONTEXT_RESTORED );
 	}
 	
@@ -158,14 +159,20 @@ class GLCanvas extends CoreObject implements ICanvas
 		trace("Pushing to vertex buffer", _vertices );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.STATIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		trace("Pushing to index buffer", _indices );
 		
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.STATIC_DRAW );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
+		
+		trace("Pushing to stencil buffer", _masks );
+		
+		GL.bindBuffer( GL.ARRAY_BUFFER, _stencilBuffer );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _masks ), GL.STATIC_DRAW );
+		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 	}
 	
@@ -188,7 +195,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	{
 		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
-		var mask : Array<Point> = getCurrentMask();
+		var mask : Int = getCurrentMask();
 		
 		if ( batch != null && batch.shader == _fillShader && batch.mask == mask ) {
 			batch.length += 6;	
@@ -293,14 +300,20 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	public function pushMask( rect : Rectangle, transform : Matrix ) : Void {
 		
-		var points : Array<Point> = [
+		_maskStack.push( _masks.length );
+		
+		var arr : Array<Point> = [
 			transform.transformPoint( new Point( rect.x + rect.width, rect.y + rect.height ) ),
 			transform.transformPoint( new Point( rect.x, rect.y + rect.height ) ),
 			transform.transformPoint( new Point( rect.x + rect.width, rect.y ) ),
 			transform.transformPoint( new Point( rect.x, rect.y ) )
 		];
 		
-		_maskStack.push( points );
+		for ( point in arr ) {
+			_masks.push( point.x );
+			_masks.push( point.y );
+			_masks.push(0);
+		}
 		
 	}
 	
@@ -308,11 +321,11 @@ class GLCanvas extends CoreObject implements ICanvas
 		_maskStack.pop();
 	}
 	
-	public inline function getCurrentMask() : Array<Point> {
+	public inline function getCurrentMask() : Int {
 		if ( _maskStack.length > 0 ) {
 			return _maskStack[ _maskStack.length - 1 ];
 		}else{
-			return null;
+			return -1;
 		}
 	}
 	
@@ -358,16 +371,22 @@ class GLCanvas extends CoreObject implements ICanvas
 			
 		for ( batch in _batches ) {
 			
-			if ( batch.mask != null ) {
+			if ( batch.mask > -1 ) {
 				if ( batch.mask != getCurrentMask() ) {
-					GL.enable( GL.STENCIL_TEST );
-					GL.stencilFunc( GL.ALWAYS, 1, 0xFF );
-					GL.stencilOp( GL.KEEP, GL.KEEP, GL.REPLACE );
-					GL.stencilMask( 0xFF );
-					GL.clear( GL.STENCIL_BUFFER_BIT );
 					
-					GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-					GL.drawArray( GL.TRIANGLE_STRIP, 0, 6 );
+					trace("Using stencil", batch.mask );
+					
+					//GL.enable( GL.STENCIL_TEST );
+					//GL.stencilFunc( GL.ALWAYS, 1, 0xFF );
+					//GL.stencilOp( GL.KEEP, GL.KEEP, GL.REPLACE );
+					//GL.stencilMask( 0xFF );
+					//GL.clear( GL.STENCIL_BUFFER_BIT );
+					
+					GL.bindBuffer( GL.ARRAY_BUFFER, _stencilBuffer );
+					GL.drawArrays( GL.TRIANGLE_STRIP, batch.mask, 4 );
+					
+					//GL.stencilFunc( GL.EQUAL, 1, 0xFF );
+					//GL.stencilMask( 0x00 );
 				}
 			}else {
 				GL.disable( GL.STENCIL_TEST );
