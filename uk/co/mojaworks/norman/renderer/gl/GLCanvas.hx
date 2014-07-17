@@ -57,6 +57,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	// Store the mask start index in the array
 	var _maskStack : Array<Int>;
+	var _renderTexturesStack : Array<GLFrameBufferData>;
 	
 	
 	public function new() 
@@ -309,13 +310,15 @@ class GLCanvas extends CoreObject implements ICanvas
 			transform.transformPoint( new Point( rect.x, rect.y ) )
 		];
 		
-		for ( point in arr ) {
-			_masks.push( point.x );
-			_masks.push( point.y );
-			_masks.push( 1 );
-			_masks.push( 1 );
-			_masks.push( 1 );
-			_masks.push( 1 );
+		if ( getCurrentMask() > -1 ) {
+			for ( point in arr ) {
+				_masks.push( point.x );
+				_masks.push( point.y );
+				_masks.push( 1 );
+				_masks.push( 1 );
+				_masks.push( 1 );
+				_masks.push( 1 );
+			}
 		}
 		
 	}

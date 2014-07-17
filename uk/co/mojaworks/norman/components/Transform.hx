@@ -12,6 +12,8 @@ import uk.co.mojaworks.norman.core.GameObject;
 class Transform extends Component
 {
 
+	public static inline var MATRIX_DIRTY : String = "MATRIX_DIRTY";
+	
 	public var x( default, set ) : Float = 0;
 	public var y( default, set ) : Float = 0;
 	
@@ -65,6 +67,8 @@ class Transform extends Component
 				child.transform.invalidateMatrices();
 			}
 		}
+		
+		gameObject.messenger.sendMessage( MATRIX_DIRTY );
 	}	
 	
 	private function recalculateLocalTransform() : Matrix {

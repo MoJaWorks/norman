@@ -86,7 +86,11 @@ class GameObject extends CoreObject
 	@:generic public function removeByType<T:(Component)>( classType : Class<T> ) : GameObject {
 		var type : String = Reflect.field( classType, "TYPE" );
 		if ( type == Display.TYPE ) this.display = null;
-		_components.remove( type );
+		
+		if ( _components.get( type ) != null ) {
+			_components.get(type).onRemoved();
+			_components.remove( type );
+		}
 		return this; 
 	}
 	
@@ -99,6 +103,7 @@ class GameObject extends CoreObject
 	}
 	
 	public function remove( component : Component ) : GameObject {
+		component.onRemoved();
 		_components.remove( component.getComponentType() );
 		if ( component.getComponentType() == Display.TYPE ) this.display = null;
 		component.gameObject = null;
