@@ -312,7 +312,10 @@ class GLCanvas extends CoreObject implements ICanvas
 		for ( point in arr ) {
 			_masks.push( point.x );
 			_masks.push( point.y );
-			_masks.push(0);
+			_masks.push( 1 );
+			_masks.push( 1 );
+			_masks.push( 1 );
+			_masks.push( 1 );
 		}
 		
 	}
@@ -350,8 +353,6 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
 		
-		//GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		
 		var vertexAttrib : Int = -1;
 		var colorAttrib : Int = -1;
 		var texAttrib : Int = -1;
@@ -374,19 +375,42 @@ class GLCanvas extends CoreObject implements ICanvas
 			if ( batch.mask > -1 ) {
 				if ( batch.mask != getCurrentMask() ) {
 					
-					trace("Using stencil", batch.mask );
+					GL.useProgram( _fillShader.program );
 					
-					//GL.enable( GL.STENCIL_TEST );
-					//GL.stencilFunc( GL.ALWAYS, 1, 0xFF );
-					//GL.stencilOp( GL.KEEP, GL.KEEP, GL.REPLACE );
-					//GL.stencilMask( 0xFF );
-					//GL.clear( GL.STENCIL_BUFFER_BIT );
+					vertexAttrib = _fillShader.getAttrib( "aVertexPosition" );
+					colorAttrib = _fillShader.getAttrib( "aVertexColor" );
+					uMVMatrix = _fillShader.getUniform( "uModelViewMatrix" );
+					uProjectionMatrix = _fillShader.getUniform( "uProjectionMatrix" );
+					
+					GL.enableVertexAttribArray( vertexAttrib );
+					GL.enableVertexAttribArray( colorAttrib );
+					
+					GL.uniformMatrix3D( uProjectionMatrix, false, _projectionMatrix );
+					GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
 					
 					GL.bindBuffer( GL.ARRAY_BUFFER, _stencilBuffer );
-					GL.drawArrays( GL.TRIANGLE_STRIP, batch.mask, 4 );
+					GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, 6 * 4, VERTEX_POS * 4 );
+					GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, 6 * 4, VERTEX_COLOR * 4 );
 					
-					//GL.stencilFunc( GL.EQUAL, 1, 0xFF );
-					//GL.stencilMask( 0x00 );
+					trace("Using stencil", batch.mask );
+					
+					GL.enable( GL.STENCIL_TEST );
+					GL.stencilFunc( GL.ALWAYS, 1, 0xFF );
+					GL.stencilOp( GL.KEEP, GL.KEEP, GL.REPLACE );
+					GL.stencilMask( 0xFF );
+					GL.colorMask( false, false, false, false );
+					GL.clear( GL.STENCIL_BUFFER_BIT );
+					
+					GL.drawArrays( GL.TRIANGLE_STRIP, Std.int(batch.mask / 6), 4 );
+					
+					GL.stencilFunc( GL.EQUAL, 1, 0xFF );
+					GL.stencilMask( 0x00 );
+					GL.colorMask( true, true, true, true );
+					
+					GL.useProgram( null );
+					GL.bindBuffer( GL.ARRAY_BUFFER, null );
+					GL.disableVertexAttribArray( vertexAttrib );
+					GL.disableVertexAttribArray( colorAttrib );
 				}
 			}else {
 				GL.disable( GL.STENCIL_TEST );
@@ -436,10 +460,12 @@ class GLCanvas extends CoreObject implements ICanvas
 				GL.bindTexture( GL.TEXTURE_2D, null );
 				GL.disable( GL.TEXTURE_2D );
 			}
+			
+			GL.bindBuffer( GL.ARRAY_BUFFER, null );
+			GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
+			
 		}
 		
-		GL.bindBuffer( GL.ARRAY_BUFFER, null );
-		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		GL.useProgram( null );
 		GL.disable(GL.STENCIL_TEST);
 		
