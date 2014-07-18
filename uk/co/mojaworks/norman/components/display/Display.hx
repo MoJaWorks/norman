@@ -58,6 +58,15 @@ class Display extends Component
 		}
 	}
 	
+	/**
+	 * Gets the bounds of one object in the space of another. If no space is passed, it will get it's bounds in it's own space
+	 * @param	space
+	 * @return
+	 */
+	private function getBounds( space : Display ) : Rectangle {
+		
+	}
+	
 	public function get_bounds() : Rectangle {
 		if ( _isBoundsDirty ) {
 			recalculateBounds();
@@ -135,6 +144,5 @@ class Display extends Component
 	public function postRender( canvas : ICanvas ) : Void {
 		if ( clipRect != null ) canvas.popMask();
 	}
-
 	
 }

@@ -29,9 +29,11 @@ class Transform extends Component
 	public var rotation( default, set ) : Float = 0;
 	
 	public var worldTransform( get, never ) : Matrix;
+	public var inverseWorldTransform( get, never ) : Matrix;
 	public var localTransform( get, never ) : Matrix;
 	
 	var _worldTransform : Matrix;
+	var _inverseWorld : Matrix;
 	var _localTransform : Matrix;
 	
 	var _isLocalDirty : Bool = true;
