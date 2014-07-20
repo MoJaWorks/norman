@@ -23,7 +23,7 @@ class MathUtils
 		var tx0 = m.a * rect.x + m.c * rect.y;
 		var tx1 = tx0;
 		var ty0 = m.b * rect.x + m.d * rect.y;
-		var ty1 = tx0;
+		var ty1 = ty0;
 		
 		var tx = m.a * (rect.x + rect.width) + m.c * rect.y;
 		var ty = m.b * (rect.x + rect.width) + m.d * rect.y;
@@ -50,6 +50,8 @@ class MathUtils
 		rect.y = ty0 + m.ty;
 		rect.width = tx1 - tx0;
 		rect.height = ty1 - ty0;
+		
+		//trace( ty1, ty0 );
 		//return new Rectangle (tx0 + m.tx, ty0 + m.ty, tx1 - tx0, ty1 - ty0);
 		
 	}

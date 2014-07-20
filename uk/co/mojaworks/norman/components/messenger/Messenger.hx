@@ -22,7 +22,7 @@ class Messenger extends Component
 	
 	public function sendMessage( message : String, ?data : Dynamic = null ) : Void {
 		
-		trace("Sending", message );
+		//trace("Sending", message );
 		
 		if ( _listeners.get( message ) != null ) {
 			for ( listener in _listeners.get( message ) ) {

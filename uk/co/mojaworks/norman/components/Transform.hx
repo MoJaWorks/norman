@@ -95,7 +95,8 @@ class Transform extends Component
 			_worldTransform.concat( gameObject.parent.transform.worldTransform );
 		}
 			
-		_inverseWorldTransform = _worldTransform.invert();
+		_inverseWorldTransform.copyFrom(_worldTransform);
+		_inverseWorldTransform.invert();
 		
 		_isWorldDirty = false;
 		return worldTransform;
