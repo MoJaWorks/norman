@@ -157,19 +157,19 @@ class GLCanvas extends CoreObject implements ICanvas
 		#end
 		
 		// Pass it to the graphics card
-		trace("Pushing to vertex buffer", _vertices );
+		//trace("Pushing to vertex buffer", _vertices );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.STATIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
-		trace("Pushing to index buffer", _indices );
+		//trace("Pushing to index buffer", _indices );
 		
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.STATIC_DRAW );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		
-		trace("Pushing to stencil buffer", _masks );
+		//trace("Pushing to stencil buffer", _masks );
 		
 		GL.bindBuffer( GL.ARRAY_BUFFER, _stencilBuffer );
 		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _masks ), GL.STATIC_DRAW );
@@ -371,7 +371,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		//trace( GL.isEnabled( GL.CULL_FACE ) );
 		
-		trace("Begin draw", _batches );
+		//trace("Begin draw", _batches );
 			
 		for ( batch in _batches ) {
 			
@@ -395,7 +395,7 @@ class GLCanvas extends CoreObject implements ICanvas
 					GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, 6 * 4, VERTEX_POS * 4 );
 					GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, 6 * 4, VERTEX_COLOR * 4 );
 					
-					trace("Using stencil", batch.mask );
+					//trace("Using stencil", batch.mask );
 					
 					GL.enable( GL.STENCIL_TEST );
 					GL.stencilFunc( GL.ALWAYS, 1, 0xFF );
@@ -419,7 +419,7 @@ class GLCanvas extends CoreObject implements ICanvas
 				GL.disable( GL.STENCIL_TEST );
 			}
 			
-			trace("Drawing batch", batch.start, batch.length );
+			//trace("Drawing batch", batch.start, batch.length );
 			
 			GL.useProgram( batch.shader.program );
 			

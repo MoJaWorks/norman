@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.components ;
 
 import openfl.geom.Matrix;
+import openfl.geom.Point;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -33,7 +34,7 @@ class Transform extends Component
 	public var localTransform( get, never ) : Matrix;
 	
 	var _worldTransform : Matrix;
-	var _inverseWorld : Matrix;
+	var _inverseWorldTransform : Matrix;
 	var _localTransform : Matrix;
 	
 	var _isLocalDirty : Bool = true;
@@ -45,6 +46,7 @@ class Transform extends Component
 		
 		_worldTransform = new Matrix();
 		_localTransform = new Matrix();
+		_inverseWorldTransform = new Matrix();
 	}
 	
 	override public function onAdded():Void 
@@ -58,15 +60,15 @@ class Transform extends Component
 		invalidateMatrices();
 	}
 	
-	public function invalidateMatrices() : Void {
+	public function invalidateMatrices( local : Bool = true, world : Bool = true ) : Void {
 		
 		var update : Bool = !_isLocalDirty && !_isWorldDirty;
-		_isLocalDirty = true;
-		_isWorldDirty = true;
+		_isLocalDirty = local;
+		_isWorldDirty = world;
 		
 		if ( update ) {
 			for ( child in gameObject.children ) {
-				child.transform.invalidateMatrices();
+				child.transform.invalidateMatrices( false, true );
 			}
 		}
 		
@@ -86,13 +88,15 @@ class Transform extends Component
 	
 	private function recalculateWorldTransform() : Matrix {
 		
-		recalculateLocalTransform();
+		if ( _isLocalDirty ) recalculateLocalTransform();
 		_worldTransform.copyFrom( _localTransform );
 		
 		if ( gameObject.parent != null ) {
 			_worldTransform.concat( gameObject.parent.transform.worldTransform );
 		}
 			
+		_inverseWorldTransform = _worldTransform.invert();
+		
 		_isWorldDirty = false;
 		return worldTransform;
 		
@@ -149,19 +153,38 @@ class Transform extends Component
 	 */
 	
 	private function get_worldTransform( ) : Matrix {
-		if ( !_isWorldDirty && !_isLocalDirty ) {
-			return _worldTransform;
-		}else {
-			return recalculateWorldTransform();
+		
+		if ( _isWorldDirty || _isLocalDirty ) {
+			recalculateWorldTransform();
 		}
+		
+		return _worldTransform;
 	}
 	
 	private function get_localTransform( ) : Matrix {
-		if ( !_isLocalDirty ) {
-			return _localTransform;
-		}else {
-			return recalculateLocalTransform();
+		
+		if ( _isLocalDirty ) {
+			recalculateLocalTransform();
 		}
+		
+		return _localTransform;
+	}
+	
+	private function get_inverseWorldTransform( ) : Matrix {
+		
+		if ( _isWorldDirty || _isLocalDirty ) {
+			recalculateWorldTransform();
+		}
+		
+		return _inverseWorldTransform;
+	}
+	
+	public function localToGlobal( point : Point ) : Point {
+		return worldTransform.transformPoint( point );
+	}
+	
+	public function globalToLocal( point : Point ) : Point {
+		return inverseWorldTransform.transformPoint( point );
 	}
 	
 	/**

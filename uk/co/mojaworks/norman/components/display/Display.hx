@@ -5,6 +5,7 @@ import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.renderer.ICanvas;
+import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -16,103 +17,115 @@ class Display extends Component
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
 	public var clipRect : Rectangle = null;
-	public var bounds( get, never ) : Rectangle;
 	
-	private var _bounds : Rectangle;	
 	private var _isBoundsDirty : Bool = true;
 	
 	public function new() 
 	{
 		super();
-		_bounds = new Rectangle();
 	}
 	
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		gameObject.messenger.attachListener( Transform.MATRIX_DIRTY, onMatricesDirty );
 	}
-	
-	override public function onRemoved():Void 
-	{
-		super.onRemoved();
-		gameObject.messenger.removeListener( Transform.MATRIX_DIRTY, onMatricesDirty );
-	}
-	
-	private function onMatricesDirty( object : GameObject, param : Dynamic = null ) : Void {
-		invalidateBounds();
-	}
-	
-	private function invalidateBounds( fromParent : Bool = false ) : Void {
-		
-		_isBoundsDirty = true;
-		
-		if ( !fromParent && gameObject.parent != null && gameObject.parent.display != null ) {
-			gameObject.parent.display.invalidateBounds();
-		}
-		
-		for ( child in gameObject.children ) {
-			if ( child.display != null ) {
-				child.display.invalidateBounds( true );
-			}
-		}
-	}
-	
+			
 	/**
 	 * Gets the bounds of one object in the space of another. If no space is passed, it will get it's bounds in it's own space
 	 * @param	space
 	 * @return
 	 */
-	private function getBounds( space : Display ) : Rectangle {
+	public function getBounds( space : Transform = null ) : Rectangle {
 		
-	}
-	
-	public function get_bounds() : Rectangle {
-		if ( _isBoundsDirty ) {
-			recalculateBounds();
-		}
-		return _bounds;
-	}
-	
-	private function recalculateBounds() : Void {
-		
-		var xMin : Float = Math.POSITIVE_INFINITY;
-		var xMax : Float = Math.NEGATIVE_INFINITY;
-		var yMin : Float = Math.NEGATIVE_INFINITY;
-		var yMax : Float = Math.POSITIVE_INFINITY;
+		// Get the total bounds in this coordinate space with children and clippingRect applied
+		var bounds : Rectangle = getTotalBounds( gameObject.transform );
 				
-		var pts : Array<Point> = [
-			gameObject.transform.worldTransform.transformPoint( new Point( 0, 0 ) ),
-			gameObject.transform.worldTransform.transformPoint( new Point( 0, getNaturalHeight() ) ),
-			gameObject.transform.worldTransform.transformPoint( new Point( getNaturalWidth(), getNaturalHeight() ) ),
-			gameObject.transform.worldTransform.transformPoint( new Point( getNaturalWidth(), 0 ) )
-		];
+		// Transform to the target coordinate space
+		if ( space != null && space != gameObject.transform ) {
+			
+			MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
+			MathUtils.transformRect( bounds, space.inverseWorldTransform );
+			
+		}
+			//var pts : Array<Point> = [
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( bounds.left, bounds.top ) ) ),
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( bounds.left, bounds.bottom ) ) ),
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( bounds.right, bounds.bottom ) ) ),
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( bounds.right, bounds.top ) ) )
+				//
+				////bounds.transform
+			//];
+			//
+			//var xMin : Float = Math.NEGATIVE_INFINITY;
+			//var xMax : Float = Math.POSITIVE_INFINITY;
+			//var yMin : Float = Math.NEGATIVE_INFINITY;
+			//var yMax : Float = Math.POSITIVE_INFINITY;
+			//
+			//for ( pt in pts ) {
+				//if ( pt.x < xMin ) xMin = pt.x;
+				//if ( pt.x > xMax ) xMax = pt.x;
+				//if ( pt.x < yMin ) yMin = pt.y;
+				//if ( pt.x > yMax ) yMax = pt.y;
+			//}
+					
+			//return new Rectangle( xMin, yMin, xMax - xMin, yMax - yMin );
+			
+		//}else {
+			return bounds;
+		//}
 		
-		// Bounds of own display
-		for ( pt in pts ) {
-			if ( pt.x < xMin ) xMin = pt.x;
-			if ( pt.x > xMax ) xMax = pt.x;
-			if ( pt.y < yMin ) yMin = pt.y;
-			if ( pt.y > yMax ) yMax = pt.y;
-		}	
+	}
+	
+	private function getTotalBounds( space : Transform ) : Rectangle {
 		
-		// Bounds including children		
+		var bounds : Rectangle = new Rectangle( 0, 0, getNaturalWidth(), getNaturalHeight() );
+		//var xMin : Float = 0;
+		//var xMax : Float = getNaturalWidth();
+		//var yMin : Float = 0;
+		//var yMax : Float = getNaturalHeight();
+		
+		// Get own bounds in this space
+		if ( space != gameObject.transform ) {
+			
+			MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
+			MathUtils.transformRect( bounds, space.inverseWorldTransform );
+			
+			//var pts : Array<Point> = [
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( 0, 0 ) ) ),
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( 0, getNaturalHeight() ) ) ),
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( getNaturalWidth(), getNaturalHeight() ) ) ),
+				//space.globalToLocal( gameObject.transform.localToGlobal( new Point( getNaturalWidth(), 0 ) ) ),
+			//];
+			//
+			//for ( pt in pts ) {
+				//if ( pt.x < xMin ) xMin = pt.x;
+				//if ( pt.x > xMax ) xMax = pt.x;
+				//if ( pt.x < yMin ) yMin = pt.y;
+				//if ( pt.x > yMax ) yMax = pt.y;
+			//}
+		}
+				
+		//var childBounds : Rectangle;
+		
+		// Adjust min and max for children
 		for ( child in gameObject.children ) {
 			if ( child.display != null ) {
-				if ( child.display.bounds.left < xMin ) xMin = child.display.bounds.left;
-				if ( child.display.bounds.right > xMax ) xMax = child.display.bounds.right;
-				if ( child.display.bounds.top < yMin ) yMin = child.display.bounds.top;
-				if ( child.display.bounds.bottom > yMax ) yMax = child.display.bounds.bottom;
+				bounds = bounds.union( child.display.getTotalBounds( space ) );
+				//childBounds = child.display.getTotalBounds( space );
+				//if ( childBounds.left < xMin ) xMin = childBounds.left;
+				//if ( childBounds.right > xMax ) xMax = childBounds.right;
+				//if ( childBounds.top < yMin ) yMin = childBounds.top;
+				//if ( childBounds.bottom > yMax ) yMax = childBounds.bottom;
 			}
 		}
 		
-		// Account for clippingRect
-		
-		
-		_bounds.x = xMin;
-		_bounds.y = yMin;
-		_bounds.width = xMax - xMin;
-		_bounds.height = yMax - yMin;	
+		if ( clipRect != null ) {
+			return bounds.intersection( clipRect );
+			//return new Rectangle( Math.max( xMin, clipRect.x ), Math.max( yMin, clipRect.y ), Math.min( xMax - xMin, clipRect.right ), Math.min( yMax - yMin, clipRect.bottom ) );
+		}else {
+			return bounds;
+			//return new Rectangle( xMin, yMin, xMax - xMin, yMax - yMin );
+		}
 		
 	}
 	
