@@ -36,13 +36,12 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	var _vertexBuffer : GLBuffer;
 	var _indexBuffer : GLBuffer;
-	var _framesBuffer : GLBuffer;
+	var _maskBuffer : GLBuffer;
 	var _batches : Array<GLBatchData>;
 	
 	// A temporary array re-generated each frame with positions of all vertices
 	var _vertices:Array<Float>;
 	var _indices:Array<Int>;
-	var _masks:Array<Float>;
 	var _root : GameObject;
 	
 	// The opengl view object used to reserve our spot on the display list
@@ -56,9 +55,9 @@ class GLCanvas extends CoreObject implements ICanvas
 	var _modelViewMatrix : Matrix3D;
 	
 	// Store the mask start index in the array
-	var _frameBuffers : Array<GLFrameBufferData>;
+	var _masks : Array<GLFrameBufferData>;
 	var _maskStack : Array<Int>;
-	var _frameBufferPoints : Array<Float>;
+	var _maskVertices : Array<Float>;
 	
 	
 	public function new() 
@@ -78,8 +77,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		_vertices = [];
 		_batches = [];
 		_indices = [];
-		_frameBufferPoints = [];
-		_frameBuffers = [];
+		_maskVertices = [];
+		_masks = [];
 		_maskStack = [];
 		
 		initShaders();
@@ -127,7 +126,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	private function initBuffers() : Void {
 		_vertexBuffer = GL.createBuffer();
 		_indexBuffer = GL.createBuffer();
-		_framesBuffer = GL.createBuffer();
+		_maskBuffer = GL.createBuffer();
 	}
 	
 	public function resize(rect:Rectangle):Void 
@@ -146,6 +145,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		_vertices = [];
 		_batches = [];
 		_indices = [];
+		_maskVertices = [];
 		
 		// Collect all of the vertex data
 		renderLevel( root );
@@ -170,8 +170,10 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		
-		GL.bindBuffer( GL.ARRAY_BUFFER, _framesBuffer );
-		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _frameBufferPoints ), GL.DYNAMIC_DRAW );
+		
+		trace("Pushing to mask buffer", _maskVertices );
+		GL.bindBuffer( GL.ARRAY_BUFFER, _maskBuffer );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _maskVertices ), GL.DYNAMIC_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 			
 	}
@@ -303,20 +305,26 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 	public function pushMask(rect:Rectangle, transform:Matrix):Void 
 	{
+		_maskStack.push( _masks.length );
+		
 		var fbData : GLFrameBufferData = new GLFrameBufferData();
 		fbData.bounds = rect;
-		_frameBuffers.push( fbData );
-		_maskStack.push( _frameBuffers.length );
+		_masks.push( fbData );
 		
-		fbData.index = _frameBufferPoints.length;
+		fbData.index = _maskVertices.length;
 		fbData.frameBuffer = GL.createFramebuffer();
 		fbData.texture = GL.createTexture();
 		
+		GL.bindFramebuffer( GL.FRAMEBUFFER, fbData.frameBuffer );
 		GL.bindTexture( GL.TEXTURE_2D, fbData.texture );
 		GL.texImage2D( GL.TEXTURE_2D, 0, GL.RGBA, Std.int(rect.width), Std.int(rect.height), 0, GL.RGBA, GL.UNSIGNED_BYTE, null );
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST );
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST );
+		
+		GL.framebufferTexture2D( GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, fbData.texture, 0 );
+		
 		GL.bindTexture( GL.TEXTURE_2D, null );
+		GL.bindFramebuffer( GL.FRAMEBUFFER, null );
 		
 		var pts : Array<Point> = [
 			transform.transformPoint( new Point(rect.right, rect.bottom) ),
@@ -335,14 +343,14 @@ class GLCanvas extends CoreObject implements ICanvas
 		var i : Int = 0;
 		
 		for ( pt in pts ) {
-			_frameBufferPoints.push( pt.x );
-			_frameBufferPoints.push( pt.y );
-			_frameBufferPoints.push( 1 );
-			_frameBufferPoints.push( 1 );
-			_frameBufferPoints.push( 1 );
-			_frameBufferPoints.push( 1 );
-			_frameBufferPoints.push( uvs[i*2] );
-			_frameBufferPoints.push( uvs[i * 2] + 1 );
+			_maskVertices.push( pt.x );
+			_maskVertices.push( pt.y );
+			_maskVertices.push( 1 );
+			_maskVertices.push( 1 );
+			_maskVertices.push( 1 );
+			_maskVertices.push( 1 );
+			_maskVertices.push( uvs[i * 2] );
+			_maskVertices.push( uvs[(i * 2) + 1] );
 			i++;
 		}		
 		
@@ -398,8 +406,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		//trace( GL.isEnabled( GL.CULL_FACE ) );
 		
 		//trace("Begin draw", _batches );
-		
 		_maskStack = [];
+		var currentMask : GLFrameBufferData = null;
 			
 		for ( batch in _batches ) {
 				
@@ -409,8 +417,22 @@ class GLCanvas extends CoreObject implements ICanvas
 				
 				// Moving up the stack, render the current texture
 				if ( batch.mask < getCurrentMask() ) {
-					
+					trace("Drawing mask texture");
+					_maskStack.pop();
+					renderFrameBuffer( rect, currentMask );
 				}
+				
+				if ( batch.mask > -1 ) {
+					
+					trace("Collecting on frame buffer");
+					
+					currentMask = _masks[batch.mask];
+					_maskStack.push( batch.mask );
+					GL.bindFramebuffer( GL.FRAMEBUFFER, currentMask.frameBuffer );
+					GL.viewport( 0, 0, Std.int(currentMask.bounds.width), Std.int(currentMask.bounds.height) );
+					_projectionMatrix = Matrix3D.createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
+				}
+				
 			}
 			
 			GL.useProgram( batch.shader.program );
@@ -461,6 +483,10 @@ class GLCanvas extends CoreObject implements ICanvas
 			
 		}
 		
+		while ( _maskStack.length > 0 ) {
+			renderFrameBuffer( rect, _masks[_maskStack.pop()]);
+		}
+		
 		GL.useProgram( null );
 		GL.disable(GL.STENCIL_TEST);
 		
@@ -471,6 +497,50 @@ class GLCanvas extends CoreObject implements ICanvas
 		}
 		//GL.disable( GL.BLEND );
 		//trace( "Error code end", GL.getError() );
+	}
+	
+	private function renderFrameBuffer( rect : Rectangle, currentMask : GLFrameBufferData ) : Void {
+		
+		trace("Rendering framebuffer" );
+		
+		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
+		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
+		GL.bindFramebuffer( GL.FRAMEBUFFER, null );
+		
+		GL.useProgram( _imageShader.program );
+			
+		var vertexAttrib = _imageShader.getAttrib( "aVertexPosition" );
+		var colorAttrib = _imageShader.getAttrib( "aVertexColor" );
+		var texAttrib = _imageShader.getAttrib("aTexCoord");
+		var uMVMatrix = _imageShader.getUniform( "uModelViewMatrix" );
+		var uImage = _imageShader.getUniform( "uImage0" );
+		var uProjectionMatrix = _imageShader.getUniform( "uProjectionMatrix" );
+				
+		GL.enableVertexAttribArray( vertexAttrib );
+		GL.enableVertexAttribArray( colorAttrib );
+		GL.enableVertexAttribArray( texAttrib );
+		
+		GL.bindBuffer( GL.ARRAY_BUFFER, _maskBuffer );
+		GL.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POS * 4 );
+		GL.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
+		GL.vertexAttribPointer( texAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
+		
+		GL.activeTexture(GL.TEXTURE0);
+		GL.enable( GL.TEXTURE_2D );
+		GL.bindTexture( GL.TEXTURE_2D, currentMask.texture );
+		GL.uniform1i( uImage, 0 );
+		
+		GL.uniformMatrix3D( uProjectionMatrix, false, _projectionMatrix );
+		GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
+		
+		GL.drawArrays( GL.TRIANGLE_STRIP, Std.int( currentMask.index / 6 ), 4 );
+		
+		GL.disableVertexAttribArray( colorAttrib );
+		GL.disableVertexAttribArray( vertexAttrib );
+		GL.disableVertexAttribArray( texAttrib );
+		GL.bindTexture( GL.TEXTURE_2D, null );
+		GL.disable( GL.TEXTURE_2D );
+		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 	}
 	
 	
