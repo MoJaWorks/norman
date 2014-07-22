@@ -255,13 +255,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 	}
 	
-	public function drawImage( texture : TextureData, transform:Matrix, alpha:Float, red : Float, green : Float, blue : Float ):Void 
+	public function drawImage( texture : TextureData, transform:Matrix, alpha:Float = 1, red : Float = 1, green : Float = 1, blue : Float = 1 ):Void 
 	{
 		// Just call drawSubimage with whole image as bounds
 		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, alpha, red, green, blue );
 	}
 	
-	public function drawSubImage( texture : TextureData, sourceRect : Rectangle, transform:Matrix, alpha:Float, red : Float, green : Float, blue : Float ):Void 
+	public function drawSubImage( texture : TextureData, sourceRect : Rectangle, transform:Matrix, alpha:Float = 1, red : Float = 1, green : Float = 1, blue : Float = 1 ):Void 
 	{
 		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
@@ -320,6 +320,14 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 	public function pushMask(rect:Rectangle, transform:Matrix):Void 
 	{
+		
+		#if html5
+			if ( GL.__context == null ) {
+				trace("No context");
+				return;
+			}
+		#end
+		
 		_maskStack.push( _masks.length );
 		
 		var fbData : GLFrameBufferData = new GLFrameBufferData();
@@ -368,7 +376,6 @@ class GLCanvas extends CoreObject implements ICanvas
 			_maskVertices.push( 1 );
 			_maskVertices.push( uvs[i * 2] );
 			_maskVertices.push( uvs[(i * 2) + 1] );
-			//trace("Added mask point", pt );
 			i++;
 		}		
 		

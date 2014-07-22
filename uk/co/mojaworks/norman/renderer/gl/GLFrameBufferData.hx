@@ -15,5 +15,4 @@ class GLFrameBufferData
 	public var bounds : Rectangle;
 	public var texture : GLTexture;
 	public var frameBuffer : GLFramebuffer;
-	public var points : Array<Point>;
 }

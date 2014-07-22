@@ -18,8 +18,8 @@ interface ICanvas
 	
 	// Drawing functions
 	function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix ) : Void;
-	function drawImage(texture:TextureData, transform:Matrix, alpha:Float, red:Float, green:Float, blue:Float):Void;
-	function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix, alpha:Float, red:Float, green:Float, blue:Float):Void;
+	function drawImage(texture:TextureData, transform:Matrix, alpha:Float = 1, red : Float = 1, green : Float = 1, blue : Float = 1):Void;
+	function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix, alpha:Float = 1, red : Float = 1, green : Float = 1, blue : Float = 1):Void;
 	
 	// Mask
 	function pushMask( rect : Rectangle, transform : Matrix ) : Void;

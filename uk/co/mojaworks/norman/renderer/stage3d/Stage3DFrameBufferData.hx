@@ -12,5 +12,5 @@ class Stage3DFrameBufferData
 	public var index : Int = -1;
 	public var bounds : Rectangle;
 	public var texture : Texture;
-	public var points : Array<Point>;
+	public var scissor : Rectangle = null;
 }
