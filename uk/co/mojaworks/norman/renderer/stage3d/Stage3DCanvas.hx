@@ -5,6 +5,7 @@ import flash.display3D.Context3DBlendFactor;
 import flash.display3D.Context3DProfile;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DRenderMode;
+import flash.display3D.Context3DTextureFormat;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
@@ -19,6 +20,8 @@ import openfl.Vector;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.renderer.stage3d.Stage3DFrameBufferData;
+import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -34,10 +37,12 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	
 	var _vertexBuffer : VertexBuffer3D;
 	var _indexBuffer : IndexBuffer3D;
+	var _maskVertexBuffer : VertexBuffer3D;
 	var _batches : Array<Stage3DBatchData>;
 	
 	// A temporary array re-generated each frame with positions of all vertices
 	var _vertices:Vector<Float>;
+	var _maskVertices:Vector<Float>;
 	var _indices:Vector<UInt>;
 	var _root : GameObject;
 	
@@ -51,6 +56,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	
 	var _projectionMatrix : Matrix3D;
 	var _modelViewMatrix : Matrix3D;
+	
+	// masks
+	var _maskStack : Array<Int>;
+	var _masks : Array<Stage3DFrameBufferData>;
 		
 	
 	public function new() 
@@ -126,22 +135,32 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_vertices = [];
 		_batches = [];
 		_indices = [];
+		_masks = [];
+		_maskStack = [];
+		_maskVertices = [];
 		
 		// Collect all of the vertex data
 		renderLevel( root );
 		
 		// Pass it to the graphics card
-		trace("Pushing to vertex buffer", _vertices );
-
 		if ( _vertexBuffer != null ) _vertexBuffer.dispose();
 		_vertexBuffer = _context.createVertexBuffer( Std.int(_vertices.length / VERTEX_SIZE), VERTEX_SIZE );
 		_vertexBuffer.uploadFromVector( _vertices, 0, Std.int(_vertices.length / VERTEX_SIZE) );
-		
-		//trace("Pushing to index buffer", _indices );
 
 		if ( _indexBuffer != null ) _indexBuffer.dispose();
 		_indexBuffer = _context.createIndexBuffer( _indices.length );
 		_indexBuffer.uploadFromVector( _indices, 0, _indices.length );
+		
+		if ( _maskVertexBuffer != null ) _maskVertexBuffer.dispose();
+		if ( _maskVertices.length > 0 ) {
+			//trace("Creating mask buffer, ", _maskVertices );
+			_maskVertexBuffer = _context.createVertexBuffer( Std.int(_maskVertices.length / VERTEX_SIZE), VERTEX_SIZE );
+			_maskVertexBuffer.uploadFromVector( _maskVertices, 0, Std.int(_maskVertices.length / VERTEX_SIZE) );
+		}
+		
+		/**
+		 * render
+		 */
 		
 		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
 		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
@@ -149,8 +168,30 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		_context.clear( 0, 0, 0, 1 );
 		
+		var currentMask : Stage3DFrameBufferData = null;
 		
 		for ( batch in _batches ) {
+			
+			if ( batch.mask != getCurrentMask() ) {
+				
+				//trace("Using mask");
+				// Moving up the stack, render the current texture
+				if ( batch.mask < getCurrentMask() ) {
+					_maskStack.pop();
+					renderFrameBuffer( currentMask );
+				}
+				
+				if ( batch.mask > -1 ) {
+					currentMask = _masks[batch.mask];
+					_maskStack.push( batch.mask );
+					_context.setRenderToTexture( currentMask.texture );
+					
+					trace("Started render to texture");
+					//_projectionMatrix = createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
+				}
+				
+			}
+			
 			
 			trace("Drawing batch", batch.start, batch.length );
 			
@@ -168,18 +209,71 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			}
 		}
 		
+		while ( _maskStack.length > 0 ) {
+			renderFrameBuffer( _masks[_maskStack.pop()] );
+		}
+		
 		_context.present();
 	}
+	
+	private function renderFrameBuffer( currentMask : Stage3DFrameBufferData ) : Void {
+		
+		trace("Rendering framebuffer" );
+				
+		if ( _maskStack.length > 0 ) {
+			
+			trace("Moving onto higher framebuffer");
+			var currentMask : Stage3DFrameBufferData = _masks[getCurrentMask()];
+			_context.setRenderToTexture( currentMask.texture );
+			//_context.clear(0.5, 0.5, 0.5);
+			//_projectionMatrix = Matrix3D.createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
+		}else {
+			trace("Rendering to screen");
+			//_projectionMatrix = Matrix3D.createOrtho( 0, screenRect.width, screenRect.height, 0, 1000, -1000 );
+			_context.setRenderToBackBuffer();
+		}		
+		
+		_context.setProgram( _imageShader.program );
+		_context.setTextureAt( 0, currentMask.texture );
+		
+		_context.setVertexBufferAt( 0, _maskVertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
+		_context.setVertexBufferAt( 1, _maskVertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
+		_context.setVertexBufferAt( 2, _maskVertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
+		//_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _modelViewMatrix, true );
+		
+		var points : Vector<UInt> = new Vector<UInt>();
+		points.push( currentMask.index + 0 );
+		points.push( currentMask.index + 1 );
+		points.push( currentMask.index + 2 );
+		points.push( currentMask.index + 1 );
+		points.push( currentMask.index + 3 );
+		points.push( currentMask.index + 2 );
+		var indexBuffer = _context.createIndexBuffer( points.length );
+		indexBuffer.uploadFromVector( points, 0, points.length );
+		_context.drawTriangles( indexBuffer );
+		indexBuffer.dispose();
+		
+		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
+		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
+		_context.setTextureAt( 0, null );
+		_context.setVertexBufferAt( 2, null );
+		
+	}
+	
+	
 	
 	private function renderLevel( root : GameObject ) : Void {
 		var display : Display = root.get(Display);
 		if ( display != null && display.visible && display.getFinalAlpha() > 0 ) {
 			
+			display.preRender( this );
 			display.render( this );
 			
 			for ( child in root.children ) {
 				renderLevel( child );
-			}			
+			}
+			
+			display.postRender( this );
 		}
 	}
 	
@@ -187,8 +281,9 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	{
 		var batch : Stage3DBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
+		var mask : Int = getCurrentMask();
 		
-		if ( batch != null && batch.shader == _fillShader ) {
+		if ( batch != null && batch.shader == _fillShader && batch.mask == mask ) {
 			batch.length += 2;	
 		}else {
 			batch = new Stage3DBatchData();
@@ -196,6 +291,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			batch.length = 2;
 			batch.shader = _fillShader;
 			batch.texture = null;
+			batch.mask = mask;
 			_batches.push( batch );
 		}
 		
@@ -239,14 +335,16 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
 		var width : Float = (sourceRect.width * texture.sourceBitmap.width) / texture.paddingMultiplierX;
 		var height : Float = (sourceRect.height * texture.sourceBitmap.height) / texture.paddingMultiplierY;
+		var mask : Int = getCurrentMask();
 		
-		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture ) {
+		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture && batch.mask == mask ) {
 			batch.length += 2;	
 		}else {
 			batch = new Stage3DBatchData();
 			batch.start = _indices.length;
 			batch.length = 2;
 			batch.shader = _imageShader;
+			batch.mask = mask;
 			batch.texture = texture.texture;
 			_batches.push( batch );
 		}
@@ -285,6 +383,68 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_indices.push(1 + offset);
 		_indices.push(3 + offset);
 		_indices.push(2 + offset);
+	}
+	
+	public function pushMask(rect:Rectangle, transform:Matrix):Void 
+	{
+		//trace("Pushing mask");
+		
+		_maskStack.push( _masks.length );
+		
+		var fbData : Stage3DFrameBufferData = new Stage3DFrameBufferData();
+		fbData.bounds = rect;
+		
+		rect.width = MathUtils.roundToNextPow2(rect.width);
+		rect.height = MathUtils.roundToNextPow2(rect.height);
+		
+		trace("Creating new texture", rect );
+		
+		_masks.push( fbData );
+		
+		fbData.index = _maskVertices.length;
+		fbData.texture = _context.createTexture( Std.int(rect.width), Std.int(rect.height), Context3DTextureFormat.BGRA, true );
+		
+		var pts : Array<Point> = [
+			transform.transformPoint( new Point(rect.right, rect.bottom) ),
+			transform.transformPoint( new Point(rect.left, rect.bottom) ),
+			transform.transformPoint( new Point(rect.right, rect.top) ),
+			transform.transformPoint( new Point(rect.left, rect.top) )
+		];
+		
+		var uvs : Array<Float> = [
+			1, 0,
+			0, 0,
+			1, 1,
+			0, 1
+		];
+		
+		var i : Int = 0;
+		
+		for ( pt in pts ) {
+			_maskVertices.push( pt.x );
+			_maskVertices.push( pt.y );
+			_maskVertices.push( 1 );
+			_maskVertices.push( 1 );
+			_maskVertices.push( 1 );
+			_maskVertices.push( 1 );
+			_maskVertices.push( uvs[i * 2] );
+			_maskVertices.push( uvs[(i * 2) + 1] );
+			i++;
+		}		
+		
+	}
+	
+	public function popMask():Void 
+	{
+		if ( _maskStack.length > 0 ) _maskStack.pop();
+	}
+	
+	public inline function getCurrentMask() : Int {
+		if ( _maskStack.length == 0 ) {
+			return -1;
+		}else {
+			return _maskStack[ _maskStack.length - 1 ];
+		}
 	}
 	
 	/**

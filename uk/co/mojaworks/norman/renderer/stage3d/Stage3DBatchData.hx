@@ -12,6 +12,7 @@ class Stage3DBatchData
 	public var length : Int;
 	public var shader : Stage3DShaderWrapper;
 	public var texture : TextureBase;
+	public var mask : Int = -1;
 	
 	public function new() 
 	{
