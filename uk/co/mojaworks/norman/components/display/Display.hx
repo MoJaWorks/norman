@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.display ;
 
+import openfl.geom.Matrix;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.core.Component;
@@ -16,7 +17,7 @@ class Display extends Component
 
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
-	public var clipRect : Rectangle = null;
+	public var clipRect( default, set ) : Rectangle = null;
 	
 	private var _isBoundsDirty : Bool = true;
 	
@@ -88,7 +89,21 @@ class Display extends Component
 	}
 		
 	public function preRender( canvas : ICanvas ) : Void {
-		if ( clipRect != null ) canvas.pushMask( getBounds(), gameObject.transform.worldTransform );
+		
+		trace("Prerender", clipRect);
+		
+		if ( clipRect != null ) {
+			
+			trace("Adding mask", gameObject.parent );
+			
+			if ( gameObject.parent != null ) {
+				var transform : Matrix = gameObject.parent.transform.renderTransform.clone();
+				transform.concat( gameObject.transform.localTransform );
+				canvas.pushMask( getBounds(), transform );
+			}else {
+				canvas.pushMask( getBounds(), gameObject.transform.renderTransform );
+			}
+		}
 	}
 	
 	public function render( canvas : ICanvas ) : Void {
@@ -97,6 +112,12 @@ class Display extends Component
 	
 	public function postRender( canvas : ICanvas ) : Void {
 		if ( clipRect != null ) canvas.popMask();
+	}
+	
+	private function set_clipRect( rect : Rectangle ) : Rectangle {
+		gameObject.transform.invalidateMatrices();
+		this.clipRect = rect;
+		return rect;
 	}
 		
 }

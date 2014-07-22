@@ -32,10 +32,12 @@ class Transform extends Component
 	public var worldTransform( get, never ) : Matrix;
 	public var inverseWorldTransform( get, never ) : Matrix;
 	public var localTransform( get, never ) : Matrix;
+	public var renderTransform( get, never ) : Matrix;
 	
 	var _worldTransform : Matrix;
 	var _inverseWorldTransform : Matrix;
 	var _localTransform : Matrix;
+	var _renderTransform : Matrix;
 	
 	var _isLocalDirty : Bool = true;
 	var _isWorldDirty : Bool = true;
@@ -47,6 +49,7 @@ class Transform extends Component
 		_worldTransform = new Matrix();
 		_localTransform = new Matrix();
 		_inverseWorldTransform = new Matrix();
+		_renderTransform = new Matrix();
 	}
 	
 	override public function onAdded():Void 
@@ -75,7 +78,7 @@ class Transform extends Component
 		gameObject.messenger.sendMessage( MATRIX_DIRTY );
 	}	
 	
-	private function recalculateLocalTransform() : Matrix {
+	private function recalculateLocalTransform() : Void {
 		_localTransform.identity();
 		_localTransform.translate( paddingX, paddingY );
 		_localTransform.translate( -pivotX, -pivotY );
@@ -83,23 +86,31 @@ class Transform extends Component
 		_localTransform.rotate( rotation );
 		_localTransform.translate( x, y );
 		_isLocalDirty = false;
-		return _localTransform;
 	}
 	
-	private function recalculateWorldTransform() : Matrix {
+	private function recalculateWorldTransform() : Void {
 		
 		if ( _isLocalDirty ) recalculateLocalTransform();
 		_worldTransform.copyFrom( _localTransform );
+		_renderTransform.identity();
+		
+		// If an object is masked, global transforms will all be in this coordinate
+		var isMasked : Bool = gameObject.display != null && gameObject.display.clipRect != null;
 		
 		if ( gameObject.parent != null ) {
 			_worldTransform.concat( gameObject.parent.transform.worldTransform );
+			if ( !isMasked ) {
+				_renderTransform.copyFrom( _localTransform );
+				_renderTransform.concat( gameObject.parent.transform.renderTransform );
+			}else {
+				_renderTransform.translate( -gameObject.display.clipRect.x, -gameObject.display.clipRect.y );
+			}
 		}
 			
 		_inverseWorldTransform.copyFrom(_worldTransform);
 		_inverseWorldTransform.invert();
 		
 		_isWorldDirty = false;
-		return worldTransform;
 		
 	}
 	
@@ -158,7 +169,6 @@ class Transform extends Component
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
 		}
-		
 		return _worldTransform;
 	}
 	
@@ -167,7 +177,6 @@ class Transform extends Component
 		if ( _isLocalDirty ) {
 			recalculateLocalTransform();
 		}
-		
 		return _localTransform;
 	}
 	
@@ -176,8 +185,15 @@ class Transform extends Component
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
 		}
-		
 		return _inverseWorldTransform;
+	}
+	
+	private function get_renderTransform() : Matrix {
+		
+		if ( _isWorldDirty || _isLocalDirty ) {
+			recalculateWorldTransform();
+		}
+		return _renderTransform;
 	}
 	
 	public function localToGlobal( point : Point ) : Point {

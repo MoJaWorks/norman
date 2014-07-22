@@ -2,8 +2,6 @@
 <project>
 	<haxelib name="openfl" />		
 	<assets path="assets/shaders" rename="shaders"/>
-	
-	<window hardware="true" allow-shaders="true" require-shaders="true" depth-buffer="false" stencil-buffer="true" />
-	
+		
 	<haxeflag name="-swf-lib lib/AGALAssembler.swf" if="flash" />
 </project>

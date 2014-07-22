@@ -48,7 +48,7 @@ class Image extends Display
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.worldTransform, getFinalAlpha(), red, green, blue );
+		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.renderTransform, getFinalAlpha(), red, green, blue );
 	}
 	
 	override public function getNaturalWidth():Float 

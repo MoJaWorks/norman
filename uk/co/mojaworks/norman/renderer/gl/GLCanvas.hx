@@ -11,6 +11,7 @@ import openfl.geom.Rectangle;
 import openfl.geom.Rectangle;
 import openfl.gl.GL;
 import openfl.gl.GLBuffer;
+import openfl.gl.GLFramebuffer;
 import openfl.gl.GLProgram;
 import openfl.gl.GLShader;
 import openfl.gl.GLTexture;
@@ -50,6 +51,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	// Relevant shaders
 	var _imageShader : GLShaderWrapper;
 	var _fillShader : GLShaderWrapper;
+	var _imageDirectShader : GLShaderWrapper;
 	
 	var _projectionMatrix : Matrix3D;
 	var _modelViewMatrix : Matrix3D;
@@ -119,6 +121,11 @@ class GLCanvas extends CoreObject implements ICanvas
 		_fillShader = new GLShaderWrapper( 
 			Assets.getText("shaders/glsl/fill.vs.glsl"),
 			Assets.getText("shaders/glsl/fill.fs.glsl")
+		);
+		
+		_imageDirectShader = new GLShaderWrapper( 
+			Assets.getText("shaders/glsl/image.vs.glsl"),
+			Assets.getText("shaders/glsl/image-direct.fs.glsl")
 		);
 		
 	}
@@ -318,8 +325,10 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.bindFramebuffer( GL.FRAMEBUFFER, fbData.frameBuffer );
 		GL.bindTexture( GL.TEXTURE_2D, fbData.texture );
 		GL.texImage2D( GL.TEXTURE_2D, 0, GL.RGBA, Std.int(rect.width), Std.int(rect.height), 0, GL.RGBA, GL.UNSIGNED_BYTE, null );
-		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST );
-		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST );
+		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
+		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
+		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
+		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE );
 		
 		GL.framebufferTexture2D( GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, fbData.texture, 0 );
 		
@@ -334,10 +343,10 @@ class GLCanvas extends CoreObject implements ICanvas
 		];
 		
 		var uvs : Array<Float> = [
-			1, 1,
-			0, 1,
 			1, 0,
-			0, 0
+			0, 0,
+			1, 1,
+			0, 1
 		];
 		
 		var i : Int = 0;
@@ -351,6 +360,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			_maskVertices.push( 1 );
 			_maskVertices.push( uvs[i * 2] );
 			_maskVertices.push( uvs[(i * 2) + 1] );
+			trace("Added mask point", pt );
 			i++;
 		}		
 		
@@ -495,19 +505,31 @@ class GLCanvas extends CoreObject implements ICanvas
 		}else {
 			GL.blendFunc( prev_blend_src, prev_blend_dst );
 		}
-		//GL.disable( GL.BLEND );
-		//trace( "Error code end", GL.getError() );
+		
+		// Release memory used for masks
+		for ( mask in _masks ) {
+			GL.deleteTexture( mask.texture );
+			GL.deleteFramebuffer( mask.frameBuffer );
+		}
+		
 	}
 	
-	private function renderFrameBuffer( rect : Rectangle, currentMask : GLFrameBufferData ) : Void {
+	private function renderFrameBuffer( screenRect : Rectangle, currentMask : GLFrameBufferData ) : Void {
 		
 		trace("Rendering framebuffer" );
 		
-		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
-		_projectionMatrix = Matrix3D.createOrtho( 0, rect.width, rect.height, 0, 1000, -1000 );
-		GL.bindFramebuffer( GL.FRAMEBUFFER, null );
+		if ( _maskStack.length > 0 ) {
+			var currentMask : GLFrameBufferData = _masks[getCurrentMask()];
+			GL.bindFramebuffer( GL.FRAMEBUFFER, currentMask.frameBuffer );
+			GL.viewport( 0, 0, Std.int(currentMask.bounds.width), Std.int(currentMask.bounds.height) );
+			_projectionMatrix = Matrix3D.createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
+		}else {
+			GL.viewport( Std.int( screenRect.x ), Std.int( screenRect.y ), Std.int( screenRect.width ), Std.int( screenRect.height ) );
+			_projectionMatrix = Matrix3D.createOrtho( 0, screenRect.width, screenRect.height, 0, 1000, -1000 );
+			GL.bindFramebuffer( GL.FRAMEBUFFER, null );
+		}		
 		
-		GL.useProgram( _imageShader.program );
+		GL.useProgram( _imageDirectShader.program );
 			
 		var vertexAttrib = _imageShader.getAttrib( "aVertexPosition" );
 		var colorAttrib = _imageShader.getAttrib( "aVertexColor" );
@@ -533,7 +555,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.uniformMatrix3D( uProjectionMatrix, false, _projectionMatrix );
 		GL.uniformMatrix3D( uMVMatrix, false, _modelViewMatrix );
 		
-		GL.drawArrays( GL.TRIANGLE_STRIP, Std.int( currentMask.index / 6 ), 4 );
+		GL.drawArrays( GL.TRIANGLE_STRIP, Std.int( currentMask.index / VERTEX_SIZE ), 4 );
 		
 		GL.disableVertexAttribArray( colorAttrib );
 		GL.disableVertexAttribArray( vertexAttrib );
