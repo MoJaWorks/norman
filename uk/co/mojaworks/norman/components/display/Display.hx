@@ -90,11 +90,11 @@ class Display extends Component
 		
 	public function preRender( canvas : ICanvas ) : Void {
 		
-		trace("Prerender", clipRect);
+		//trace("Prerender", clipRect);
 		
 		if ( clipRect != null ) {
 			
-			trace("Adding mask", gameObject.parent );
+			//trace("Adding mask", gameObject.parent );
 			
 			if ( gameObject.parent != null ) {
 				var transform : Matrix = gameObject.parent.transform.renderTransform.clone();

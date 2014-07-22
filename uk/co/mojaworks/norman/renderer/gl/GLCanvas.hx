@@ -153,6 +153,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		_batches = [];
 		_indices = [];
 		_maskVertices = [];
+		_masks = [];
+		_maskStack = [];
 		
 		// Collect all of the vertex data
 		renderLevel( root );
@@ -167,20 +169,26 @@ class GLCanvas extends CoreObject implements ICanvas
 		// Pass it to the graphics card
 		//trace("Pushing to vertex buffer", _vertices );
 		
+		GL.deleteBuffer( _vertexBuffer );
+		_vertexBuffer = GL.createBuffer();
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _vertices ), GL.STREAM_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		//trace("Pushing to index buffer", _indices );
 		
+		GL.deleteBuffer( _indexBuffer );
+		_indexBuffer = GL.createBuffer();
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( cast _indices ), GL.STREAM_DRAW );
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		
 		
-		trace("Pushing to mask buffer", _maskVertices );
+		//trace("Pushing to mask buffer", _maskVertices );
+		GL.deleteBuffer( _maskBuffer );
+		_maskBuffer = GL.createBuffer();
 		GL.bindBuffer( GL.ARRAY_BUFFER, _maskBuffer );
-		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _maskVertices ), GL.DYNAMIC_DRAW );
+		GL.bufferData( GL.ARRAY_BUFFER, new Float32Array( cast _maskVertices ), GL.STREAM_DRAW );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 			
 	}
@@ -360,7 +368,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			_maskVertices.push( 1 );
 			_maskVertices.push( uvs[i * 2] );
 			_maskVertices.push( uvs[(i * 2) + 1] );
-			trace("Added mask point", pt );
+			//trace("Added mask point", pt );
 			i++;
 		}		
 		
@@ -427,14 +435,14 @@ class GLCanvas extends CoreObject implements ICanvas
 				
 				// Moving up the stack, render the current texture
 				if ( batch.mask < getCurrentMask() ) {
-					trace("Drawing mask texture");
+					//trace("Drawing mask texture");
 					_maskStack.pop();
 					renderFrameBuffer( rect, currentMask );
 				}
 				
 				if ( batch.mask > -1 ) {
 					
-					trace("Collecting on frame buffer");
+					//trace("Collecting on frame buffer");
 					
 					currentMask = _masks[batch.mask];
 					_maskStack.push( batch.mask );
@@ -510,13 +518,14 @@ class GLCanvas extends CoreObject implements ICanvas
 		for ( mask in _masks ) {
 			GL.deleteTexture( mask.texture );
 			GL.deleteFramebuffer( mask.frameBuffer );
+			mask.bounds = null;
 		}
 		
 	}
 	
 	private function renderFrameBuffer( screenRect : Rectangle, currentMask : GLFrameBufferData ) : Void {
 		
-		trace("Rendering framebuffer" );
+		//trace("Rendering framebuffer" );
 		
 		if ( _maskStack.length > 0 ) {
 			var currentMask : GLFrameBufferData = _masks[getCurrentMask()];
@@ -563,6 +572,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.bindTexture( GL.TEXTURE_2D, null );
 		GL.disable( GL.TEXTURE_2D );
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
+		
 	}
 	
 	
