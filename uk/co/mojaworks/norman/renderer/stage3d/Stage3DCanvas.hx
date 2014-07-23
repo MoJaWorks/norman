@@ -38,12 +38,14 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	var _vertexBuffer : VertexBuffer3D;
 	var _indexBuffer : IndexBuffer3D;
 	var _maskVertexBuffer : VertexBuffer3D;
+	var _maskIndexBuffer : IndexBuffer3D;
 	var _batches : Array<Stage3DBatchData>;
 	
 	// A temporary array re-generated each frame with positions of all vertices
 	var _vertices:Vector<Float>;
-	var _maskVertices:Vector<Float>;
 	var _indices:Vector<UInt>;
+	var _maskVertices:Vector<Float>;
+	var _maskIndices:Vector<UInt>;
 	var _root : GameObject;
 	
 	// The opengl view object used to reserve our spot on the display list
@@ -68,10 +70,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	
 	public function init(rect:Rectangle) 
 	{		
-		_vertices = [];
-		_batches = [];
-		_indices = [];
-		
+	
 		_rect = rect;
 		
 		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
@@ -87,6 +86,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	private function onContextCreated( e : Event ) : Void {
 		var target : Stage3D = cast e.target;
 		_context = target.context3D;
+		_context.enableErrorChecking = true;
 		
 		_context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0, false );
 		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
@@ -137,6 +137,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_masks = [];
 		_maskStack = [];
 		_maskVertices = [];
+		_maskIndices = [];
 		
 		// Collect all of the vertex data
 		renderLevel( root );
@@ -151,10 +152,14 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_indexBuffer.uploadFromVector( _indices, 0, _indices.length );
 		
 		if ( _maskVertexBuffer != null ) _maskVertexBuffer.dispose();
+		if ( _maskIndexBuffer != null ) _maskIndexBuffer.dispose();
 		if ( _maskVertices.length > 0 ) {
 			//trace("Creating mask buffer, ", _maskVertices );
 			_maskVertexBuffer = _context.createVertexBuffer( Std.int(_maskVertices.length / VERTEX_SIZE), VERTEX_SIZE );
 			_maskVertexBuffer.uploadFromVector( _maskVertices, 0, Std.int(_maskVertices.length / VERTEX_SIZE) );
+			
+			_maskIndexBuffer = _context.createIndexBuffer( _maskIndices.length );
+			_maskIndexBuffer.uploadFromVector( _maskIndices, 0, _maskIndices.length );
 		}
 		
 		/**
@@ -175,8 +180,12 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 				//trace("Using mask");
 				// Moving up the stack, render the current texture
 				if ( batch.mask < getCurrentMask() ) {
-					_maskStack.pop();
-					renderFrameBuffer( currentMask );
+					while ( batch.mask < getCurrentMask() ) {
+						//trace("Drawing mask texture");
+						var current : Int = getCurrentMask();
+						_maskStack.pop();
+						renderFrameBuffer( _masks[current] );
+					}
 				}else {
 					newLayer = true;
 				}
@@ -243,9 +252,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			
 			var nextMask : Stage3DFrameBufferData = _masks[getCurrentMask()];
 			_context.setRenderToTexture( nextMask.texture );
+			_context.clear( 0, 0, 0, 0 );
 			_context.setScissorRectangle( nextMask.scissor );
 			_mvpMatrix = createOrtho( 0, nextMask.bounds.width, nextMask.bounds.height, 0, 1000, -1000 );
-			trace("Rendering framebuffer onto higher framebuffer", nextMask.bounds, nextMask.scissor);
+			trace("Rendering framebuffer onto higher framebuffer", currentMask.bounds, currentMask.scissor, nextMask.bounds, nextMask.scissor);
 		}else {
 			trace("Rendering framebuffer to screen");
 			_mvpMatrix = createOrtho( 0, _rect.width, _rect.height, 0, 1000, -1000 );
@@ -261,17 +271,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_context.setVertexBufferAt( 2, _maskVertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
 		_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _mvpMatrix, true );
 		
-		var points : Vector<UInt> = new Vector<UInt>();
-		points.push( currentMask.index + 0 );
-		points.push( currentMask.index + 1 );
-		points.push( currentMask.index + 2 );
-		points.push( currentMask.index + 1 );
-		points.push( currentMask.index + 3 );
-		points.push( currentMask.index + 2 );
-		var indexBuffer = _context.createIndexBuffer( points.length );
-		indexBuffer.uploadFromVector( points, 0, points.length );
-		_context.drawTriangles( indexBuffer );
-		indexBuffer.dispose();
+		trace("Rendering using", currentMask.index );
+		_context.drawTriangles( _maskIndexBuffer, currentMask.index, 2 );
 		
 		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
 		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
@@ -422,7 +423,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		_masks.push( fbData );
 		
-		fbData.index = _maskVertices.length;
+		fbData.index = _maskIndices.length;
 		fbData.texture = _context.createTexture( Std.int(fbData.bounds.width), Std.int(fbData.bounds.height), Context3DTextureFormat.BGRA, true );
 		
 		var pts : Array<Point> = [
@@ -441,6 +442,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		var i : Int = 0;
 		
+		var offset : Int = Std.int(_maskVertices.length / VERTEX_SIZE);
+		
 		for ( pt in pts ) {
 			_maskVertices.push( pt.x );
 			_maskVertices.push( pt.y );
@@ -451,7 +454,14 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			_maskVertices.push( uvs[i * 2] );
 			_maskVertices.push( uvs[(i * 2) + 1] );
 			i++;
-		}		
+		}	
+		
+		_maskIndices.push( offset + 0 );
+		_maskIndices.push( offset + 1 );
+		_maskIndices.push( offset + 2 );
+		_maskIndices.push( offset + 1 );
+		_maskIndices.push( offset + 3 );
+		_maskIndices.push( offset + 2 );
 		
 	}
 	

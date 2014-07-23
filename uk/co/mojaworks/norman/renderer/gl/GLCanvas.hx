@@ -267,8 +267,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
 		var width : Float = sourceRect.width * texture.sourceBitmap.width;
 		var height : Float = sourceRect.height * texture.sourceBitmap.height;
+		var mask : Int = getCurrentMask();
 		
-		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture && batch.mask == getCurrentMask() ) {
+		if ( batch != null && batch.shader == _imageShader && batch.texture == texture.texture && batch.mask == mask ) {
 			batch.length += 6;	
 		}else {
 			batch = new GLBatchData();
@@ -276,7 +277,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			batch.length = 6;
 			batch.shader = _imageShader;
 			batch.texture = texture.texture;
-			batch.mask = getCurrentMask();
+			batch.mask = mask;
 			_batches.push( batch );
 		}
 		
@@ -436,15 +437,16 @@ class GLCanvas extends CoreObject implements ICanvas
 			
 		for ( batch in _batches ) {
 				
-			//trace("Drawing batch", batch.start, batch.length );
+			trace("Drawing batch", batch.start, batch.length, batch.mask, getCurrentMask() );
 			
 			if ( batch.mask != getCurrentMask() ) {
 				
 				// Moving up the stack, render the current texture
-				if ( batch.mask < getCurrentMask() ) {
+				while ( batch.mask < getCurrentMask() ) {
 					//trace("Drawing mask texture");
+					var current : Int = getCurrentMask();
 					_maskStack.pop();
-					renderFrameBuffer( rect, currentMask );
+					renderFrameBuffer( rect, _masks[current] );
 				}
 				
 				if ( batch.mask > -1 ) {
@@ -459,6 +461,8 @@ class GLCanvas extends CoreObject implements ICanvas
 				}
 				
 			}
+			
+			trace("Drawing polys");
 			
 			GL.useProgram( batch.shader.program );
 			
@@ -535,11 +539,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		//trace("Rendering framebuffer" );
 		
 		if ( _maskStack.length > 0 ) {
+			trace("Rendering back to buffer", _maskStack );
 			var currentMask : GLFrameBufferData = _masks[getCurrentMask()];
 			GL.bindFramebuffer( GL.FRAMEBUFFER, currentMask.frameBuffer );
 			GL.viewport( 0, 0, Std.int(currentMask.bounds.width), Std.int(currentMask.bounds.height) );
 			_projectionMatrix = Matrix3D.createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
 		}else {
+			trace("Rendering back to screen");
 			GL.viewport( Std.int( screenRect.x ), Std.int( screenRect.y ), Std.int( screenRect.width ), Std.int( screenRect.height ) );
 			_projectionMatrix = Matrix3D.createOrtho( 0, screenRect.width, screenRect.height, 0, 1000, -1000 );
 			GL.bindFramebuffer( GL.FRAMEBUFFER, null );
