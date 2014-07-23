@@ -60,6 +60,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	var _masks : Array<GLFrameBufferData>;
 	var _maskStack : Array<Int>;
 	var _maskVertices : Array<Float>;
+	var _abandonCurrentFrame : Bool = false;
 	
 	
 	public function new() 
@@ -138,7 +139,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	public function resize(rect:Rectangle):Void 
 	{
-		
+		_abandonCurrentFrame = true;
 	}
 	
 	/***
@@ -436,7 +437,12 @@ class GLCanvas extends CoreObject implements ICanvas
 		var currentMask : GLFrameBufferData = null;
 			
 		for ( batch in _batches ) {
-				
+			
+			if ( _abandonCurrentFrame ) {
+				_abandonCurrentFrame = false;
+				return;
+			}
+			
 			trace("Drawing batch", batch.start, batch.length, batch.mask, getCurrentMask() );
 			
 			if ( batch.mask != getCurrentMask() ) {
