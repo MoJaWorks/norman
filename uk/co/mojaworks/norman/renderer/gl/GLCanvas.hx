@@ -70,12 +70,9 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	public function init(rect:Rectangle) 
 	{		
-		#if html5
-			if ( GL.__context == null ) {
-				trace("No context");
-				return;
-			}
-		#end
+		
+		_canvas = new OpenGLView();
+		_canvas.render = _onRender;
 		
 		_vertices = [];
 		_batches = [];
@@ -87,10 +84,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		initShaders();
 		initBuffers();
 		
-		_canvas = new OpenGLView();
 		core.stage.addEventListener( OpenGLView.CONTEXT_LOST, onContextLost );
 		core.stage.addEventListener( OpenGLView.CONTEXT_RESTORED, onContextRestored );
-		_canvas.render = _onRender;
 		
 		GL.clearColor( 0, 0, 0, 1 );
 		
@@ -159,14 +154,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		// Collect all of the vertex data
 		renderLevel( root );
-		
-		#if html5
-			if ( GL.__context == null ) {
-				trace("No context");
-				return;
-			}
-		#end
-		
+				
 		// Pass it to the graphics card
 		//trace("Pushing to vertex buffer", _vertices );
 		
@@ -276,7 +264,11 @@ class GLCanvas extends CoreObject implements ICanvas
 			batch = new GLBatchData();
 			batch.start = _indices.length;
 			batch.length = 6;
-			batch.shader = _imageShader;
+			#if html5
+				batch.shader = _imageDirectShader;
+			#else
+				batch.shader = _imageShader;
+			#end
 			batch.texture = texture.texture;
 			batch.mask = mask;
 			_batches.push( batch );
@@ -322,13 +314,6 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 	public function pushMask(rect:Rectangle, transform:Matrix):Void 
 	{
-		
-		#if html5
-			if ( GL.__context == null ) {
-				trace("No context");
-				return;
-			}
-		#end
 		
 		_maskStack.push( _masks.length );
 		
@@ -402,14 +387,7 @@ class GLCanvas extends CoreObject implements ICanvas
 	 */
 	
 	private function _onRender( rect : Rectangle ) : Void {
-		
-		#if html5
-			if ( GL.__context == null ) {
-				trace("No context");
-				return;
-			}
-		#end
-		
+				
 		GL.viewport( Std.int( rect.x ), Std.int( rect.y ), Std.int( rect.width ), Std.int( rect.height ) );
 		
 		GL.clearColor( 0, 0, 0, 1 );
@@ -443,7 +421,7 @@ class GLCanvas extends CoreObject implements ICanvas
 				return;
 			}
 			
-			trace("Drawing batch", batch.start, batch.length, batch.mask, getCurrentMask() );
+			//trace("Drawing batch", batch.start, batch.length, batch.mask, getCurrentMask() );
 			
 			if ( batch.mask != getCurrentMask() ) {
 				
@@ -468,10 +446,11 @@ class GLCanvas extends CoreObject implements ICanvas
 				
 			}
 			
-			trace("Drawing polys");
+			//trace("Drawing polys");
 			
 			GL.useProgram( batch.shader.program );
 			
+			//trace("Getting uniforms in render");
 			vertexAttrib = batch.shader.getAttrib( "aVertexPosition" );
 			colorAttrib = batch.shader.getAttrib( "aVertexColor" );
 			uMVMatrix = batch.shader.getUniform( "uModelViewMatrix" );
@@ -493,7 +472,9 @@ class GLCanvas extends CoreObject implements ICanvas
 				GL.vertexAttribPointer( texAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
 				
 				GL.activeTexture(GL.TEXTURE0);
-				GL.enable( GL.TEXTURE_2D );
+				#if !html5
+					GL.enable( GL.TEXTURE_2D );
+				#end
 				GL.bindTexture( GL.TEXTURE_2D, batch.texture );
 				GL.uniform1i( uImage, 0 );
 			}
@@ -510,7 +491,9 @@ class GLCanvas extends CoreObject implements ICanvas
 			if ( batch.texture != null ) {
 				GL.disableVertexAttribArray( texAttrib );
 				GL.bindTexture( GL.TEXTURE_2D, null );
-				GL.disable( GL.TEXTURE_2D );
+				#if !html5
+					GL.disable( GL.TEXTURE_2D );
+				#end
 			}
 			
 			GL.bindBuffer( GL.ARRAY_BUFFER, null );
@@ -545,13 +528,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		//trace("Rendering framebuffer" );
 		
 		if ( _maskStack.length > 0 ) {
-			trace("Rendering back to buffer", _maskStack );
+			//trace("Rendering back to buffer", _maskStack );
 			var currentMask : GLFrameBufferData = _masks[getCurrentMask()];
 			GL.bindFramebuffer( GL.FRAMEBUFFER, currentMask.frameBuffer );
 			GL.viewport( 0, 0, Std.int(currentMask.bounds.width), Std.int(currentMask.bounds.height) );
 			_projectionMatrix = Matrix3D.createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
 		}else {
-			trace("Rendering back to screen");
+			//trace("Rendering back to screen");
 			GL.viewport( Std.int( screenRect.x ), Std.int( screenRect.y ), Std.int( screenRect.width ), Std.int( screenRect.height ) );
 			_projectionMatrix = Matrix3D.createOrtho( 0, screenRect.width, screenRect.height, 0, 1000, -1000 );
 			GL.bindFramebuffer( GL.FRAMEBUFFER, null );
@@ -559,12 +542,12 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 		GL.useProgram( _imageDirectShader.program );
 			
-		var vertexAttrib = _imageShader.getAttrib( "aVertexPosition" );
-		var colorAttrib = _imageShader.getAttrib( "aVertexColor" );
-		var texAttrib = _imageShader.getAttrib("aTexCoord");
-		var uMVMatrix = _imageShader.getUniform( "uModelViewMatrix" );
-		var uImage = _imageShader.getUniform( "uImage0" );
-		var uProjectionMatrix = _imageShader.getUniform( "uProjectionMatrix" );
+		var vertexAttrib = _imageDirectShader.getAttrib( "aVertexPosition" );
+		var colorAttrib = _imageDirectShader.getAttrib( "aVertexColor" );
+		var texAttrib = _imageDirectShader.getAttrib("aTexCoord");
+		var uMVMatrix = _imageDirectShader.getUniform( "uModelViewMatrix" );
+		var uImage = _imageDirectShader.getUniform( "uImage0" );
+		var uProjectionMatrix = _imageDirectShader.getUniform( "uProjectionMatrix" );
 				
 		GL.enableVertexAttribArray( vertexAttrib );
 		GL.enableVertexAttribArray( colorAttrib );
@@ -576,7 +559,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.vertexAttribPointer( texAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_TEX * 4 );
 		
 		GL.activeTexture(GL.TEXTURE0);
-		GL.enable( GL.TEXTURE_2D );
+		#if !html5
+			GL.enable( GL.TEXTURE_2D );
+		#end
 		GL.bindTexture( GL.TEXTURE_2D, currentMask.texture );
 		GL.uniform1i( uImage, 0 );
 		
@@ -589,7 +574,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.disableVertexAttribArray( vertexAttrib );
 		GL.disableVertexAttribArray( texAttrib );
 		GL.bindTexture( GL.TEXTURE_2D, null );
-		GL.disable( GL.TEXTURE_2D );
+		#if !html5
+			GL.disable( GL.TEXTURE_2D );
+		#end
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 	}

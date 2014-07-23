@@ -41,13 +41,6 @@ class GLTextureManager extends TextureManager
 	public function createGLTexture( t_data : TextureData ) : Void {
 		// Create the GL texture
 		
-		#if html5
-			if ( GL.__context == null ) {
-				trace("No context");
-				return;
-			}
-		#end
-		
 		t_data.texture = GL.createTexture();
 		GL.bindTexture( GL.TEXTURE_2D, t_data.texture );
 		GL.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
