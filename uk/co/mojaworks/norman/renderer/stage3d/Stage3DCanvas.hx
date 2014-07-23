@@ -196,7 +196,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 					_context.setScissorRectangle( currentMask.scissor );
 					_mvpMatrix = createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
 										
-					trace("Started render to texture");
+					//trace("Started render to texture");
 					//_projectionMatrix = createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
 				}
 				
@@ -208,7 +208,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _mvpMatrix, true );
 			
 			
-			trace("Drawing batch", batch.start, batch.length );
+			//trace("Drawing batch", batch.start, batch.length );
 			
 			if ( batch.texture != null ) {
 				_context.setTextureAt( 0, batch.texture );
@@ -262,10 +262,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			_context.clear( 0, 0, 0, 0 );
 			_context.setScissorRectangle( nextMask.scissor );
 			_mvpMatrix = createOrtho( 0, nextMask.bounds.width, nextMask.bounds.height, 0, 1000, -1000 );
-			trace("Rendering framebuffer onto higher framebuffer", currentMask.bounds, currentMask.scissor, nextMask.bounds, nextMask.scissor);
+			//trace("Rendering framebuffer onto higher framebuffer", currentMask.bounds, currentMask.scissor, nextMask.bounds, nextMask.scissor);
 			
 		}else {
-			trace("Rendering framebuffer to screen");
+			//trace("Rendering framebuffer to screen");
 			_mvpMatrix = createOrtho( 0, _rect.width, _rect.height, 0, 1000, -1000 );
 			_context.setScissorRectangle( null );
 			_context.setRenderToBackBuffer();
@@ -310,7 +310,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 		_context.setTextureAt( 0, currentMask.textures[ currentMask.lastTextureUsed ] );
 		
-		trace("Rendering using", currentMask.index );
+		//trace("Rendering using", currentMask.index );
 		_context.drawTriangles( _maskIndexBuffer, currentMask.index, 2 );
 		
 		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
@@ -458,8 +458,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		fbData.bounds.width = MathUtils.roundToNextPow2(rect.width);
 		fbData.bounds.height = MathUtils.roundToNextPow2(rect.height);
 		
-		trace("Creating new texture", rect );
-		
 		_masks.push( fbData );
 		
 		fbData.index = _maskIndices.length;
@@ -468,6 +466,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		fbData.textures = [];
 		fbData.textures.push( _context.createTexture( Std.int(fbData.bounds.width), Std.int(fbData.bounds.height), Context3DTextureFormat.BGRA, true ) );
 		fbData.textures.push( _context.createTexture( Std.int(fbData.bounds.width), Std.int(fbData.bounds.height), Context3DTextureFormat.BGRA, true ) );
+		
+		//trace("Mask transform", transform );
 		
 		var pts : Array<Point> = [
 			transform.transformPoint( new Point(fbData.bounds.right, fbData.bounds.bottom) ),

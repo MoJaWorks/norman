@@ -97,8 +97,8 @@ class Display extends Component
 			//trace("Adding mask", gameObject.parent );
 			
 			if ( gameObject.parent != null ) {
-				var transform : Matrix = gameObject.parent.transform.renderTransform.clone();
-				transform.concat( gameObject.transform.localTransform );
+				var transform : Matrix = gameObject.transform.localTransform.clone();
+				transform.concat( gameObject.parent.transform.renderTransform );
 				canvas.pushMask( getBounds(), transform );
 			}else {
 				canvas.pushMask( getBounds(), gameObject.transform.renderTransform );
