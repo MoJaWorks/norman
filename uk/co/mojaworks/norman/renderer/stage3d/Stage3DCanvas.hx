@@ -79,8 +79,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
 		core.stage.stage3Ds[0].requestContext3D( );
 				
-		//_modelViewMatrix = new Matrix3D();
-		//_modelViewMatrix.identity();
 		_mvpMatrix = createOrtho( 0, Std.int(_rect.width), Std.int(_rect.height), 0, 1000, -1000 );
 		
 		resize( rect );
@@ -117,7 +115,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		
 	public function resize(rect:Rectangle):Void 
 	{
-		trace("Resize, ", rect );
 		_rect = rect;
 		if ( _context != null ) _context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0, false );
 		_mvpMatrix = createOrtho( 0, Std.int(_rect.width), Std.int(_rect.height), 0, 1000, -1000 );
@@ -157,10 +154,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		if ( _maskVertexBuffer != null ) _maskVertexBuffer.dispose();
 		if ( _maskIndexBuffer != null ) _maskIndexBuffer.dispose();
 		if ( _maskVertices.length > 0 ) {
-			//trace("Creating mask buffer, ", _maskVertices );
 			_maskVertexBuffer = _context.createVertexBuffer( Std.int(_maskVertices.length / VERTEX_SIZE), VERTEX_SIZE );
 			_maskVertexBuffer.uploadFromVector( _maskVertices, 0, Std.int(_maskVertices.length / VERTEX_SIZE) );
-			
 			_maskIndexBuffer = _context.createIndexBuffer( _maskIndices.length );
 			_maskIndexBuffer.uploadFromVector( _maskIndices, 0, _maskIndices.length );
 		}
@@ -168,20 +163,19 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		/**
 		 * render
 		 */
-		
-		
-		
+			
 		_context.clear( 0, 0, 0, 1 );
 		
 		var currentMask : Stage3DFrameBufferData = null;
+		var maskTextureUsed : Int = -1;
 		
 		for ( batch in _batches ) {
+			
 			
 			if ( batch.mask != getCurrentMask() ) {
 
 				// Moving up the stack, render the current texture
 				while ( batch.mask < getCurrentMask() ) {
-					//trace("Drawing mask texture");
 					var current : Int = getCurrentMask();
 					_maskStack.pop();
 					renderFrameBuffer( _masks[current] );
@@ -190,14 +184,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 				if ( batch.mask > -1 ) {
 					currentMask = _masks[batch.mask];
 					_maskStack.push( batch.mask );
-					_context.setRenderToTexture( currentMask.textures[0] );
-					currentMask.lastTextureUsed = 0;
-					_context.clear(0, 0, 0, 0);
-					_context.setScissorRectangle( currentMask.scissor );
-					_mvpMatrix = createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
-										
-					//trace("Started render to texture");
-					//_projectionMatrix = createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
+					maskTextureUsed = setRenderBuffer( currentMask );
+				}else {
+					currentMask = null;
+					maskTextureUsed = -1;
 				}
 				
 			}
@@ -206,9 +196,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
 			_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
 			_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _mvpMatrix, true );
-			
-			
-			//trace("Drawing batch", batch.start, batch.length );
 			
 			if ( batch.texture != null ) {
 				_context.setTextureAt( 0, batch.texture );
@@ -220,6 +207,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 			if ( batch.texture != null ) {
 				_context.setTextureAt( 0, null );
 				_context.setVertexBufferAt( 2, null );
+			}
+			
+			if ( batch.mask > -1 ) {
+				currentMask.lastTextureUsed = maskTextureUsed;
 			}
 			
 			_context.setVertexBufferAt( 0, null );
@@ -243,29 +234,36 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		}
 	}
 	
+	
+	private function setRenderBuffer( mask : Stage3DFrameBufferData ) : Int {
+		
+		var textureUsed : Int = -1;
+		
+		if ( mask.lastTextureUsed == 0 ) {
+			_context.setRenderToTexture( mask.textures[1] );
+			textureUsed = 1;
+		}else {
+			_context.setRenderToTexture( mask.textures[0] );
+			textureUsed = 0;
+		}
+		_context.clear( 0, 0, 0, 0 );
+		_context.setScissorRectangle( mask.scissor );
+		_mvpMatrix = createOrtho( 0, mask.bounds.width, mask.bounds.height, 0, 1000, -1000 );
+		
+		return textureUsed;
+		
+	}
+	
+	
 	private function renderFrameBuffer( currentMask : Stage3DFrameBufferData ) : Void {
 		
 		var nextMask : Stage3DFrameBufferData = null;
 		var textureUsed : Int = -1;
 		
 		if ( _maskStack.length > 0 ) {
-			
 			nextMask = _masks[getCurrentMask()];
-			
-			if ( nextMask.lastTextureUsed == 0 ) {
-				_context.setRenderToTexture( nextMask.textures[1] );
-				textureUsed = 1;
-			}else {
-				_context.setRenderToTexture( nextMask.textures[0] );
-				textureUsed = 0;
-			}
-			_context.clear( 0, 0, 0, 0 );
-			_context.setScissorRectangle( nextMask.scissor );
-			_mvpMatrix = createOrtho( 0, nextMask.bounds.width, nextMask.bounds.height, 0, 1000, -1000 );
-			//trace("Rendering framebuffer onto higher framebuffer", currentMask.bounds, currentMask.scissor, nextMask.bounds, nextMask.scissor);
-			
+			textureUsed = setRenderBuffer( nextMask );
 		}else {
-			//trace("Rendering framebuffer to screen");
 			_mvpMatrix = createOrtho( 0, _rect.width, _rect.height, 0, 1000, -1000 );
 			_context.setScissorRectangle( null );
 			_context.setRenderToBackBuffer();
@@ -275,8 +273,9 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _mvpMatrix, true );
 		
 		if ( nextMask != null && nextMask.lastTextureUsed > -1 ) {
-			// Render the last used texture to the current one
 			
+			// Render the last used texture to the current one
+			// This is purely because Stage3D has a strange requirement to clear the texture before use.
 			_context.setTextureAt( 0, nextMask.textures[ nextMask.lastTextureUsed ] );
 			
 			var verts : Vector<Float> = [
@@ -307,14 +306,10 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_context.setVertexBufferAt( 0, _maskVertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
 		_context.setVertexBufferAt( 1, _maskVertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
 		_context.setVertexBufferAt( 2, _maskVertexBuffer, VERTEX_TEX, Context3DVertexBufferFormat.FLOAT_2 );
-		
 		_context.setTextureAt( 0, currentMask.textures[ currentMask.lastTextureUsed ] );
 		
-		//trace("Rendering using", currentMask.index );
 		_context.drawTriangles( _maskIndexBuffer, currentMask.index, 2 );
 		
-		_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POS, Context3DVertexBufferFormat.FLOAT_2 );
-		_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
 		_context.setTextureAt( 0, null );
 		_context.setVertexBufferAt( 2, null );
 		
@@ -447,8 +442,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	
 	public function pushMask(rect:Rectangle, transform:Matrix):Void 
 	{
-		//trace("Pushing mask");
-		
 		_maskStack.push( _masks.length );
 		
 		var fbData : Stage3DFrameBufferData = new Stage3DFrameBufferData();
@@ -466,8 +459,6 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		fbData.textures = [];
 		fbData.textures.push( _context.createTexture( Std.int(fbData.bounds.width), Std.int(fbData.bounds.height), Context3DTextureFormat.BGRA, true ) );
 		fbData.textures.push( _context.createTexture( Std.int(fbData.bounds.width), Std.int(fbData.bounds.height), Context3DTextureFormat.BGRA, true ) );
-		
-		//trace("Mask transform", transform );
 		
 		var pts : Array<Point> = [
 			transform.transformPoint( new Point(fbData.bounds.right, fbData.bounds.bottom) ),

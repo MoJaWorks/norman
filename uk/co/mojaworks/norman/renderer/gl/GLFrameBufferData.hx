@@ -1,7 +1,5 @@
 package uk.co.mojaworks.norman.renderer.gl;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
-import openfl.gl.GLBuffer;
 import openfl.gl.GLFramebuffer;
 import openfl.gl.GLTexture;
 

@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.renderer.gl;
-import openfl.geom.Point;
 import openfl.gl.GLTexture;
 
 /**

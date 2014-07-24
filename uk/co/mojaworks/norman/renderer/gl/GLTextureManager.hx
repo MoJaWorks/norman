@@ -1,15 +1,7 @@
 package uk.co.mojaworks.norman.renderer.gl ;
 
-import flash.display.BitmapData;
-import haxe.Json;
-import openfl.Assets;
-import openfl.geom.Rectangle;
 import openfl.gl.GL;
-import openfl.gl.GLTexture;
-import openfl.utils.Int32Array;
 import openfl.utils.UInt8Array;
-import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.renderer.TextureData;
 
 /**

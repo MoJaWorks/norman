@@ -46,7 +46,6 @@ class Stage3DTextureManager extends TextureManager
 	override public function restoreTextures() 
 	{		
 		for ( key in _textures.keys() ) {
-			trace("Rebuilding texture", key );
 			createStage3DTexture( _textures.get(key) );
 		}
 	}

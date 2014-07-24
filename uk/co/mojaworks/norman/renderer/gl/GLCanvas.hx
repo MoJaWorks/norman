@@ -1,24 +1,17 @@
 package uk.co.mojaworks.norman.renderer.gl ;
-import openfl.events.Event;
-import openfl.geom.Matrix3D;
 import openfl.Assets;
 import openfl.display.DisplayObject;
 import openfl.display.OpenGLView;
-import openfl.geom.ColorTransform;
+import openfl.events.Event;
 import openfl.geom.Matrix;
+import openfl.geom.Matrix3D;
 import openfl.geom.Point;
-import openfl.geom.Rectangle;
 import openfl.geom.Rectangle;
 import openfl.gl.GL;
 import openfl.gl.GLBuffer;
-import openfl.gl.GLFramebuffer;
-import openfl.gl.GLProgram;
-import openfl.gl.GLShader;
-import openfl.gl.GLTexture;
 import openfl.gl.GLUniformLocation;
 import openfl.utils.Float32Array;
 import openfl.utils.Int16Array;
-import openfl.utils.UInt8Array;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -157,7 +150,6 @@ class GLCanvas extends CoreObject implements ICanvas
 				
 		// Pass it to the graphics card
 		//trace("Pushing to vertex buffer", _vertices );
-		
 		GL.deleteBuffer( _vertexBuffer );
 		_vertexBuffer = GL.createBuffer();
 		GL.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
@@ -165,7 +157,6 @@ class GLCanvas extends CoreObject implements ICanvas
 		GL.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		//trace("Pushing to index buffer", _indices );
-		
 		GL.deleteBuffer( _indexBuffer );
 		_indexBuffer = GL.createBuffer();
 		GL.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
@@ -402,15 +393,14 @@ class GLCanvas extends CoreObject implements ICanvas
 		var uProjectionMatrix : GLUniformLocation;
 		var uImage : GLUniformLocation;
 		
+		// Store the previous values so we can restore them
 		var prev_blended : Bool = GL.getParameter( GL.BLEND );
 		var prev_blend_src : Int = GL.getParameter( GL.BLEND_SRC_ALPHA );
 		var prev_blend_dst : Int = GL.getParameter( GL.BLEND_DST_ALPHA );
 		
 		GL.enable( GL.BLEND );
 		GL.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-		//trace( GL.isEnabled( GL.CULL_FACE ) );
 		
-		//trace("Begin draw", _batches );
 		_maskStack = [];
 		var currentMask : GLFrameBufferData = null;
 			
@@ -421,21 +411,16 @@ class GLCanvas extends CoreObject implements ICanvas
 				return;
 			}
 			
-			//trace("Drawing batch", batch.start, batch.length, batch.mask, getCurrentMask() );
-			
 			if ( batch.mask != getCurrentMask() ) {
 				
-				// Moving up the stack, render the current texture
+				// Moving up the stack, render the current texture and set the current framebuffer to be the next layer up
 				while ( batch.mask < getCurrentMask() ) {
-					//trace("Drawing mask texture");
 					var current : Int = getCurrentMask();
 					_maskStack.pop();
 					renderFrameBuffer( rect, _masks[current] );
 				}
 				
 				if ( batch.mask > -1 ) {
-					
-					//trace("Collecting on frame buffer");
 					
 					currentMask = _masks[batch.mask];
 					_maskStack.push( batch.mask );
@@ -446,11 +431,8 @@ class GLCanvas extends CoreObject implements ICanvas
 				
 			}
 			
-			//trace("Drawing polys");
-			
 			GL.useProgram( batch.shader.program );
 			
-			//trace("Getting uniforms in render");
 			vertexAttrib = batch.shader.getAttrib( "aVertexPosition" );
 			colorAttrib = batch.shader.getAttrib( "aVertexColor" );
 			uMVMatrix = batch.shader.getUniform( "uModelViewMatrix" );
@@ -501,6 +483,7 @@ class GLCanvas extends CoreObject implements ICanvas
 			
 		}
 		
+		// Render any framebuffers we are currently using
 		while ( _maskStack.length > 0 ) {
 			renderFrameBuffer( rect, _masks[_maskStack.pop()]);
 		}
@@ -525,20 +508,21 @@ class GLCanvas extends CoreObject implements ICanvas
 	
 	private function renderFrameBuffer( screenRect : Rectangle, currentMask : GLFrameBufferData ) : Void {
 		
-		//trace("Rendering framebuffer" );
 		
 		if ( _maskStack.length > 0 ) {
-			//trace("Rendering back to buffer", _maskStack );
-			var currentMask : GLFrameBufferData = _masks[getCurrentMask()];
-			GL.bindFramebuffer( GL.FRAMEBUFFER, currentMask.frameBuffer );
-			GL.viewport( 0, 0, Std.int(currentMask.bounds.width), Std.int(currentMask.bounds.height) );
-			_projectionMatrix = Matrix3D.createOrtho( 0, currentMask.bounds.width, currentMask.bounds.height, 0, 1000, -1000 );
+			// Render to next level render buffer texture
+			var nextMask : GLFrameBufferData = _masks[getCurrentMask()];
+			GL.bindFramebuffer( GL.FRAMEBUFFER, nextMask.frameBuffer );
+			GL.viewport( 0, 0, Std.int(nextMask.bounds.width), Std.int(nextMask.bounds.height) );
+			_projectionMatrix = Matrix3D.createOrtho( 0, nextMask.bounds.width, nextMask.bounds.height, 0, 1000, -1000 );
 		}else {
-			//trace("Rendering back to screen");
+			// Render to back buffer
 			GL.viewport( Std.int( screenRect.x ), Std.int( screenRect.y ), Std.int( screenRect.width ), Std.int( screenRect.height ) );
 			_projectionMatrix = Matrix3D.createOrtho( 0, screenRect.width, screenRect.height, 0, 1000, -1000 );
 			GL.bindFramebuffer( GL.FRAMEBUFFER, null );
 		}		
+		
+		// Draw render buffer texture to target
 		
 		GL.useProgram( _imageDirectShader.program );
 			
