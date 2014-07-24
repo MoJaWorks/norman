@@ -8,16 +8,13 @@ import openfl.geom.Rectangle;
  */
 class MathUtils
 {
-
-	public function new() 
-	{
-		
-	}
 	
 	public static function roundToNextPow2( val : Float ) : Int {
 		return Std.int( Math.pow( 2, Math.ceil( Math.log( val ) / Math.log(2) ) ) );
 	}
 	
+	// Stolen from OpenFL Rectangle.
+	// Gets the bounding box of a rectangle after a matrix transformation
 	public static function transformRect( rect : Rectangle, m : Matrix ) : Void {
 
 		var tx0 = m.a * rect.x + m.c * rect.y;
@@ -50,9 +47,6 @@ class MathUtils
 		rect.y = ty0 + m.ty;
 		rect.width = tx1 - tx0;
 		rect.height = ty1 - ty0;
-		
-		//trace( ty1, ty0 );
-		//return new Rectangle (tx0 + m.tx, ty0 + m.ty, tx1 - tx0, ty1 - ty0);
 		
 	}
 	

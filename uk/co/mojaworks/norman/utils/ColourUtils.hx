@@ -6,18 +6,13 @@ package uk.co.mojaworks.norman.utils;
  */
 class ColourUtils
 {
-
-	public function new() 
-	{
-		
-	}
 	
 	public static function makeHex( r : Int, g : Int, b : Int ) : Int {
-		return ((r >> 4) + (g >> 2) + (b));
+		return ((r << 16) + (g << 8) + (b));
 	}
 	
 	public static function makeHex32( r : Int, g : Int, b : Int, a : Int ) : Int {
-		return (makeHex(r,g,b) + (a >> 6));
+		return (makeHex(r,g,b) + (a << 24));
 	}
 	
 	public static function r( colour : Int ) : Int {
