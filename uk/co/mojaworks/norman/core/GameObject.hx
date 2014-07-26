@@ -14,6 +14,8 @@ class GameObject extends CoreObject
 	static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
 	static public inline var REMOVED_AS_CHILD : String = "REMOVED_AS_CHILD";
 	
+	private static var objectCount : Int = 0;
+	
 	// Children of an object are affected by their parent and are destroyed along with their parent
 	public var parent( default, null ) : GameObject;
 	public var children(default, null ) : Array<GameObject>;
@@ -27,6 +29,8 @@ class GameObject extends CoreObject
 	// Display is not set by default and will be null until a display component is added
 	public var display( default, null ) : Display;
 	
+	public var id( default, null) : Int = 0;
+	
 	public function new() 
 	{
 		super();
@@ -34,6 +38,8 @@ class GameObject extends CoreObject
 		_components = new Map<String, Component>();
 		children = [];
 		parent = null;
+		
+		id = objectCount++;
 		
 		init();
 		
@@ -119,6 +125,19 @@ class GameObject extends CoreObject
 	 */
 	
 	public function destroy() : Void {
+		
+		for ( child in children ) {
+			child.destroy();
+		}
+		
+		for ( cid in _components.keys() ) {
+			var comp : Component = _components.get( cid );
+			comp.onRemoved();
+			destroy();			
+		}
+		
+		_components = null;
+		children = null;
 		
 	}
 		

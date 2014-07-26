@@ -7,6 +7,7 @@ import uk.co.mojaworks.norman.components.director.Director;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.components.display.Fill;
 import uk.co.mojaworks.norman.components.display.Image;
+import uk.co.mojaworks.norman.components.input.Input;
 import uk.co.mojaworks.norman.components.Viewport;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Core;
@@ -62,6 +63,7 @@ class GameEngine extends Component
 		core.root.add( this );
 		core.root.add( new Display() );
 		core.root.add( new Director() );
+		core.root.add( new Input() );
 		
 		
 	}
