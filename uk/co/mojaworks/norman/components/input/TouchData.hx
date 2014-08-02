@@ -7,7 +7,7 @@ import openfl.geom.Point;
  */
 class TouchData
 {
-	public var isTouching : Bool = false;
+	public var isDown : Bool = false;
 	public var touchId : Int = -1;
 	public var position : Point;
 	public var lastTouchStart : Point;

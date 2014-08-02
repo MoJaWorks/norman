@@ -18,8 +18,8 @@ class Input extends Component
 {
 	
 	public static inline var TAPPED : String = "TAPPED";
-	public static inline var TOUCH_START : String = "TOUCH_START";
-	public static inline var TOUCH_END : String = "TOUCH_END";
+	public static inline var POINTER_DOWN : String = "POINTER_DOWN";
+	public static inline var POINTER_UP : String = "POINTER_UP";
 	
 	public var touchCount( default, null ) : Int = 0;
 	var _touchRegister : Map<Int,TouchData>;
@@ -81,20 +81,22 @@ class Input extends Component
 		
 	public function onMouseDown( e : MouseEvent ) : Void {
 		var touch : TouchData = _touchRegister.get(0);		
-		touch.isTouching = true;
+		touch.isDown = true;
 		touch.lastTouchStart.setTo( e.stageX, e.stageY );
 		touch.position.setTo( e.stageX, e.stageY );
 		core.stage.addEventListener( MouseEvent.MOUSE_UP, onMouseUp );
+		
+		checkTouchTargets( 0, POINTER_DOWN );
 	}
 	
 	public function onMouseUp( e : MouseEvent ) : Void {
 		var touch : TouchData = _touchRegister.get(0);
 		touch.lastTouchEnd.setTo( e.stageX, e.stageY );
 		touch.position.setTo( e.stageX, e.stageY );
-		touch.isTouching = false;
+		touch.isDown = false;
 		core.stage.removeEventListener( MouseEvent.MOUSE_UP, onMouseUp );
 		
-		checkTouchTargets(0);
+		checkTouchTargets( 0, POINTER_UP );
 	}
 		
 	/**
@@ -109,13 +111,15 @@ class Input extends Component
 		var touch : TouchData = _touchRegister.get( e.touchPointID );
 		touch.lastTouchStart.setTo( e.stageX, e.stageY );
 		touch.position.setTo( e.stageX, e.stageY );
-		touch.isTouching = true;
+		touch.isDown = true;
 		
 		// If this is the first touch add the listeners
 		if ( touchCount == 1 ) {
 			core.stage.addEventListener( TouchEvent.TOUCH_END, onTouchEnd );
 			core.stage.addEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
 		}
+		
+		checkTouchTargets( e.touchPointID, POINTER_DOWN );
 	}
 	
 	public function onTouchEnd( e : TouchEvent ) : Void {
@@ -125,7 +129,7 @@ class Input extends Component
 		var touch : TouchData = _touchRegister.get( e.touchPointID );
 		touch.lastTouchEnd.setTo( e.stageX, e.stageY );
 		touch.position.setTo( e.stageX, e.stageY );
-		touch.isTouching = false;
+		touch.isDown = false;
 		
 		// This is the last touch - clean up
 		if ( touchCount == 0 ) {
@@ -133,7 +137,7 @@ class Input extends Component
 			core.stage.removeEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
 		}
 		
-		checkTouchTargets( e.touchPointID );
+		checkTouchTargets( e.touchPointID, POINTER_UP );
 	}
 	
 	public function onTouchMove( e : TouchEvent ) : Void {
@@ -166,21 +170,105 @@ class Input extends Component
 		_touchListeners.remove( object );
 	}
 	
-	private function checkTouchTargets( pid : Int ) : Void {
+	private function checkTouchTargets( pid : Int, mode : String ) : Void {
+		
+		var touch : TouchData = _touchRegister.get( pid );
+		var startPoint : Point;
+		var endPoint : Point;
+		var bounds : Rectangle;
 		
 		for ( object in _touchListeners ) {
-			var bounds : Rectangle = object.display.getBounds();
-			var startPoint : Point = object.transform.globalToLocal(_touchRegister.get( pid ).lastTouchStart );
-			var endPoint : Point = object.transform.globalToLocal(_touchRegister.get( pid ).lastTouchEnd );
-			if ( bounds.containsPoint( startPoint ) && bounds.containsPoint( endPoint ) ) {
-				object.messenger.sendMessage( TAPPED, endPoint );
+			bounds = object.display.getBounds();
+			startPoint = object.transform.globalToLocal( touch.lastTouchStart );
+			
+			if ( mode == POINTER_DOWN ) {
+				
+				if ( bounds.containsPoint( startPoint ) ) {
+					object.messenger.sendMessage( POINTER_DOWN, new PointerEventData( POINTER_DOWN, touch.touchId, touch.lastTouchStart, startPoint ) );
+				}
+				
+			}else if ( mode == POINTER_UP ) {
+				
+				endPoint = object.transform.globalToLocal( touch.lastTouchEnd );
+				if ( bounds.containsPoint( endPoint ) ) {
+					
+					object.messenger.sendMessage( POINTER_UP, new PointerEventData( POINTER_UP, touch.touchId, touch.lastTouchEnd, endPoint ) );
+					
+					// Event started on this object so it is clicked
+					if ( bounds.containsPoint( startPoint ) ) {
+						object.messenger.sendMessage( TAPPED, new PointerEventData( TAPPED, touch.touchId, touch.lastTouchEnd, endPoint ) );
+					}
+				}
 			}
 		}
 		
 	}
+	 	
+	/**
+	 * Easy access
+	 */
+	
+	 public function getPointerInfo( id : Int = 0 ) : TouchData {
+		return _touchRegister.get( id );
+	}
 	 
-	private function onClick( ) : Void {
-		trace("Clicked ", core.stage.mouseX, core.stage.mouseY );
+	public function isPointerDown( id : Int = 0 ) : Bool {
+		return _touchRegister.get( id ).isDown;
+	}
+	
+	public function getTouchPosition( id : Int = 0 ) : Point {
+		return _touchRegister.get( id ).position;
+	}	 
+	 
+	public function isAnyPointerDown() : Array<Int> {
+		
+		var result : Array<Int> = [];
+		var touch : TouchData;
+		
+		for ( key in _touchRegister.keys() ) {
+			touch = _touchRegister.get(key);
+			if ( touch.isDown ) result.push( touch.touchId );
+		}
+		return result;
+	}
+	
+	public function isAnyPointerOver( object : GameObject ) : Array<Int> {
+		
+		var bounds : Rectangle;
+		var local : Point;
+		var touch : TouchData;
+		var result : Array<Int> = [];
+		
+		for ( key in _touchRegister.keys() ) {
+			touch = _touchRegister.get( key );
+			bounds = object.display.getBounds();
+			local = object.transform.globalToLocal( touch.position );
+			
+			if ( bounds.containsPoint( local ) ) result.push( touch.touchId );
+		}
+		
+		return result;
+	}
+	
+	public function isAnyPointerDownOver( object : GameObject ) : Array<Int> {
+		
+		var bounds : Rectangle;
+		var local : Point;
+		var touch : TouchData;
+		var result : Array<Int> = [];
+		
+		for ( key in _touchRegister.keys() ) {
+			touch = _touchRegister.get( key );
+			
+			if ( touch.isDown ) {
+				bounds = object.display.getBounds();
+				local = object.transform.globalToLocal( touch.position );
+				if ( bounds.containsPoint( local ) ) result.push( touch.touchId );
+			}
+		}
+		
+		return result;
+		
 	}
 	
 }
