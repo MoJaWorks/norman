@@ -3,6 +3,7 @@ package uk.co.mojaworks.norman.components ;
 import openfl.geom.Matrix;
 import openfl.geom.Point;
 import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.messenger.MessageData;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 
@@ -56,10 +57,19 @@ class Transform extends Component
 	{
 		super.onAdded();
 		//trace("OnAdded", gameObject.messenger );
-		gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onAddedToParent );
+		gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onParentChanged );
+		gameObject.messenger.attachListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
 	}
 	
-	private function onAddedToParent( object : GameObject, ?param : Dynamic ) : Void {
+	override public function onRemoved():Void 
+	{
+		super.onRemoved();
+		//trace("OnAdded", gameObject.messenger );
+		gameObject.messenger.removeListener( GameObject.ADDED_AS_CHILD, onParentChanged );
+		gameObject.messenger.removeListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
+	}
+	
+	private function onParentChanged( data : MessageData ) : Void {
 		invalidateMatrices();
 	}
 	

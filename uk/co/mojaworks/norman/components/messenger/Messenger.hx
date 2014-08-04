@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.components.messenger ;
 import uk.co.mojaworks.norman.components.messenger.IScript;
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.core.GameObject;
 
 /**
  * ...
@@ -11,13 +10,13 @@ class Messenger extends Component
 {
 
 	var _scripts : Map<String, Array<Class<IScript>>>;
-	var _listeners:Map<String, Array<GameObject->Dynamic->Void>>;
+	var _listeners:Map<String, Array<MessageData->Void>>;
 	
 	public function new() 
 	{
 		super();
 		_scripts = new Map<String, Array<Class<IScript>>>();
-		_listeners = new Map<String, Array<GameObject->Dynamic->Void>>();
+		_listeners = new Map<String, Array<MessageData->Void>>();
 	}
 	
 	public function sendMessage( message : String, ?data : Dynamic = null ) : Void {
@@ -26,14 +25,14 @@ class Messenger extends Component
 		
 		if ( _listeners.get( message ) != null ) {
 			for ( listener in _listeners.get( message ) ) {
-				listener( gameObject, data );
+				listener( new MessageData( gameObject, message, data ) );
 			}
 		}
 		
 		if ( _scripts.get(message) != null ) {
 			for ( listener in _scripts.get(message) ) {
 				var l : IScript = Type.createInstance( listener, [] );
-				l.execute( gameObject, data );
+				l.execute( new MessageData( gameObject, message, data ) );
 			}
 		}
 	}
@@ -54,14 +53,14 @@ class Messenger extends Component
 		}
 	}
 	
-	public function attachListener( message : String, listener : GameObject->Dynamic->Void ) : Void {
+	public function attachListener( message : String, listener : MessageData->Void ) : Void {
 		if ( _listeners.get(message) == null ) _listeners.set( message, [] );
 		if ( _listeners.get(message).indexOf( listener ) == -1 ) {
 			_listeners.get(message).push( listener );
 		}
 	}
 	
-	public function removeListener( message : String, ?listener : GameObject->Dynamic->Void = null ) : Void {
+	public function removeListener( message : String, ?listener : MessageData->Void = null ) : Void {
 		if ( _listeners.get(message) != null ) {
 			if ( listener != null ) {
 				_listeners.get(message).remove( listener );
@@ -70,6 +69,11 @@ class Messenger extends Component
 				_listeners.set(message, []);
 			}
 		}
+	}
+	
+	override public function destroy() : Void {
+		_scripts = null;
+		_listeners = null;
 	}
 	
 }

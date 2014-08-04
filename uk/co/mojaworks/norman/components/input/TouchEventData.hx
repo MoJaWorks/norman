@@ -5,7 +5,7 @@ import openfl.geom.Point;
  * ...
  * @author Simon
  */
-class PointerEventData
+class TouchEventData
 {
 
 	public var type : String;

@@ -4,6 +4,7 @@ import openfl.display.DisplayObject;
 import openfl.display.OpenGLView;
 import openfl.events.Event;
 import openfl.geom.Rectangle;
+import uk.co.mojaworks.norman.components.messenger.MessageData;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.renderer.ICanvas;
@@ -39,7 +40,7 @@ class Renderer extends Component {
 		resize( screenRect );
 	}
 	
-	public function onContextRestored( gameObject : GameObject, ?param : Dynamic = null ) : Void {
+	public function onContextRestored( param : MessageData ) : Void {
 		#if ( flash ) 
 			cast( textureManager, uk.co.mojaworks.norman.renderer.stage3d.Stage3DTextureManager ).setContext( cast( _canvas, uk.co.mojaworks.norman.renderer.stage3d.Stage3DCanvas ).getContext() );
 		#end

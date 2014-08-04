@@ -28,7 +28,6 @@ class GameObject extends CoreObject
 	
 	// Display is not set by default and will be null until a display component is added
 	public var display( default, null ) : Display;
-	
 	public var id( default, null) : Int = 0;
 	
 	public function new() 
@@ -75,9 +74,11 @@ class GameObject extends CoreObject
 		
 		if ( object.parent == this ) {
 			children.remove( object );
-			object.parent = null;
 			messenger.sendMessage( CHILD_REMOVED, object );
-			object.messenger.sendMessage(REMOVED_AS_CHILD, object );
+			object.messenger.sendMessage( REMOVED_AS_CHILD, object );
+			
+			// Let the object remove any references/listeners before removing the parent reference
+			object.parent = null;
 		}
 	}
 	
@@ -91,28 +92,43 @@ class GameObject extends CoreObject
 	
 	@:generic public function removeByType<T:(Component)>( classType : Class<T> ) : GameObject {
 		var type : String = Reflect.field( classType, "TYPE" );
+		return removeById( type ); 
+	}
+	
+	public function remove( component : Component ) : GameObject {
+		return removeById( component.getComponentType() );
+	}
+	
+	public function removeById( type : String ) : GameObject {
+		
+		// Check for any special types
 		if ( type == Display.TYPE ) this.display = null;
 		
-		if ( _components.get( type ) != null ) {
-			_components.get(type).onRemoved();
+		// remove it from the list if it exists
+		var component : Component = _components.get( type );
+		if ( component != null ) {
+			component.onRemoved();
+			component.gameObject = null;
 			_components.remove( type );
 		}
+		
 		return this; 
 	}
 	
 	@:generic public function add<T:(Component)>( component : T ) : GameObject {
+		
+		// Remove any existing components of this type
+		removeById( component.getComponentType() );
+		
+		// Add it to the list
 		_components.set( component.getComponentType(), component );
+		
+		// Check for any special types
 		if ( component.getComponentType() == Display.TYPE ) this.display = cast component;
+		
+		// Tell the component it has been added
 		component.gameObject = this;
 		component.onAdded( );
-		return this;
-	}
-	
-	public function remove( component : Component ) : GameObject {
-		component.onRemoved();
-		_components.remove( component.getComponentType() );
-		if ( component.getComponentType() == Display.TYPE ) this.display = null;
-		component.gameObject = null;
 		return this;
 	}
 	

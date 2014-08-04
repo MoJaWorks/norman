@@ -184,7 +184,7 @@ class Input extends Component
 			if ( mode == POINTER_DOWN ) {
 				
 				if ( bounds.containsPoint( startPoint ) ) {
-					object.messenger.sendMessage( POINTER_DOWN, new PointerEventData( POINTER_DOWN, touch.touchId, touch.lastTouchStart, startPoint ) );
+					object.messenger.sendMessage( POINTER_DOWN, new TouchEventData( POINTER_DOWN, touch.touchId, touch.lastTouchStart, startPoint ) );
 				}
 				
 			}else if ( mode == POINTER_UP ) {
@@ -192,11 +192,11 @@ class Input extends Component
 				endPoint = object.transform.globalToLocal( touch.lastTouchEnd );
 				if ( bounds.containsPoint( endPoint ) ) {
 					
-					object.messenger.sendMessage( POINTER_UP, new PointerEventData( POINTER_UP, touch.touchId, touch.lastTouchEnd, endPoint ) );
+					object.messenger.sendMessage( POINTER_UP, new TouchEventData( POINTER_UP, touch.touchId, touch.lastTouchEnd, endPoint ) );
 					
 					// Event started on this object so it is clicked
 					if ( bounds.containsPoint( startPoint ) ) {
-						object.messenger.sendMessage( TAPPED, new PointerEventData( TAPPED, touch.touchId, touch.lastTouchEnd, endPoint ) );
+						object.messenger.sendMessage( TAPPED, new TouchEventData( TAPPED, touch.touchId, touch.lastTouchEnd, endPoint ) );
 					}
 				}
 			}
