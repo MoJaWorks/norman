@@ -29,12 +29,12 @@ class GameEngine extends Component
 	var _lastTick : Float = 0;
 	var _elapsed : Float = 0;
 	
-	public function new( stage ) 
+	public function new( stage : Stage, stageWidth : Int, stageHeight : Int ) 
 	{
 		super();
 		
 		initCore( stage );
-		initViewport();
+		initViewport( stageWidth, stageHeight );
 		initCoreModules();
 		initCanvas();
 		initView();
@@ -49,10 +49,10 @@ class GameEngine extends Component
 		Core.init( stage );
 	}
 	
-	private function initViewport( ) : Void {
+	private function initViewport( stageWidth : Int, stageHeight : Int ) : Void {
 		
 		var viewport : Viewport = new Viewport();
-		viewport.init( 1000, 600 );
+		viewport.init( stageWidth, stageHeight );
 		core.root.add( viewport );
 		
 	}
@@ -95,6 +95,7 @@ class GameEngine extends Component
 		_renderer = new Renderer();		
 		_renderer.init( core.root.get(Viewport).screenRect );
 		
+		// Flash stage3D doesn't need adding to display list
 		#if ( !flash ) 
 			core.stage.addChild( _renderer.getDisplayObject() );
 		#end
@@ -120,6 +121,14 @@ class GameEngine extends Component
 		_lastTick = Timer.stamp();
 		
 		onUpdate( _elapsed );
+		
+	}
+	
+	private function onUpdate( e : Event ) : Void {
+		// This is the one that will be overriden
+		
+		core.root.get(Input).onUpdate( seconds );
+		
 		_renderer.render( core.root );
 	}
 	

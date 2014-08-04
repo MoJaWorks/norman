@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.components.input;
-import openfl.events.Event;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
@@ -222,6 +221,8 @@ class Input extends Component
 	 
 	public function isAnyPointerDown() : Array<Int> {
 		
+		if ( touchCount == 0 ) return [];
+		
 		var result : Array<Int> = [];
 		var touch : TouchData;
 		
@@ -251,6 +252,8 @@ class Input extends Component
 	}
 	
 	public function isAnyPointerDownOver( object : GameObject ) : Array<Int> {
+		
+		if ( touchCount == 0 ) return [];
 		
 		var bounds : Rectangle;
 		var local : Point;
