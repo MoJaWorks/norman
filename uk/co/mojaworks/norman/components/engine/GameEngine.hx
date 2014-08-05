@@ -5,18 +5,15 @@ import openfl.display.Stage;
 import openfl.events.Event;
 import uk.co.mojaworks.norman.components.director.Director;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.display.Fill;
-import uk.co.mojaworks.norman.components.display.Image;
 import uk.co.mojaworks.norman.components.input.Input;
 import uk.co.mojaworks.norman.components.Viewport;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Core;
-import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.renderer.Renderer;
 
 /**
- * This class is intended to be extended and used as a root
- * It sets up the core and viewport and some core components
+ * This class is intended to be extended and used as a root controller
+ * It sets up the game, viewport and some core components
  * 
  * @author Simon
  */
@@ -122,14 +119,13 @@ class GameEngine extends Component
 		
 		onUpdate( _elapsed );
 		
+		_renderer.render( core.root );
+		
 	}
 	
-	private function onUpdate( e : Event ) : Void {
+	override public function onUpdate( seconds : Float ) : Void {
 		// This is the one that will be overriden
-		
 		core.root.get(Input).onUpdate( seconds );
-		
-		_renderer.render( core.root );
 	}
 	
 }
