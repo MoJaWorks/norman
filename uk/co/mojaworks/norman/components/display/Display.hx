@@ -19,8 +19,6 @@ class Display extends Component
 	public var visible : Bool = true;
 	public var clipRect( default, set ) : Rectangle = null;
 	
-	private var _isBoundsDirty : Bool = true;
-	
 	public function new() 
 	{
 		super();

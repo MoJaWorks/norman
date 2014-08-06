@@ -6,6 +6,7 @@ import openfl.events.Event;
 import uk.co.mojaworks.norman.components.director.Director;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.components.input.Input;
+import uk.co.mojaworks.norman.components.Tick;
 import uk.co.mojaworks.norman.components.Viewport;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Core;
@@ -64,6 +65,7 @@ class GameEngine extends Component
 	private function initCoreModules() : Void {
 		
 		// Add self to core so can be retrieved by other components later
+		core.root.add( new Tick() );
 		core.root.add( this );
 		core.root.add( new Display() );
 		core.root.add( new Director() );
@@ -125,6 +127,7 @@ class GameEngine extends Component
 	override public function onUpdate( seconds : Float ) : Void {
 		// This is the one that will be overriden
 		core.root.get(Input).onUpdate( seconds );
+		core.root.get(Tick).onUpdate( seconds );
 	}
 	
 	/**
