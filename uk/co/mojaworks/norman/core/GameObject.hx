@@ -137,7 +137,60 @@ class GameObject extends CoreObject
 	}
 	
 	/**
-	 * 
+	 * Search
+	 */
+	
+	@:generic public function findAncestorThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
+		if ( parent == null || parent.has( classType ) ) {
+			return parent;
+		}else {
+			return parent.findAncestorThatHas( classType );
+		}
+	}
+	
+	@:generic public function findChildThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
+		for ( child in children ) {
+			if ( child.has( classType ) ) return child;
+		}
+		return null;
+	}
+	
+	@:generic public function findChildrenThatHave<T:(Component)>( classType : Class<T> ) : Array<GameObject> {
+		var result : Array<GameObject> = [];
+		for ( child in children ) {
+			if ( child.has( classType ) ) result.push(child);
+		}
+		return result;
+	}
+	
+	@:generic public function findDescendantThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
+		
+		var result : GameObject = null;
+		
+		for ( child in children ) {
+			if ( child.has( classType ) ) {
+				return child;
+			}else {
+				result = child.findAncestorThatHas( classType );
+				if ( result != null ) return result;
+			}
+		}
+		
+		return null;
+	}
+	
+	@:generic public function findDescendantsThatHave<T:(Component)>( classType : Class<T> ) : Array<GameObject> {
+		var result : Array<GameObject> = [];
+		for ( child in children ) {
+			if ( child.has( classType ) ) result.push(child);
+			result = result.concat( child.findDescendantsThatHave( classType ) );
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * End
 	 */
 	
 	public function destroy() : Void {

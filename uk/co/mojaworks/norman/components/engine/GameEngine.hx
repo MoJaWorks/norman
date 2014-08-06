@@ -37,10 +37,17 @@ class GameEngine extends Component
 		initView();
 		
 		core.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
+		core.stage.addEventListener( Event.RESIZE, resize );
+		
+		resize();
 		
 		onStartupComplete();
 
 	}
+	
+	/**
+	 * Boot
+	 */
 	
 	private function initCore( stage : Stage ) : Void {
 		Core.init( stage );
@@ -65,28 +72,6 @@ class GameEngine extends Component
 		
 	}
 	
-	private function initView() : Void {
-			
-		core.root.addChild( core.root.get(Director).root );
-		
-		// Respond to any changes in orientation/size
-		core.stage.addEventListener( Event.RESIZE, resize );
-		resize();
-		
-	}
-	
-	private function resize( e : Event = null ) : Void {
-						
-		// Resize the viewport to scale everything to the screen size
-		core.root.get(Viewport).resize();
-		
-		_renderer.resize( core.root.get(Viewport).screenRect );
-			
-		// Resize any active screens/panels
-		core.root.get(Director).resize();
-		
-	}
-	
 	private function initCanvas( ) : Void {
 		
 		_renderer = new Renderer();		
@@ -101,17 +86,31 @@ class GameEngine extends Component
 		
 	}
 	
+	private function initView() : Void {
+		core.root.addChild( core.root.get(Director).root );
+	}
+	
 	private function onStartupComplete() : Void {
 		// Override
 	}
 	
-	override public function destroy():Void 
-	{
-		super.destroy();
+	
+	/**
+	 * Ongoing
+	 */
+	
+	private function resize( e : Event = null ) : Void {
+						
+		// Resize the viewport to scale everything to the screen size
+		core.root.get(Viewport).resize();
 		
-		core.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
+		_renderer.resize( core.root.get(Viewport).screenRect );
+			
+		// Resize any active screens/panels
+		core.root.get(Director).resize();
+		
 	}
-		
+	
 	private function onEnterFrame( e : Event ) : Void {
 				
 		_elapsed = Timer.stamp() - _lastTick;
@@ -127,5 +126,18 @@ class GameEngine extends Component
 		// This is the one that will be overriden
 		core.root.get(Input).onUpdate( seconds );
 	}
+	
+	/**
+	 * End
+	 */
+	
+	override public function destroy():Void 
+	{
+		super.destroy();
+		
+		core.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
+	}
+		
+	
 	
 }
