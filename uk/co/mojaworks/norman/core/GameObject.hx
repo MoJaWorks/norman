@@ -30,6 +30,9 @@ class GameObject extends CoreObject
 	public var display( default, null ) : Display;
 	public var id( default, null) : Int = 0;
 	
+	public var enabled : Bool = true;
+	public var destroyed : Bool = false;
+	
 	public function new() 
 	{
 		super();
