@@ -12,6 +12,7 @@ class Core
 	
 	public var stage( default, null ) : Stage;
 	public var root( default, null ) : GameObject;
+	public var gameObjectManager( default, null ) : GameObjectManager;
 	
 	public function new( ) 
 	{
@@ -20,7 +21,7 @@ class Core
 	public static function init( stage : Stage ) : Void {
 		instance = new Core( );
 		instance.stage = stage;
-		
+		instance.gameObjectManager = new GameObjectManager();
 		instance.root = new GameObject();
 	}
 	

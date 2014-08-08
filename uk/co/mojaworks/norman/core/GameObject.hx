@@ -14,7 +14,8 @@ class GameObject extends CoreObject
 	static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
 	static public inline var REMOVED_AS_CHILD : String = "REMOVED_AS_CHILD";
 	
-	private static var objectCount : Int = 0;
+	// Used to generate automatic Ids
+	private static var nextId : Int = 0;
 	
 	// Children of an object are affected by their parent and are destroyed along with their parent
 	public var parent( default, null ) : GameObject;
@@ -28,12 +29,12 @@ class GameObject extends CoreObject
 	
 	// Display is not set by default and will be null until a display component is added
 	public var display( default, null ) : Display;
-	public var id( default, null) : Int = 0;
+	public var id( default, null) : String = "";
 	
 	public var enabled : Bool = true;
 	public var destroyed : Bool = false;
 	
-	public function new() 
+	public function new( id : String = "" ) 
 	{
 		super();
 		
@@ -41,13 +42,19 @@ class GameObject extends CoreObject
 		children = [];
 		parent = null;
 		
-		id = objectCount++;
+		if ( id != "" ) {
+			this.id = id;
+		}else{
+			this.id = "" + nextId++;
+		}
 		
 		init();
 		
 	}
 	
 	function init() : Void {
+		
+		core.gameObjectManager.registerGameObject( this );
 				
 		messenger = new Messenger();
 		add( messenger );
@@ -142,7 +149,7 @@ class GameObject extends CoreObject
 	/**
 	 * Search
 	 */
-	
+		
 	@:generic public function findAncestorThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
 		if ( parent == null || parent.has( classType ) ) {
 			return parent;
@@ -150,7 +157,7 @@ class GameObject extends CoreObject
 			return parent.findAncestorThatHas( classType );
 		}
 	}
-	
+		
 	@:generic public function findChildThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
 		for ( child in children ) {
 			if ( child.has( classType ) ) return child;
@@ -197,6 +204,8 @@ class GameObject extends CoreObject
 	 */
 	
 	public function destroy() : Void {
+		
+		core.gameObjectManager.unregisterGameObject( this );
 		
 		for ( child in children ) {
 			child.destroy();
