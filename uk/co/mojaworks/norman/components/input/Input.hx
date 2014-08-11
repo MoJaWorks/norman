@@ -34,7 +34,8 @@ class Input extends Component
 		
 		#if mobile
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-			for ( i in 0...Multitouch.maxTouchPoints ) _touchRegister.set( i, new TouchData( i ) );
+			// Hard code at 5 as that is currently the maximum for ipads and top end android
+			for ( i in 0...5 ) _touchRegister.set( i, new TouchData( i ) );
 		#else
 			_touchRegister.set( 0, new TouchData(0) );
 		#end

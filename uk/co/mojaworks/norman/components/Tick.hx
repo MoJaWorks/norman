@@ -9,12 +9,12 @@ import uk.co.mojaworks.norman.core.Component;
 class Tick extends Component
 {
 
-	var _tickables : Array<Component>;
+	var _tickables : List<Component>;
 	
 	public function new() 
 	{
 		super();
-		_tickables = [];
+		_tickables = new List<Component>();
 	}
 	
 	override public function destroy():Void 
@@ -24,7 +24,7 @@ class Tick extends Component
 	}
 	
 	public function addTarget( target : Component ) : Void {
-		_tickables.push( target );
+		_tickables.add( target );
 	}
 	
 	public function removeTarget( target : Component ) : Void {

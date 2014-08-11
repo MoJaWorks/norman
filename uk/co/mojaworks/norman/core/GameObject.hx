@@ -19,7 +19,8 @@ class GameObject extends CoreObject
 	
 	// Children of an object are affected by their parent and are destroyed along with their parent
 	public var parent( default, null ) : GameObject;
-	public var children(default, null ) : Array<GameObject>;
+	public var children( default, null ) : Array<GameObject>;
+	public var childIndex( default, null ) : Int;
 	
 	// Components
 	var _components : Map<String, Component>;
@@ -70,11 +71,18 @@ class GameObject extends CoreObject
 	 * Children
 	 */
 	
-	public function addChild( object : GameObject ) : Void {
+	public function addChild( object : GameObject, at : Int = -1) : Void {
 		
 		if ( object.parent != null ) object.parent.removeChild( object );
 		object.parent = this;
-		children.push( object );
+		object.childIndex = children.length;
+		
+		if ( at == -1 || at >= children.length ) {
+			children.push( object );
+		}else {
+			children.insert( at, object );
+			regenerateChildrenSortOrder();
+		}
 		
 		messenger.sendMessage( CHILD_ADDED, object );
 		object.messenger.sendMessage( ADDED_AS_CHILD, object );
@@ -89,6 +97,34 @@ class GameObject extends CoreObject
 			
 			// Let the object remove any references/listeners before removing the parent reference
 			object.parent = null;
+		}
+	}
+	
+	public function setChildIndex( object : GameObject, to : Int ) : Void {
+		children.remove( object );
+		
+		if ( to == -1 || to >= children.length ) {
+			children.push( object );
+		}else{
+			children.insert( to, object );
+		}
+		
+		regenerateChildrenSortOrder();
+	}
+	
+	public function getChildSortString() : String {
+		if ( parent != null ) {
+			trace("Log", Math.log( parent.children.length ) );
+			return parent.getChildSortString() + ":" + StringTools.lpad( Std.string( childIndex ), "0", Std.string(parent.children.length).length );
+		}else {
+			return Std.string( childIndex );
+		}
+	}
+	
+	private function regenerateChildrenSortOrder() : Void {
+		var i : Int = 0;
+		for ( child in children ) {
+			child.childIndex = i++;
 		}
 	}
 	

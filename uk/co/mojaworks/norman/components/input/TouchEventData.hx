@@ -12,6 +12,7 @@ class TouchEventData
 	public var touchId : Int;
 	public var position : Point;
 	public var localPosition : Point;
+	public var isSuppressed : Bool = false;
 	
 	public function new( type : String, touchId : Int, position : Point, localPosition : Point ) 
 	{
