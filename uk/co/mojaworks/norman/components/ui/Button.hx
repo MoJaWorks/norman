@@ -1,8 +1,8 @@
-package uk.co.mojaworks.norman.components.interactive;
+package uk.co.mojaworks.norman.components.ui ;
 
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.input.Input;
-import uk.co.mojaworks.norman.components.input.TouchData;
+import uk.co.mojaworks.norman.systems.input.InputSystem;
+import uk.co.mojaworks.norman.systems.input.TouchData;
 import uk.co.mojaworks.norman.core.Component;
 
 /**
@@ -25,7 +25,6 @@ class Button extends Component
 	public function new() 
 	{
 		super();
-		autoUpdate = true;
 	}
 	
 	public function setup( upState : Display, downState : Display = null, overState : Display = null, disabledState : Display = null ) : Void {
@@ -42,7 +41,7 @@ class Button extends Component
 		super.onUpdate(seconds);
 		
 		// Buttons only respond to primary pointer
-		var pointer : TouchData = core.root.get(Input).getPointerInfo( 0 );
+		var pointer : TouchData = core.app.input.getPointerInfo( 0 );
 		var newState : Display = null;
 		
 		if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) ) {

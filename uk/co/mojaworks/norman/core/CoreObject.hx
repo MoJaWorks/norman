@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.core ;
 
 /**
- * ...
+ * A base class for everything else to extend. Gives easy access to core instance.
  * @author Simon
  */
 class CoreObject

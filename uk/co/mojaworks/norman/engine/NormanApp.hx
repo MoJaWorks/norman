@@ -1,12 +1,12 @@
-package uk.co.mojaworks.norman.components.engine ;
+package uk.co.mojaworks.norman.engine ;
 
 import haxe.Timer;
 import openfl.display.Stage;
 import openfl.events.Event;
-import uk.co.mojaworks.norman.components.director.Director;
+import uk.co.mojaworks.norman.core.CoreObject;
+import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.input.Input;
-import uk.co.mojaworks.norman.components.Tick;
+import uk.co.mojaworks.norman.systems.input.InputSystem;
 import uk.co.mojaworks.norman.components.Viewport;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Core;
@@ -19,11 +19,13 @@ import uk.co.mojaworks.norman.renderer.Renderer;
  * @author Simon
  */
 
-class GameEngine extends Component
+class NormanApp extends CoreObject
 {
+	public var input( default, null ) : InputSystem;
+	public var viewport( default, null ) : Viewport;
+	public var director( default, null ) : Director;
 	
 	var _renderer : Renderer;
-	
 	var _lastTick : Float = 0;
 	var _elapsed : Float = 0;
 	
@@ -34,6 +36,7 @@ class GameEngine extends Component
 		initCore( stage );
 		initViewport( stageWidth, stageHeight );
 		initCoreModules();
+		initSystems();
 		initCanvas();
 		initView();
 		
@@ -51,33 +54,31 @@ class GameEngine extends Component
 	 */
 	
 	private function initCore( stage : Stage ) : Void {
-		Core.init( stage );
+		Core.init( this, stage );
 	}
 	
 	private function initViewport( stageWidth : Int, stageHeight : Int ) : Void {
 		
-		var viewport : Viewport = new Viewport();
+		viewport = new Viewport();
 		viewport.init( stageWidth, stageHeight );
-		core.root.add( viewport );
 		
 	}
 	
 	private function initCoreModules() : Void {
-		
-		// Add self to core so can be retrieved by other components later
-		core.root.add( new Tick() );
-		core.root.add( this );
 		core.root.add( new Display() );
-		core.root.add( new Director() );
-		core.root.add( new Input() );
+	}
+	
+	private function initSystems() : Void {
 		
+		director = new Director();
+		input = new InputSystem();
 		
 	}
 	
 	private function initCanvas( ) : Void {
 		
 		_renderer = new Renderer();		
-		_renderer.init( core.root.get(Viewport).screenRect );
+		_renderer.init( viewport.screenRect );
 		
 		// Flash stage3D doesn't need adding to display list
 		#if ( !flash ) 
@@ -89,7 +90,7 @@ class GameEngine extends Component
 	}
 	
 	private function initView() : Void {
-		core.root.addChild( core.root.get(Director).root );
+		core.root.addChild( director.root );
 	}
 	
 	private function onStartupComplete() : Void {
@@ -104,12 +105,11 @@ class GameEngine extends Component
 	private function resize( e : Event = null ) : Void {
 						
 		// Resize the viewport to scale everything to the screen size
-		core.root.get(Viewport).resize();
-		
-		_renderer.resize( core.root.get(Viewport).screenRect );
+		viewport.resize();
+		_renderer.resize( viewport.screenRect );
 			
 		// Resize any active screens/panels
-		core.root.get(Director).resize();
+		director.resize();
 		
 	}
 	
@@ -124,20 +124,18 @@ class GameEngine extends Component
 		
 	}
 	
-	override public function onUpdate( seconds : Float ) : Void {
+	public function onUpdate( seconds : Float ) : Void {
 		// This is the one that will be overriden
-		core.root.get(Input).onUpdate( seconds );
-		core.root.get(Tick).onUpdate( seconds );
+		input.onUpdate( seconds );
+		director.onUpdate( seconds );
 	}
 	
 	/**
 	 * End
 	 */
 	
-	override public function destroy():Void 
+	public function destroy():Void 
 	{
-		super.destroy();
-		
 		core.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
 	}
 		

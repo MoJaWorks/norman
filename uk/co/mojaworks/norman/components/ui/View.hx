@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.director ;
+package uk.co.mojaworks.norman.components.ui ;
 
 import uk.co.mojaworks.norman.core.Component;
 
@@ -19,10 +19,6 @@ class View extends Component
 	
 	public function onShow() : Void {
 		
-	}
-	
-	public function onHide() : Float {
-		return 0;
 	}
 	
 	public function onActivate() : Void {

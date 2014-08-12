@@ -1,6 +1,4 @@
 package uk.co.mojaworks.norman.core;
-import haxe.ds.StringMap;
-import uk.co.mojaworks.norman.components.Tick;
 
 /**
  * ...
@@ -11,9 +9,7 @@ class Component extends CoreObject
 {
 	
 	public var gameObject : GameObject;
-	
 	public var enabled : Bool = true;
-	var autoUpdate : Bool = false;
 	
 	private function new() 
 	{
@@ -28,11 +24,9 @@ class Component extends CoreObject
 	}
 	
 	public function onAdded( ) : Void {
-		if ( autoUpdate ) core.root.get(Tick).addTarget( this );
 	}
 	
 	public function onRemoved( ) : Void {
-		if ( autoUpdate ) core.root.get(Tick).removeTarget( this );
 	}
 		
 	public function destroy() : Void {

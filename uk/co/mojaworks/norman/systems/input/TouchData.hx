@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.input;
+package uk.co.mojaworks.norman.systems.input ;
 import openfl.geom.Point;
 
 /**

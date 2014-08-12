@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.input;
+package uk.co.mojaworks.norman.systems.input ;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
@@ -6,14 +6,13 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.ui.Multitouch;
 import openfl.ui.MultitouchInputMode;
-import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 
 /**
  * ...
  * @author Simon
  */
-class Input extends Component
+class InputSystem extends AppSystem
 {
 	
 	public static inline var TAPPED : String = "TAPPED";
@@ -32,31 +31,21 @@ class Input extends Component
 		_touchRegister = new Map<Int,TouchData>();
 		_touchListeners = [];
 		
-		#if mobile
-			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
-			// Hard code at 5 as that is currently the maximum for ipads and top end android
-			for ( i in 0...5 ) _touchRegister.set( i, new TouchData( i ) );
-		#else
-			_touchRegister.set( 0, new TouchData(0) );
-		#end
-		
-	}
-	
-	override public function onAdded():Void 
-	{
-		super.onAdded();
-		
 		core.stage.addEventListener( KeyboardEvent.KEY_DOWN, onKeyDown );
 		core.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 		
 		#if mobile
-		trace("Using touch events");
+			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
+			// Hard code at 5 as that is currently the maximum for ipads and top end android
+			for ( i in 0...5 ) _touchRegister.set( i, new TouchData( i ) );
 			core.stage.addEventListener( TouchEvent.TOUCH_BEGIN, onTouchBegin );
 		#else
+			_touchRegister.set( 0, new TouchData(0) );
 			core.stage.addEventListener( MouseEvent.MOUSE_DOWN, onMouseDown );
 		#end
+		
 	}
-	
+		
 	/**
 	 * KEYBOARD
 	 **/

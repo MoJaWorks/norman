@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.director ;
+package uk.co.mojaworks.norman.systems.director ;
 import openfl.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 
@@ -9,5 +9,5 @@ import uk.co.mojaworks.norman.core.GameObject;
 
 interface ITransition 
 {
-	function transition( parent : GameObject, to : GameObject, from : GameObject, allowAnimateOut : Bool = true ) : Void;
+	function transition( from : GameObject, to : GameObject, callback : GameObject->GameObject->Void ) : Void;
 }

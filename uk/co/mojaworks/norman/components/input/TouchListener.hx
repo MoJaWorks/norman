@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.input;
+package uk.co.mojaworks.norman.components.input ;
 
 import uk.co.mojaworks.norman.core.Component;
 
@@ -15,11 +15,11 @@ class TouchListener extends Component
 	}
 	
 	override public function onAdded() : Void {
-		core.root.get(Input).addTouchListener( gameObject );
+		core.app.input.addTouchListener( gameObject );
 	}
 	
 	override public function onRemoved() : Void {
-		core.root.get(Input).removeTouchListener( gameObject );
+		core.app.input.removeTouchListener( gameObject );
 	}
 	
 }
