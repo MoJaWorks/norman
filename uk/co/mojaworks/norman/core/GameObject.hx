@@ -179,7 +179,7 @@ class GameObject extends CoreObject
 	}
 	
 	@:generic public function has<T:(Component)>( classType : Class<T> ) : Bool {
-		return ( _components.get( Reflect.field( classType, "TYPE" ) ) != null );
+		return Std.is( _components.get( Reflect.field( classType, "TYPE" )), classType );
 	}
 	
 	/**
