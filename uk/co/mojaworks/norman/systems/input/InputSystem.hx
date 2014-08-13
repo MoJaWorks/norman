@@ -8,12 +8,16 @@ import openfl.ui.Multitouch;
 import openfl.ui.MultitouchInputMode;
 import uk.co.mojaworks.norman.core.GameObject;
 
+using Lambda;
+
 /**
  * ...
  * @author Simon
  */
 class InputSystem extends AppSystem
 {
+	
+	
 	
 	public static inline var TAPPED : String = "TAPPED";
 	public static inline var POINTER_DOWN : String = "POINTER_DOWN";
@@ -22,14 +26,14 @@ class InputSystem extends AppSystem
 	public var touchCount( default, null ) : Int = 0;
 	var _touchRegister : Map<Int,TouchData>;
 	var _keyRegister : Map<Int,Bool>;
-	var _touchListeners : Array<GameObject>;
+	var _touchListeners : List<GameObject>;
 	
 	public function new() 
 	{
 		super();
 		_keyRegister = new Map<Int,Bool>();
 		_touchRegister = new Map<Int,TouchData>();
-		_touchListeners = [];
+		_touchListeners = new List<GameObject>();
 		
 		core.stage.addEventListener( KeyboardEvent.KEY_DOWN, onKeyDown );
 		core.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
@@ -152,7 +156,7 @@ class InputSystem extends AppSystem
 	 */
 	
 	public function addTouchListener( object : GameObject ) {
-		if ( _touchListeners.indexOf( object ) == -1 ) _touchListeners.push( object );
+		_touchListeners.add( object );
 	}
 	
 	public function removeTouchListener( object : GameObject ) {
@@ -165,7 +169,7 @@ class InputSystem extends AppSystem
 		var startPoint : Point;
 		var endPoint : Point;
 		var bounds : Rectangle;
-		
+				
 		for ( object in _touchListeners ) {
 			bounds = object.display.getBounds();
 			startPoint = object.transform.globalToLocal( touch.lastTouchStart );
