@@ -11,17 +11,19 @@ class LinkedListIterator<T> {
 	var list : LinkedList<T>;
 	var current : LinkedListItem<T>;
 	
-	public function new( list : LinkedList ) {
+	public function new( list : LinkedList<T> ) {
 		this.list = list;
+		current = list.first;
 	}
 	
 	public function hasNext() : Bool {
-		return current.next != null;
+		return current != null;
 	}
 	
 	public function next() : T {
+		var item : T = current.item;
 		current = current.next;
-		return current;
+		return item;
 	}
 	
 }
@@ -46,20 +48,19 @@ class LinkedList<T>
 {
 	
 	public var length : Int = 0;
-	public var first : LinkedListItem;
-	public var last : LinkedListItem;
+	public var first : LinkedListItem<T>;
+	public var last : LinkedListItem<T>;
 
 	public function new() 
 	{
-		super();
 	}
 	
-	public function iterator() : Iterator<T> {
-		return new LinkedListIterator( this );
+	public function iterator() : LinkedListIterator<T> {
+		return new LinkedListIterator<T>( this );
 	}
 	
 	public function push( item : T ) : Void {
-		var link : LinkedListItem = new LinkedListItem( item );
+		var link : LinkedListItem<T> = new LinkedListItem<T>( item );
 		
 		if ( length == 0 ) {
 			first = link;
@@ -94,10 +95,10 @@ class LinkedList<T>
 	public function remove( item : T ) : Void {
 		
 		var looking : Bool = true;
-		var current : LinkedListItem = first;
+		var current : LinkedListItem<T> = first;
 		
 		while ( current != null ) {
-			if ( current.item = item ) {
+			if ( current.item == item ) {
 				if ( current.prev != null ) {
 					current.prev.next = current.next;
 				}
@@ -121,17 +122,18 @@ class LinkedList<T>
 	}
 	
 	public function removeItem( item : LinkedListItem<T> ) : Void {
+		
 		if ( item.prev != null ) {
 			item.prev.next = item.next;
 		}
 		if ( item.next != null ) {
 			item.next.prev = item.prev;
 		}
-		if ( current == first ) {
-			first = current.next;
+		if ( item == first ) {
+			first = item.next;
 		}
-		if ( current == last ) {
-			last = current.prev;
+		if ( item == last ) {
+			last = item.prev;
 		}
 		item.destroy();
 		item = null;
@@ -140,7 +142,7 @@ class LinkedList<T>
 	
 	public function insertAfterItem( item : T, after : LinkedListItem<T> ) : Void {
 		
-		var link : LinkedListItem<T> = new LinkedListItem(item);
+		var link : LinkedListItem<T> = new LinkedListItem<T>(item);
 		
 		link.prev = after;
 		link.next = after.next;
@@ -156,7 +158,7 @@ class LinkedList<T>
 	
 	public function insertBeforeItem( item : T, before : LinkedListItem<T> ) : Void {
 		
-		var link : LinkedListItem<T> = new LinkedListItem(item);
+		var link : LinkedListItem<T> = new LinkedListItem<T>(item);
 		
 		link.next = before;
 		link.prev = before.prev;

@@ -7,8 +7,7 @@ import openfl.geom.Rectangle;
 import openfl.ui.Multitouch;
 import openfl.ui.MultitouchInputMode;
 import uk.co.mojaworks.norman.core.GameObject;
-
-using Lambda;
+import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -17,8 +16,6 @@ using Lambda;
 class InputSystem extends AppSystem
 {
 	
-	
-	
 	public static inline var TAPPED : String = "TAPPED";
 	public static inline var POINTER_DOWN : String = "POINTER_DOWN";
 	public static inline var POINTER_UP : String = "POINTER_UP";
@@ -26,14 +23,14 @@ class InputSystem extends AppSystem
 	public var touchCount( default, null ) : Int = 0;
 	var _touchRegister : Map<Int,TouchData>;
 	var _keyRegister : Map<Int,Bool>;
-	var _touchListeners : List<GameObject>;
+	var _touchListeners : LinkedList<GameObject>;
 	
 	public function new() 
 	{
 		super();
 		_keyRegister = new Map<Int,Bool>();
 		_touchRegister = new Map<Int,TouchData>();
-		_touchListeners = new List<GameObject>();
+		_touchListeners = new LinkedList<GameObject>();
 		
 		core.stage.addEventListener( KeyboardEvent.KEY_DOWN, onKeyDown );
 		core.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
@@ -156,7 +153,7 @@ class InputSystem extends AppSystem
 	 */
 	
 	public function addTouchListener( object : GameObject ) {
-		_touchListeners.add( object );
+		_touchListeners.push( object );
 	}
 	
 	public function removeTouchListener( object : GameObject ) {
@@ -170,7 +167,12 @@ class InputSystem extends AppSystem
 		var endPoint : Point;
 		var bounds : Rectangle;
 				
+		trace( _touchListeners, _touchListeners.length );
+		
 		for ( object in _touchListeners ) {
+			
+			trace("Testing", object );
+			
 			bounds = object.display.getBounds();
 			startPoint = object.transform.globalToLocal( touch.lastTouchStart );
 			
