@@ -60,7 +60,9 @@ class Director extends AppSystem
 		
 		// Activate the new one
 		if ( to != null ) {
-			to.get(ViewSpace).currentActiveView.get(View).onActivate();
+			var view : View = to.get(ViewSpace).currentActiveView.get(View);
+			view.onShow();
+			view.onActivate();
 		}		
 	}
 	
@@ -89,7 +91,9 @@ class Director extends AppSystem
 	}
 	
 	private function onPresentationComplete( from : GameObject, to : GameObject ) : Void {
-		to.get(View).onActivate();
+		var view : View = to.get(View);
+		view.onShow();
+		view.onActivate();
 	}
 	
 	/**
@@ -104,7 +108,7 @@ class Director extends AppSystem
 		
 		var next_view : GameObject = _currentSpace.get(ViewSpace).previousView;
 				
-		// Transition to the old view
+		// Transition to the old view (by removing the new one)
 		var t : ITransition = null;
 		if ( transitionType != null ) t = Type.createInstance( transitionType, [] );
 		if ( t != null ) {
