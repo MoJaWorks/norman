@@ -47,9 +47,9 @@ class LinkedListItem<T> {
 class LinkedList<T> 
 {
 	
-	public var length : Int = 0;
-	public var first : LinkedListItem<T>;
-	public var last : LinkedListItem<T>;
+	public var length( default, null ) : Int = 0;
+	public var first( default, null ) : LinkedListItem<T>;
+	public var last( default, null ) : LinkedListItem<T>;
 
 	public function new() 
 	{
@@ -99,21 +99,22 @@ class LinkedList<T>
 		
 		while ( current != null ) {
 			if ( current.item == item ) {
-				if ( current.prev != null ) {
-					current.prev.next = current.next;
-				}
-				if ( current.next != null ) {
-					current.next.prev = current.prev;
-				}
-				if ( current == first ) {
-					first = current.next;
-				}
-				if ( current == last ) {
-					last = current.prev;
-				}
-				current.destroy();
-				current = null;
-				length--;
+				removeItem( current );
+				//if ( current.prev != null ) {
+					//current.prev.next = current.next;
+				//}
+				//if ( current.next != null ) {
+					//current.next.prev = current.prev;
+				//}
+				//if ( current == first ) {
+					//first = current.next;
+				//}
+				//if ( current == last ) {
+					//last = current.prev;
+				//}
+				//current.destroy();
+				//current = null;
+				//length--;
 			}else {
 				current = current.next;
 			}
@@ -170,6 +171,25 @@ class LinkedList<T>
 		
 		length++;
 		
+	}
+	
+	public function clear() 
+	{
+		var current : LinkedListItem<T> = first;
+		var next : LinkedListItem<T>;
+		
+		while ( current != null ) {
+			
+			// Only destroys references to actual items, not the items themselves
+			next = current.next;
+			current.destroy();
+			current = next;
+			
+		}
+		
+		first = null;
+		last = null;
+		length = 0;
 	}
 	
 }
