@@ -11,26 +11,23 @@ import uk.co.mojaworks.norman.core.Component;
 class View extends Component
 {
 
+	public var active : Bool = false;
+	
 	public function new() 
 	{
 		super();
-		
 	}
 	
 	public function onShow() : Void {
-		
 	}
 	
 	public function onActivate() : Void {
-		
 	}
 	
-	public function onDeactivate() : Void {
-		
+	public function onDeactivate() : Void {		
 	}
 	
 	public function resize() : Void {
-		
 	}
 	
 }

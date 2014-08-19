@@ -9,16 +9,18 @@ import uk.co.mojaworks.norman.core.Component;
  * ...
  * @author Simon
  */
-class Button extends Component
+class Button extends View
 {
 
-	public var upState : Display;
-	public var downState : Display;
-	public var overState : Display;
-	public var disabledState : Display;
+	private var upState : Display;
+	private var downState : Display;
+	private var overState : Display;
+	private var disabledState : Display;
 	
-	public var mouseOver : Bool;
-	public var mouseDown : Bool;
+	private var mouseOver : Bool;
+	private var mouseDown : Bool;
+	
+	public var buttonEnabled : Bool = true;
 	
 	private var currentState : Display;
 	
@@ -40,34 +42,43 @@ class Button extends Component
 	{
 		super.onUpdate(seconds);
 		
-		// Buttons only respond to primary pointer
-		var pointer : TouchData = core.app.input.getPointerInfo( 0 );
 		var newState : Display = null;
 		
-		if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) ) {
-			mouseOver = true;
-			if ( pointer.isDown ) {
-				mouseDown = true;
+		if ( buttonEnabled ) {
+		
+			// Buttons only respond to primary pointer
+			var pointer : TouchData = core.app.input.getPointerInfo( 0 );
+			
+			
+			if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) ) {
+				mouseOver = true;
+				if ( pointer.isDown ) {
+					mouseDown = true;
+				}else {
+					mouseDown = false;
+				}
 			}else {
+				mouseOver = false;
 				mouseDown = false;
 			}
-		}else {
-			mouseOver = false;
-			mouseDown = false;
-		}
-		
-		if ( mouseOver ) {
-			if ( mouseDown ) {
-				newState = downState;
+			
+			if ( mouseOver ) {
+				if ( mouseDown ) {
+					newState = downState;
+				}else {
+					newState = overState;
+				}
 			}else {
-				newState = overState;
+				newState = upState;
 			}
+						
 		}else {
-			newState = upState;
+			newState = disabledState;
 		}
 		
 		if ( currentState != newState ) {
 			gameObject.add( newState );
+			currentState = newState;
 		}
 	}
 	
