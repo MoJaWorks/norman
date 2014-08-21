@@ -20,6 +20,8 @@ class InputSystem extends AppSystem
 	public static inline var POINTER_DOWN : String = "POINTER_DOWN";
 	public static inline var POINTER_UP : String = "POINTER_UP";
 	
+	public static inline var MAX_TOUCHES : Int = 5;
+	
 	public var touchCount( default, null ) : Int = 0;
 	var _touchRegister : Map<Int,TouchData>;
 	var _keyRegister : Map<Int,Bool>;
@@ -38,7 +40,7 @@ class InputSystem extends AppSystem
 		#if mobile
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			// Hard code at 5 as that is currently the maximum for ipads and top end android
-			for ( i in 0...5 ) _touchRegister.set( i, new TouchData( i ) );
+			for ( i in 0...MAX_TOUCHES ) _touchRegister.set( i, new TouchData( i ) );
 			core.stage.addEventListener( TouchEvent.TOUCH_BEGIN, onTouchBegin );
 		#else
 			_touchRegister.set( 0, new TouchData(0) );
@@ -214,6 +216,16 @@ class InputSystem extends AppSystem
 	public function getTouchPosition( id : Int = 0 ) : Point {
 		return _touchRegister.get( id ).position;
 	}	 
+	
+	public function isPointerOver( id : Int, object : GameObject ) : Bool {
+		
+		var bounds : Rectangle = object.display.getBounds();
+		var touch : TouchData = _touchRegister.get( id );
+		var local : Point = object.transform.globalToLocal( touch.position );
+		
+		if ( bounds.containsPoint( local ) ) return true;
+		else return false;
+	}
 	 
 	public function isAnyPointerDown() : Array<Int> {
 		
@@ -230,23 +242,16 @@ class InputSystem extends AppSystem
 	}
 	
 	public function isAnyPointerOver( object : GameObject ) : Array<Int> {
-		
-		var bounds : Rectangle;
-		var local : Point;
-		var touch : TouchData;
+
 		var result : Array<Int> = [];
 		
-		for ( key in _touchRegister.keys() ) {
-			touch = _touchRegister.get( key );
-			bounds = object.display.getBounds();
-			local = object.transform.globalToLocal( touch.position );
-			
-			if ( bounds.containsPoint( local ) ) result.push( touch.touchId );
+		for ( touch in _touchRegister ) {			
+			if ( isPointerOver( touch.touchId, object ) ) result.push( touch.touchId );
 		}
 		
 		return result;
 	}
-	
+		
 	public function isAnyPointerDownOver( object : GameObject ) : Array<Int> {
 		
 		if ( touchCount == 0 ) return [];
@@ -268,6 +273,15 @@ class InputSystem extends AppSystem
 		
 		return result;
 		
+	}
+	
+	public function isPrimaryTarget( gameObject:GameObject, pointer : Int = 0 ) : Bool
+	{
+		for ( object in _touchListeners ) {
+			if ( object.getChildSortString() > gameObject.getChildSortString() && isPointerOver( pointer, object ) ) return false;
+		}
+		
+		return true;
 	}
 	
 }

@@ -114,7 +114,6 @@ class GameObject extends CoreObject
 	
 	public function getChildSortString() : String {
 		if ( parent != null ) {
-			trace("Log", Math.log( parent.children.length ) );
 			return parent.getChildSortString() + ":" + StringTools.lpad( Std.string( childIndex ), "0", Std.string(parent.children.length).length );
 		}else {
 			return Std.string( childIndex );

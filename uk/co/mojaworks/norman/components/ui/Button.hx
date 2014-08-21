@@ -17,8 +17,11 @@ class Button extends View
 	private var overState : Display;
 	private var disabledState : Display;
 	
-	private var mouseOver : Bool;
-	private var mouseDown : Bool;
+	private var mouseOver : Bool = false;
+	private var mouseDown : Bool = false;
+	
+	private var mouseDownCaptured : Bool = false;
+	private var mouseWasDown : Bool = false;
 	
 	public var buttonEnabled : Bool = true;
 	
@@ -45,14 +48,21 @@ class Button extends View
 		var newState : Display = null;
 		
 		if ( buttonEnabled ) {
-		
+	
 			// Buttons only respond to primary pointer
 			var pointer : TouchData = core.app.input.getPointerInfo( 0 );
-			
-			
-			if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) ) {
+						
+			if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) && core.app.input.isPrimaryTarget( gameObject ) ) {
+				
+				if ( mouseOver && !mouseWasDown && pointer.isDown ) {
+					mouseDownCaptured = true;
+				}else if ( !pointer.isDown ) {
+					mouseDownCaptured = false;
+				}
 				mouseOver = true;
-				if ( pointer.isDown ) {
+				mouseWasDown = pointer.isDown;
+				
+				if ( pointer.isDown && mouseDownCaptured ) {
 					mouseDown = true;
 				}else {
 					mouseDown = false;
