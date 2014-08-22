@@ -3,14 +3,13 @@ package uk.co.mojaworks.norman.engine ;
 import haxe.Timer;
 import openfl.display.Stage;
 import openfl.events.Event;
-import uk.co.mojaworks.norman.core.CoreObject;
-import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.systems.input.InputSystem;
 import uk.co.mojaworks.norman.components.Viewport;
-import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Core;
+import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.renderer.Renderer;
+import uk.co.mojaworks.norman.systems.director.Director;
+import uk.co.mojaworks.norman.systems.input.InputSystem;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -24,8 +23,8 @@ class NormanApp extends CoreObject
 	public var input( default, null ) : InputSystem;
 	public var viewport( default, null ) : Viewport;
 	public var director( default, null ) : Director;
+	public var renderer( default, null ) : Renderer;
 	
-	var _renderer : Renderer;
 	var _lastTick : Float = 0;
 	var _elapsed : Float = 0;
 	
@@ -77,15 +76,15 @@ class NormanApp extends CoreObject
 	
 	private function initCanvas( ) : Void {
 		
-		_renderer = new Renderer();		
-		_renderer.init( viewport.screenRect );
+		renderer = new Renderer();		
+		renderer.init( viewport.screenRect );
 		
 		// Flash stage3D doesn't need adding to display list
 		#if ( !flash ) 
-			core.stage.addChild( _renderer.getDisplayObject() );
+			core.stage.addChild( renderer.getDisplayObject() );
 		#end
 		
-		core.root.add( _renderer );
+		core.root.add( renderer );
 		
 	}
 	
@@ -106,7 +105,7 @@ class NormanApp extends CoreObject
 						
 		// Resize the viewport to scale everything to the screen size
 		viewport.resize();
-		_renderer.resize( viewport.screenRect );
+		renderer.resize( viewport.screenRect );
 			
 		// Resize any active screens/panels
 		director.resize();
@@ -120,7 +119,7 @@ class NormanApp extends CoreObject
 		
 		onUpdate( _elapsed );
 		
-		_renderer.render( core.root );
+		renderer.render( core.root );
 		
 	}
 	

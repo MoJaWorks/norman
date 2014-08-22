@@ -1,7 +1,9 @@
 package uk.co.mojaworks.norman.renderer.stage3d;
 
+import flash.display.BitmapData;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DTextureFormat;
+import uk.co.mojaworks.norman.renderer.TextureData;
 import uk.co.mojaworks.norman.renderer.TextureManager;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
@@ -37,6 +39,17 @@ class Stage3DTextureManager extends TextureManager
 		
 	}
 	
+	override public function loadBitmap(id:String, bitmap:BitmapData):TextureData 
+	{
+		var t_data : TextureData = super.loadBitmap(id, bitmap);
+		
+		if ( _context != null ) {
+			createStage3DTexture( t_data );
+		}
+		
+		return t_data;
+	}
+	
 	public function createStage3DTexture( t_data : TextureData ) : Void {
 		// Create the Stage3D texture
 		t_data.texture = _context.createTexture( MathUtils.roundToNextPow2( t_data.sourceBitmap.width ), MathUtils.roundToNextPow2( t_data.sourceBitmap.height ), Context3DTextureFormat.BGRA, false );
@@ -48,6 +61,11 @@ class Stage3DTextureManager extends TextureManager
 		for ( key in _textures.keys() ) {
 			createStage3DTexture( _textures.get(key) );
 		}
+	}
+	
+	override public function unloadTexture( id : String ) : Void  
+	{
+		_textures.get(id).texture.dispose();
 	}
 	
 }

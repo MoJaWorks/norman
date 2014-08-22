@@ -13,6 +13,7 @@ class TextureData
 	// The source bitmap and an ID used to keep track of it
 	public var sourceBitmap( default, set ) : BitmapData;
 	public var id : String;
+	public var useCount : Int = 0;
 	
 	#if (!flash)
 		public var texture : openfl.gl.GLTexture;

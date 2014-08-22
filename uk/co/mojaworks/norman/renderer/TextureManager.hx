@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.renderer ;
+import flash.display.BitmapData;
 import haxe.Json;
 import openfl.Assets;
 import uk.co.mojaworks.norman.core.Component;
@@ -32,6 +33,21 @@ class TextureManager extends Component
 		_textures.set( assetId, t_data );
 		return t_data;
 	}
+	
+	public function loadBitmap( id : String, bitmap : BitmapData ) : TextureData {
+		
+		var t_data : TextureData = new TextureData();
+		t_data.id = id;
+		t_data.sourceBitmap = bitmap;
+		
+		if ( _textures.get( id ) != null ) {
+			unloadTexture( id );
+		}
+		
+		_textures.set( id, t_data );
+		return t_data;
+		
+	}
 	  
 	public function getTexture ( id : String ) : TextureData {
 		return _textures.get(id);
@@ -44,6 +60,11 @@ class TextureManager extends Component
 	
 	public function restoreTextures() 
 	{
-		
+		// Override
+	}
+	
+	public function unloadTexture( id : String ) : Void  
+	{
+		// Override
 	}
 }

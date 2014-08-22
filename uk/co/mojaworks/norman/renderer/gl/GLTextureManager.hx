@@ -23,11 +23,16 @@ class GLTextureManager extends TextureManager
 		
 		// Let super do its thing and build a texturedata
 		var t_data : TextureData = super.loadTexture( assetId );		
-		
 		createGLTexture( t_data );
-		
 		return t_data;
 		
+	}
+	
+	override public function loadBitmap(id:String, bitmap:BitmapData):TextureData 
+	{
+		var t_data : TextureData = super.loadBitmap(id, bitmap);
+		createGLTexture( t_data );
+		return t_data;
 	}
 	
 	public function createGLTexture( t_data : TextureData ) : Void {
@@ -52,6 +57,11 @@ class GLTextureManager extends TextureManager
 		for ( key in _textures.keys() ) {
 			createGLTexture( _textures.get(key) );
 		}
+	}
+	
+	override public function unloadTexture( id : String ) : Void  
+	{
+		GL.deleteTexture( _textures.get(id).texture );
 	}
 		
 }

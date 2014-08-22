@@ -17,7 +17,7 @@ class Image extends Display
 	public var textureData : TextureData;
 	private var _uvRect : Rectangle = null;
 	private var _rect : Rectangle = null;
-	
+		
 	// Colour multipliers
 	public var red : Float = 1;
 	public var green : Float = 1;
@@ -25,19 +25,18 @@ class Image extends Display
 		
 	public function new( textureId : String, subTextureId : String = null ) 
 	{
-		super();	
+		super();
 		
-		var textureManager : TextureManager = core.root.get(Renderer).textureManager;
+		var textureManager : TextureManager = core.app.renderer.textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
 			textureData = textureManager.loadTexture( textureId );
 		}else {
 			textureData = textureManager.getTexture( textureId );
 		}
 		
+		textureData.useCount++;
 		_uvRect = textureData.getUVFor( subTextureId );
 		_rect = textureData.getRectFor( subTextureId );
-			
-		//trace("Creating image with texture data", textureData, _uvRect, _rect );
 	}
 	
 	override public function onAdded():Void 
@@ -59,6 +58,18 @@ class Image extends Display
 	override public function getNaturalHeight():Float 
 	{
 		return _rect.height;
+	}
+	
+	override public function destroy():Void 
+	{
+		super.destroy();
+		textureData.useCount--;
+		// Unload the texture if it is no longer in use
+		if ( textureData.useCount <= 0 ) core.app.renderer.textureManager.unloadTexture( textureData.id );
+		
+		textureData = null;
+		_uvRect = null;
+		_rect = null;
 	}
 	
 }
