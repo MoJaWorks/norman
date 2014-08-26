@@ -19,9 +19,10 @@ class Image extends Display
 	private var _rect : Rectangle = null;
 		
 	// Colour multipliers
-	public var red : Float = 1;
-	public var green : Float = 1;
-	public var blue : Float = 1;
+	public var r : Float = 1;
+	public var g : Float = 1;
+	public var b : Float = 1;
+	public var a : Float = 1;
 		
 	public function new( textureId : String, subTextureId : String = null ) 
 	{
@@ -37,6 +38,7 @@ class Image extends Display
 		textureData.useCount++;
 		_uvRect = textureData.getUVFor( subTextureId );
 		_rect = textureData.getRectFor( subTextureId );
+		
 	}
 	
 	override public function onAdded():Void 
@@ -47,7 +49,7 @@ class Image extends Display
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.renderTransform, getFinalAlpha(), red, green, blue );
+		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.renderTransform, a * getFinalAlpha(), r, g, b );
 	}
 	
 	override public function getNaturalWidth():Float 

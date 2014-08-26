@@ -65,7 +65,9 @@ class Stage3DTextureManager extends TextureManager
 	
 	override public function unloadTexture( id : String ) : Void  
 	{
-		_textures.get(id).texture.dispose();
+		if ( _textures.get(id) != null ) {
+			_textures.get(id).texture.dispose();
+		}
 	}
 	
 }

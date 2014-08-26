@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.renderer.gl ;
 
+import openfl.display.BitmapData;
 import openfl.gl.GL;
 import openfl.utils.UInt8Array;
 import uk.co.mojaworks.norman.renderer.TextureData;
@@ -61,7 +62,9 @@ class GLTextureManager extends TextureManager
 	
 	override public function unloadTexture( id : String ) : Void  
 	{
-		GL.deleteTexture( _textures.get(id).texture );
+		if ( _textures.get(id) != null ) {
+			GL.deleteTexture( _textures.get(id).texture );
+		}
 	}
 		
 }
