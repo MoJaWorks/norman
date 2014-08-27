@@ -26,9 +26,9 @@ class Text extends Display
 	public var textureData : TextureData;
 	
 	// colour multipliers
-	public var r : Float = 1;
-	public var g : Float = 1;
-	public var b : Float = 1;
+	public var r : Float = 255;
+	public var g : Float = 255;
+	public var b : Float = 255;
 	public var a : Float = 1;
 	
 	public function new( text : String, width : Int = 200, height : Int = 200 ) 
@@ -124,6 +124,16 @@ class Text extends Display
 		r = ColourUtils.r( colour );
 		g = ColourUtils.g( colour );
 		b = ColourUtils.b( colour );
+		return this;
+	}
+	
+	public function setColour32( colour : Int ) : Text {
+		r = ColourUtils.r( colour );
+		g = ColourUtils.g( colour );
+		b = ColourUtils.b( colour );
+		a = ColourUtils.a( colour );
+		
+		trace("Set to", r, g, b, a );
 		return this;
 	}
 	

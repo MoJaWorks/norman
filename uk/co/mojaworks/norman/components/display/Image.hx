@@ -19,9 +19,9 @@ class Image extends Display
 	private var _rect : Rectangle = null;
 		
 	// Colour multipliers
-	public var r : Float = 1;
-	public var g : Float = 1;
-	public var b : Float = 1;
+	public var r : Float = 255;
+	public var g : Float = 255;
+	public var b : Float = 255;
 	public var a : Float = 1;
 		
 	public function new( textureId : String, subTextureId : String = null ) 

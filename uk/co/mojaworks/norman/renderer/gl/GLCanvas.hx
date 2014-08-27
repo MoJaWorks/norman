@@ -15,6 +15,7 @@ import openfl.utils.Int16Array;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.utils.ColourUtils;
 
 /**
  * ...
@@ -217,9 +218,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		for ( point in arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			_vertices.push( red / 255 );
-			_vertices.push( green / 255 );
-			_vertices.push( blue / 255 );
+			_vertices.push( red * ColourUtils.RATIO_255 );
+			_vertices.push( green * ColourUtils.RATIO_255 );
+			_vertices.push( blue * ColourUtils.RATIO_255 );
 			_vertices.push( alpha );
 			_vertices.push( 0 );
 			_vertices.push( 0 );
@@ -235,13 +236,13 @@ class GLCanvas extends CoreObject implements ICanvas
 		
 	}
 	
-	public function drawImage( texture : TextureData, transform:Matrix, alpha:Float = 1, red : Float = 1, green : Float = 1, blue : Float = 1 ):Void 
+	public function drawImage( texture : TextureData, transform:Matrix, alpha:Float = 1, red : Float = 255, green : Float = 255, blue : Float = 255 ):Void 
 	{
 		// Just call drawSubimage with whole image as bounds
 		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, alpha, red, green, blue );
 	}
 	
-	public function drawSubImage( texture : TextureData, sourceRect : Rectangle, transform:Matrix, alpha:Float = 1, red : Float = 1, green : Float = 1, blue : Float = 1 ):Void 
+	public function drawSubImage( texture : TextureData, sourceRect : Rectangle, transform:Matrix, alpha:Float = 1, red : Float = 255, green : Float = 255, blue : Float = 255 ):Void 
 	{
 		var batch : GLBatchData = (_batches.length > 0) ? _batches[ _batches.length - 1 ] : null;
 		var offset : Int = Math.floor(_vertices.length / VERTEX_SIZE);
@@ -283,9 +284,9 @@ class GLCanvas extends CoreObject implements ICanvas
 		for ( point in pts_arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			_vertices.push( red );
-			_vertices.push( green );
-			_vertices.push( blue );
+			_vertices.push( red * ColourUtils.RATIO_255 );
+			_vertices.push( green * ColourUtils.RATIO_255 );
+			_vertices.push( blue * ColourUtils.RATIO_255 );
 			_vertices.push( alpha );
 			_vertices.push( uv_arr[(i*2)] );
 			_vertices.push( uv_arr[(i*2)+1] );
