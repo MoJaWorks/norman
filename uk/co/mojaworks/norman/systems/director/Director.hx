@@ -3,9 +3,9 @@ package uk.co.mojaworks.norman.systems.director ;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.components.ui.View;
 import uk.co.mojaworks.norman.components.ui.ViewSpace;
-import uk.co.mojaworks.norman.components.Viewport;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.systems.AppSystem;
+import uk.co.mojaworks.norman.systems.director.Viewport;
 
 /**
  * ...
@@ -15,6 +15,7 @@ class Director extends AppSystem
 {
 	
 	public var root(default, null) : GameObject;
+	public var viewport( default, null ) : Viewport;
 	
 	// All items presented including the main view are added to this space
 	// When a new view is loaded - all items in this space will be removed
@@ -25,6 +26,11 @@ class Director extends AppSystem
 	{
 		super();
 		root = new GameObject().add( new Display() );
+		viewport = new Viewport();
+	}
+	
+	public function setViewportTarget( width : Float, height : Float ) : Void {
+		viewport.setTargetSize( width, height );
 	}
 	
 	/**
@@ -136,7 +142,7 @@ class Director extends AppSystem
 	
 	public function resize( ) : Void {
 		
-		var viewport : Viewport = core.app.viewport;
+		viewport.resize();
 		root.transform.setScale( viewport.scale ).setPosition( viewport.screenRect.x, viewport.screenRect.y );
 		
 		if ( _currentSpace != null ) {

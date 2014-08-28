@@ -1,22 +1,20 @@
-package uk.co.mojaworks.norman.components ;
+package uk.co.mojaworks.norman.systems.director ;
 
-import openfl.display.Sprite;
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.core.CoreObject;
 
 /**
  * Game Viewport automatically resizes it's contents to fit inside a viewport
  * ...
  * @author Simon
  */
-class Viewport extends Component
+class Viewport extends CoreObject
 {
 	// StageRect is the scaled stage. It will be scaled and centered to match the current screen resolution
 	public var stageRect( default, null ) : Rectangle;
 	
 	// DisplayRect is the total display area including margins
-	public var displayRect( default, null ) : Rectangle;
+	public var fullStageRect( default, null ) : Rectangle;
 	
 	// Screenrect is the total unscaled screen area
 	public var screenRect( default, null ) : Rectangle;
@@ -29,12 +27,12 @@ class Viewport extends Component
 		super();
 		
 		stageRect = new Rectangle();
-		displayRect = new Rectangle();
+		fullStageRect = new Rectangle();
 		screenRect = new Rectangle();
 		
 	}
 	
-	public function init( viewWidth : Float, viewHeight : Float ):Void 
+	public function setTargetSize( viewWidth : Float, viewHeight : Float ):Void 
 	{
 		
 		stageRect.width = viewWidth;
@@ -56,10 +54,10 @@ class Viewport extends Component
 		stageRect.x = screenRect.x / scale;
 		stageRect.y = screenRect.y / scale;
 		
-		displayRect.x = -stageRect.x;
-		displayRect.y = -stageRect.y;
-		displayRect.width = stageRect.x + stageRect.x + stageRect.width;
-		displayRect.height = stageRect.y + stageRect.y + stageRect.height;
+		fullStageRect.x = -stageRect.x;
+		fullStageRect.y = -stageRect.y;
+		fullStageRect.width = stageRect.x + stageRect.x + stageRect.width;
+		fullStageRect.height = stageRect.y + stageRect.y + stageRect.height;
 		
 	}
 	

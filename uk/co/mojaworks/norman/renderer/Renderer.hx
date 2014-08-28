@@ -5,15 +5,15 @@ import openfl.display.OpenGLView;
 import openfl.events.Event;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.components.messenger.MessageData;
-import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.AppSystem;
 
 /**
  * ...
  * @author Simon
  */
-class Renderer extends Component {
+class Renderer extends AppSystem {
 
 	var _canvas : ICanvas;
 	public var textureManager( default, null ) : TextureManager;

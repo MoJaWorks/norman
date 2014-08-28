@@ -3,6 +3,7 @@ import openfl.display.BitmapData;
 import openfl.geom.Matrix;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
+import openfl.text.TextFormatAlign;
 import uk.co.mojaworks.norman.renderer.ICanvas;
 import uk.co.mojaworks.norman.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.ColourUtils;
@@ -14,17 +15,26 @@ import uk.co.mojaworks.norman.utils.ColourUtils;
 class Text extends Display
 {
 
-	public var width( default, null ) : Int;
-	public var height( default, null ) : Int;
+	public var textureData : TextureData;
 	
 	// when updated draw textfield onto canvas
 	var textField : TextField;
 	var canvas : BitmapData;
 	
-	public var text( get, set ) : String;
-	
-	public var textureData : TextureData;
-	
+	public var width( default, null ) : Int;
+	public var height( default, null ) : Int;
+	public var bold( default, null ) : Bool = false;
+	public var italic( default, null ) : Bool = false;
+	public var underline( default, null ) : Bool = false;
+	#if flash
+	public var align( default, null ) : TextFormatAlign = TextFormatAlign.LEFT;
+	#else
+	public var align( default, null ) : String = TextFormatAlign.LEFT;
+	#end
+	public var fontSize( default, null ) : Int = 12;
+	public var font( default, null ) : String = "Arial";
+	public var text( default, null ) : String = "";
+		
 	// colour multipliers
 	public var r : Float = 255;
 	public var g : Float = 255;
@@ -35,8 +45,9 @@ class Text extends Display
 	{
 		super();
 		textField = new TextField();
-		textField.text = text;
-		textField.textColor = 0xFFFFFF;
+		setText( text );
+		setSize( width, height );
+		updateTextFormat();
 		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
 	}
 	
@@ -51,56 +62,14 @@ class Text extends Display
 		super.onRemoved();
 		if ( textureData != null ) core.app.renderer.textureManager.unloadTexture( textureData.id );
 	}
-	
-	private function get_text() : String {
-		return textField.text;
-	}
-	
-	private function set_text( text : String ) : String {
-		textField.text = text;
-		build();
-		return text;
-	}
-	
-	public function setWidth( width : Int ) : Text {
-		this.width = width;
-		textField.width = width;
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
-		build();
-		return this;
-	}
-	
-	public function setHeight( height : Int ) : Text {
-		this.height = height;
-		textField.height = height;
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
-		build();
-		return this;
-	}
-	
-	public function setSize( width : Int, height : Int ) : Text {
-		this.width = width;
-		this.height = height;
-		textField.width = width;
-		textField.height = height;
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
-		build();
-		return this;
-	}
-	
-	public function setTextFormat( format : TextFormat ) : Text {
-		textField.defaultTextFormat = format;
-		textField.setTextFormat( format );
-		build();
-		return this;
-	}
-	
+		
 	private function build() : Void {
 		
-		canvas.fillRect( canvas.rect, 0x00FFFFFF );
-		canvas.draw( textField, new Matrix(), null, null, null, true );
-		
-		textureData = core.app.renderer.textureManager.loadBitmap( "text/" + gameObject.id, canvas );
+		if ( gameObject != null ) {
+			canvas.fillRect( canvas.rect, 0x00FFFFFF );
+			canvas.draw( textField, new Matrix(), null, null, null, true );
+			textureData = core.app.renderer.textureManager.loadBitmap( "text/" + gameObject.id, canvas );
+		}
 	
 	}
 	
@@ -135,6 +104,112 @@ class Text extends Display
 		
 		trace("Set to", r, g, b, a );
 		return this;
+	}
+	
+	
+	/**
+	 * SETTERS
+	 */
+	
+	public function setBold( bold : Bool ) : Text {
+		if ( bold != this.bold ) {
+			this.bold = bold;
+			updateTextFormat();
+			build();
+		}
+		return this;
+	}
+	
+	public function setItalic( italic : Bool ) : Text {
+		if ( italic != this.italic ) {
+			this.italic = italic;
+			updateTextFormat();
+			build();
+		}
+		return this;
+	}
+	
+	public function setUnderline( underline : Bool ) : Text {
+		if ( underline != this.underline ) {
+			this.underline = underline;
+			updateTextFormat();
+			build();
+		}
+		return this;
+	}
+	
+	public function setFontSize( fontSize : Int ) : Text {
+		if ( fontSize != this.fontSize ) {
+			this.fontSize = fontSize;
+			updateTextFormat();
+			build();
+		}
+		return this;
+	}
+	
+	#if flash
+	public function setAlign( align : TextFormatAlign ) : Text {
+	#else
+	public function setAlign( align : String ) : Text {
+	#end
+		if ( align != this.align ) {
+			this.align = align;
+			updateTextFormat();
+			build();
+		}
+		return this;
+	}
+	
+	public function setFont( font : String ) : Text {
+		
+		if ( font != this.font ) {
+			this.font = font;
+			updateTextFormat();
+			build();
+		}
+		return this;
+	}
+
+	public function setText( text : String ) : Text {
+		
+		if ( text != this.text ) {
+			this.text = text;
+			textField.text = text;
+			build();
+		}
+		return this;
+	}
+	
+	public function setWidth( width : Int ) : Text {
+		this.width = width;
+		textField.width = width;
+		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
+		build();
+		return this;
+	}
+	
+	public function setHeight( height : Int ) : Text {
+		this.height = height;
+		textField.height = height;
+		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
+		build();
+		return this;
+	}
+	
+	public function setSize( width : Int, height : Int ) : Text {
+		this.width = width;
+		this.height = height;
+		textField.width = width;
+		textField.height = height;
+		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
+		build();
+		return this;
+	}
+	
+	private function updateTextFormat() : Void {
+		var format : TextFormat = new TextFormat( font, fontSize, 0xFFFFFF, bold, italic, underline, null, null, align );
+		textField.defaultTextFormat = format;
+		textField.setTextFormat( format );
 	}
 	
 	

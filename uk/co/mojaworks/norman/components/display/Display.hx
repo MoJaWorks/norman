@@ -78,6 +78,14 @@ class Display extends Component
 		return 0;
 	}
 	
+	public function getScaledWidth() : Float {
+		return getNaturalWidth() * gameObject.transform.scaleX;
+	}
+	
+	public function getScaledHeight() : Float {
+		return getNaturalHeight() * gameObject.transform.scaleY;
+	}
+	
 	public function getFinalAlpha() : Float {
 		if ( gameObject.parent != null ) {
 			return gameObject.parent.get(Display).getFinalAlpha() * alpha;

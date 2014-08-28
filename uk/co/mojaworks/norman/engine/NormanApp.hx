@@ -4,7 +4,7 @@ import haxe.Timer;
 import openfl.display.Stage;
 import openfl.events.Event;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.Viewport;
+import uk.co.mojaworks.norman.systems.director.Viewport;
 import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.renderer.Renderer;
@@ -21,24 +21,28 @@ import uk.co.mojaworks.norman.systems.input.InputSystem;
 class NormanApp extends CoreObject
 {
 	public var input( default, null ) : InputSystem;
-	public var viewport( default, null ) : Viewport;
 	public var director( default, null ) : Director;
 	public var renderer( default, null ) : Renderer;
 	
 	var _lastTick : Float = 0;
 	var _elapsed : Float = 0;
 	
+	// Temp variables to store width/height for setup
+	var _stageWidth : Int;
+	var _stageHeight : Int;
+	
 	public function new( stage : Stage, stageWidth : Int, stageHeight : Int ) 
 	{
 		super();
 		
-		initCore( stage );
-		initViewport( stageWidth, stageHeight );
-		initCoreModules();
-		initSystems();
-		initCanvas();
-		initView();
+		_stageHeight = stageHeight;
+		_stageWidth = stageWidth;
 		
+		initCore( stage );
+		initSystems( );
+		initCanvas( );
+		initView( );
+				
 		core.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
 		core.stage.addEventListener( Event.RESIZE, resize );
 		
@@ -54,22 +58,14 @@ class NormanApp extends CoreObject
 	
 	private function initCore( stage : Stage ) : Void {
 		Core.init( this, stage );
-	}
-	
-	private function initViewport( stageWidth : Int, stageHeight : Int ) : Void {
-		
-		viewport = new Viewport();
-		viewport.init( stageWidth, stageHeight );
-		
-	}
-	
-	private function initCoreModules() : Void {
 		core.root.add( new Display() );
 	}
 	
 	private function initSystems() : Void {
 		
 		director = new Director();
+		director.setViewportTarget( _stageWidth, _stageHeight );
+		
 		input = new InputSystem();
 		
 	}
@@ -77,14 +73,12 @@ class NormanApp extends CoreObject
 	private function initCanvas( ) : Void {
 		
 		renderer = new Renderer();		
-		renderer.init( viewport.screenRect );
+		renderer.init( director.viewport.screenRect );
 		
 		// Flash stage3D doesn't need adding to display list
 		#if ( !flash ) 
 			core.stage.addChild( renderer.getDisplayObject() );
 		#end
-		
-		core.root.add( renderer );
 		
 	}
 	
@@ -102,13 +96,12 @@ class NormanApp extends CoreObject
 	 */
 	
 	private function resize( e : Event = null ) : Void {
-						
-		// Resize the viewport to scale everything to the screen size
-		viewport.resize();
-		renderer.resize( viewport.screenRect );
-			
+
 		// Resize any active screens/panels
 		director.resize();
+		
+		// Resize the viewport to scale everything to the screen size
+		renderer.resize( director.viewport.screenRect );
 		
 	}
 	

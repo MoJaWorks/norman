@@ -129,7 +129,7 @@ class Transform extends Component
 	 */
 	public function centerPivot() : Transform {
 		if ( gameObject.has(Display) ) {
-			setPivot( gameObject.get(Display).getNaturalWidth() * 0.5, gameObject.get(Display).getNaturalHeight() * 0.5 );
+			setPivot( gameObject.display.getNaturalWidth() * 0.5, gameObject.display.getNaturalHeight() * 0.5 );
 		}else {
 			setPivot(0, 0);
 		}
