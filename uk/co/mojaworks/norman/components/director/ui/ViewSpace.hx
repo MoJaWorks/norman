@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.ui ;
+package uk.co.mojaworks.norman.components.director.ui ;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.utils.LinkedList;

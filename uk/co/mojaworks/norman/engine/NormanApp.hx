@@ -3,13 +3,11 @@ package uk.co.mojaworks.norman.engine ;
 import haxe.Timer;
 import openfl.display.Stage;
 import openfl.events.Event;
-import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.systems.director.Viewport;
-import uk.co.mojaworks.norman.core.Core;
-import uk.co.mojaworks.norman.core.CoreObject;
-import uk.co.mojaworks.norman.renderer.Renderer;
-import uk.co.mojaworks.norman.systems.director.Director;
-import uk.co.mojaworks.norman.systems.input.InputSystem;
+import uk.co.mojaworks.norman.components.director.Director;
+import uk.co.mojaworks.norman.components.input.Input;
+import uk.co.mojaworks.norman.components.renderer.Renderer;
+import uk.co.mojaworks.norman.core.Root;
+import uk.co.mojaworks.norman.core.RootObject;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -18,12 +16,9 @@ import uk.co.mojaworks.norman.systems.input.InputSystem;
  * @author Simon
  */
 
-class NormanApp extends CoreObject
+class NormanApp extends RootObject
 {
-	public var input( default, null ) : InputSystem;
-	public var director( default, null ) : Director;
-	public var renderer( default, null ) : Renderer;
-	
+
 	var _lastTick : Float = 0;
 	var _elapsed : Float = 0;
 	
@@ -38,13 +33,11 @@ class NormanApp extends CoreObject
 		_stageHeight = stageHeight;
 		_stageWidth = stageWidth;
 		
-		initCore( stage );
-		initSystems( );
-		initCanvas( );
-		initView( );
+		initRoot( stage, stageWidth, stageHeight );
+		initApp();
 				
-		core.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
-		core.stage.addEventListener( Event.RESIZE, resize );
+		root.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
+		root.stage.addEventListener( Event.RESIZE, resize );
 		
 		resize();
 		
@@ -56,36 +49,26 @@ class NormanApp extends CoreObject
 	 * Boot
 	 */
 	
-	private function initCore( stage : Stage ) : Void {
-		Core.init( this, stage );
-		core.root.add( new Display() );
-	}
-	
-	private function initSystems() : Void {
+	private function initRoot( stage : Stage, width : Int, height : Int ) : Void {
+		Root.init( stage );
 		
-		director = new Director();
-		director.setViewportTarget( _stageWidth, _stageHeight );
+		var director : Director = new Director();
+		director.setViewportTarget( width, height );
+		root.add( director );
 		
-		input = new InputSystem();
+		root.add( new Input() );
 		
-	}
-	
-	private function initCanvas( ) : Void {
-		
-		renderer = new Renderer();		
+		var renderer = new Renderer();
 		renderer.init( director.viewport.screenRect );
+		root.add( renderer );
 		
-		// Flash stage3D doesn't need adding to display list
-		#if ( !flash ) 
-			core.stage.addChild( renderer.getDisplayObject() );
-		#end
 		
 	}
 	
-	private function initView() : Void {
-		core.root.addChild( director.root );
+	private function initApp() : Void {
+		
 	}
-	
+			
 	private function onStartupComplete() : Void {
 		// Override
 	}
@@ -98,10 +81,11 @@ class NormanApp extends CoreObject
 	private function resize( e : Event = null ) : Void {
 
 		// Resize any active screens/panels
+		var director : Director = root.get(Director);
 		director.resize();
 		
 		// Resize the viewport to scale everything to the screen size
-		renderer.resize( director.viewport.screenRect );
+		root.get(Renderer).resize( director.viewport.screenRect );
 		
 	}
 	
@@ -112,14 +96,14 @@ class NormanApp extends CoreObject
 		
 		onUpdate( _elapsed );
 		
-		renderer.render( core.root );
+		root.get(Renderer).render( root );
 		
 	}
 	
 	public function onUpdate( seconds : Float ) : Void {
 		// This is the one that will be overriden
-		input.onUpdate( seconds );
-		director.onUpdate( seconds );
+		root.get(Input).onUpdate( seconds );
+		root.get(Director).onUpdate( seconds );
 	}
 	
 	/**
@@ -128,9 +112,8 @@ class NormanApp extends CoreObject
 	
 	public function destroy():Void 
 	{
-		core.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
+		root.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
+		root.stage.removeEventListener( Event.RESIZE, resize );
 	}
-		
-	
 	
 }

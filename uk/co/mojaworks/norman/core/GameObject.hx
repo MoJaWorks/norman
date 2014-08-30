@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.components.Transform;
  * ...
  * @author Simon
  */
-class GameObject extends CoreObject
+class GameObject extends RootObject
 {
 	public static inline var CHILD_ADDED : String = "CHILD_ADDED";
 	public static inline var CHILD_REMOVED : String = "CHILD_REMOVED";
@@ -18,19 +18,16 @@ class GameObject extends CoreObject
 	private static var nextId : Int = 0;
 	
 	// Children of an object are affected by their parent and are destroyed along with their parent
+	public var id( default, null) : String = "";
 	public var parent( default, null ) : GameObject;
 	public var children( default, null ) : Array<GameObject>;
 	public var childIndex( default, null ) : Int;
 	
 	// Components
 	var _components : Map<String, Component>;
-	
 	public var transform( default, null ) : Transform;
 	public var messenger( default, null ) : Messenger;
-	
-	// Display is not set by default and will be null until a display component is added
-	public var display( default, null ) : Display;
-	public var id( default, null) : String = "";
+	public var display( default, null ) : Display; // Display is not set by default and will be null until a display component is added
 	
 	public var enabled : Bool = true;
 	public var destroyed : Bool = false;
@@ -39,29 +36,21 @@ class GameObject extends CoreObject
 	{
 		super();
 		
+		// Initialise state
+		this.id = (id != null) ? id : (""+(nextId++));
 		_components = new Map<String, Component>();
 		children = [];
 		parent = null;
-		
-		if ( id != "" ) {
-			this.id = id;
-		}else{
-			this.id = "" + nextId++;
-		}
-		
-		init();
-		
-	}
-	
-	function init() : Void {
-		
-		core.gameObjectManager.registerGameObject( this );
 				
+		// Add default components
 		messenger = new Messenger();
 		add( messenger );
 		
 		transform = new Transform();
 		add( transform );
+		
+		// Register with system
+		root.gameObjectManager.registerGameObject( this );
 		
 	}
 	
@@ -240,7 +229,7 @@ class GameObject extends CoreObject
 	
 	public function destroy() : Void {
 		
-		core.gameObjectManager.unregisterGameObject( this );
+		root.gameObjectManager.unregisterGameObject( this );
 		
 		for ( child in children ) {
 			child.destroy();

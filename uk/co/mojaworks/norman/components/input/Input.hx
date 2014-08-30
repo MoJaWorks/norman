@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.systems.input ;
+package uk.co.mojaworks.norman.components.input ;
 import openfl.events.KeyboardEvent;
 import openfl.events.MouseEvent;
 import openfl.events.TouchEvent;
@@ -6,6 +6,7 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.ui.Multitouch;
 import openfl.ui.MultitouchInputMode;
+import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
@@ -13,7 +14,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * ...
  * @author Simon
  */
-class InputSystem extends AppSystem
+class Input extends Component
 {
 	
 	public static inline var TAPPED : String = "TAPPED";
@@ -34,17 +35,17 @@ class InputSystem extends AppSystem
 		_touchRegister = new Map<Int,TouchData>();
 		_touchListeners = new LinkedList<GameObject>();
 		
-		core.stage.addEventListener( KeyboardEvent.KEY_DOWN, onKeyDown );
-		core.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
+		root.stage.addEventListener( KeyboardEvent.KEY_DOWN, onKeyDown );
+		root.stage.addEventListener( KeyboardEvent.KEY_UP, onKeyUp );
 		
 		#if mobile
 			Multitouch.inputMode = MultitouchInputMode.TOUCH_POINT;
 			// Hard code at 5 as that is currently the maximum for ipads and top end android
 			for ( i in 0...MAX_TOUCHES ) _touchRegister.set( i, new TouchData( i ) );
-			core.stage.addEventListener( TouchEvent.TOUCH_BEGIN, onTouchBegin );
+			root.stage.addEventListener( TouchEvent.TOUCH_BEGIN, onTouchBegin );
 		#else
 			_touchRegister.set( 0, new TouchData(0) );
-			core.stage.addEventListener( MouseEvent.MOUSE_DOWN, onMouseDown );
+			root.stage.addEventListener( MouseEvent.MOUSE_DOWN, onMouseDown );
 		#end
 		
 	}
@@ -76,7 +77,7 @@ class InputSystem extends AppSystem
 		touch.isDown = true;
 		touch.lastTouchStart.setTo( e.stageX, e.stageY );
 		touch.position.setTo( e.stageX, e.stageY );
-		core.stage.addEventListener( MouseEvent.MOUSE_UP, onMouseUp );
+		root.stage.addEventListener( MouseEvent.MOUSE_UP, onMouseUp );
 		
 		checkTouchTargets( 0, POINTER_DOWN );
 	}
@@ -86,7 +87,7 @@ class InputSystem extends AppSystem
 		touch.lastTouchEnd.setTo( e.stageX, e.stageY );
 		touch.position.setTo( e.stageX, e.stageY );
 		touch.isDown = false;
-		core.stage.removeEventListener( MouseEvent.MOUSE_UP, onMouseUp );
+		root.stage.removeEventListener( MouseEvent.MOUSE_UP, onMouseUp );
 		
 		checkTouchTargets( 0, POINTER_UP );
 	}
@@ -107,8 +108,8 @@ class InputSystem extends AppSystem
 		
 		// If this is the first touch add the listeners
 		if ( touchCount == 1 ) {
-			core.stage.addEventListener( TouchEvent.TOUCH_END, onTouchEnd );
-			core.stage.addEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
+			root.stage.addEventListener( TouchEvent.TOUCH_END, onTouchEnd );
+			root.stage.addEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
 		}
 		
 		checkTouchTargets( e.touchPointID, POINTER_DOWN );
@@ -125,8 +126,8 @@ class InputSystem extends AppSystem
 		
 		// This is the last touch - clean up
 		if ( touchCount == 0 ) {
-			core.stage.removeEventListener( TouchEvent.TOUCH_END, onTouchEnd );
-			core.stage.removeEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
+			root.stage.removeEventListener( TouchEvent.TOUCH_END, onTouchEnd );
+			root.stage.removeEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
 		}
 		
 		checkTouchTargets( e.touchPointID, POINTER_UP );
@@ -145,7 +146,7 @@ class InputSystem extends AppSystem
 		super.onUpdate(seconds);
 		
 		#if !mobile
-			_touchRegister.get(0).position.setTo( core.stage.mouseX, core.stage.mouseY );
+			_touchRegister.get(0).position.setTo( root.stage.mouseX, root.stage.mouseY );
 		#end
 	}
 	

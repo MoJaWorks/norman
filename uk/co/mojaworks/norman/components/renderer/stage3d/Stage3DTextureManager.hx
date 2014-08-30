@@ -1,10 +1,8 @@
-package uk.co.mojaworks.norman.renderer.stage3d;
+package uk.co.mojaworks.norman.components.renderer.stage3d ;
 
 import flash.display.BitmapData;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DTextureFormat;
-import uk.co.mojaworks.norman.renderer.TextureData;
-import uk.co.mojaworks.norman.renderer.TextureManager;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**

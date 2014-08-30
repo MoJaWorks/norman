@@ -1,11 +1,10 @@
 package uk.co.mojaworks.norman.components.display ;
 
 import openfl.geom.Matrix;
-import openfl.geom.Point;
 import openfl.geom.Rectangle;
+import uk.co.mojaworks.norman.components.renderer.ICanvas;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.renderer.ICanvas;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**

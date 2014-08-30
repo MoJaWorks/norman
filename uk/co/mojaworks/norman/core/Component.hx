@@ -5,7 +5,7 @@ package uk.co.mojaworks.norman.core;
  * @author Simon
  */
 #if !macro @:autoBuild( uk.co.mojaworks.norman.core.ComponentBuilder.build() ) #end
-class Component extends CoreObject
+class Component extends RootObject
 {
 	
 	public var gameObject : GameObject;

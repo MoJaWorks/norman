@@ -4,8 +4,9 @@ import openfl.geom.Matrix;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
-import uk.co.mojaworks.norman.renderer.ICanvas;
-import uk.co.mojaworks.norman.renderer.TextureData;
+import uk.co.mojaworks.norman.components.renderer.ICanvas;
+import uk.co.mojaworks.norman.components.renderer.Renderer;
+import uk.co.mojaworks.norman.components.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.ColourUtils;
 
 /**
@@ -60,7 +61,7 @@ class Text extends Display
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		if ( textureData != null ) core.app.renderer.textureManager.unloadTexture( textureData.id );
+		if ( textureData != null ) root.get(Renderer).textureManager.unloadTexture( textureData.id );
 	}
 		
 	private function build() : Void {
@@ -68,7 +69,7 @@ class Text extends Display
 		if ( gameObject != null ) {
 			canvas.fillRect( canvas.rect, 0x00FFFFFF );
 			canvas.draw( textField, new Matrix(), null, null, null, true );
-			textureData = core.app.renderer.textureManager.loadBitmap( "text/" + gameObject.id, canvas );
+			textureData = root.get(Renderer).textureManager.loadBitmap( "text/" + gameObject.id, canvas );
 		}
 	
 	}

@@ -1,8 +1,8 @@
-package uk.co.mojaworks.norman.components.ui ;
+package uk.co.mojaworks.norman.components.director.ui ;
 
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.systems.input.InputSystem;
-import uk.co.mojaworks.norman.systems.input.TouchData;
+import uk.co.mojaworks.norman.components.input.Input;
+import uk.co.mojaworks.norman.components.input.TouchData;
 import uk.co.mojaworks.norman.core.Component;
 
 /**
@@ -50,9 +50,9 @@ class Button extends View
 		if ( buttonEnabled ) {
 	
 			// Buttons only respond to primary pointer
-			var pointer : TouchData = core.app.input.getPointerInfo( 0 );
+			var pointer : TouchData = root.get(Input).getPointerInfo( 0 );
 						
-			if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) && core.app.input.isPrimaryTarget( gameObject ) ) {
+			if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) && root.get(Input).isPrimaryTarget( gameObject ) ) {
 				
 				if ( mouseOver && !mouseWasDown && pointer.isDown ) {
 					mouseDownCaptured = true;

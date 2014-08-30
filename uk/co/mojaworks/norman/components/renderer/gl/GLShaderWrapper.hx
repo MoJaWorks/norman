@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer.gl;
+package uk.co.mojaworks.norman.components.renderer.gl ;
 import openfl.gl.GL;
 import openfl.gl.GLProgram;
 import openfl.gl.GLShader;

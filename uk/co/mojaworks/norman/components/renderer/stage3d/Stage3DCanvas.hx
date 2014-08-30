@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer.stage3d ;
+package uk.co.mojaworks.norman.components.renderer.stage3d ;
 import flash.display.Stage3D;
 import flash.display3D.Context3D;
 import flash.display3D.Context3DBlendFactor;
@@ -16,9 +16,8 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Vector;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.renderer.stage3d.Stage3DFrameBufferData;
+import uk.co.mojaworks.norman.core.RootObject;
 import uk.co.mojaworks.norman.utils.ColourUtils;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
@@ -28,7 +27,7 @@ using openfl.Vector;
  * ...
  * @author Simon
  */
-class Stage3DCanvas extends CoreObject implements ICanvas
+class Stage3DCanvas extends RootObject implements ICanvas
 {
 	
 	private static inline var VERTEX_SIZE : Int = 8;
@@ -74,8 +73,8 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 	
 		_rect = rect;
 		
-		core.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
-		core.stage.stage3Ds[0].requestContext3D( );
+		root.stage.stage3Ds[0].addEventListener( Event.CONTEXT3D_CREATE, onContextCreated );
+		root.stage.stage3Ds[0].requestContext3D( );
 				
 		_mvpMatrix = createOrtho( 0, Std.int(_rect.width), Std.int(_rect.height), 0, 1000, -1000 );
 		
@@ -90,7 +89,7 @@ class Stage3DCanvas extends CoreObject implements ICanvas
 		_context.configureBackBuffer( Std.int(_rect.width), Std.int(_rect.height), 0, false );
 		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
 		
-		core.root.messenger.sendMessage( Event.CONTEXT3D_CREATE );
+		root.messenger.sendMessage( Event.CONTEXT3D_CREATE );
 		
 		initShaders();
 	}

@@ -15,11 +15,11 @@ class TouchListener extends Component
 	}
 	
 	override public function onAdded() : Void {
-		core.app.input.addTouchListener( gameObject );
+		root.get(Input).addTouchListener( gameObject );
 	}
 	
 	override public function onRemoved() : Void {
-		core.app.input.removeTouchListener( gameObject );
+		root.get(Input).removeTouchListener( gameObject );
 	}
 	
 }

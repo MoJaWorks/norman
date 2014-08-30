@@ -1,11 +1,9 @@
 package uk.co.mojaworks.norman.components.display;
-import flash.display.BitmapData;
-import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.norman.renderer.ICanvas;
-import uk.co.mojaworks.norman.renderer.Renderer;
-import uk.co.mojaworks.norman.renderer.TextureData;
-import uk.co.mojaworks.norman.renderer.TextureManager;
+import uk.co.mojaworks.norman.components.renderer.ICanvas;
+import uk.co.mojaworks.norman.components.renderer.Renderer;
+import uk.co.mojaworks.norman.components.renderer.TextureData;
+import uk.co.mojaworks.norman.components.renderer.TextureManager;
 
 /**
  * ...
@@ -28,7 +26,7 @@ class Image extends Display
 	{
 		super();
 		
-		var textureManager : TextureManager = core.app.renderer.textureManager;
+		var textureManager : TextureManager = root.get(Renderer).textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
 			textureData = textureManager.loadTexture( textureId );
 		}else {
@@ -67,7 +65,7 @@ class Image extends Display
 		super.destroy();
 		textureData.useCount--;
 		// Unload the texture if it is no longer in use
-		if ( textureData.useCount <= 0 ) core.app.renderer.textureManager.unloadTexture( textureData.id );
+		if ( textureData.useCount <= 0 ) root.get(Renderer).textureManager.unloadTexture( textureData.id );
 		
 		textureData = null;
 		_uvRect = null;

@@ -1,9 +1,8 @@
-package uk.co.mojaworks.norman.renderer ;
+package uk.co.mojaworks.norman.components.renderer ;
 import flash.display.BitmapData;
 import haxe.Json;
 import openfl.Assets;
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.renderer.TextureData;
 
 /**
  * @author Simon

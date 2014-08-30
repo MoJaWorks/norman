@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer.gl;
+package uk.co.mojaworks.norman.components.renderer.gl ;
 import openfl.geom.Rectangle;
 import openfl.gl.GLFramebuffer;
 import openfl.gl.GLTexture;

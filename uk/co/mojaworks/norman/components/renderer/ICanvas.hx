@@ -1,9 +1,8 @@
-package uk.co.mojaworks.norman.renderer;
+package uk.co.mojaworks.norman.components.renderer ;
 import openfl.display.DisplayObject;
 import openfl.geom.Matrix;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.renderer.TextureData;
 
 /**
  * @author Simon

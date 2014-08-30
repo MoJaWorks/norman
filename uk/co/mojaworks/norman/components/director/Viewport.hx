@@ -1,14 +1,14 @@
-package uk.co.mojaworks.norman.systems.director ;
+package uk.co.mojaworks.norman.components.director ;
 
 import openfl.geom.Rectangle;
-import uk.co.mojaworks.norman.core.CoreObject;
+import uk.co.mojaworks.norman.core.RootObject;
 
 /**
  * Game Viewport automatically resizes it's contents to fit inside a viewport
  * ...
  * @author Simon
  */
-class Viewport extends CoreObject
+class Viewport extends RootObject
 {
 	// StageRect is the scaled stage. It will be scaled and centered to match the current screen resolution
 	public var stageRect( default, null ) : Rectangle;
@@ -32,7 +32,7 @@ class Viewport extends CoreObject
 		
 	}
 	
-	public function setTargetSize( viewWidth : Float, viewHeight : Float ):Void 
+	public function setTargetSize( viewWidth : Int, viewHeight : Int ):Void 
 	{
 		
 		stageRect.width = viewWidth;
@@ -43,8 +43,8 @@ class Viewport extends CoreObject
 		
 	public function resize() : Void {
 		
-		screenRect.width = core.stage.stageWidth;
-		screenRect.height = core.stage.stageHeight;
+		screenRect.width = root.stage.stageWidth;
+		screenRect.height = root.stage.stageHeight;
 		
 		scale = Math.min( screenRect.width / stageRect.width, screenRect.height / stageRect.height );
 		

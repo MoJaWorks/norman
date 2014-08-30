@@ -1,20 +1,18 @@
-package uk.co.mojaworks.norman.systems.director ;
+package uk.co.mojaworks.norman.components.director ;
 
+import uk.co.mojaworks.norman.components.director.ui.View;
+import uk.co.mojaworks.norman.components.director.ui.ViewSpace;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.ui.View;
-import uk.co.mojaworks.norman.components.ui.ViewSpace;
+import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.systems.AppSystem;
-import uk.co.mojaworks.norman.systems.director.Viewport;
 
 /**
  * ...
  * @author Simon
  */
-class Director extends AppSystem
+class Director extends Component
 {
 	
-	public var root(default, null) : GameObject;
 	public var viewport( default, null ) : Viewport;
 	
 	// All items presented including the main view are added to this space
@@ -25,11 +23,16 @@ class Director extends AppSystem
 	public function new() 
 	{
 		super();
-		root = new GameObject().add( new Display() );
 		viewport = new Viewport();
 	}
 	
-	public function setViewportTarget( width : Float, height : Float ) : Void {
+	override public function onAdded():Void 
+	{
+		super.onAdded();
+		root.add( new Display() );
+	}
+	
+	public function setViewportTarget( width : Int, height : Int ) : Void {
 		viewport.setTargetSize( width, height );
 	}
 	

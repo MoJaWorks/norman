@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.systems.director ;
+package uk.co.mojaworks.norman.components.director ;
 import openfl.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 

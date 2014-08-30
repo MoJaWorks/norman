@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer;
+package uk.co.mojaworks.norman.components.renderer ;
 import flash.display.BitmapData;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.utils.MathUtils;

@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer.stage3d;
+package uk.co.mojaworks.norman.components.renderer.stage3d ;
 import flash.display3D.textures.TextureBase;
 import openfl.geom.Rectangle;
 
