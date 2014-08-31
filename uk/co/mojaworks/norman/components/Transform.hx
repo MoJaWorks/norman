@@ -115,6 +115,8 @@ class Transform extends Component
 			}else {
 				_renderTransform.translate( -gameObject.display.clipRect.x, -gameObject.display.clipRect.y );
 			}
+		}else {
+			_renderTransform.copyFrom( _worldTransform );
 		}
 			
 		_inverseWorldTransform.copyFrom(_worldTransform);

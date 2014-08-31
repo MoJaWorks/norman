@@ -18,7 +18,11 @@ class Root extends GameObject
 	public function new( ) 
 	{
 		// Must make sure this exists before instantiating
+		
+		trace("Creating manager");
 		gameObjectManager = new GameObjectManager();
+		
+		trace("Building gameObject");
 		super();
 	}
 	

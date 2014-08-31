@@ -80,7 +80,7 @@ class TextureData
 			paddingMultiplierX = sourceBitmap.width / MathUtils.roundToNextPow2( sourceBitmap.width );
 			paddingMultiplierY = sourceBitmap.height / MathUtils.roundToNextPow2( sourceBitmap.height );
 			
-			trace("Setting padding to", paddingMultiplierX, paddingMultiplierY, MathUtils.roundToNextPow2( sourceBitmap.width ) );
+			//trace("Setting padding to", paddingMultiplierX, paddingMultiplierY, MathUtils.roundToNextPow2( sourceBitmap.width ) );
 		#end
 		
 		return bitmap;

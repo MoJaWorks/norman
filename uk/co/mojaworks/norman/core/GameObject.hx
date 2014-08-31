@@ -50,7 +50,7 @@ class GameObject extends RootObject
 		add( transform );
 		
 		// Register with system
-		root.gameObjectManager.registerGameObject( this );
+		if ( root != null ) root.gameObjectManager.registerGameObject( this );
 		
 	}
 	
@@ -149,7 +149,7 @@ class GameObject extends RootObject
 		return this; 
 	}
 	
-	@:generic public function add<T:(Component)>( component : T ) : GameObject {
+	public function add( component : Component ) : GameObject {
 		
 		// Remove any existing components of this type
 		removeById( component.getComponentType() );

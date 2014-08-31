@@ -3,7 +3,6 @@ package uk.co.mojaworks.norman.components.renderer.gl ;
 import openfl.display.BitmapData;
 import openfl.gl.GL;
 import openfl.utils.UInt8Array;
-import uk.co.mojaworks.norman.renderer.TextureData;
 
 /**
  * ...

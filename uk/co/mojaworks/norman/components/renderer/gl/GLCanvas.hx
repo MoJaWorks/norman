@@ -13,15 +13,15 @@ import openfl.gl.GLUniformLocation;
 import openfl.utils.Float32Array;
 import openfl.utils.Int16Array;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.core.RootObject;
 import uk.co.mojaworks.norman.utils.ColourUtils;
 
 /**
  * ...
  * @author Simon
  */
-class GLCanvas extends CoreObject implements ICanvas
+class GLCanvas extends RootObject implements ICanvas
 {	
 	
 	private static inline var VERTEX_SIZE : Int = 8;
@@ -78,8 +78,8 @@ class GLCanvas extends CoreObject implements ICanvas
 		initShaders();
 		initBuffers();
 		
-		core.stage.addEventListener( OpenGLView.CONTEXT_LOST, onContextLost );
-		core.stage.addEventListener( OpenGLView.CONTEXT_RESTORED, onContextRestored );
+		root.stage.addEventListener( OpenGLView.CONTEXT_LOST, onContextLost );
+		root.stage.addEventListener( OpenGLView.CONTEXT_RESTORED, onContextRestored );
 		
 		GL.clearColor( 0, 0, 0, 1 );
 		
@@ -98,7 +98,7 @@ class GLCanvas extends CoreObject implements ICanvas
 		trace("Context restored");
 		initShaders();
 		initBuffers();
-		core.root.messenger.sendMessage( OpenGLView.CONTEXT_RESTORED );
+		root.messenger.sendMessage( OpenGLView.CONTEXT_RESTORED );
 	}
 	
 	private function initShaders() : Void {

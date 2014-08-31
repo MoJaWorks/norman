@@ -50,6 +50,7 @@ class NormanApp extends RootObject
 	 */
 	
 	private function initRoot( stage : Stage, width : Int, height : Int ) : Void {
+		
 		Root.init( stage );
 		
 		var director : Director = new Director();
@@ -61,6 +62,10 @@ class NormanApp extends RootObject
 		var renderer = new Renderer();
 		renderer.init( director.viewport.screenRect );
 		root.add( renderer );
+		
+		#if !flash
+			root.stage.addChild( renderer.getDisplayObject() );
+		#end
 		
 		
 	}
@@ -80,10 +85,13 @@ class NormanApp extends RootObject
 	
 	private function resize( e : Event = null ) : Void {
 
+		
 		// Resize any active screens/panels
 		var director : Director = root.get(Director);
 		director.resize();
 		
+		trace("Resize", root.transform.scaleX, root.transform.scaleY, director.viewport.scale );
+				
 		// Resize the viewport to scale everything to the screen size
 		root.get(Renderer).resize( director.viewport.screenRect );
 		
