@@ -18,7 +18,7 @@ import openfl.Vector;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.core.RootObject;
-import uk.co.mojaworks.norman.utils.ColourUtils;
+import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 using openfl.Vector;
@@ -357,9 +357,9 @@ class Stage3DCanvas extends RootObject implements ICanvas
 		for ( point in arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			_vertices.push( red * ColourUtils.RATIO_255 );
-			_vertices.push( green * ColourUtils.RATIO_255 );
-			_vertices.push( blue * ColourUtils.RATIO_255 );
+			_vertices.push( red * Color.RATIO_255 );
+			_vertices.push( green * Color.RATIO_255 );
+			_vertices.push( blue * Color.RATIO_255 );
 			_vertices.push( alpha );
 			_vertices.push( 0 );
 			_vertices.push( 0 );
@@ -419,9 +419,9 @@ class Stage3DCanvas extends RootObject implements ICanvas
 		for ( point in pts_arr ) {
 			_vertices.push( point.x );
 			_vertices.push( point.y );
-			_vertices.push( red * ColourUtils.RATIO_255 );
-			_vertices.push( green * ColourUtils.RATIO_255 );
-			_vertices.push( blue * ColourUtils.RATIO_255 );
+			_vertices.push( red * Color.RATIO_255 );
+			_vertices.push( green * Color.RATIO_255 );
+			_vertices.push( blue * Color.RATIO_255 );
 			_vertices.push( alpha );
 			_vertices.push( uv_arr[(i*2)] );
 			_vertices.push( uv_arr[(i*2)+1] );

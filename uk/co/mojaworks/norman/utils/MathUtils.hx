@@ -9,6 +9,9 @@ import openfl.geom.Rectangle;
 class MathUtils
 {
 	
+	public static var RAD2DEG : Float = (180 / Math.PI);
+	public static var DEG2RAD : Float = (Math.PI / 180);
+	
 	public static function roundToNextPow2( val : Float ) : Int {
 		return Std.int( Math.pow( 2, Math.ceil( Math.log( val ) / Math.log(2) ) ) );
 	}

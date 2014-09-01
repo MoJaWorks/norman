@@ -4,6 +4,7 @@ import uk.co.mojaworks.norman.components.renderer.ICanvas;
 import uk.co.mojaworks.norman.components.renderer.Renderer;
 import uk.co.mojaworks.norman.components.renderer.TextureData;
 import uk.co.mojaworks.norman.components.renderer.TextureManager;
+import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...
@@ -17,14 +18,13 @@ class Image extends Display
 	private var _rect : Rectangle = null;
 		
 	// Colour multipliers
-	public var r : Float = 255;
-	public var g : Float = 255;
-	public var b : Float = 255;
-	public var a : Float = 1;
+	public var color( default, default ) : Color;
 		
 	public function new( textureId : String, subTextureId : String = null ) 
 	{
 		super();
+		
+		color = 0xFFFFFFFF;
 		
 		var textureManager : TextureManager = root.get(Renderer).textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
@@ -47,7 +47,7 @@ class Image extends Display
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.renderTransform, a * getFinalAlpha(), r, g, b );
+		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
 	override public function getNaturalWidth():Float 

@@ -7,7 +7,7 @@ import openfl.text.TextFormatAlign;
 import uk.co.mojaworks.norman.components.renderer.ICanvas;
 import uk.co.mojaworks.norman.components.renderer.Renderer;
 import uk.co.mojaworks.norman.components.renderer.TextureData;
-import uk.co.mojaworks.norman.utils.ColourUtils;
+import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...
@@ -37,14 +37,14 @@ class Text extends Display
 	public var text( default, null ) : String = "";
 		
 	// colour multipliers
-	public var r : Float = 255;
-	public var g : Float = 255;
-	public var b : Float = 255;
-	public var a : Float = 1;
+	public var color( default, default ) : Color;
 	
 	public function new( text : String, width : Int = 200, height : Int = 200 ) 
 	{
 		super();
+		
+		color = 0xFFFFFFFF;
+		
 		textField = new TextField();
 		setText( text );
 		setSize( width, height );
@@ -77,7 +77,7 @@ class Text extends Display
 	override public function render(canvas:ICanvas):Void 
 	{
 		super.render(canvas);
-		canvas.drawImage( textureData, gameObject.transform.renderTransform, a * getFinalAlpha(), r, g, b );
+		canvas.drawImage( textureData, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
 	override public function getNaturalWidth() : Float 
@@ -90,24 +90,11 @@ class Text extends Display
 		return height;
 	}
 	
-	public function setColour( colour : Int ) : Text {
-		r = ColourUtils.r( colour );
-		g = ColourUtils.g( colour );
-		b = ColourUtils.b( colour );
+	public function setColor( color : Int ) : Text {
+		this.color = color;
 		return this;
 	}
-	
-	public function setColour32( colour : Int ) : Text {
-		r = ColourUtils.r( colour );
-		g = ColourUtils.g( colour );
-		b = ColourUtils.b( colour );
-		a = ColourUtils.a( colour );
 		
-		trace("Set to", r, g, b, a );
-		return this;
-	}
-	
-	
 	/**
 	 * SETTERS
 	 */
