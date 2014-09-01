@@ -66,8 +66,7 @@ class NormanApp extends RootObject
 		#if !flash
 			root.stage.addChild( renderer.getDisplayObject() );
 		#end
-		
-		
+			
 	}
 	
 	private function initApp() : Void {

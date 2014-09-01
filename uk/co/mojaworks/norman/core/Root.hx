@@ -17,13 +17,9 @@ class Root extends GameObject
 	
 	public function new( ) 
 	{
-		// Must make sure this exists before instantiating
-		
-		trace("Creating manager");
+		super( "root" );
 		gameObjectManager = new GameObjectManager();
-		
-		trace("Building gameObject");
-		super();
+		gameObjectManager.registerGameObject( this );
 	}
 	
 	public static function init( stage : Stage ) : Void {
