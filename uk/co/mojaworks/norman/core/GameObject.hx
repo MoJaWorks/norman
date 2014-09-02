@@ -32,7 +32,7 @@ class GameObject extends RootObject
 	public var enabled : Bool = true;
 	public var destroyed : Bool = false;
 	
-	public function new( id : String = "" ) 
+	public function new( id : String = null ) 
 	{
 		super();
 		
@@ -120,11 +120,12 @@ class GameObject extends RootObject
 	 * Components
 	 */
 	
-	@:generic public function get<T:(Component)>( classType : Class<T> ) : T {
-		return cast _components.get( Reflect.field( classType, "TYPE" ) );
+	public function get<T:(Component)>( classType : Class<T> ) : T {
+		if ( has( cast classType ) ) return cast _components.get( Reflect.field( classType, "TYPE" ));
+		else return null;
 	}
 	
-	@:generic public function removeByType<T:(Component)>( classType : Class<T> ) : GameObject {
+	public function removeByType( classType : Class<Component> ) : GameObject {
 		var type : String = Reflect.field( classType, "TYPE" );
 		return removeById( type ); 
 	}
@@ -166,62 +167,83 @@ class GameObject extends RootObject
 		return this;
 	}
 	
-	@:generic public function has<T:(Component)>( classType : Class<T> ) : Bool {
+	public function has( classType : Class<Component> ) : Bool {
 		return Std.is( _components.get( Reflect.field( classType, "TYPE" )), classType );
 	}
 	
 	/**
 	 * Search
 	 */
+	
+	public function findParentThatHas( classType : Class<Component> ) : GameObject {
 		
-	@:generic public function findAncestorThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
-		if ( parent == null || parent.has( classType ) ) {
-			return parent;
-		}else {
-			return parent.findAncestorThatHas( classType );
-		}
-	}
+		var current = parent;
 		
-	@:generic public function findChildThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
-		for ( child in children ) {
-			if ( child.has( classType ) ) return child;
+		while ( current != null ) {
+			if ( current.has( classType ) ) return current;
+			else current = current.parent;
 		}
+		
 		return null;
-	}
-	
-	@:generic public function findChildrenThatHave<T:(Component)>( classType : Class<T> ) : Array<GameObject> {
-		var result : Array<GameObject> = [];
-		for ( child in children ) {
-			if ( child.has( classType ) ) result.push(child);
-		}
-		return result;
-	}
-	
-	@:generic public function findDescendantThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
 		
-		var result : GameObject = null;
+	}
+	 
+	public function findChildThatHas( classType : Class<Component>, depth : Int = -1 ) : GameObject {
 		
-		for ( child in children ) {
-			if ( child.has( classType ) ) {
-				return child;
-			}else {
-				result = child.findAncestorThatHas( classType );
-				if ( result != null ) return result;
+		var current_depth = 1;
+		var children : Array<GameObject> = this.children;
+		var next_children : Array<GameObject> = [];
+		
+		while( (current_depth <= depth || depth == -1) && children.length > 0 ) {
+		
+			for ( child in children ) {
+				if ( child.has( classType ) ) return child;
+				
+				if ( current_depth < depth || depth == -1 ) {
+					next_children = next_children.concat( child.children );
+				}
 			}
+			
+			children = next_children;
+			next_children = [];
+			current_depth++;
+			
 		}
-		
 		return null;
 	}
 	
-	@:generic public function findDescendantsThatHave<T:(Component)>( classType : Class<T> ) : Array<GameObject> {
+	public function findChildrenThatHave( classType : Class<Component>, depth : Int = -1 ) : Array<GameObject> {
+		
 		var result : Array<GameObject> = [];
-		for ( child in children ) {
-			if ( child.has( classType ) ) result.push(child);
-			result = result.concat( child.findDescendantsThatHave( classType ) );
+		
+		var current_depth = 1;
+		var children : Array<GameObject> = this.children;
+		var next_children : Array<GameObject> = [];
+		
+		while ( (current_depth <= depth || depth == -1) && children.length > 0 ) {
+					
+			for ( child in children ) {
+				
+				trace("Checking ", child.id );
+				
+				if ( child.has( classType ) ) result.push( child );
+				
+				if ( current_depth < depth || depth == -1 ) {
+					next_children = next_children.concat( child.children );
+				}
+			}
+			
+			children = next_children;
+			next_children = [];
+			current_depth++;
+			
 		}
+		
+		trace("Quit searching", current_depth, depth, children.length );
+		
 		return result;
 	}
-	
+		
 	
 	/**
 	 * End

@@ -29,14 +29,14 @@ class GameObjectManager
 		return null;
 	}
 	
-	@:generic public function findGameObjectThatHas<T:(Component)>( classType : Class<T> ) : GameObject {
+	public function findGameObjectThatHas( classType : Class<Component> ) : GameObject {
 		for ( object in _objects ) {
 			if ( object.has( classType ) ) return object;
 		}
 		return null;
 	}
 	
-	@:generic public function findGameObjectsThatHave<T:(Component)>( classType : Class<T> ) : Array<GameObject> {
+	public function findGameObjectsThatHave( classType : Class<Component> ) : Array<GameObject> {
 		var result : Array<GameObject> = [];
 		for ( object in _objects ) {
 			if ( object.has( classType ) ) result.push( object );
