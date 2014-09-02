@@ -13,7 +13,7 @@ class Fill extends Display
 	public var width( default, default ) : Float;
 	public var height( default, default ) : Float;
 	
-	public function new( color : Int, alpha : Float, width : Float = 0, height : Float = 0 ) 
+	public function new( color : Int, width : Float = 100, height : Float = 100 ) 
 	{
 		
 		super();

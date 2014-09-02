@@ -89,8 +89,6 @@ class NormanApp extends RootObject
 		var director : Director = root.get(Director);
 		director.resize();
 		
-		trace("Resize", root.transform.scaleX, root.transform.scaleY, director.viewport.scale );
-				
 		// Resize the viewport to scale everything to the screen size
 		root.get(Renderer).resize( director.viewport.screenRect );
 		

@@ -21,7 +21,17 @@ class Prefab extends Component
 		construct();
 	}
 	
+	override public function onRemoved():Void 
+	{
+		super.onAdded();
+		destruct();
+	}
+	
 	private function construct() : Void {
+		// Build an entity
+	}
+	
+	private function destruct() : Void {
 		// Build an entity
 	}
 	

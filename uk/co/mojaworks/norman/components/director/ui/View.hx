@@ -11,6 +11,11 @@ import uk.co.mojaworks.norman.core.Component;
 class View extends Component
 {
 
+	public static inline var SHOWN : String = "VIEW_SHOWN";
+	public static inline var ACTIVATE : String = "VIEW_ACTIVATE";
+	public static inline var DEACTIVATE : String = "VIEW_DEACTIVATE";
+	public static inline var RESIZE : String = "VIEW_RESIZE";
+	
 	public var active : Bool = false;
 	
 	public function new() 
@@ -19,15 +24,19 @@ class View extends Component
 	}
 	
 	public function onShow() : Void {
+		gameObject.messenger.sendMessage( SHOWN );
 	}
 	
 	public function onActivate() : Void {
+		gameObject.messenger.sendMessage( ACTIVATE );
 	}
 	
-	public function onDeactivate() : Void {		
+	public function onDeactivate() : Void {
+		gameObject.messenger.sendMessage( DEACTIVATE );
 	}
 	
 	public function resize() : Void {
+		gameObject.messenger.sendMessage( RESIZE );
 	}
 	
 }

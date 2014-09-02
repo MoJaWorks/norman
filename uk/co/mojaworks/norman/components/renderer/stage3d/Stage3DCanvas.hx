@@ -136,8 +136,13 @@ class Stage3DCanvas extends RootObject implements ICanvas
 		_maskVertices = [];
 		_maskIndices = [];
 		
+		_context.clear( 0, 0, 0, 1 );
+		
 		// Collect all of the vertex data
 		renderLevel( root );
+		
+		// Check there is something to render
+		if ( _vertices.length == 0 || _indices.length == 0 ) return;
 		
 		// Pass it to the graphics card
 		if ( _vertexBuffer != null ) _vertexBuffer.dispose();
@@ -160,9 +165,7 @@ class Stage3DCanvas extends RootObject implements ICanvas
 		/**
 		 * render
 		 */
-			
-		_context.clear( 0, 0, 0, 1 );
-		
+					
 		var currentMask : Stage3DFrameBufferData = null;
 		var maskTextureUsed : Int = -1;
 		

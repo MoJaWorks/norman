@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.core;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.components.messenger.Messenger;
+import uk.co.mojaworks.norman.components.Prefab;
 import uk.co.mojaworks.norman.components.Transform;
 
 /**
@@ -152,6 +153,9 @@ class GameObject extends RootObject
 	
 	public function add( component : Component ) : GameObject {
 		
+		// Make sure to remove it from any other gameobject it's attached to
+		if ( component.gameObject != null ) component.gameObject.removeById( component.getComponentType() );
+		
 		// Remove any existing components of this type
 		removeById( component.getComponentType() );
 		
@@ -243,7 +247,16 @@ class GameObject extends RootObject
 		
 		return result;
 	}
+	
+	
+	/**
+	 * Does nothing special at this moment in time - just added for future use (and it looks more readable)
+	 */
 		
+	public function buildFrom( prefab : Prefab ) : GameObject {
+		add( prefab );
+		return this;
+	}
 	
 	/**
 	 * End
