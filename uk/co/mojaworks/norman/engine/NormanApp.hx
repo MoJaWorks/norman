@@ -6,6 +6,7 @@ import openfl.events.Event;
 import uk.co.mojaworks.norman.components.director.Director;
 import uk.co.mojaworks.norman.components.input.Input;
 import uk.co.mojaworks.norman.components.renderer.Renderer;
+import uk.co.mojaworks.norman.components.tick.Ticker;
 import uk.co.mojaworks.norman.core.Root;
 import uk.co.mojaworks.norman.core.RootObject;
 
@@ -52,6 +53,8 @@ class NormanApp extends RootObject
 	private function initRoot( stage : Stage, width : Int, height : Int ) : Void {
 		
 		Root.init( stage );
+		
+		root.add( new Ticker() );
 		
 		var director : Director = new Director();
 		director.setViewportTarget( width, height );
@@ -108,7 +111,7 @@ class NormanApp extends RootObject
 	public function onUpdate( seconds : Float ) : Void {
 		// This is the one that will be overriden
 		root.get(Input).onUpdate( seconds );
-		root.get(Director).onUpdate( seconds );
+		root.get(Ticker).onUpdate( seconds );
 	}
 	
 	/**

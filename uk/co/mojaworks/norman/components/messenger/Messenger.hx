@@ -9,13 +9,13 @@ import uk.co.mojaworks.norman.core.Component;
 class Messenger extends Component
 {
 
-	var _scripts : Map<String, Array<Class<IScript>>>;
+	var _scripts : Map<String, Array<IScript>>;
 	var _listeners:Map<String, Array<MessageData->Void>>;
 	
 	public function new() 
 	{
 		super();
-		_scripts = new Map<String, Array<Class<IScript>>>();
+		_scripts = new Map<String, Array<IScript>>();
 		_listeners = new Map<String, Array<MessageData->Void>>();
 	}
 	
@@ -31,21 +31,25 @@ class Messenger extends Component
 		
 		if ( _scripts.get(message) != null ) {
 			for ( listener in _scripts.get(message) ) {
-				var l : IScript = Type.createInstance( listener, [] );
-				l.execute( new MessageData( gameObject, message, data ) );
+				listener.execute( new MessageData( gameObject, message, data ) );
 			}
 		}
 	}
 	
 	public function attachScript( message : String, script : Class<IScript> ) : Void {
 		if ( _scripts.get(message) == null ) _scripts.set( message, [] );
-		_scripts.get( message ).push( script );
+		_scripts.get( message ).push( Type.createInstance(script, []) );
 	}
 	
 	public function removeScript( message : String, ?script : Class<IScript> = null ) : Void {
 		if ( _scripts.get(message) != null ) {
 			if ( script != null ) {
-				_scripts.get(message).remove( script );
+				
+				for ( s in _scripts.get( message ) ) {
+					if ( Std.is( s, script ) ) _scripts.get(message).remove( s );
+					return;
+				}
+				
 			}else {
 				 //Clear all listeners for this message
 				_scripts.set(message, []);

@@ -154,16 +154,4 @@ class Director extends Component
 		
 	}
 	
-	override public function onUpdate(seconds:Float):Void 
-	{
-		super.onUpdate(seconds);
-		
-		if ( _currentSpace != null ) {
-			var viewspace : ViewSpace = _currentSpace.get(ViewSpace);
-			if ( viewspace.currentActiveView != null ) {
-				viewspace.currentActiveView.get(View).onUpdate( seconds );
-			}
-		}
-	}
-		
 }
