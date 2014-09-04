@@ -8,13 +8,13 @@ import uk.co.mojaworks.norman.core.GameObject;
 class MessageData
 {
 
-	public var target : GameObject;
+	public var gameObject : GameObject;
 	public var message : String;
 	public var data : Dynamic;
 	
 	public function new( target : GameObject, message : String, data : Dynamic = null ) 
 	{
-		this.target = target;
+		this.gameObject = target;
 		this.message = message;
 		this.data = data;
 	}

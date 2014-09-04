@@ -6,6 +6,7 @@ import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.ui.Multitouch;
 import openfl.ui.MultitouchInputMode;
+import uk.co.mojaworks.norman.components.input.TouchEventData;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.utils.LinkedList;
@@ -16,11 +17,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  */
 class Input extends Component
 {
-	
-	public static inline var TAPPED : String = "TAPPED";
-	public static inline var POINTER_DOWN : String = "POINTER_DOWN";
-	public static inline var POINTER_UP : String = "POINTER_UP";
-	
+		
 	public static inline var MAX_TOUCHES : Int = 5;
 	
 	public var touchCount( default, null ) : Int = 0;
@@ -79,7 +76,7 @@ class Input extends Component
 		touch.position.setTo( e.stageX, e.stageY );
 		root.stage.addEventListener( MouseEvent.MOUSE_UP, onMouseUp );
 		
-		checkTouchTargets( 0, POINTER_DOWN );
+		checkTouchTargets( 0, TouchListener.POINTER_DOWN );
 	}
 	
 	public function onMouseUp( e : MouseEvent ) : Void {
@@ -89,7 +86,7 @@ class Input extends Component
 		touch.isDown = false;
 		root.stage.removeEventListener( MouseEvent.MOUSE_UP, onMouseUp );
 		
-		checkTouchTargets( 0, POINTER_UP );
+		checkTouchTargets( 0, TouchListener.POINTER_UP );
 	}
 		
 	/**
@@ -112,7 +109,7 @@ class Input extends Component
 			root.stage.addEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
 		}
 		
-		checkTouchTargets( e.touchPointID, POINTER_DOWN );
+		checkTouchTargets( e.touchPointID, TouchListener.POINTER_DOWN );
 	}
 	
 	public function onTouchEnd( e : TouchEvent ) : Void {
@@ -130,7 +127,7 @@ class Input extends Component
 			root.stage.removeEventListener( TouchEvent.TOUCH_MOVE, onTouchMove );
 		}
 		
-		checkTouchTargets( e.touchPointID, POINTER_UP );
+		checkTouchTargets( e.touchPointID, TouchListener.POINTER_UP );
 	}
 	
 	public function onTouchMove( e : TouchEvent ) : Void {
@@ -172,30 +169,27 @@ class Input extends Component
 				
 		trace( _touchListeners, _touchListeners.length );
 		
-		for ( object in _touchListeners ) {
+		var object : GameObject = getPrimaryTarget( pid );
 			
-			trace("Testing", object );
+		bounds = object.display.getBounds();
+		startPoint = object.transform.globalToLocal( touch.lastTouchStart );
+		
+		if ( mode == TouchListener.POINTER_DOWN ) {
 			
-			bounds = object.display.getBounds();
-			startPoint = object.transform.globalToLocal( touch.lastTouchStart );
+			if ( bounds.containsPoint( startPoint ) ) {
+				object.get(TouchListener).onTouchEvent( new TouchEventData( TouchListener.POINTER_DOWN, touch.touchId, touch.lastTouchStart, startPoint ) );
+			}
 			
-			if ( mode == POINTER_DOWN ) {
+		}else if ( mode == TouchListener.POINTER_UP ) {
+			
+			endPoint = object.transform.globalToLocal( touch.lastTouchEnd );
+			if ( bounds.containsPoint( endPoint ) ) {
 				
+				object.get(TouchListener).onTouchEvent( new TouchEventData( TouchListener.POINTER_UP, touch.touchId, touch.lastTouchEnd, endPoint ) );
+				
+				// Event started on this object so it is clicked
 				if ( bounds.containsPoint( startPoint ) ) {
-					object.messenger.sendMessage( POINTER_DOWN, new TouchEventData( POINTER_DOWN, touch.touchId, touch.lastTouchStart, startPoint ) );
-				}
-				
-			}else if ( mode == POINTER_UP ) {
-				
-				endPoint = object.transform.globalToLocal( touch.lastTouchEnd );
-				if ( bounds.containsPoint( endPoint ) ) {
-					
-					object.messenger.sendMessage( POINTER_UP, new TouchEventData( POINTER_UP, touch.touchId, touch.lastTouchEnd, endPoint ) );
-					
-					// Event started on this object so it is clicked
-					if ( bounds.containsPoint( startPoint ) ) {
-						object.messenger.sendMessage( TAPPED, new TouchEventData( TAPPED, touch.touchId, touch.lastTouchEnd, endPoint ) );
-					}
+					object.get(TouchListener).onTouchEvent( new TouchEventData( TouchListener.TAPPED, touch.touchId, touch.lastTouchEnd, endPoint ) );
 				}
 			}
 		}
@@ -219,15 +213,9 @@ class Input extends Component
 	}	 
 	
 	public function isPointerOver( id : Int, object : GameObject ) : Bool {
-		
-		var bounds : Rectangle = object.display.getBounds();
-		var touch : TouchData = _touchRegister.get( id );
-		var local : Point = object.transform.globalToLocal( touch.position );
-		
-		if ( bounds.containsPoint( local ) ) return true;
-		else return false;
+		return object.display.hitTestPoint( _touchRegister.get(id).position );
 	}
-	 
+		
 	public function isAnyPointerDown() : Array<Int> {
 		
 		if ( touchCount == 0 ) return [];
@@ -283,6 +271,28 @@ class Input extends Component
 		}
 		
 		return true;
+	}
+	
+	public function getPrimaryTarget( pointer : Int = 0 ) : GameObject
+	{
+		var primary : GameObject = null;
+		
+		for ( object in _touchListeners ) {
+			if ( primary == null || (object.getChildSortString() > gameObject.getChildSortString() && isPointerOver( pointer, object )) ) primary = object;
+		}
+		
+		return primary;
+	}
+	
+	public function getPrimaryTargetAtPoint( globalPoint : Point ) : GameObject
+	{
+		var primary : GameObject = null;
+		
+		for ( object in _touchListeners ) {
+			if ( primary == null || (object.getChildSortString() > gameObject.getChildSortString() && object.display.hitTestPoint( globalPoint )) ) primary = object;
+		}
+		
+		return primary;
 	}
 	
 }

@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.components.display ;
 
 import openfl.geom.Matrix;
+import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import uk.co.mojaworks.norman.components.renderer.ICanvas;
 import uk.co.mojaworks.norman.core.Component;
@@ -67,6 +68,10 @@ class Display extends Component
 			return bounds;
 		}
 		
+	}
+	
+	public function hitTestPoint( global : Point ) : Bool {
+		return getBounds().containsPoint( gameObject.transform.globalToLocal( global ) );
 	}
 	
 	public function getNaturalWidth() : Float {

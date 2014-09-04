@@ -5,6 +5,7 @@ import openfl.display.Stage;
 import openfl.events.Event;
 import uk.co.mojaworks.norman.components.director.Director;
 import uk.co.mojaworks.norman.components.input.Input;
+import uk.co.mojaworks.norman.components.input.TouchListener;
 import uk.co.mojaworks.norman.components.renderer.Renderer;
 import uk.co.mojaworks.norman.components.tick.Ticker;
 import uk.co.mojaworks.norman.core.Root;
@@ -54,13 +55,13 @@ class NormanApp extends RootObject
 		
 		Root.init( stage );
 		
+		root.add( new Input() );
 		root.add( new Ticker() );
+		root.add( new TouchListener() );
 		
 		var director : Director = new Director();
 		director.setViewportTarget( width, height );
 		root.add( director );
-		
-		root.add( new Input() );
 		
 		var renderer = new Renderer();
 		renderer.init( director.viewport.screenRect );

@@ -264,8 +264,6 @@ class GameObject extends RootObject
 	
 	public function destroy() : Void {
 		
-		root.gameObjectManager.unregisterGameObject( this );
-		
 		for ( child in children ) {
 			child.destroy();
 		}
@@ -276,6 +274,7 @@ class GameObject extends RootObject
 			destroy();			
 		}
 		
+		root.gameObjectManager.unregisterGameObject( this );
 		_components = null;
 		children = null;
 		

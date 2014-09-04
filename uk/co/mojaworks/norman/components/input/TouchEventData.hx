@@ -16,6 +16,7 @@ class TouchEventData
 	
 	public function new( type : String, touchId : Int, position : Point, localPosition : Point ) 
 	{
+		this.type = type;
 		this.touchId = touchId;
 		this.position = position;
 		this.localPosition = localPosition;
