@@ -10,6 +10,7 @@ class Component extends RootObject
 	
 	public var gameObject : GameObject;
 	public var enabled : Bool = true;
+	public var destroyed : Bool = true;
 	
 	private function new() 
 	{
@@ -30,6 +31,9 @@ class Component extends RootObject
 	}
 		
 	public function destroy() : Void {
+		gameObject = null;
+		enabled = false;
+		destroyed = true;
 	}
 		
 }

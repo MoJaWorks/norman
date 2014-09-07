@@ -35,9 +35,6 @@ class ViewSpace extends Component
 	}
 	
 	override public function destroy() : Void {
-		for ( view in viewStack ) {
-			view.destroy();
-		}
 		viewStack.clear();
 		viewStack = null;
 	}

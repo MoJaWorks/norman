@@ -34,7 +34,7 @@ class TouchListener extends Component
 		gameObject.messenger.sendMessage( event.type, event );
 		
 		// Bubble the event
-		if ( !event.isSuppressed ) {
+		if ( gameObject != null && !event.isSuppressed ) {
 			var next : GameObject = gameObject.findParentThatHas( TouchListener );
 			if ( next != null ) next.get(TouchListener).onTouchEvent( event );
 		}

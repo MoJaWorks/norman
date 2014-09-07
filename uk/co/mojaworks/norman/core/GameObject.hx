@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core;
+import haxe.io.Error;
 import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.components.messenger.Messenger;
 import uk.co.mojaworks.norman.components.Prefab;
@@ -264,6 +265,12 @@ class GameObject extends RootObject
 	
 	public function destroy() : Void {
 		
+		
+		if ( destroyed ) {
+			trace("Object already destroyed", id );
+			return;
+		}
+		
 		for ( child in children ) {
 			child.destroy();
 		}
@@ -271,12 +278,13 @@ class GameObject extends RootObject
 		for ( cid in _components.keys() ) {
 			var comp : Component = _components.get( cid );
 			comp.onRemoved();
-			destroy();			
+			comp.destroy();			
 		}
 		
 		root.gameObjectManager.unregisterGameObject( this );
 		_components = null;
 		children = null;
+		destroyed = true;
 		
 	}
 		

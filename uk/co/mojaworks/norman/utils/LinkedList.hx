@@ -100,21 +100,6 @@ class LinkedList<T>
 		while ( current != null ) {
 			if ( current.item == item ) {
 				removeItem( current );
-				//if ( current.prev != null ) {
-					//current.prev.next = current.next;
-				//}
-				//if ( current.next != null ) {
-					//current.next.prev = current.prev;
-				//}
-				//if ( current == first ) {
-					//first = current.next;
-				//}
-				//if ( current == last ) {
-					//last = current.prev;
-				//}
-				//current.destroy();
-				//current = null;
-				//length--;
 			}else {
 				current = current.next;
 			}
