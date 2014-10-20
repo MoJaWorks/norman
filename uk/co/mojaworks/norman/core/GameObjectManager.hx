@@ -43,9 +43,5 @@ class GameObjectManager
 		}
 		return result;
 	}
-	
-	/**
-	 * TODO: Experiment with spaces
-	 */
-	
+		
 }

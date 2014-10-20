@@ -1,8 +1,8 @@
 package uk.co.mojaworks.norman.engine ;
 
 import haxe.Timer;
-import openfl.display.Stage;
-import openfl.events.Event;
+import lime.app.Application;
+import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.director.Director;
 import uk.co.mojaworks.norman.components.input.Input;
 import uk.co.mojaworks.norman.components.input.TouchListener;
@@ -18,33 +18,24 @@ import uk.co.mojaworks.norman.core.RootObject;
  * @author Simon
  */
 
-class NormanApp extends RootObject
+class NormanApp extends Application
 {
-
-	var _lastTick : Float = 0;
-	var _elapsed : Float = 0;
 	
-	// Temp variables to store width/height for setup
-	var _stageWidth : Int;
-	var _stageHeight : Int;
+	private var _hasInit : Bool = false;
 	
-	public function new( stage : Stage, stageWidth : Int, stageHeight : Int ) 
+	public function new( ) 
 	{
 		super();
-		
-		_stageHeight = stageHeight;
-		_stageWidth = stageWidth;
-		
-		initRoot( stage, stageWidth, stageHeight );
-		initApp();
+	}
+	
+	private function initNorman( stageWidth, stageHeight ) : Void {
 				
-		root.stage.addEventListener( Event.ENTER_FRAME, onEnterFrame );
-		root.stage.addEventListener( Event.RESIZE, resize );
-		
+		initRoot( stageWidth, stageHeight );		
 		resize();
-		
 		onStartupComplete();
-
+		
+		
+		
 	}
 	
 	/**
@@ -70,11 +61,9 @@ class NormanApp extends RootObject
 		#if !flash
 			root.stage.addChild( renderer.getDisplayObject() );
 		#end
-			
-	}
-	
-	private function initApp() : Void {
 		
+		_hasInit = true;
+			
 	}
 			
 	private function onStartupComplete() : Void {
@@ -86,33 +75,60 @@ class NormanApp extends RootObject
 	 * Ongoing
 	 */
 	
-	private function resize( e : Event = null ) : Void {
-
+	override public function onWindowResize( width : Int, height : Int ) : Void {
 		
-		// Resize any active screens/panels
-		var director : Director = root.get(Director);
-		director.resize();
-		
-		// Resize the viewport to scale everything to the screen size
-		root.get(Renderer).resize( director.viewport.screenRect );
+		if ( _hasInit ) {
+			// Resize any active screens/panels
+			var director : Director = root.get(Director);
+			director.resize( width, height );
+			
+			// Resize the viewport to scale everything to the screen size
+			root.get(Renderer).resize( director.viewport.screenRect );
+		}
 		
 	}
+		
+	override public function update( deltaTime : Int ) : Void 
+	{
+		if ( _hasInit ) {
+			super.update( deltaTime );
+			root.get(Input).onUpdate( seconds );
+			root.get(Ticker).onUpdate( seconds );
+		}
+	}
 	
-	private function onEnterFrame( e : Event ) : Void {
+	override public function render (context:RenderContext):Void {
+		
+		if ( _hasInit ) {
+			switch (context) {
 				
-		_elapsed = Timer.stamp() - _lastTick;
-		_lastTick = Timer.stamp();
+				case CANVAS (context):
+					
+					// TODO: Display error message
+					context.fillStyle = "#BFFF00";
+					context.fillRect (0, 0, window.width, window.height);
+				
+				case DOM (element):
+					
+					// TODO: Display error message
+					element.style.backgroundColor = "#BFFF00";
+				
+				case FLASH (sprite):
+					
+					sprite.graphics.beginFill (0xBFFF00);
+					sprite.graphics.drawRect (0, 0, window.width, window.height);
+				
+				case OPENGL (gl):
+					
+					gl.clearColor (0.75, 1, 0, 1);
+					gl.clear (gl.COLOR_BUFFER_BIT);					
+
+				
+				default:
+				
+			}
+		}
 		
-		onUpdate( _elapsed );
-		
-		root.get(Renderer).render( root );
-		
-	}
-	
-	public function onUpdate( seconds : Float ) : Void {
-		// This is the one that will be overriden
-		root.get(Input).onUpdate( seconds );
-		root.get(Ticker).onUpdate( seconds );
 	}
 	
 	/**
@@ -121,8 +137,7 @@ class NormanApp extends RootObject
 	
 	public function destroy():Void 
 	{
-		root.stage.removeEventListener( Event.ENTER_FRAME, onEnterFrame );
-		root.stage.removeEventListener( Event.RESIZE, resize );
+
 	}
 	
 }

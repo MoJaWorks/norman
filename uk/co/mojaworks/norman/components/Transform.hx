@@ -1,11 +1,9 @@
 package uk.co.mojaworks.norman.components ;
 
-import openfl.geom.Matrix;
-import openfl.geom.Point;
+import lime.math.Matrix3;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.messenger.MessageData;
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.core.GameObject;
 
 /**
  * ...
@@ -14,10 +12,19 @@ import uk.co.mojaworks.norman.core.GameObject;
 class Transform extends Component
 {
 
+	public static inline var CHILD_ADDED : String = "CHILD_ADDED";
+	public static inline var CHILD_REMOVED : String = "CHILD_REMOVED";
+	static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
+	static public inline var REMOVED_AS_CHILD : String = "REMOVED_AS_CHILD";
+	
 	public static inline var MATRIX_DIRTY : String = "MATRIX_DIRTY";
+	
+	public var parent( default, set ) : Transform;
+	public var children( default, null ) : Array<Transform>;
 	
 	public var x( default, set ) : Float = 0;
 	public var y( default, set ) : Float = 0;
+	public var z( default, default ) : Float = 0; // This is not a 3d matrix component, only used for sorting
 	
 	public var pivotX( default, set ) : Float = 0;
 	public var pivotY( default, set ) : Float = 0;
@@ -30,15 +37,15 @@ class Transform extends Component
 	
 	public var rotation( default, set ) : Float = 0;
 	
-	public var worldTransform( get, never ) : Matrix;
-	public var inverseWorldTransform( get, never ) : Matrix;
-	public var localTransform( get, never ) : Matrix;
-	public var renderTransform( get, never ) : Matrix;
+	public var worldTransform( get, never ) : Matrix3;
+	public var inverseWorldTransform( get, never ) : Matrix3;
+	public var localTransform( get, never ) : Matrix3;
+	public var renderTransform( get, never ) : Matrix3;
 	
-	var _worldTransform : Matrix;
-	var _inverseWorldTransform : Matrix;
-	var _localTransform : Matrix;
-	var _renderTransform : Matrix;
+	var _worldTransform : Matrix3;
+	var _inverseWorldTransform : Matrix3;
+	var _localTransform : Matrix3;
+	var _renderTransform : Matrix3;
 	
 	var _isLocalDirty : Bool = true;
 	var _isWorldDirty : Bool = true;
@@ -47,31 +54,33 @@ class Transform extends Component
 	{
 		super();
 		
-		_worldTransform = new Matrix();
-		_localTransform = new Matrix();
-		_inverseWorldTransform = new Matrix();
-		_renderTransform = new Matrix();
+		_worldTransform = new Matrix3();
+		_localTransform = new Matrix3();
+		_inverseWorldTransform = new Matrix3();
+		_renderTransform = new Matrix3();
+		
+		children = new Array<Transform>();
 	}
 	
-	override public function onAdded():Void 
-	{
-		super.onAdded();
-		//trace("OnAdded", gameObject.messenger );
-		gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onParentChanged );
-		gameObject.messenger.attachListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
-	}
-	
-	override public function onRemoved():Void 
-	{
-		super.onRemoved();
-		//trace("OnAdded", gameObject.messenger );
-		gameObject.messenger.removeListener( GameObject.ADDED_AS_CHILD, onParentChanged );
-		gameObject.messenger.removeListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
-	}
-	
-	private function onParentChanged( data : MessageData ) : Void {
-		invalidateMatrices();
-	}
+	//override public function onAdded():Void 
+	//{
+		//super.onAdded();
+		////trace("OnAdded", gameObject.messenger );
+		//gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onParentChanged );
+		//gameObject.messenger.attachListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
+	//}
+	//
+	//override public function onRemoved():Void 
+	//{
+		//super.onRemoved();
+		////trace("OnAdded", gameObject.messenger );
+		//gameObject.messenger.removeListener( GameObject.ADDED_AS_CHILD, onParentChanged );
+		//gameObject.messenger.removeListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
+	//}
+	//
+	//private function onParentChanged( data : MessageData ) : Void {
+		//invalidateMatrices();
+	//}
 	
 	public function invalidateMatrices( local : Bool = true, world : Bool = true ) : Void {
 		
@@ -176,7 +185,7 @@ class Transform extends Component
 	 * Getters
 	 */
 	
-	private function get_worldTransform( ) : Matrix {
+	private function get_worldTransform( ) : Matrix3 {
 		
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
@@ -184,7 +193,7 @@ class Transform extends Component
 		return _worldTransform;
 	}
 	
-	private function get_localTransform( ) : Matrix {
+	private function get_localTransform( ) : Matrix3 {
 		
 		if ( _isLocalDirty ) {
 			recalculateLocalTransform();
@@ -192,7 +201,7 @@ class Transform extends Component
 		return _localTransform;
 	}
 	
-	private function get_inverseWorldTransform( ) : Matrix {
+	private function get_inverseWorldTransform( ) : Matrix3 {
 		
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
@@ -200,7 +209,7 @@ class Transform extends Component
 		return _inverseWorldTransform;
 	}
 	
-	private function get_renderTransform() : Matrix {
+	private function get_renderTransform() : Matrix3 {
 		
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
@@ -208,11 +217,11 @@ class Transform extends Component
 		return _renderTransform;
 	}
 	
-	public function localToGlobal( point : Point ) : Point {
+	public function localToGlobal( point : Vector2 ) : Vector2 {
 		return worldTransform.transformPoint( point );
 	}
 	
-	public function globalToLocal( point : Point ) : Point {
+	public function globalToLocal( point : Vector2 ) : Vector2 {
 		return inverseWorldTransform.transformPoint( point );
 	}
 	
@@ -229,5 +238,37 @@ class Transform extends Component
 	private function set_scaleX( _scaleX : Float ) : Float { scaleX = _scaleX; invalidateMatrices(); return scaleX; }
 	private function set_scaleY( _scaleY : Float ) : Float { scaleY = _scaleY; invalidateMatrices(); return scaleY; }
 	private function set_rotation( _rotation : Float ) : Float { rotation = _rotation; invalidateMatrices(); return rotation; }
+	
+	
+	/**
+	 * CHILDREN
+	 */
+	
+	public function addChild( child : Transform ) : Void {
+		
+		if ( child.parent != null ) {
+			child.parent.removeChild( child );
+		}
+		child.parent = this;
+		children.push( child );
+		gameObject.messenger.sendMessage( CHILD_ADDED, child.gameObject );
+		child.gameObject.messenger.sendMessage( ADDED_AS_CHILD );
+		
+	}
+	
+	public function removeChild( child : Transform ) : Void {
+		
+		children.remove( child );
+		gameObject.messenger.sendMessage(CHILD_REMOVED, child.gameObject);
+		child.gameObject.messenger.sendMessage(REMOVED_AS_CHILD);
+		child.parent = null;
+		
+	}
+	
+	public function set_parent( parent : Transform ) : Transform {
+		
+		parent.addChild( this );
+		
+	}
 	
 }

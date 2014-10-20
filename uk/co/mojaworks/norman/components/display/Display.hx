@@ -1,8 +1,7 @@
 package uk.co.mojaworks.norman.components.display ;
 
-import openfl.geom.Matrix;
-import openfl.geom.Point;
-import openfl.geom.Rectangle;
+import lime.math.Rectangle;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.ICanvas;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -70,7 +69,7 @@ class Display extends Component
 		
 	}
 	
-	public function hitTestPoint( global : Point ) : Bool {
+	public function hitTestPoint( global : Vector2 ) : Bool {
 		return getBounds().containsPoint( gameObject.transform.globalToLocal( global ) );
 	}
 	
