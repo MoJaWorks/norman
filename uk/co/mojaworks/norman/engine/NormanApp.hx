@@ -2,14 +2,15 @@ package uk.co.mojaworks.norman.engine ;
 
 import haxe.Timer;
 import lime.app.Application;
+import lime.graphics.opengl.GLTexture;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.components.director.Director;
-import uk.co.mojaworks.norman.components.input.Input;
-import uk.co.mojaworks.norman.components.input.TouchListener;
-import uk.co.mojaworks.norman.components.renderer.Renderer;
 import uk.co.mojaworks.norman.components.tick.Ticker;
-import uk.co.mojaworks.norman.core.Root;
-import uk.co.mojaworks.norman.core.RootObject;
+import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.core.GameObjectManager;
+import uk.co.mojaworks.norman.renderer.gl.GLCanvas;
+import uk.co.mojaworks.norman.renderer.gl.GLTextureManager;
+import uk.co.mojaworks.norman.renderer.ICanvas;
+import uk.co.mojaworks.norman.renderer.ITextureManager;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -23,18 +24,36 @@ class NormanApp extends Application
 	
 	private var _hasInit : Bool = false;
 	
+	// Public static vars for easy access
+	public static var canvas : ICanvas;
+	public static var textureManager : ITextureManager;
+	public static var root : GameObject;
+	public static var gameObjectManager : GameObjectManager;
+	
 	public function new( ) 
 	{
 		super();
 	}
 	
+	override public function init( context : RenderContext ) {
+		
+		gameObjectManager = new GameObjectManager();
+		root = new GameObject();
+		
+		switch( context ) {
+			case RenderContext.OPENGL(gl):
+				textureManager = new GLTextureManager( gl );
+				canvas = new GLCanvas();
+			default:
+				// Nothing yet
+				
+		}
+	}
+	
 	private function initNorman( stageWidth, stageHeight ) : Void {
 				
 		initRoot( stageWidth, stageHeight );		
-		resize();
 		onStartupComplete();
-		
-		
 		
 	}
 	
@@ -42,26 +61,14 @@ class NormanApp extends Application
 	 * Boot
 	 */
 	
-	private function initRoot( stage : Stage, width : Int, height : Int ) : Void {
+	private function initRoot( width : Int, height : Int ) : Void {
 		
-		Root.init( stage );
+		//Root.init( stage );
 		
-		root.add( new Input() );
-		root.add( new Ticker() );
-		root.add( new TouchListener() );
-		
-		var director : Director = new Director();
-		director.setViewportTarget( width, height );
-		root.add( director );
-		
-		var renderer = new Renderer();
-		renderer.init( director.viewport.screenRect );
-		root.add( renderer );
-		
-		#if !flash
-			root.stage.addChild( renderer.getDisplayObject() );
-		#end
-		
+		//root.add( new Input() );
+		//root.add( new Ticker() );
+		//root.add( new TouchListener() );
+			
 		_hasInit = true;
 			
 	}
@@ -78,12 +85,7 @@ class NormanApp extends Application
 	override public function onWindowResize( width : Int, height : Int ) : Void {
 		
 		if ( _hasInit ) {
-			// Resize any active screens/panels
-			var director : Director = root.get(Director);
-			director.resize( width, height );
 			
-			// Resize the viewport to scale everything to the screen size
-			root.get(Renderer).resize( director.viewport.screenRect );
 		}
 		
 	}
@@ -92,8 +94,8 @@ class NormanApp extends Application
 	{
 		if ( _hasInit ) {
 			super.update( deltaTime );
-			root.get(Input).onUpdate( seconds );
-			root.get(Ticker).onUpdate( seconds );
+			//root.get(Input).onUpdate( seconds );
+			root.get(Ticker).onUpdate( deltaTime );
 		}
 	}
 	

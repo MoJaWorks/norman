@@ -3,26 +3,18 @@ import uk.co.mojaworks.norman.components.display.Display;
 import uk.co.mojaworks.norman.components.messenger.Messenger;
 import uk.co.mojaworks.norman.components.Prefab;
 import uk.co.mojaworks.norman.components.Transform;
+import uk.co.mojaworks.norman.engine.NormanApp;
 
 /**
  * ...
  * @author Simon
  */
-class GameObject extends RootObject
+class GameObject
 {
-	//public static inline var CHILD_ADDED : String = "CHILD_ADDED";
-	//public static inline var CHILD_REMOVED : String = "CHILD_REMOVED";
-	//static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
-	//static public inline var REMOVED_AS_CHILD : String = "REMOVED_AS_CHILD";
-	
 	// Used to generate automatic Ids
 	private static var nextId : Int = 0;
 	
-	// Children of an object are affected by their parent and are destroyed along with their parent
 	public var id( default, null) : String = "";
-	//public var parent( default, null ) : GameObject;
-	//public var children( default, null ) : Array<GameObject>;
-	//public var childIndex( default, null ) : Int;
 	
 	// Components
 	var _components : Map<String, Component>;
@@ -34,15 +26,11 @@ class GameObject extends RootObject
 	public var destroyed : Bool = false;
 	
 	public function new( id : String = null ) 
-	{
-		super();
-		
+	{		
 		// Initialise state
 		this.id = (id != null) ? id : (""+(nextId++));
 		_components = new Map<String, Component>();
-		//children = [];
-		//parent = null;
-				
+		
 		// Add default components
 		messenger = new Messenger();
 		add( messenger );
@@ -51,74 +39,15 @@ class GameObject extends RootObject
 		add( transform );
 		
 		// Register with system
-		if ( root != null ) {
-			root.gameObjectManager.registerGameObject( this );
-			transform.parent = root;
-		}
+		//if ( root != null ) {
+			//root.gameObjectManager.registerGameObject( this );
+			//transform.parent = root;
+		//}
+		NormanApp.gameObjectManager.registerGameObject(this);
+		if ( NormanApp.root != null ) transform.parent = NormanApp.root.transform;
 		
 	}
 	
-	
-	
-	/**
-	 * Children
-	 */
-	
-	//public function addChild( object : GameObject, at : Int = -1) : Void {
-		//
-		//if ( object.parent != null ) object.parent.removeChild( object );
-		//object.parent = this;
-		//object.childIndex = children.length;
-		//
-		//if ( at == -1 || at >= children.length ) {
-			//children.push( object );
-		//}else {
-			//children.insert( at, object );
-			//regenerateChildrenSortOrder();
-		//}
-		//
-		//messenger.sendMessage( CHILD_ADDED, object );
-		//object.messenger.sendMessage( ADDED_AS_CHILD, object );
-	//}
-	
-	//public function removeChild( object : GameObject ) : Void {
-		//
-		//if ( object.parent == this ) {
-			//children.remove( object );
-			//messenger.sendMessage( CHILD_REMOVED, object );
-			//object.messenger.sendMessage( REMOVED_AS_CHILD, object );
-			//
-			//// Let the object remove any references/listeners before removing the parent reference
-			//object.parent = null;
-		//}
-	//}
-	
-	//public function setChildIndex( object : GameObject, to : Int ) : Void {
-		//children.remove( object );
-		//
-		//if ( to == -1 || to >= children.length ) {
-			//children.push( object );
-		//}else{
-			//children.insert( to, object );
-		//}
-		//
-		//regenerateChildrenSortOrder();
-	//}
-	
-	//public function getChildSortString() : String {
-		//if ( parent != null ) {
-			//return parent.getChildSortString() + ":" + StringTools.lpad( Std.string( childIndex ), "0", Std.string(parent.children.length).length );
-		//}else {
-			//return Std.string( childIndex );
-		//}
-	//}
-	//
-	//private function regenerateChildrenSortOrder() : Void {
-		//var i : Int = 0;
-		//for ( child in children ) {
-			//child.childIndex = i++;
-		//}
-	//}
 	
 	/**
 	 * Components
@@ -273,21 +202,26 @@ class GameObject extends RootObject
 			return;
 		}
 		
-		//for ( child in children ) {
-			//child.destroy();
-		//}
-		
 		for ( cid in _components.keys() ) {
 			var comp : Component = _components.get( cid );
 			comp.onRemoved();
 			comp.destroy();			
 		}
 		
-		root.gameObjectManager.unregisterGameObject( this );
+		NormanApp.gameObjectManager.unregisterGameObject(this);
+		//root.gameObjectManager.unregisterGameObject( this );
 		_components = null;
-		//children = null;
 		destroyed = true;
 		
+	}
+	
+	
+	/**
+	 * Convenience
+	 */
+	
+	public function sendMessage( message : String, ?data : Dynamic = null ) : Void {
+		messenger.sendMessage( message, data );
 	}
 		
 }

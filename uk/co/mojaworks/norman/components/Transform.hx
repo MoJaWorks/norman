@@ -50,6 +50,11 @@ class Transform extends Component
 	var _isLocalDirty : Bool = true;
 	var _isWorldDirty : Bool = true;
 	
+	
+	/**
+	 * 
+	 */
+	
 	public function new() 
 	{
 		super();
@@ -61,26 +66,12 @@ class Transform extends Component
 		
 		children = new Array<Transform>();
 	}
-	
-	//override public function onAdded():Void 
-	//{
-		//super.onAdded();
-		////trace("OnAdded", gameObject.messenger );
-		//gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onParentChanged );
-		//gameObject.messenger.attachListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
-	//}
-	//
-	//override public function onRemoved():Void 
-	//{
-		//super.onRemoved();
-		////trace("OnAdded", gameObject.messenger );
-		//gameObject.messenger.removeListener( GameObject.ADDED_AS_CHILD, onParentChanged );
-		//gameObject.messenger.removeListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
-	//}
-	//
-	//private function onParentChanged( data : MessageData ) : Void {
-		//invalidateMatrices();
-	//}
+		
+	/**
+	 * 
+	 * @param	local
+	 * @param	world
+	 */
 	
 	public function invalidateMatrices( local : Bool = true, world : Bool = true ) : Void {
 		
@@ -89,8 +80,8 @@ class Transform extends Component
 		_isWorldDirty = world;
 		
 		if ( update ) {
-			for ( child in gameObject.children ) {
-				child.transform.invalidateMatrices( false, true );
+			for ( child in children ) {
+				child.invalidateMatrices( false, true );
 			}
 		}
 		
@@ -116,11 +107,11 @@ class Transform extends Component
 		// If an object is masked, global transforms will all be in this coordinate
 		var isMasked : Bool = gameObject.display != null && gameObject.display.clipRect != null;
 		
-		if ( gameObject.parent != null ) {
-			_worldTransform.concat( gameObject.parent.transform.worldTransform );
+		if ( parent != null ) {
+			_worldTransform.concat( parent.worldTransform );
 			if ( !isMasked ) {
 				_renderTransform.copyFrom( _localTransform );
-				_renderTransform.concat( gameObject.parent.transform.renderTransform );
+				_renderTransform.concat( parent.renderTransform );
 			}else {
 				_renderTransform.translate( -gameObject.display.clipRect.x, -gameObject.display.clipRect.y );
 			}
@@ -138,6 +129,7 @@ class Transform extends Component
 	/**
 	 * Centers the pivot based on the display
 	 */
+	
 	public function centerPivot() : Transform {
 		if ( gameObject.has(Display) ) {
 			setPivot( gameObject.display.getNaturalWidth() * 0.5, gameObject.display.getNaturalHeight() * 0.5 );
@@ -218,11 +210,11 @@ class Transform extends Component
 	}
 	
 	public function localToGlobal( point : Vector2 ) : Vector2 {
-		return worldTransform.transformPoint( point );
+		return worldTransform.transformVector2( point );
 	}
 	
 	public function globalToLocal( point : Vector2 ) : Vector2 {
-		return inverseWorldTransform.transformPoint( point );
+		return inverseWorldTransform.transformVector2( point );
 	}
 	
 	/**
@@ -268,7 +260,26 @@ class Transform extends Component
 	public function set_parent( parent : Transform ) : Transform {
 		
 		parent.addChild( this );
+		return parent;
 		
+	}
+	
+	/**
+	 * Destroy
+	 */
+	
+	override public function destroy() : Void {
+		
+		super.destroy();
+		
+		_worldTransform = null;
+		_localTransform = null;
+		_renderTransform = null;
+		_inverseWorldTransform = null;
+		
+		for ( child in children ) {
+			child.gameObject.destroy();
+		}
 	}
 	
 }

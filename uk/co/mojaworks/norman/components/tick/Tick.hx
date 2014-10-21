@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.components.tick ;
 
 import uk.co.mojaworks.norman.components.messenger.MessageData;
 import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.engine.NormanApp;
 
 /**
  * ...
@@ -19,13 +20,13 @@ class Tick extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		root.get(Ticker).registerTickable( this );
+		NormanApp.root.get(Ticker).registerTickable( this );
 	}
 	
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		root.get(Ticker).unregisterTickable( this );
+		NormanApp.root.get(Ticker).unregisterTickable( this );
 	}
 	
 	override public function onUpdate(seconds:Float):Void 

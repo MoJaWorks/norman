@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.components;
 
 import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.core.GameObject;
 
 /**
  * ...
@@ -12,26 +13,13 @@ class Prefab extends Component
 	public function new() 
 	{
 		super();
-		
 	}
 	
-	override public function onAdded():Void 
-	{
-		super.onAdded();
-		construct();
-	}
-	
-	override public function onRemoved():Void 
-	{
-		super.onAdded();
-		destruct();
-	}
-	
-	private function construct() : Void {
+	public function construct( object : GameObject ) : Void {
 		// Build an entity
 	}
 	
-	private function destruct() : Void {
+	public function destruct( object : GameObject ) : Void {
 		// Build an entity
 	}
 	
