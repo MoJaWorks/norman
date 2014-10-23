@@ -6,7 +6,7 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author Simon
  */
-class Fill extends Display
+class FillSprite extends Sprite
 {
 
 	public var color( default, default ) : Color;
@@ -18,18 +18,20 @@ class Fill extends Display
 		
 		super();
 		
+		isRenderable = true;
+		
 		this.color = color;
 		this.width = width;
 		this.height = height;
 	}
 	
-	public function setSize( width : Float, height : Float ) : Fill {
+	public function setSize( width : Float, height : Float ) : FillSprite {
 		this.width = width;
 		this.height = height;
 		return this;
 	}
 	
-	public function setColor( color : Int ) : Fill {
+	public function setColor( color : Int ) : FillSprite {
 		this.color = color;
 		return this;
 	}

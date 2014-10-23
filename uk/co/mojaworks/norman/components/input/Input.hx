@@ -171,7 +171,7 @@ class Input extends Component
 		
 		var object : GameObject = getPrimaryTarget( pid );
 			
-		bounds = object.display.getBounds();
+		bounds = object.sprite.getBounds();
 		startPoint = object.transform.globalToLocal( touch.lastTouchStart );
 		
 		if ( mode == TouchListener.POINTER_DOWN ) {
@@ -213,7 +213,7 @@ class Input extends Component
 	}	 
 	
 	public function isPointerOver( id : Int, object : GameObject ) : Bool {
-		return object.display.hitTestPoint( _touchRegister.get(id).position );
+		return object.sprite.hitTestPoint( _touchRegister.get(id).position );
 	}
 		
 	public function isAnyPointerDown() : Array<Int> {
@@ -254,7 +254,7 @@ class Input extends Component
 			touch = _touchRegister.get( key );
 			
 			if ( touch.isDown ) {
-				bounds = object.display.getBounds();
+				bounds = object.sprite.getBounds();
 				local = object.transform.globalToLocal( touch.position );
 				if ( bounds.containsPoint( local ) ) result.push( touch.touchId );
 			}

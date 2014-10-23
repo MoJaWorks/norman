@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core;
+import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -7,20 +8,42 @@ package uk.co.mojaworks.norman.core;
 class GameObjectManager
 {
 
-	var _objects : Array<GameObject>;
+	var _objects : LinkedList<GameObject>;
+	var _collections : LinkedList<GameObjectCollection>;
 	
 	public function new() 
 	{
-		_objects = [];
+		_objects = new LinkedList<GameObject>();
+		_collections = new LinkedList<GameObjectCollection>();
 	}
+	
+	/**
+	 * GameObjects
+	 */
 	
 	public function registerGameObject( object : GameObject ) : Void {
 		_objects.push( object );
+		for ( collection in _collections ) {
+			collection.onGameObjectAdded( object );
+		}
+	}
+	
+	public function gameObjectUpdated( object : GameObject ) : Void {
+		for ( collection in _collections ) {
+			collection.onGameObjectUpdated( object );
+		}
 	}
 	
 	public function unregisterGameObject( object : GameObject ) : Void {
 		_objects.remove( object );
+		for ( collection in _collections ) {
+			collection.onGameObjectRemoved( object );
+		}
 	}
+	
+	/**
+	 * Searching
+	 */
 	
 	public function findGameObjectWithId( id : String ) : GameObject {
 		for ( object in _objects ) {
@@ -42,6 +65,18 @@ class GameObjectManager
 			if ( object.has( classType ) ) result.push( object );
 		}
 		return result;
+	}
+	
+	/**
+	 * Collections
+	 */
+	
+	public function addCollection( collection : GameObjectCollection ) : Void {
+		_collections.push( collection );
+	}
+	
+	public function removeCollection( collection : GameObjectCollection ) : Void {
+		_collections.remove( collection );
 	}
 		
 }

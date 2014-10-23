@@ -92,18 +92,40 @@ class LinkedList<T>
 		return null;
 	}
 	
-	public function remove( item : T ) : Void {
+	public function contains( item : T ) : Bool {
 		
-		var looking : Bool = true;
+		var current : LinkedListItem<T> = first;
+		
+		while ( current != null ) {
+			if ( current.item == item ) {
+				return true;
+			}
+			current = current.next;
+		}
+		
+		return false;
+		
+	}
+	
+	/**
+	 * Returns true if the item was fount and removed
+	 * @param	item
+	 * @return
+	 */
+	
+	public function remove( item : T ) : Bool {
+		
 		var current : LinkedListItem<T> = first;
 		
 		while ( current != null ) {
 			if ( current.item == item ) {
 				removeItem( current );
-			}else {
-				current = current.next;
+				return true;
 			}
+			current = current.next;
 		}
+		
+		return false;
 		
 	}
 	

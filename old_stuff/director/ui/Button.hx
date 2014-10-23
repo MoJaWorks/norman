@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.components.director.ui ;
 
-import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.components.input.Input;
 import uk.co.mojaworks.norman.components.input.TouchData;
 import uk.co.mojaworks.norman.core.Component;
@@ -12,10 +12,10 @@ import uk.co.mojaworks.norman.core.Component;
 class Button extends View
 {
 
-	private var upState : Display;
-	private var downState : Display;
-	private var overState : Display;
-	private var disabledState : Display;
+	private var upState : Sprite;
+	private var downState : Sprite;
+	private var overState : Sprite;
+	private var disabledState : Sprite;
 	
 	private var mouseOver : Bool = false;
 	private var mouseDown : Bool = false;
@@ -25,14 +25,14 @@ class Button extends View
 	
 	public var buttonEnabled : Bool = true;
 	
-	private var currentState : Display;
+	private var currentState : Sprite;
 	
 	public function new() 
 	{
 		super();
 	}
 	
-	public function setup( upState : Display, downState : Display = null, overState : Display = null, disabledState : Display = null ) : Void {
+	public function setup( upState : Sprite, downState : Sprite = null, overState : Sprite = null, disabledState : Sprite = null ) : Void {
 		
 		this.upState = upState;
 		this.downState = (downState == null) ? upState : downState;
@@ -45,14 +45,14 @@ class Button extends View
 	{
 		super.onUpdate(seconds);
 		
-		var newState : Display = null;
+		var newState : Sprite = null;
 		
 		if ( buttonEnabled ) {
 	
 			// Buttons only respond to primary pointer
 			var pointer : TouchData = root.get(Input).getPointerInfo( 0 );
 						
-			if ( gameObject.display != null && gameObject.display.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) && root.get(Input).isPrimaryTarget( gameObject ) ) {
+			if ( gameObject.sprite != null && gameObject.sprite.getBounds().containsPoint( gameObject.transform.globalToLocal( pointer.position ) ) && root.get(Input).isPrimaryTarget( gameObject ) ) {
 				
 				if ( mouseOver && !mouseWasDown && pointer.isDown ) {
 					mouseDownCaptured = true;

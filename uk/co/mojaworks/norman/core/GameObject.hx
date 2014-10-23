@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.core;
-import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.components.messenger.Messenger;
 import uk.co.mojaworks.norman.components.Prefab;
 import uk.co.mojaworks.norman.components.Transform;
@@ -20,7 +20,7 @@ class GameObject
 	var _components : Map<String, Component>;
 	public var transform( default, null ) : Transform;
 	public var messenger( default, null ) : Messenger;
-	public var display( default, null ) : Display; // Display is not set by default and will be null until a display component is added
+	public var sprite( default, null ) : Sprite; // Display is not set by default and will be null until a display component is added
 	
 	public var enabled : Bool = true;
 	public var destroyed : Bool = false;
@@ -70,7 +70,7 @@ class GameObject
 	public function removeById( type : String ) : GameObject {
 		
 		// Check for any special types
-		if ( type == Display.TYPE ) this.display = null;
+		if ( type == Sprite.TYPE ) this.sprite = null;
 		
 		// remove it from the list if it exists
 		var component : Component = _components.get( type );
@@ -79,6 +79,8 @@ class GameObject
 			component.gameObject = null;
 			_components.remove( type );
 		}
+		
+		NormanApp.gameObjectManager.gameObjectUpdated( this );
 		
 		return this; 
 	}
@@ -95,11 +97,14 @@ class GameObject
 		_components.set( component.getComponentType(), component );
 		
 		// Check for any special types
-		if ( component.getComponentType() == Display.TYPE ) this.display = cast component;
+		if ( component.getComponentType() == Sprite.TYPE ) this.sprite = cast component;
 		
 		// Tell the component it has been added
 		component.gameObject = this;
 		component.onAdded( );
+		
+		NormanApp.gameObjectManager.gameObjectUpdated( this );
+		
 		return this;
 	}
 	

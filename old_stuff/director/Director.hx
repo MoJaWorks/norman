@@ -2,7 +2,7 @@ package uk.co.mojaworks.norman.components.director ;
 
 import uk.co.mojaworks.norman.components.director.ui.View;
 import uk.co.mojaworks.norman.components.director.ui.ViewSpace;
-import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 
@@ -29,7 +29,7 @@ class Director extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		root.add( new Display() );
+		root.add( new Sprite() );
 	}
 	
 	public function setViewportTarget( width : Int, height : Int ) : Void {
@@ -44,7 +44,7 @@ class Director extends Component
 		
 		// Swap spaces
 		_previousSpace = _currentSpace;
-		_currentSpace = new GameObject().add(new Display()).add(new ViewSpace());
+		_currentSpace = new GameObject().add(new Sprite()).add(new ViewSpace());
 		_currentSpace.get(ViewSpace).addView( view );
 		root.addChild( _currentSpace );
 		

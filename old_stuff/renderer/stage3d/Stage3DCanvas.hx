@@ -15,7 +15,7 @@ import openfl.geom.Matrix3D;
 import openfl.geom.Point;
 import openfl.geom.Rectangle;
 import openfl.Vector;
-import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.core.RootObject;
 import uk.co.mojaworks.norman.utils.Color;
@@ -318,7 +318,7 @@ class Stage3DCanvas extends RootObject implements ICanvas
 	
 	
 	private function renderLevel( root : GameObject ) : Void {
-		var display : Display = root.get(Display);
+		var display : Sprite = root.get(Sprite);
 		if ( display != null && display.visible && display.getFinalAlpha() > 0 ) {
 			
 			display.preRender( this );

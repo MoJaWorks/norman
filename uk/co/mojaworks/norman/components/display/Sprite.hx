@@ -11,12 +11,13 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  * ...
  * @author Simon
  */
-class Display extends Component
+class Sprite extends Component
 {
 
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
 	public var clipRect( default, set ) : Rectangle = null;
+	public var isRenderable : Bool = false;
 	
 	public function new() 
 	{
@@ -91,7 +92,7 @@ class Display extends Component
 	
 	public function getFinalAlpha() : Float {
 		if ( gameObject.transform.parent != null ) {
-			return gameObject.transform.parent.gameObject.display.getFinalAlpha() * alpha;
+			return gameObject.transform.parent.gameObject.sprite.getFinalAlpha() * alpha;
 		}else {
 			return alpha;
 		}

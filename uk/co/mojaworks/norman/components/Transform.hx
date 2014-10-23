@@ -2,7 +2,7 @@ package uk.co.mojaworks.norman.components ;
 
 import lime.math.Matrix3;
 import lime.math.Vector2;
-import uk.co.mojaworks.norman.components.display.Display;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.Component;
 
 /**
@@ -105,7 +105,7 @@ class Transform extends Component
 		_renderTransform.identity();
 		
 		// If an object is masked, global transforms will all be in this coordinate
-		var isMasked : Bool = gameObject.display != null && gameObject.display.clipRect != null;
+		var isMasked : Bool = gameObject.sprite != null && gameObject.sprite.clipRect != null;
 		
 		if ( parent != null ) {
 			_worldTransform.concat( parent.worldTransform );
@@ -113,7 +113,7 @@ class Transform extends Component
 				_renderTransform.copyFrom( _localTransform );
 				_renderTransform.concat( parent.renderTransform );
 			}else {
-				_renderTransform.translate( -gameObject.display.clipRect.x, -gameObject.display.clipRect.y );
+				_renderTransform.translate( -gameObject.sprite.clipRect.x, -gameObject.sprite.clipRect.y );
 			}
 		}else {
 			_renderTransform.copyFrom( _worldTransform );
@@ -131,8 +131,8 @@ class Transform extends Component
 	 */
 	
 	public function centerPivot() : Transform {
-		if ( gameObject.has(Display) ) {
-			setPivot( gameObject.display.getNaturalWidth() * 0.5, gameObject.display.getNaturalHeight() * 0.5 );
+		if ( gameObject.has(Sprite) ) {
+			setPivot( gameObject.sprite.getNaturalWidth() * 0.5, gameObject.sprite.getNaturalHeight() * 0.5 );
 		}else {
 			setPivot(0, 0);
 		}

@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.renderer;
+import lime.graphics.RenderContext;
 import lime.math.Matrix3;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -10,8 +11,8 @@ import uk.co.mojaworks.norman.renderer.ITextureData;
 
 interface ICanvas 
 {
-	function init( rect : Rectangle ) : Void;
-	function resize( rect : Rectangle ) : Void;
+	function init( context : RenderContext ) : Void;
+	function resize( width : Int, height : Int ) : Void;
 	function render( root : GameObject) : Void;
 	
 	// Drawing functions

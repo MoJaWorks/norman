@@ -13,7 +13,7 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author Simon
  */
-class Text extends Display
+class TextSprite extends Sprite
 {
 
 	public var textureData : TextureData;
@@ -42,6 +42,8 @@ class Text extends Display
 	public function new( text : String, width : Int = 200, height : Int = 200 ) 
 	{
 		super();
+		
+		isRenderable = true;
 		
 		color = 0xFFFFFFFF;
 		
@@ -90,7 +92,7 @@ class Text extends Display
 		return height;
 	}
 	
-	public function setColor( color : Int ) : Text {
+	public function setColor( color : Int ) : TextSprite {
 		this.color = color;
 		return this;
 	}
@@ -99,7 +101,7 @@ class Text extends Display
 	 * SETTERS
 	 */
 	
-	public function setBold( bold : Bool ) : Text {
+	public function setBold( bold : Bool ) : TextSprite {
 		if ( bold != this.bold ) {
 			this.bold = bold;
 			updateTextFormat();
@@ -108,7 +110,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setItalic( italic : Bool ) : Text {
+	public function setItalic( italic : Bool ) : TextSprite {
 		if ( italic != this.italic ) {
 			this.italic = italic;
 			updateTextFormat();
@@ -117,7 +119,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setUnderline( underline : Bool ) : Text {
+	public function setUnderline( underline : Bool ) : TextSprite {
 		if ( underline != this.underline ) {
 			this.underline = underline;
 			updateTextFormat();
@@ -126,7 +128,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setFontSize( fontSize : Int ) : Text {
+	public function setFontSize( fontSize : Int ) : TextSprite {
 		if ( fontSize != this.fontSize ) {
 			this.fontSize = fontSize;
 			updateTextFormat();
@@ -136,9 +138,9 @@ class Text extends Display
 	}
 	
 	#if flash
-	public function setAlign( align : TextFormatAlign ) : Text {
+	public function setAlign( align : TextFormatAlign ) : TextSprite {
 	#else
-	public function setAlign( align : String ) : Text {
+	public function setAlign( align : String ) : TextSprite {
 	#end
 		if ( align != this.align ) {
 			this.align = align;
@@ -148,7 +150,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setFont( font : String ) : Text {
+	public function setFont( font : String ) : TextSprite {
 		
 		if ( font != this.font ) {
 			this.font = font;
@@ -158,7 +160,7 @@ class Text extends Display
 		return this;
 	}
 
-	public function setText( text : String ) : Text {
+	public function setText( text : String ) : TextSprite {
 		
 		if ( text != this.text ) {
 			this.text = text;
@@ -168,7 +170,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setWidth( width : Int ) : Text {
+	public function setWidth( width : Int ) : TextSprite {
 		this.width = width;
 		textField.width = width;
 		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
@@ -176,7 +178,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setHeight( height : Int ) : Text {
+	public function setHeight( height : Int ) : TextSprite {
 		this.height = height;
 		textField.height = height;
 		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
@@ -184,7 +186,7 @@ class Text extends Display
 		return this;
 	}
 	
-	public function setSize( width : Int, height : Int ) : Text {
+	public function setSize( width : Int, height : Int ) : TextSprite {
 		this.width = width;
 		this.height = height;
 		textField.width = width;

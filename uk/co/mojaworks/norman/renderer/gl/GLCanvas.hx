@@ -1,8 +1,12 @@
 package uk.co.mojaworks.norman.renderer.gl;
+import lime.graphics.GLRenderContext;
+import lime.graphics.RenderContext;
+import lime.math.Matrix4;
 import uk.co.mojaworks.norman.renderer.ITextureData;
 import lime.math.Matrix3;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
+import uk.co.mojaworks.norman.renderer.RendererCollection;
 
 /**
  * ...
@@ -11,6 +15,11 @@ import lime.math.Rectangle;
 class GLCanvas implements ICanvas
 {
 
+	private var _collection : RendererCollection;
+	private var _context : GLRenderContext;
+	private var _stageWidth : Int;
+	private var _stageHeight : Int;
+	
 	public function new() 
 	{
 		
@@ -18,12 +27,12 @@ class GLCanvas implements ICanvas
 	
 	/* INTERFACE uk.co.mojaworks.norman.renderer.ICanvas */
 	
-	public function init(rect:Rectangle):Void 
+	public function init( context : RenderContext ):Void 
 	{
-		
+		_context = cast context;
 	}
 	
-	public function resize(rect:Rectangle):Void 
+	public function resize( width : Int, height : Int ):Void 
 	{
 		
 	}

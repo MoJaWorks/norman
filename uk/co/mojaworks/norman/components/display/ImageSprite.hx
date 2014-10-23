@@ -11,7 +11,7 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author Simon
  */
-class Image extends Display
+class ImageSprite extends Sprite
 {
 
 	public var textureData : TextureData;
@@ -24,6 +24,8 @@ class Image extends Display
 	public function new( textureId : String, subTextureId : String = null ) 
 	{
 		super();
+		
+		isRenderable = true;
 		
 		color = 0xFFFFFFFF;
 		setTexture( textureId, subTextureId );

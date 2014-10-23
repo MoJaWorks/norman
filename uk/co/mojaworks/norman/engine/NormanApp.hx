@@ -1,8 +1,6 @@
 package uk.co.mojaworks.norman.engine ;
 
-import haxe.Timer;
 import lime.app.Application;
-import lime.graphics.opengl.GLTexture;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.tick.Ticker;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -42,8 +40,15 @@ class NormanApp extends Application
 		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
+				
+				// Set up the texture manager
 				textureManager = new GLTextureManager( gl );
+				
+				// Set up the Canvas
 				canvas = new GLCanvas();
+				canvas.init( cast gl );
+				canvas.resize( window.width, window.height );
+				
 			default:
 				// Nothing yet
 				
@@ -95,7 +100,7 @@ class NormanApp extends Application
 		if ( _hasInit ) {
 			super.update( deltaTime );
 			//root.get(Input).onUpdate( seconds );
-			root.get(Ticker).onUpdate( deltaTime );
+			//root.get(Ticker).onUpdate( deltaTime );
 		}
 	}
 	
