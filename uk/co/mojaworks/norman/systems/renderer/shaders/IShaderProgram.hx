@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer.shaders;
+package uk.co.mojaworks.norman.systems.renderer.shaders ;
 
 /**
  * ...

@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer.gl;
+package uk.co.mojaworks.norman.systems.renderer.gl ;
 
 import lime.graphics.Image;
 import lime.graphics.opengl.GLTexture;
@@ -7,16 +7,14 @@ import lime.graphics.opengl.GLTexture;
  * ...
  * @author Simon
  */
-class GLTextureData
+class GLTextureData extends TextureData
 {
 
-	public var sourceImage : Image;
-	public var map : Dynamic; // Interpreted JSON object
 	public var texture : GLTexture;
 	
 	public function new() 
 	{
-		
+		super();
 	}
 	
 }

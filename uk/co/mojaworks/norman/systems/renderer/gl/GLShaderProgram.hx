@@ -1,11 +1,11 @@
-package uk.co.mojaworks.norman.renderer.gl;
+package uk.co.mojaworks.norman.systems.renderer.gl ;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.renderer.shaders.ShaderData;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
 /**
  * ...

@@ -23,6 +23,7 @@ class GameObject
 	public var sprite( default, null ) : Sprite; // Display is not set by default and will be null until a display component is added
 	
 	public var enabled : Bool = true;
+	public var enabledInTree( get, never ) : Bool;
 	public var destroyed : Bool = false;
 	
 	public function new( id : String = null ) 
@@ -227,6 +228,14 @@ class GameObject
 	
 	public function sendMessage( message : String, ?data : Dynamic = null ) : Void {
 		messenger.sendMessage( message, data );
+	}
+	
+	public function get_enabledInTree( ) : Bool {
+		if ( transform.parent != null ) {
+			return enabled && transform.parent.gameObject.enabledInTree;
+		}else {
+			return enabled;
+		}
 	}
 		
 }

@@ -1,12 +1,11 @@
-package uk.co.mojaworks.norman.renderer.gl;
+package uk.co.mojaworks.norman.systems.renderer.gl ;
 import lime.graphics.GLRenderContext;
 import lime.graphics.RenderContext;
 import lime.math.Matrix4;
-import uk.co.mojaworks.norman.renderer.ITextureData;
 import lime.math.Matrix3;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
-import uk.co.mojaworks.norman.renderer.RendererCollection;
+import uk.co.mojaworks.norman.systems.renderer.RendererCollection;
 
 /**
  * ...
@@ -47,12 +46,12 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(texture:ITextureData, transform:Matrix3, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
+	public function drawImage(texture:TextureData, transform:Matrix3, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
 	{
 		
 	}
 	
-	public function drawSubImage(texture:ITextureData, sourceRect:Rectangle, transform:Matrix3, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
+	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix3, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
 	{
 		
 	}

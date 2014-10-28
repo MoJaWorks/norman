@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.renderer;
+package uk.co.mojaworks.norman.systems.renderer ;
 
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;

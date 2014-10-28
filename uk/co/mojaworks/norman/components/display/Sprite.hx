@@ -4,7 +4,7 @@ import lime.math.Rectangle;
 import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**

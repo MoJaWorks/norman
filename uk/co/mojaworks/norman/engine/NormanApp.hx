@@ -5,10 +5,10 @@ import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.tick.Ticker;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.core.GameObjectManager;
-import uk.co.mojaworks.norman.renderer.gl.GLCanvas;
-import uk.co.mojaworks.norman.renderer.gl.GLTextureManager;
-import uk.co.mojaworks.norman.renderer.ICanvas;
-import uk.co.mojaworks.norman.renderer.ITextureManager;
+import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
+import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureManager;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
 
 /**
  * This class is intended to be extended and used as a root controller
