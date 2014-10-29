@@ -9,6 +9,7 @@ import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureManager;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
+import uk.co.mojaworks.norman.systems.renderer.Renderer;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -23,7 +24,7 @@ class NormanApp extends Application
 	private var _hasInit : Bool = false;
 	
 	// Public static vars for easy access
-	public static var canvas : ICanvas;
+	public static var renderer : Renderer;
 	public static var textureManager : ITextureManager;
 	public static var root : GameObject;
 	public static var gameObjectManager : GameObjectManager;
@@ -37,18 +38,14 @@ class NormanApp extends Application
 		
 		gameObjectManager = new GameObjectManager();
 		root = new GameObject();
+		renderer = new Renderer( context );
 		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
 				
 				// Set up the texture manager
 				textureManager = new GLTextureManager( gl );
-				
-				// Set up the Canvas
-				canvas = new GLCanvas();
-				canvas.init( cast gl );
-				canvas.resize( window.width, window.height );
-				
+								
 			default:
 				// Nothing yet
 				
@@ -107,33 +104,34 @@ class NormanApp extends Application
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
-			switch (context) {
-				
-				case CANVAS (context):
-					
-					// TODO: Display error message
-					context.fillStyle = "#BFFF00";
-					context.fillRect (0, 0, window.width, window.height);
-				
-				case DOM (element):
-					
-					// TODO: Display error message
-					element.style.backgroundColor = "#BFFF00";
-				
-				case FLASH (sprite):
-					
-					sprite.graphics.beginFill (0xBFFF00);
-					sprite.graphics.drawRect (0, 0, window.width, window.height);
-				
-				case OPENGL (gl):
-					
-					gl.clearColor (0.75, 1, 0, 1);
-					gl.clear (gl.COLOR_BUFFER_BIT);					
-
-				
-				default:
-				
-			}
+			//switch (context) {
+				//
+				//case CANVAS (context):
+					//
+					//// TODO: Display error message
+					//context.fillStyle = "#BFFF00";
+					//context.fillRect (0, 0, window.width, window.height);
+				//
+				//case DOM (element):
+					//
+					//// TODO: Display error message
+					//element.style.backgroundColor = "#BFFF00";
+				//
+				//case FLASH (sprite):
+					//
+					//sprite.graphics.beginFill (0xBFFF00);
+					//sprite.graphics.drawRect (0, 0, window.width, window.height);
+				//
+				//case OPENGL (gl):
+					//
+					//gl.clearColor (0.75, 1, 0, 1);
+					//gl.clear (gl.COLOR_BUFFER_BIT);					
+//
+				//
+				//default:
+				//
+			//}
+			renderer.render( context, root, camera );
 		}
 		
 	}

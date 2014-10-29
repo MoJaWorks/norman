@@ -81,8 +81,6 @@ class GameObject
 			_components.remove( type );
 		}
 		
-		NormanApp.gameObjectManager.gameObjectUpdated( this );
-		
 		return this; 
 	}
 	
@@ -103,8 +101,6 @@ class GameObject
 		// Tell the component it has been added
 		component.gameObject = this;
 		component.onAdded( );
-		
-		NormanApp.gameObjectManager.gameObjectUpdated( this );
 		
 		return this;
 	}

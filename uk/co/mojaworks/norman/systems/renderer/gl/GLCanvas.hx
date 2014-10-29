@@ -5,7 +5,7 @@ import lime.math.Matrix4;
 import lime.math.Matrix3;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
-import uk.co.mojaworks.norman.systems.renderer.RendererCollection;
+import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -14,7 +14,7 @@ import uk.co.mojaworks.norman.systems.renderer.RendererCollection;
 class GLCanvas implements ICanvas
 {
 
-	private var _collection : RendererCollection;
+	private var _collection : LinkedList<GameObject>;
 	private var _context : GLRenderContext;
 	private var _stageWidth : Int;
 	private var _stageHeight : Int;
