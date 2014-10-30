@@ -19,7 +19,7 @@ class Renderer
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
 				canvas = new GLCanvas();
-				canvas.init( gl );
+				canvas.init( cast gl );
 			
 			default:
 				// Nothing yet
@@ -27,9 +27,9 @@ class Renderer
 		
 	}
 	
-	public function render( context : RenderContext, root : GameObject, camera : Camera ) {
+	public function render( context : RenderContext, root : GameObject, camera : GameObject ) {
 		
-		canvas.render( context, root, camera );
+		canvas.render( root, camera );
 		
 	}
 	

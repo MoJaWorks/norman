@@ -1,13 +1,14 @@
 package uk.co.mojaworks.norman.components.display ;
 
 import lime.math.Matrix4;
+import uk.co.mojaworks.norman.core.Component;
  
 enum CameraMode {
 	Orthographic;
 	Perspective;
 }
 
-class Camera
+class Camera extends Component
 {
 	
 	public var mode(default, set) : CameraMode;

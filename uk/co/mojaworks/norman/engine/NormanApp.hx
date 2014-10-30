@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.engine ;
 
 import lime.app.Application;
 import lime.graphics.RenderContext;
+import uk.co.mojaworks.norman.components.display.Camera;
 import uk.co.mojaworks.norman.components.tick.Ticker;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.core.GameObjectManager;
@@ -26,7 +27,8 @@ class NormanApp extends Application
 	// Public static vars for easy access
 	public static var renderer : Renderer;
 	public static var textureManager : ITextureManager;
-	public static var root : GameObject;
+	public static var world : GameObject;
+	public static var camera : GameObject;
 	public static var gameObjectManager : GameObjectManager;
 	
 	public function new( ) 
@@ -37,8 +39,10 @@ class NormanApp extends Application
 	override public function init( context : RenderContext ) {
 		
 		gameObjectManager = new GameObjectManager();
-		root = new GameObject();
+		world = new GameObject();
 		renderer = new Renderer( context );
+		camera = new GameObject().add( new Camera() );
+		
 		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
@@ -63,16 +67,8 @@ class NormanApp extends Application
 	 * Boot
 	 */
 	
-	private function initRoot( width : Int, height : Int ) : Void {
-		
-		//Root.init( stage );
-		
-		//root.add( new Input() );
-		//root.add( new Ticker() );
-		//root.add( new TouchListener() );
-			
-		_hasInit = true;
-			
+	private function initRoot( width : Int, height : Int ) : Void {		
+		_hasInit = true;	
 	}
 			
 	private function onStartupComplete() : Void {
@@ -96,42 +92,13 @@ class NormanApp extends Application
 	{
 		if ( _hasInit ) {
 			super.update( deltaTime );
-			//root.get(Input).onUpdate( seconds );
-			//root.get(Ticker).onUpdate( deltaTime );
 		}
 	}
 	
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
-			//switch (context) {
-				//
-				//case CANVAS (context):
-					//
-					//// TODO: Display error message
-					//context.fillStyle = "#BFFF00";
-					//context.fillRect (0, 0, window.width, window.height);
-				//
-				//case DOM (element):
-					//
-					//// TODO: Display error message
-					//element.style.backgroundColor = "#BFFF00";
-				//
-				//case FLASH (sprite):
-					//
-					//sprite.graphics.beginFill (0xBFFF00);
-					//sprite.graphics.drawRect (0, 0, window.width, window.height);
-				//
-				//case OPENGL (gl):
-					//
-					//gl.clearColor (0.75, 1, 0, 1);
-					//gl.clear (gl.COLOR_BUFFER_BIT);					
-//
-				//
-				//default:
-				//
-			//}
-			renderer.render( context, root, camera );
+			renderer.render( context, world, camera );
 		}
 		
 	}

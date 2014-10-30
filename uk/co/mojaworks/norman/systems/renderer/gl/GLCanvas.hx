@@ -36,7 +36,7 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function render(root:GameObject):Void 
+	public function render(root:GameObject, camera : GameObject):Void 
 	{
 		
 	}

@@ -20,13 +20,13 @@ class Tick extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		NormanApp.root.get(Ticker).registerTickable( this );
+		NormanApp.world.get(Ticker).registerTickable( this );
 	}
 	
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		NormanApp.root.get(Ticker).unregisterTickable( this );
+		NormanApp.world.get(Ticker).unregisterTickable( this );
 	}
 	
 	override public function onUpdate(seconds:Float):Void 

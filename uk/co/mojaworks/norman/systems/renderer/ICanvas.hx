@@ -13,7 +13,7 @@ interface ICanvas
 {
 	function init( context : RenderContext ) : Void;
 	function resize( width : Int, height : Int ) : Void;
-	function render( root : GameObject) : Void;
+	function render( root : GameObject, camera : GameObject ) : Void;
 	
 	// Drawing functions
 	function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix3 ) : Void;

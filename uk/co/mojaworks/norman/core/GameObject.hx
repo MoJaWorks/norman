@@ -45,7 +45,7 @@ class GameObject
 			//transform.parent = root;
 		//}
 		NormanApp.gameObjectManager.registerGameObject(this);
-		if ( NormanApp.root != null ) transform.parent = NormanApp.root.transform;
+		if ( NormanApp.world != null ) transform.parent = NormanApp.world.transform;
 		
 	}
 	
@@ -232,6 +232,24 @@ class GameObject
 		}else {
 			return enabled;
 		}
+	}
+	
+	public function addChild( obj : GameObject ) {
+		transform.addChild( obj.transform );
+	}
+	
+	public function removeChild( obj : GameObject ) {
+		transform.removeChild( obj.transform );
+	}
+	
+	public function getChildren() : Array<GameObject> {
+		var results : Array<GameObject> = [];
+		
+		for ( trans in transform.children ) {
+			results.push( trans.gameObject );
+		}
+		
+		return results;
 	}
 		
 }
