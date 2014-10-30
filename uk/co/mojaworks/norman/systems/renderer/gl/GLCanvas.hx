@@ -14,7 +14,6 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class GLCanvas implements ICanvas
 {
 
-	private var _collection : LinkedList<GameObject>;
 	private var _context : GLRenderContext;
 	private var _stageWidth : Int;
 	private var _stageHeight : Int;
@@ -26,17 +25,17 @@ class GLCanvas implements ICanvas
 	
 	/* INTERFACE uk.co.mojaworks.norman.renderer.ICanvas */
 	
-	public function init( context : RenderContext ):Void 
+	public function init( context : RenderContext ) : Void 
 	{
 		_context = cast context;
 	}
 	
-	public function resize( width : Int, height : Int ):Void 
+	public function resize( width : Int, height : Int ) : Void 
 	{
 		
 	}
 	
-	public function render(root:GameObject, camera : GameObject):Void 
+	public function render(root:GameObject, camera : GameObject) : Void 
 	{
 		
 	}

@@ -40,9 +40,11 @@ class NormanApp extends Application
 		
 		gameObjectManager = new GameObjectManager();
 		world = new GameObject();
-		renderer = new Renderer( context );
 		camera = new GameObject().add( new Camera() );
 		
+		// initialise the renderer
+		renderer = new Renderer( context );
+		renderer.resize( window.width, window.height );
 		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):

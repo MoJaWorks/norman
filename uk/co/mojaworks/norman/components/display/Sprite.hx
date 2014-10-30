@@ -5,6 +5,8 @@ import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
@@ -13,11 +15,12 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  */
 class Sprite extends Component
 {
-
+	public var shaderProgram : IShaderProgram;
+	
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
-	public var clipRect( default, set ) : Rectangle = null;
 	public var isRenderable : Bool = false;
+	//public var clipRect( default, set ) : Rectangle = null;
 	
 	public function new() 
 	{
@@ -95,6 +98,14 @@ class Sprite extends Component
 			return gameObject.transform.parent.gameObject.sprite.getFinalAlpha() * alpha;
 		}else {
 			return alpha;
+		}
+	}
+	
+	public function getVisibleInTree() : Bool {
+		if ( gameObject.transform.parent != null ) {
+			return visible && gameObject.transform.parent.gameObject.sprite.visible;
+		}else {
+			return visible;
 		}
 	}
 		
