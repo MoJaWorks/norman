@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
 import uk.co.mojaworks.norman.components.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.utils.Color;
 
@@ -10,6 +11,8 @@ import uk.co.mojaworks.norman.utils.Color;
 class FillSprite extends Sprite
 {
 
+	public static var shaderProgram : IShaderProgram;
+	
 	public var color( default, default ) : Color;
 	public var width( default, default ) : Float;
 	public var height( default, default ) : Float;

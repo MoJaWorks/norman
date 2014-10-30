@@ -59,7 +59,7 @@ class Renderer implements ISystem
 		// Sort all of the display items based on shader, texture and target
 		
 		// First sort by target into separate lists
-		canvas.
+		//canvas.
 	}
 	
 }

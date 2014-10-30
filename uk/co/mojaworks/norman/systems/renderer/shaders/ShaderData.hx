@@ -13,11 +13,11 @@ class ShaderData
 	}
 	
 	public function getGLSL() : String {
-		
+		return "";
 	}
 	
-	public function getAGAL : String {
-		
+	public function getAGAL() : String {
+		return "";
 	}
 	
 }
