@@ -4,7 +4,7 @@ package uk.co.mojaworks.norman.systems.renderer.shaders;
  * ...
  * @author Simon
  */
-class DefaultFillVertexShader extends ShaderData
+class DefaultFillFragmentShader extends ShaderData
 {
 
 	public function new() 

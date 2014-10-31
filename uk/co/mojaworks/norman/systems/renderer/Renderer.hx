@@ -1,19 +1,25 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.components.display.Camera;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.core.ISystem;
-import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
+import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderProgram;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
  * @author Simon
  */
+ 
 class Renderer implements ISystem
-{
+{	
+
+	// Keep a cache of shaders so if the context is lost they can all be recreated quickly.
+	private var _shaders : LinkedList<IShaderProgram>;
+	
 	private var _collection : LinkedList<Sprite>;
 	public var canvas : ICanvas;
 	
@@ -22,8 +28,7 @@ class Renderer implements ISystem
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
 				canvas = new GLCanvas();
-				canvas.init( cast gl );
-			
+				canvas.init( cast gl );			
 			default:
 				// Nothing yet
 		}
@@ -58,8 +63,27 @@ class Renderer implements ISystem
 	{
 		// Sort all of the display items based on shader, texture and target
 		
-		// First sort by target into separate lists
+		// TODO: First sort by target into separate lists
 		//canvas.
+	}
+	
+	/**
+	 * 
+	 */
+	
+	public function createShader( vs : ShaderData, fs : ShaderData ) : IShaderProgram {
+		
+		var shader : IShaderProgram;
+		
+		switch( canvas.getContext() ) {
+			RenderContext.OPENGL(gl):
+				shader = new GLShaderProgram( gl, vs, fs );
+			default:
+				// Nothing yet
+		}
+		
+		_shaders.push( shader );
+		return shader;
 	}
 	
 }

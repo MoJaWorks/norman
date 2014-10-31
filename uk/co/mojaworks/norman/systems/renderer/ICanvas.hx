@@ -11,6 +11,8 @@ import uk.co.mojaworks.norman.systems.renderer.TextureData;
 
 interface ICanvas 
 {
+	function getContext() : RenderContext;
+	
 	function init( context : RenderContext ) : Void;
 	function resize( width : Int, height : Int ) : Void;
 	function render( root : GameObject, camera : GameObject ) : Void;

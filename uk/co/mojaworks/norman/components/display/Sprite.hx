@@ -15,16 +15,24 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  */
 class Sprite extends Component
 {
-	public var shaderProgram : IShaderProgram;
-	
+		
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
 	public var isRenderable : Bool = false;
-	//public var clipRect( default, set ) : Rectangle = null;
 	
 	public function new() 
 	{
 		super();
+		initShader();
+	}
+	
+	private function initShader() {
+		// Initialise the shader
+	}
+	
+	public function getShader() : IShaderProgram {
+		// override and return the current shader
+		return null;
 	}
 				
 	/**

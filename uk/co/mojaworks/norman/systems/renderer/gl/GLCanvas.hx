@@ -55,4 +55,8 @@ class GLCanvas implements ICanvas
 		
 	}
 	
+	public function getContext() : RenderContext {
+		return _context;
+	}
+	
 }

@@ -15,22 +15,29 @@ class GLShaderProgram implements IShaderProgram
 {
 	
 	private var _context : GLRenderContext;
-	private var program( default, null ) : GLProgram;
+	private var _fsData : ShaderData;
+	private var _vsData : ShaderData;
+	
+	public var program( default, null ) : GLProgram;
 
-	public function new( context : GLRenderContext ) 
+	public function new( context : GLRenderContext, vertexShader:ShaderData, fragmentShader:ShaderData ) 
 	{
 		_context = context;
+		_fsData = fragmentShader;
+		_vsData = vertexShader;
+		
+		compile();
 	}
 	
 	/* INTERFACE uk.co.mojaworks.norman.renderer.shaders.IShaderProgram */
 	
-	public function compile( vertexShader:ShaderData, fragmentShader:ShaderData ) 
+	public function compile() 
 	{
 		
 		if ( program ) _context.deleteProgram( program );
 		
 		var vs : GLShader = _context.createShader( GL.VERTEX_SHADER );
-		_context.shaderSource( vs, vertexShader.getGLSL() );
+		_context.shaderSource( vs, _vsData.getGLSL() );
 		_context.compileShader( vs );
 		
 		#if shader_debug
@@ -38,7 +45,7 @@ class GLShaderProgram implements IShaderProgram
 		#end
 		
 		var fs : GLShader = _context.createShader( GL.FRAGMENT_SHADER );
-		_context.shaderSource( fs, fragmentShader.getGLSL() );
+		_context.shaderSource( fs, _fsData.getGLSL() );
 		_context.compileShader( fs );
 		
 		#if shader_debug

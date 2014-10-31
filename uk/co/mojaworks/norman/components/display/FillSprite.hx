@@ -1,7 +1,8 @@
 package uk.co.mojaworks.norman.components.display;
-import uk.co.mojaworks.norman.components.renderer.ICanvas;
+import uk.co.mojaworks.norman.engine.NormanApp;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillFragmentShader;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillVertexShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -25,12 +26,17 @@ class FillSprite extends Sprite
 		this.color = color;
 		this.width = width;
 		this.height = height;
-		
-		createShader();
 	}
 	
-	private function createShader() {
-		shader = new DefaultFillShader();
+	override public function initShader() : Void {
+		if ( shaderProgram == null ) {
+			shaderProgram = NormanApp.renderer.createShader( new DefaultFillVertexShader(), new DefaultFillFragmentShader() );
+		}
+	}
+	
+	override public function getShader():IShaderProgram 
+	{
+		return shaderProgram;
 	}
 	
 	public function setSize( width : Float, height : Float ) : FillSprite {
