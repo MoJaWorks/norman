@@ -4,6 +4,7 @@ import lime.math.Rectangle;
 import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
@@ -33,6 +34,18 @@ class Sprite extends Component
 	public function getShader() : IShaderProgram {
 		// override and return the current shader
 		return null;
+	}
+	
+	override public function onAdded():Void 
+	{
+		super.onAdded();
+		NormanApp.renderer.addSprite( this );
+	}
+	
+	override public function onRemoved():Void 
+	{
+		super.onRemoved();
+		NormanApp.renderer.removeSprite( this );
 	}
 				
 	/**

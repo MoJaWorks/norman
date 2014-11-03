@@ -7,6 +7,14 @@ package uk.co.mojaworks.norman.systems.renderer.shaders ;
 class ShaderData
 {
 
+	// Default attributes are names aVertexPosition, aVertexData
+	// Default uniforms are uViewMatrix and uProjectionMatrix
+	// Textures are stored in uniforms named uTexture0-32
+	
+	
+	public var usesColor : Bool = false;
+	public var numTextures : Int = 0;
+	
 	public function new() 
 	{
 		

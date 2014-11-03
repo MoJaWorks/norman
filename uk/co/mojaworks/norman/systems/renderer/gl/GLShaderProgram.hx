@@ -3,7 +3,6 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
-import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
@@ -19,6 +18,10 @@ class GLShaderProgram implements IShaderProgram
 	private var _vsData : ShaderData;
 	
 	public var program( default, null ) : GLProgram;
+	
+	/**
+	 *
+	 */
 
 	public function new( context : GLRenderContext, vertexShader:ShaderData, fragmentShader:ShaderData ) 
 	{
@@ -29,7 +32,9 @@ class GLShaderProgram implements IShaderProgram
 		compile();
 	}
 	
-	/* INTERFACE uk.co.mojaworks.norman.renderer.shaders.IShaderProgram */
+	/**
+	 * 
+	 */
 	
 	public function compile() 
 	{
@@ -66,4 +71,23 @@ class GLShaderProgram implements IShaderProgram
 		
 	}
 	
+	/**
+	 * 
+	 */
+	
+	public function getUsesColor():Bool 
+	{
+		return _vsData.usesColor;
+	}
+	
+	/**
+	 * 
+	 * @return
+	 */
+	
+	public function getNumTextures():Int 
+	{
+		return Math.max( _vsData.numTextures, _fsData.numTextures);
+	}
+		
 }

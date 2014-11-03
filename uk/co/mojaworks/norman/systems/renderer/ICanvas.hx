@@ -2,8 +2,10 @@ package uk.co.mojaworks.norman.systems.renderer ;
 import lime.graphics.RenderContext;
 import lime.math.Matrix3;
 import lime.math.Rectangle;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * @author Simon
@@ -15,7 +17,7 @@ interface ICanvas
 	
 	function init( context : RenderContext ) : Void;
 	function resize( width : Int, height : Int ) : Void;
-	function render( root : GameObject, camera : GameObject ) : Void;
+	function render( objects : LinkedList<Sprite>, camera : GameObject ) : Void;
 	
 	// Drawing functions
 	function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix3 ) : Void;

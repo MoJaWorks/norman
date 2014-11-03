@@ -6,5 +6,11 @@ package uk.co.mojaworks.norman.systems.renderer.shaders ;
  */
 interface IShaderProgram
 {
-	public function compile(vertexShader : ShaderData, fragmentShader : ShaderData);	
+	public function compile();
+	
+	// If it uses color then it must define an aVertexColor attribute
+	public function getUsesColor( ) : Bool;
+	
+	// It is uses textures then it must define an aTexture0 - aTexture32 attribute depending on the number of textures required
+	public function getNumTextures( ) : Int;
 }

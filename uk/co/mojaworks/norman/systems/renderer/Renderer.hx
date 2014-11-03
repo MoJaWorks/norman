@@ -55,23 +55,20 @@ class Renderer implements ISystem
 		canvas.resize( width, height );
 	}
 	
-	public function render( context : RenderContext, root : GameObject, camera : GameObject ) {
-		canvas.render( root, camera );
+	public function render( context : RenderContext, camera : GameObject ) {
+		canvas.render( _collection, camera );
 	}
 	
 	public function update(deltaTime:Float):Void 
 	{
-		// Sort all of the display items based on shader, texture and target
-		
-		// TODO: First sort by target into separate lists
-		//canvas.
+		// TODO: Sort all of the display items based on shader, texture and target
 	}
 	
 	/**
 	 * 
 	 */
 	
-	public function createShader( vs : ShaderData, fs : ShaderData ) : IShaderProgram {
+	public function createShader( vs : IShaderData, fs : IShaderData ) : IShaderProgram {
 		
 		var shader : IShaderProgram;
 		

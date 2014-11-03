@@ -3,6 +3,7 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.RenderContext;
 import lime.math.Matrix4;
 import lime.math.Matrix3;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.utils.LinkedList;
@@ -13,6 +14,13 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  */
 class GLCanvas implements ICanvas
 {
+	
+	private static inline var VERTEX_SIZE : Int = 9;
+	private static inline var VERTEX_POSITION : Int = 0;
+	private static inline var VERTEX_COLOR : Int = 3;
+	private static inline var VERTEX_UV : Int = 7;
+	
+	
 
 	private var _context : GLRenderContext;
 	private var _stageWidth : Int;
@@ -35,7 +43,7 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function render(root:GameObject, camera : GameObject) : Void 
+	public function render(objects:LinkedList<Sprite>, camera : GameObject) : Void 
 	{
 		
 	}
