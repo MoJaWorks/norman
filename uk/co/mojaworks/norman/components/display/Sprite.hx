@@ -151,10 +151,10 @@ class Sprite extends Component
 		//if ( clipRect != null ) canvas.popMask();
 	}
 	
-	private function set_clipRect( rect : Rectangle ) : Rectangle {
-		gameObject.transform.invalidateMatrices();
-		this.clipRect = rect;
-		return rect;
-	}
+	//private function set_clipRect( rect : Rectangle ) : Rectangle {
+	//	gameObject.transform.invalidateMatrices();
+	//	this.clipRect = rect;
+	//	return rect;
+	//}
 		
 }

@@ -100,7 +100,7 @@ class NormanApp extends Application
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
-			renderer.render( context, world, camera );
+			renderer.render( camera );
 		}
 		
 	}

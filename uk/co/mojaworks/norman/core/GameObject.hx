@@ -39,13 +39,7 @@ class GameObject
 		transform = new Transform();
 		add( transform );
 		
-		// Register with system
-		//if ( root != null ) {
-			//root.gameObjectManager.registerGameObject( this );
-			//transform.parent = root;
-		//}
 		NormanApp.gameObjectManager.registerGameObject(this);
-		if ( NormanApp.world != null ) transform.parent = NormanApp.world.transform;
 		
 	}
 	
@@ -211,7 +205,6 @@ class GameObject
 		}
 		
 		NormanApp.gameObjectManager.unregisterGameObject(this);
-		//root.gameObjectManager.unregisterGameObject( this );
 		_components = null;
 		destroyed = true;
 		
@@ -231,6 +224,14 @@ class GameObject
 			return enabled && transform.parent.gameObject.enabledInTree;
 		}else {
 			return enabled;
+		}
+	}
+	
+	public function get_parent() : GameObject {
+		if ( transform.parent != null ) {
+			return transform.parent.gameObject;
+		}else {
+			return null;
 		}
 	}
 	

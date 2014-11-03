@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
 import uk.co.mojaworks.norman.engine.NormanApp;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillVertexShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;

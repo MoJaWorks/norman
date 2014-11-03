@@ -1,10 +1,10 @@
 package uk.co.mojaworks.norman.components.display;
-import openfl.geom.Rectangle;
-import uk.co.mojaworks.norman.components.renderer.ICanvas;
-import uk.co.mojaworks.norman.components.renderer.Renderer;
-import uk.co.mojaworks.norman.components.renderer.TextureData;
-import uk.co.mojaworks.norman.components.renderer.TextureManager;
+import lime.math.Rectangle;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
 import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.engine.NormanApp;
+import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -38,7 +38,7 @@ class ImageSprite extends Sprite
 		if ( textureData != null ) unlinkTexture();
 		
 		// Get the new texture
-		var textureManager : TextureManager = root.get(Renderer).textureManager;
+		var textureManager : ITextureManager = NormanApp.textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
 			textureData = textureManager.loadTexture( textureId );
 		}else {
@@ -54,7 +54,7 @@ class ImageSprite extends Sprite
 	private function unlinkTexture() : Void {
 		textureData.useCount--;
 		// Unload the texture if it is no longer in use
-		if ( textureData.useCount <= 0 ) root.get(Renderer).textureManager.unloadTexture( textureData.id );
+		if ( textureData.useCount <= 0 ) NormanApp.textureManager.unloadTexture( textureData.id );
 	}
 	
 	override public function onAdded():Void 

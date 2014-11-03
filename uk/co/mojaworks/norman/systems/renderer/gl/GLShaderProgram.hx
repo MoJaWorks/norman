@@ -39,7 +39,7 @@ class GLShaderProgram implements IShaderProgram
 	public function compile() 
 	{
 		
-		if ( program ) _context.deleteProgram( program );
+		if ( program != null ) _context.deleteProgram( program );
 		
 		var vs : GLShader = _context.createShader( GL.VERTEX_SHADER );
 		_context.shaderSource( vs, _vsData.getGLSL() );
@@ -87,7 +87,7 @@ class GLShaderProgram implements IShaderProgram
 	
 	public function getNumTextures():Int 
 	{
-		return Math.max( _vsData.numTextures, _fsData.numTextures);
+		return Std.int(Math.max( _vsData.numTextures, _fsData.numTextures));
 	}
 		
 }

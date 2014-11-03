@@ -1,8 +1,6 @@
 package uk.co.mojaworks.norman.components ;
 
-import lime.math.Matrix3;
 import lime.math.Matrix4;
-import lime.math.Vector2;
 import lime.math.Vector4;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.Component;
@@ -22,7 +20,7 @@ class Transform extends Component
 	
 	public static inline var MATRIX_DIRTY : String = "MATRIX_DIRTY";
 	
-	public var parent( default, set ) : Transform;
+	public var parent( default, null ) : Transform;
 	public var children( default, null ) : Array<Transform>;
 	
 	public var x( default, set ) : Float = 0;
@@ -35,9 +33,11 @@ class Transform extends Component
 	
 	public var paddingX( default, set ) : Float = 0;
 	public var paddingY( default, set ) : Float = 0;
+	public var paddingZ( default, set ) : Float = 0;
 	
 	public var scaleX( default, set ) : Float = 1;
 	public var scaleY( default, set ) : Float = 1;
+	public var scaleZ( default, set ) : Float = 1;
 	
 	// Set in radians, converted to quarternians for calculations
 	public var rotationX( default, set ) : Float = 0;
@@ -50,13 +50,13 @@ class Transform extends Component
 	public var worldTransform( get, never ) : Matrix4;
 	public var inverseWorldTransform( get, never ) : Matrix4;
 	public var localTransform( get, never ) : Matrix4;
-	public var renderTransform( get, never ) : Matrix4;
+	//public var renderTransform( get, never ) : Matrix4;
 
 	
 	var _worldTransform : Matrix4;
 	var _inverseWorldTransform : Matrix4;
 	var _localTransform : Matrix4;
-	var _renderTransform : Matrix4;
+	//var _renderTransform : Matrix4;
 	
 	var _isLocalDirty : Bool = true;
 	var _isWorldDirty : Bool = true;
@@ -73,7 +73,7 @@ class Transform extends Component
 		_worldTransform = new Matrix4();
 		_localTransform = new Matrix4();
 		_inverseWorldTransform = new Matrix4();
-		_renderTransform = new Matrix4();
+		//_renderTransform = new Matrix4();
 		
 		children = new Array<Transform>();
 		
@@ -102,9 +102,9 @@ class Transform extends Component
 	
 	private function recalculateLocalTransform() : Void {
 		_localTransform.identity();
-		_localTransform.prependTranslation( paddingX, paddingY, 0 );
-		_localTransform.prependTranslation( -pivotX, -pivotY, 0 );
-		_localTransform.prependScale( scaleX, scaleY, 1 );
+		_localTransform.prependTranslation( paddingX, paddingY, paddingZ );
+		_localTransform.prependTranslation( -pivotX, -pivotY, -pivotZ );
+		_localTransform.prependScale( scaleX, scaleY, scaleZ );
 		_localTransform.prependRotation( rotationZ * MathUtils.RAD2DEG, Vector4.Z_AXIS );
 		_localTransform.prependRotation( rotationY * MathUtils.RAD2DEG, Vector4.Y_AXIS );
 		_localTransform.prependRotation( rotationX * MathUtils.RAD2DEG, Vector4.X_AXIS );
@@ -166,25 +166,28 @@ class Transform extends Component
 	}
 	
 	public function setScale( scale : Float ) : Transform {
-		this.scaleX = this.scaleY = scale;
+		this.scaleZ = this.scaleX = this.scaleY = scale;
 		return this;
 	}
 	
-	public function setScaleXY( scaleX : Float, scaleY : Float ) : Transform {
+	public function setScaleXYZ( scaleX : Float, scaleY : Float, scaleZ : Float = 1 ) : Transform {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
+		this.scaleZ = scaleZ;
 		return this;
 	}
 	
-	public function setPivot( x : Float, y : Float ) : Transform {
+	public function setPivot( x : Float, y : Float, z : Float = 0 ) : Transform {
 		pivotX = x;
 		pivotY = y;
+		pivotZ = z;
 		return this;
 	}
 	
-	public function setPadding( x : Float, y : Float ) : Transform {
+	public function setPadding( x : Float, y : Float, z : Float = 0 ) : Transform {
 		paddingX = x;
 		paddingY = y;
+		paddingZ = z;
 		return this;
 	}
 	
@@ -216,13 +219,13 @@ class Transform extends Component
 		return _inverseWorldTransform;
 	}
 	
-	private function get_renderTransform() : Matrix4 {
-		
-		if ( _isWorldDirty || _isLocalDirty ) {
-			recalculateWorldTransform();
-		}
-		return _renderTransform;
-	}
+	//private function get_renderTransform() : Matrix4 {
+		//
+		//if ( _isWorldDirty || _isLocalDirty ) {
+			//recalculateWorldTransform();
+		//}
+		//return _renderTransform;
+	//}
 	
 	public function localToGlobal( point : Vector4 ) : Vector4 {
 		return worldTransform.transformVector( point );
@@ -244,12 +247,14 @@ class Transform extends Component
 	private function set_pivotZ( _pivotZ : Float ) : Float { pivotZ = _pivotZ; invalidateMatrices(); return pivotZ; }
 	private function set_paddingX( _paddingX : Float ) : Float { paddingX = _paddingX; invalidateMatrices(); return paddingX; }
 	private function set_paddingY( _paddingY : Float ) : Float { paddingY = _paddingY; invalidateMatrices(); return paddingY; }
+	private function set_paddingY( _paddingZ : Float ) : Float { paddingZ = _paddingZ; invalidateMatrices(); return paddingZ; }
 	private function set_scaleX( _scaleX : Float ) : Float { scaleX = _scaleX; invalidateMatrices(); return scaleX; }
 	private function set_scaleY( _scaleY : Float ) : Float { scaleY = _scaleY; invalidateMatrices(); return scaleY; }
-	private function set_rotationX( _rotation : Float ) : Float { rotationX = _rotation; invalidateMatrices(); return rotation; }
-	private function set_rotationY( _rotation : Float ) : Float { rotationY = _rotation; invalidateMatrices(); return rotation; }
-	private function set_rotationZ( _rotation : Float ) : Float { rotationZ = _rotation; invalidateMatrices(); return rotation; }
-	private function set_rotation( _rotation : Float ) : Float { rotationZ = _rotation; invalidateMatrices(); return rotation; }
+	private function set_scaleY( _scaleZ : Float ) : Float { scaleZ = _scaleZ; invalidateMatrices(); return scaleZ; }
+	private function set_rotationX( _rotation : Float ) : Float { rotationX = _rotation; invalidateMatrices(); return rotationX; }
+	private function set_rotationY( _rotation : Float ) : Float { rotationY = _rotation; invalidateMatrices(); return rotationY; }
+	private function set_rotationZ( _rotation : Float ) : Float { rotationZ = _rotation; invalidateMatrices(); return rotationZ; }
+	private function set_rotation( _rotation : Float ) : Float { rotationZ = _rotation; invalidateMatrices(); return rotationZ; }
 	private function get_rotation( ) : Float { return rotationZ; }
 	
 	
@@ -277,14 +282,7 @@ class Transform extends Component
 		child.parent = null;
 		
 	}
-	
-	public function set_parent( parent : Transform ) : Transform {
 		
-		parent.addChild( this );
-		return parent;
-		
-	}
-	
 	/**
 	 * Destroy
 	 */
@@ -295,7 +293,7 @@ class Transform extends Component
 		
 		_worldTransform = null;
 		_localTransform = null;
-		_renderTransform = null;
+		//_renderTransform = null;
 		_inverseWorldTransform = null;
 		
 		for ( child in children ) {

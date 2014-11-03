@@ -20,8 +20,6 @@ class GLCanvas implements ICanvas
 	private static inline var VERTEX_COLOR : Int = 3;
 	private static inline var VERTEX_UV : Int = 7;
 	
-	
-
 	private var _context : GLRenderContext;
 	private var _stageWidth : Int;
 	private var _stageHeight : Int;
@@ -40,11 +38,13 @@ class GLCanvas implements ICanvas
 	
 	public function resize( width : Int, height : Int ) : Void 
 	{
-		
+		// Don't usually need to do anything here - resizing is handled by the camera
 	}
 	
 	public function render(objects:LinkedList<Sprite>, camera : GameObject) : Void 
 	{
+		
+		
 		
 	}
 	
@@ -64,7 +64,7 @@ class GLCanvas implements ICanvas
 	}
 	
 	public function getContext() : RenderContext {
-		return _context;
+		return cast _context;
 	}
 	
 }

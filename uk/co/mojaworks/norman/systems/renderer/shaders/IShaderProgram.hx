@@ -6,7 +6,7 @@ package uk.co.mojaworks.norman.systems.renderer.shaders ;
  */
 interface IShaderProgram
 {
-	public function compile();
+	public function compile() : Void;
 	
 	// If it uses color then it must define an aVertexColor attribute
 	public function getUsesColor( ) : Bool;
