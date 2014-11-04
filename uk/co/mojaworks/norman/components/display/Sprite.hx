@@ -1,14 +1,9 @@
 package uk.co.mojaworks.norman.components.display ;
 
-import lime.math.Rectangle;
-import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
-import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -20,6 +15,7 @@ class Sprite extends Component
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
 	public var isRenderable : Bool = false;
+	public var isTextured : Bool = false;
 	
 	public function new() 
 	{
@@ -44,8 +40,8 @@ class Sprite extends Component
 	
 	override public function onRemoved():Void 
 	{
-		super.onRemoved();
 		NormanApp.renderer.removeSprite( this );
+		super.onRemoved();
 	}
 				
 	/**

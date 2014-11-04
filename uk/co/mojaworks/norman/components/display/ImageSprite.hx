@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.display;
+import lime.Assets;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
@@ -26,13 +27,14 @@ class ImageSprite extends Sprite
 		super();
 		
 		isRenderable = true;
+		isTextured = true;
 		
 		color = 0xFFFFFFFF;
 		setTexture( textureId, subTextureId );
 		
 	}
 	
-	public function setTexture( textureId : String, subTextureId : String = null ) : GameObject {
+	public function setTexture( textureId : String, subTextureId : String = null ) : ImageSprite {
 	
 		// Unload the old one first
 		if ( textureData != null ) unlinkTexture();
@@ -40,7 +42,7 @@ class ImageSprite extends Sprite
 		// Get the new texture
 		var textureManager : ITextureManager = NormanApp.textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
-			textureData = textureManager.loadTexture( textureId );
+			textureData = textureManager.createTexture( textureId, Assets.getImage(textureId), Assets.getText(textureId + ".map"));
 		}else {
 			textureData = textureManager.getTexture( textureId );
 		}
@@ -49,12 +51,13 @@ class ImageSprite extends Sprite
 		_uvRect = textureData.getUVFor( subTextureId );
 		_rect = textureData.getRectFor( subTextureId );
 		
+		return this;
 	}
 	
 	private function unlinkTexture() : Void {
 		textureData.useCount--;
 		// Unload the texture if it is no longer in use
-		if ( textureData.useCount <= 0 ) NormanApp.textureManager.unloadTexture( textureData.id );
+		if ( textureData.useCount <= 0 ) NormanApp.textureManager.removeTexture( textureData.id );
 	}
 	
 	override public function onAdded():Void 
@@ -65,7 +68,7 @@ class ImageSprite extends Sprite
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
+		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.worldTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
 	override public function getNaturalWidth():Float 

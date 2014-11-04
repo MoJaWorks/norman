@@ -46,6 +46,14 @@ class GLTextureManager implements ITextureManager
 		return data;
 	}
 	
+	public function removeTexture( id : String ) : Void {
+		
+		var data : GLTextureData = getTexture(id);
+		_context.deleteTexture( data.texture );
+		_textures.remove( id );
+		
+	}
+	
 	/**
 	 * 
 	 * @param	data

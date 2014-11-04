@@ -6,6 +6,7 @@ import lime.math.Matrix3;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
+import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -41,7 +42,7 @@ class GLCanvas implements ICanvas
 		// Don't usually need to do anything here - resizing is handled by the camera
 	}
 	
-	public function render(objects:LinkedList<Sprite>, camera : GameObject) : Void 
+	public function render(objects:RenderBatch, camera : GameObject) : Void 
 	{
 		
 		
@@ -53,12 +54,12 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(texture:TextureData, transform:Matrix3, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
+	public function drawImage(texture:TextureData, transform:Matrix4, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
 	{
 		
 	}
 	
-	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix3, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
+	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix4, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
 	{
 		
 	}

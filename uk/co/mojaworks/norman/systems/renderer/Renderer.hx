@@ -1,7 +1,5 @@
 package uk.co.mojaworks.norman.systems.renderer;
-import flash.display3D.textures.TextureBase;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.components.display.FillSprite;
 import uk.co.mojaworks.norman.components.display.ImageSprite;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
@@ -26,7 +24,7 @@ class Renderer implements ISystem
 	
 	// Keep a cache of shaders so if the context is lost they can all be recreated quickly.
 	private var _shaders : LinkedList<IShaderProgram>;
-	private var _batches : RenderBatch;
+	private var _batch : RenderBatch;
 	
 	public var canvas : ICanvas;
 	
@@ -40,12 +38,11 @@ class Renderer implements ISystem
 				// Nothing yet
 		}
 		
-		//_batches = new RenderBatch();
-		//_batches.items.push( new TextureBatch() );
-		//_batches.items.first.item.texture = null;
-		//_batches.items.first.item.items.push( new ShaderBatch() );
-		//_batches.items.first.item.items.shader = FillSprite.shaderProgram;
+		_batch = new RenderBatch();
 		
+		// This will be for the sprites without textures
+		_batch.items.push( new TextureBatch() );
+				
 	}
 	
 	/**
@@ -54,22 +51,102 @@ class Renderer implements ISystem
 	
 	public function addSprite( sprite : Sprite ) : Void {
 		
+			
+		var placed : Bool = false;
 		
+		// All render targets are the same for now so just using a single target
+		if ( sprite.isTextured ) {
+			
+			// Get the image
+			var img : ImageSprite = cast sprite;
+			
+			// Check for any texture batches using this image
+			for ( textureBatch in _batch.items ) {
+				
+				// Found a matching texture
+				if ( img.textureData == textureBatch.texture ) {
+					
+					// Check for a matching shader
+					for ( shaderBatch in textureBatch.items ) {
+						
+						// Found a matching shader
+						if ( shaderBatch.shader == sprite.getShader() ) {
+							shaderBatch.items.push( sprite );								
+							placed = true;
+						}
+						
+					}
+					
+					// Couldn't find the shader - make a new shader batch
+					if ( !placed ) {
+						var shaderBatch : ShaderBatch = new ShaderBatch();
+						shaderBatch.shader = sprite.getShader();
+						shaderBatch.items.push( sprite );
+						textureBatch.items.push( shaderBatch );
+						placed = true;
+					}
+					
+				}
+				
+				// Couldn't find the texture, create a new one
+				if ( !placed ) {
+					var textureBatch : TextureBatch = new TextureBatch();
+					textureBatch.texture = img.textureData;
+					textureBatch.items.push( new ShaderBatch() );
+					textureBatch.items[0].shader = sprite.getShader();
+					textureBatch.items[0].items.push( sprite );
+					_batch.items.push( textureBatch );
+					placed = true;
+				}
+			}
+		}else {
+			
+			// Always use textureBatch 0 for non-textures items
+			// Check for a matching shader
+			for ( shaderBatch in _batch.items[0].items ) {
+				
+				// Found a matching shader
+				if ( shaderBatch.shader == sprite.getShader() ) {
+					shaderBatch.items.push( sprite );								
+					placed = true;
+				}
+				
+			}
+			
+			// Couldn't find the shader - make a new shader batch
+			if ( !placed ) {
+				var shaderBatch : ShaderBatch = new ShaderBatch();
+				shaderBatch.shader = sprite.getShader();
+				shaderBatch.items.push( sprite );
+				_batch.items[0].items.push( shaderBatch );
+				placed = true;
+			}
+			
+		}
 		
-		//if ( !_collection.contains( sprite ) ) _collection.push( sprite );	
-		//var texture : TextureData = null;
-		//var img : ImageSprite = cast( sprite, ImageSprite );
-		//if ( img != null ) texture = img.textureData;
-		//
-		//for ( rb in _batches ) {
-			//if ( texture == rb.texture ) {
-				//rb.
-			//}
-		//}
+		if ( !placed ) trace("Something went wrong, sprite could not be placed", sprite.gameObject );
 	}
 	
 	public function removeSprite( sprite : Sprite ) : Void {
-		_batches.batches.first.item.batches.remove( sprite );
+		
+		if ( sprite.isTextured ) {
+			var img : ImageSprite = cast sprite;
+			for ( textureBatch in _batch.items ) {
+				if ( textureBatch.texture == img.textureData ) {
+					for ( shaderBatch in textureBatch.items ) {
+						if ( sprite.getShader() == shaderBatch.shader ) {
+							shaderBatch.items.remove( sprite );
+						}
+					}
+				}
+			}
+		}else{
+			for ( shaderBatch in _batch.items[0].items ) {
+				if ( sprite.getShader() == shaderBatch.shader ) {
+					shaderBatch.items.remove( sprite );
+				}
+			}
+		}
 	}
 	
 	/**
@@ -81,12 +158,11 @@ class Renderer implements ISystem
 	}
 	
 	public function render( camera : GameObject ) {
-		canvas.render( _collection, camera );
+		canvas.render( _batch, camera );
 	}
 	
 	public function update(deltaTime:Float):Void 
 	{
-		// TODO: Sort all of the display items based on shader, texture and target
 	}
 	
 	/**

@@ -116,7 +116,7 @@ class Transform extends Component
 		
 		if ( _isLocalDirty ) recalculateLocalTransform();
 		_worldTransform.copyFrom( _localTransform );
-		_renderTransform.identity();
+		//_renderTransform.identity();
 		
 		// If an object is masked, global transforms will all be in this coordinate
 		//var isMasked : Bool = gameObject.sprite != null && gameObject.sprite.clipRect != null;
@@ -247,10 +247,10 @@ class Transform extends Component
 	private function set_pivotZ( _pivotZ : Float ) : Float { pivotZ = _pivotZ; invalidateMatrices(); return pivotZ; }
 	private function set_paddingX( _paddingX : Float ) : Float { paddingX = _paddingX; invalidateMatrices(); return paddingX; }
 	private function set_paddingY( _paddingY : Float ) : Float { paddingY = _paddingY; invalidateMatrices(); return paddingY; }
-	private function set_paddingY( _paddingZ : Float ) : Float { paddingZ = _paddingZ; invalidateMatrices(); return paddingZ; }
+	private function set_paddingZ( _paddingZ : Float ) : Float { paddingZ = _paddingZ; invalidateMatrices(); return paddingZ; }
 	private function set_scaleX( _scaleX : Float ) : Float { scaleX = _scaleX; invalidateMatrices(); return scaleX; }
 	private function set_scaleY( _scaleY : Float ) : Float { scaleY = _scaleY; invalidateMatrices(); return scaleY; }
-	private function set_scaleY( _scaleZ : Float ) : Float { scaleZ = _scaleZ; invalidateMatrices(); return scaleZ; }
+	private function set_scaleZ( _scaleZ : Float ) : Float { scaleZ = _scaleZ; invalidateMatrices(); return scaleZ; }
 	private function set_rotationX( _rotation : Float ) : Float { rotationX = _rotation; invalidateMatrices(); return rotationX; }
 	private function set_rotationY( _rotation : Float ) : Float { rotationY = _rotation; invalidateMatrices(); return rotationY; }
 	private function set_rotationZ( _rotation : Float ) : Float { rotationZ = _rotation; invalidateMatrices(); return rotationZ; }
