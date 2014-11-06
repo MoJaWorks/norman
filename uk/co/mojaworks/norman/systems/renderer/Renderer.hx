@@ -6,6 +6,7 @@ import uk.co.mojaworks.norman.core.GameObject;
 import uk.co.mojaworks.norman.core.ISystem;
 import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
 import uk.co.mojaworks.norman.systems.renderer.batching.ShaderBatch;
+import uk.co.mojaworks.norman.systems.renderer.batching.TargetBatch;
 import uk.co.mojaworks.norman.systems.renderer.batching.TextureBatch;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderProgram;
@@ -24,7 +25,7 @@ class Renderer implements ISystem
 	
 	// Keep a cache of shaders so if the context is lost they can all be recreated quickly.
 	private var _shaders : LinkedList<IShaderProgram>;
-	private var _batch : RenderBatch;
+	private var _batch : TargetBatch;
 	
 	public var canvas : ICanvas;
 	
@@ -38,7 +39,7 @@ class Renderer implements ISystem
 				// Nothing yet
 		}
 		
-		_batch = new RenderBatch();
+		_batch = new TargetBatch();
 		
 		// This will be for the sprites without textures
 		_batch.items.push( new TextureBatch() );
@@ -158,7 +159,10 @@ class Renderer implements ISystem
 	}
 	
 	public function render( camera : GameObject ) {
-		canvas.render( _batch, camera );
+		
+		// TODO: create the vertex/index arrays and batch info	
+		// TODO: Pass these to the canvas for rendering
+		
 	}
 	
 	public function update(deltaTime:Float):Void 

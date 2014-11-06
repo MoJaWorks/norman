@@ -1,11 +1,13 @@
 package uk.co.mojaworks.norman.systems.renderer.gl ;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GLBuffer;
 import lime.graphics.RenderContext;
 import lime.math.Matrix4;
 import lime.math.Matrix3;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
+import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
@@ -25,9 +27,14 @@ class GLCanvas implements ICanvas
 	private var _stageWidth : Int;
 	private var _stageHeight : Int;
 	
+	private var _vertexBuffer : GLBuffer;
+	private var _indexBuffer : GLBuffer;
+	private var _batches : GLBatchData;
+	private var _target : GLTextureData;
+	
+	
 	public function new() 
 	{
-		
 	}
 	
 	/* INTERFACE uk.co.mojaworks.norman.renderer.ICanvas */
@@ -39,14 +46,12 @@ class GLCanvas implements ICanvas
 	
 	public function resize( width : Int, height : Int ) : Void 
 	{
-		// Don't usually need to do anything here - resizing is handled by the camera
+		// Create our render target
+		_target = cast NormanApp.textureManager.createTexture( "norman_render", width, height );
 	}
 	
-	public function render(objects:RenderBatch, camera : GameObject) : Void 
-	{
-		
-		
-		
+	public function render( vertices : Array<Float>, indices : Array<Int>, batches : Array<RenderBatch> ) : Void 
+	{		
 	}
 	
 	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, width:Float, height:Float, transform:Matrix3):Void 
@@ -66,6 +71,10 @@ class GLCanvas implements ICanvas
 	
 	public function getContext() : RenderContext {
 		return cast _context;
+	}
+	
+	public function getRenderTarget() : TextureData {
+		return _target;
 	}
 	
 }

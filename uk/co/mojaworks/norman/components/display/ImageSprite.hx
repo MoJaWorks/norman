@@ -42,7 +42,7 @@ class ImageSprite extends Sprite
 		// Get the new texture
 		var textureManager : ITextureManager = NormanApp.textureManager;
 		if ( !textureManager.hasTexture( textureId ) ) {
-			textureData = textureManager.createTexture( textureId, Assets.getImage(textureId), Assets.getText(textureId + ".map"));
+			textureData = textureManager.createTextureFromImage( textureId, Assets.getImage(textureId), Assets.getText(textureId + ".map"));
 		}else {
 			textureData = textureManager.getTexture( textureId );
 		}

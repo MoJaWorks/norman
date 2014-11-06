@@ -17,13 +17,14 @@ interface ICanvas
 	
 	function init( context : RenderContext ) : Void;
 	function resize( width : Int, height : Int ) : Void;
-	function render( objects : RenderBatch, camera : GameObject ) : Void;
+	function render( vertices : Array<Float>, indices : Array<Int>, batches : Array<RenderBatch> ) : Void;
 	
 	// Drawing functions
 	function fillRect( red : Float, green : Float, blue : Float, alpha : Float, width : Float, height : Float, transform : Matrix3 ) : Void;
 	function drawImage(texture:TextureData, transform:Matrix4, alpha:Float = 1, red : Float = 255, green : Float = 255, blue : Float = 255):Void;
 	function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix4, alpha:Float = 1, red : Float = 255, green : Float = 255, blue : Float = 255):Void;
 	
+	function getRenderTarget() : TextureData;
 	// Mask
 	//function pushMask( rect : Rectangle, transform : Matrix ) : Void;
 	//function popMask() : Void;

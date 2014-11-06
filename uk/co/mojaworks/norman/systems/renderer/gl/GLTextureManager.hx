@@ -1,11 +1,14 @@
 package uk.co.mojaworks.norman.systems.renderer.gl ;
 
+import haxe.ds.StringMap;
 import haxe.Json;
 import lime.graphics.GLRenderContext;
 import lime.graphics.Image;
+import lime.graphics.ImageBuffer;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLTexture;
 import lime.graphics.RenderContext;
+import lime.utils.UInt8Array;
 import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
 
 /**
@@ -28,6 +31,17 @@ class GLTextureManager implements ITextureManager
 		_textures = new Map<String, GLTextureData>();
 	}
 	
+	public function createTexture( id : String, width : Int, height : Int ) : TextureData {
+		
+		var data : GLTextureData = new GLTextureData();
+		data.id = id;
+		data.sourceImage = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
+		data.texture = uploadTexture( data );
+		
+		return data;
+		
+	}
+	
 	/**
 	 * Creates a texture, also assigns a texture map in the form of a json string
 	 * Given an id, it can be referenced multiple times while only loaded once
@@ -35,7 +49,7 @@ class GLTextureManager implements ITextureManager
 	 * @param	data
 	 * @param	map
 	 */
-	public function createTexture( id : String, image : Image, map : String = null ) : TextureData {
+	public function createTextureFromImage( id : String, image : Image, map : String = null ) : TextureData {
 		
 		var data : GLTextureData = new GLTextureData();
 		data.id = id;
