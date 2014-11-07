@@ -9,7 +9,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class TextureBatch
 {
 
-	public var texture : TextureData = null;
+	public var textureData : TextureData = null;
 	public var items : Array<ShaderBatch>;
 	
 	public function new() 

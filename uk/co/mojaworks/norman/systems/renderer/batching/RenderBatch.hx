@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.renderer.batching;
+import uk.co.mojaworks.norman.components.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 
 /**

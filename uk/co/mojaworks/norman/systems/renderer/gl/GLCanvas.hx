@@ -1,14 +1,18 @@
 package uk.co.mojaworks.norman.systems.renderer.gl ;
 import lime.graphics.GLRenderContext;
+import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.RenderContext;
 import lime.math.Matrix4;
 import lime.math.Matrix3;
+import lime.math.Vector4;
+import lime.utils.Float32Array;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
+import uk.co.mojaworks.norman.systems.renderer.batching.TargetBatch;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -29,8 +33,10 @@ class GLCanvas implements ICanvas
 	
 	private var _vertexBuffer : GLBuffer;
 	private var _indexBuffer : GLBuffer;
-	private var _batches : GLBatchData;
+	private var _batches : Array<GLBatchData>;
 	private var _target : GLTextureData;
+	
+	private var currentBatch( get, null ) : GLBatchData;
 	
 	
 	public function new() 
@@ -42,6 +48,7 @@ class GLCanvas implements ICanvas
 	public function init( context : RenderContext ) : Void 
 	{
 		_context = cast context;
+		_batches = [];
 	}
 	
 	public function resize( width : Int, height : Int ) : Void 
@@ -50,23 +57,24 @@ class GLCanvas implements ICanvas
 		_target = cast NormanApp.textureManager.createTexture( "norman_render", width, height );
 	}
 	
-	public function render( vertices : Array<Float>, indices : Array<Int>, batches : Array<RenderBatch> ) : Void 
+	public function render( vertices : Array<Float>, indices : Array<Int>, batches : TargetBatch ) : Void 
 	{		
-	}
-	
-	public function fillRect(red:Float, green:Float, blue:Float, alpha:Float, width:Float, height:Float, transform:Matrix3):Void 
-	{
+		_context.clearColor( 0, 0, 0, 1 );
 		
-	}
-	
-	public function drawImage(texture:TextureData, transform:Matrix4, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
-	{
-		
-	}
-	
-	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix4, alpha:Float = 1, red:Float = 255, green:Float = 255, blue:Float = 255):Void 
-	{
-		
+		for ( textureBatch in batches.items ) {
+			if ( textureBatch.texture != null ) {
+				_context.bindTexture( GL.TEXTURE_2D, cast( textureBatch.textureData, GLTextureData).texture );
+			}else {
+				_context.bindTexture( GL.TEXTURE_2D, null );
+			}
+			
+			for ( shaderBatch in textureBatch.items ) {
+				
+				_context.useProgram( cast( shaderBatch.shader, GLShaderProgram ).program );
+				
+				
+			}
+		}
 	}
 	
 	public function getContext() : RenderContext {
@@ -75,6 +83,14 @@ class GLCanvas implements ICanvas
 	
 	public function getRenderTarget() : TextureData {
 		return _target;
+	}
+	
+	private function get_currentBatch() : GLBatchData {
+		if ( _batches.length > 0 ) {
+			return _batches[_batches.length - 1];
+		}else {
+			return null;
+		}
 	}
 	
 }

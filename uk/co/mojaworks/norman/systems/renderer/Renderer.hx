@@ -163,6 +163,26 @@ class Renderer implements ISystem
 		// TODO: create the vertex/index arrays and batch info	
 		// TODO: Pass these to the canvas for rendering
 		
+		var vertices : Array<Float> = [];
+		var indices : Array<Int> = [];
+		
+		for ( texture in _batch.items ) {
+			for ( shader in texture.items ) {
+				for ( object in shader.items ) {
+					
+					shader.start = indices.length;
+					
+					vertices.push( object.getVertices() );
+					indices.push( object.getIndices() );
+					
+					shader.length = indices.length - shader.start;
+										
+				}				
+			}			
+		}
+		
+		canvas.render( vertices, indices, _batch );
+		
 	}
 	
 	public function update(deltaTime:Float):Void 

@@ -12,6 +12,9 @@ class ShaderBatch
 	public var shader : IShaderProgram;
 	public var items : Array<Sprite>;
 	
+	public var start : Int;
+	public var length : Int;
+	
 	public function new() 
 	{
 		items = [];
