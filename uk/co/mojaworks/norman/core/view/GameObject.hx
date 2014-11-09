@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.core.view;
 
 import sys.db.Types.SString;
+import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.CoreObject;
@@ -72,37 +73,59 @@ class GameObject extends CoreObject
 	 * Components
 	 */
 	
+	public function get<T:(Component)>( classType : Class<T> ) : T {
+		if ( has( cast classType ) ) return cast _components.get( Reflect.field( classType, "TYPE" ));
+		else return null;
+	}
+	
+	public function removeByType( classType : Class<Component> ) : GameObject {
+		var type : String = Reflect.field( classType, "TYPE" );
+		return removeById( type ); 
+	}
+	
+	public function remove( component : Component ) : GameObject {
+		return removeById( component.getComponentType() );
+	}
+	
+	public function removeById( type : String ) : GameObject {
+		
+		// Check for any special types
+		if ( type == Sprite.TYPE ) this.sprite = null;
+		
+		// remove it from the list if it exists
+		var component : Component = _components.get( type );
+		if ( component != null ) {
+			component.onRemoved();
+			component.gameObject = null;
+			_components.remove( type );
+		}
+		
+		return this; 
+	}
+	
 	public function add( component : Component ) : GameObject {
 		
-		// Make sure this component is not attached to another game object
-		if ( component.gameObject != null ) component.gameObject.removeComponent( component.getComponentType() );
+		// Make sure to remove it from any other gameobject it's attached to
+		//if ( component.gameObject != null ) component.gameObject.removeById( component.getComponentType() );
 		
-		// Remove any others of this type
-		removeComponent( component.getComponentType() );
+		// Remove any existing components of this type
+		removeById( component.getComponentType() );
 		
-		// Add this one
-		_components.set( component.getComponentType() );
+		// Add it to the list
+		_components.set( component.getComponentType(), component );
+		
+		// Check for any special types
+		if ( component.getComponentType() == Sprite.TYPE ) this.sprite = cast component;
 		
 		// Tell the component it has been added
 		component.gameObject = this;
-		component.onAdded();
+		component.onAdded( );
 		
 		return this;
 	}
 	
-	public function get( type : String ) : Component {
-		return _components.get( type );
-	}
-	
-	public function has( type : String ) : Bool {
+	public function has( classType : Class<Component> ) : Bool {
 		return Std.is( _components.get( Reflect.field( classType, "TYPE" )), classType );
-	}
-	
-	public function removeComponent( type : String ) : Void {
-		get( type ).onRemoved();
-		get( type ).gameObject = null;
-		_components.remove( type );
-	}
-	
+	}	
 	
 }

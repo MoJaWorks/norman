@@ -14,8 +14,6 @@ class Sprite extends Component
 		
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
-	public var isRenderable : Bool = false;
-	public var isTextured : Bool = false;
 	
 	public function new() 
 	{
@@ -35,12 +33,10 @@ class Sprite extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		NormanApp.renderer.addSprite( this );
 	}
 	
 	override public function onRemoved():Void 
 	{
-		NormanApp.renderer.removeSprite( this );
 		super.onRemoved();
 	}
 				
@@ -127,16 +123,6 @@ class Sprite extends Component
 	}
 		
 	public function preRender( canvas : ICanvas ) : Void {
-		
-		//if ( clipRect != null ) {
-			//if ( gameObject.parent != null ) {
-				//var transform : Matrix = gameObject.transform.localTransform.clone();
-				//transform.concat( gameObject.parent.transform.renderTransform );
-				//canvas.pushMask( getBounds(), transform );
-			//}else {
-				//canvas.pushMask( getBounds(), gameObject.transform.renderTransform );
-			//}
-		//}
 	}
 	
 	public function render( canvas : ICanvas ) : Void {
@@ -144,17 +130,6 @@ class Sprite extends Component
 	}
 	
 	public function postRender( canvas : ICanvas ) : Void {
-		//if ( clipRect != null ) canvas.popMask();
 	}
-	
-	//private function set_clipRect( rect : Rectangle ) : Rectangle {
-	//	gameObject.transform.invalidateMatrices();
-	//	this.clipRect = rect;
-	//	return rect;
-	//}
-	
-	public function getVertices() : Array<Float> {
-		
-	}
-		
+			
 }
