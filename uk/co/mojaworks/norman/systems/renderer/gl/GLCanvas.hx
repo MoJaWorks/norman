@@ -62,7 +62,7 @@ class GLCanvas implements ICanvas
 		_context.clearColor( 0, 0, 0, 1 );
 		
 		for ( textureBatch in batches.items ) {
-			if ( textureBatch.texture != null ) {
+			if ( textureBatch.textureData != null ) {
 				_context.bindTexture( GL.TEXTURE_2D, cast( textureBatch.textureData, GLTextureData).texture );
 			}else {
 				_context.bindTexture( GL.TEXTURE_2D, null );

@@ -65,7 +65,7 @@ class Renderer implements ISystem
 			for ( textureBatch in _batch.items ) {
 				
 				// Found a matching texture
-				if ( img.textureData == textureBatch.texture ) {
+				if ( img.textureData == textureBatch.textureData ) {
 					
 					// Check for a matching shader
 					for ( shaderBatch in textureBatch.items ) {
@@ -92,7 +92,7 @@ class Renderer implements ISystem
 				// Couldn't find the texture, create a new one
 				if ( !placed ) {
 					var textureBatch : TextureBatch = new TextureBatch();
-					textureBatch.texture = img.textureData;
+					textureBatch.textureData = img.textureData;
 					textureBatch.items.push( new ShaderBatch() );
 					textureBatch.items[0].shader = sprite.getShader();
 					textureBatch.items[0].items.push( sprite );
@@ -133,7 +133,7 @@ class Renderer implements ISystem
 		if ( sprite.isTextured ) {
 			var img : ImageSprite = cast sprite;
 			for ( textureBatch in _batch.items ) {
-				if ( textureBatch.texture == img.textureData ) {
+				if ( textureBatch.textureData == img.textureData ) {
 					for ( shaderBatch in textureBatch.items ) {
 						if ( sprite.getShader() == shaderBatch.shader ) {
 							shaderBatch.items.remove( sprite );
@@ -172,8 +172,8 @@ class Renderer implements ISystem
 					
 					shader.start = indices.length;
 					
-					vertices.push( object.getVertices() );
-					indices.push( object.getIndices() );
+					vertices = vertices.concat( object.getVertices() );
+					indices = indices.concat( object.getIndices() );
 					
 					shader.length = indices.length - shader.start;
 										

@@ -152,5 +152,9 @@ class Sprite extends Component
 	//	this.clipRect = rect;
 	//	return rect;
 	//}
+	
+	public function getVertices() : Array<Float> {
+		
+	}
 		
 }
