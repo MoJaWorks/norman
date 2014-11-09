@@ -68,7 +68,7 @@ class ImageSprite extends Sprite
 	
 	override public function render(canvas:ICanvas):Void 
 	{
-		canvas.drawSubImage( textureData, _uvRect, gameObject.transform.worldTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
+		//canvas.drawSubImage( textureData, _uvRect, gameObject.transform.worldTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
 	override public function getNaturalWidth():Float 

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<haxelib name="lime" />		
-	<assets path="assets/shaders" rename="shaders"/>
-		
+	<haxelib name="lime" />				
 	<haxeflag name="-swf-lib lib/AGALAssembler.swf" if="flash" />
 </project>

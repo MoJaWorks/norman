@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.core;
 import uk.co.mojaworks.norman.components.display.Sprite;
-import uk.co.mojaworks.norman.components.messenger.Messenger;
-import uk.co.mojaworks.norman.components.Prefab;
+//import uk.co.mojaworks.norman.components.messenger.Messenger;
+//import uk.co.mojaworks.norman.components.Prefab;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.engine.NormanApp;
 
@@ -23,7 +23,7 @@ class GameObject
 	public var sprite( default, null ) : Sprite; // Display is not set by default and will be null until a display component is added
 	
 	public var enabled : Bool = true;
-	public var enabledInTree( get, never ) : Bool;
+	//public var enabledInTree( get, never ) : Bool;
 	public var destroyed : Bool = false;
 	
 	public function new( id : String = null ) 
@@ -34,12 +34,12 @@ class GameObject
 		
 		// Add default components
 		messenger = new Messenger();
-		add( messenger );
+		//add( messenger );
 		
 		transform = new Transform();
 		add( transform );
 		
-		NormanApp.gameObjectManager.registerGameObject(this);
+		//NormanApp.gameObjectManager.registerGameObject(this);
 		
 	}
 	
@@ -81,7 +81,7 @@ class GameObject
 	public function add( component : Component ) : GameObject {
 		
 		// Make sure to remove it from any other gameobject it's attached to
-		if ( component.gameObject != null ) component.gameObject.removeById( component.getComponentType() );
+		//if ( component.gameObject != null ) component.gameObject.removeById( component.getComponentType() );
 		
 		// Remove any existing components of this type
 		removeById( component.getComponentType() );
@@ -102,89 +102,16 @@ class GameObject
 	public function has( classType : Class<Component> ) : Bool {
 		return Std.is( _components.get( Reflect.field( classType, "TYPE" )), classType );
 	}
-	
-	/**
-	 * Search
-	 */
-	
-	//public function findParentThatHas( classType : Class<Component> ) : GameObject {
-		//
-		//var current = parent;
-		//
-		//while ( current != null ) {
-			//if ( current.has( classType ) ) return current;
-			//else current = current.parent;
-		//}
-		//
-		//return null;
-		//
-	//}
-	 
-	//public function findChildThatHas( classType : Class<Component>, depth : Int = -1 ) : GameObject {
-		//
-		//var current_depth = 1;
-		//var children : Array<GameObject> = this.children;
-		//var next_children : Array<GameObject> = [];
-		//
-		//while( (current_depth <= depth || depth == -1) && children.length > 0 ) {
-		//
-			//for ( child in children ) {
-				//if ( child.has( classType ) ) return child;
-				//
-				//if ( current_depth < depth || depth == -1 ) {
-					//next_children = next_children.concat( child.children );
-				//}
-			//}
-			//
-			//children = next_children;
-			//next_children = [];
-			//current_depth++;
-			//
-		//}
-		//return null;
-	//}
-	
-	//public function findChildrenThatHave( classType : Class<Component>, depth : Int = -1 ) : Array<GameObject> {
-		//
-		//var result : Array<GameObject> = [];
-		//
-		//var current_depth = 1;
-		//var children : Array<GameObject> = this.children;
-		//var next_children : Array<GameObject> = [];
-		//
-		//while ( (current_depth <= depth || depth == -1) && children.length > 0 ) {
-					//
-			//for ( child in children ) {
-				//
-				//trace("Checking ", child.id );
-				//
-				//if ( child.has( classType ) ) result.push( child );
-				//
-				//if ( current_depth < depth || depth == -1 ) {
-					//next_children = next_children.concat( child.children );
-				//}
-			//}
-			//
-			//children = next_children;
-			//next_children = [];
-			//current_depth++;
-			//
-		//}
-		//
-		//trace("Quit searching", current_depth, depth, children.length );
-		//
-		//return result;
-	//}
-	
+		
 	
 	/**
 	 * 
 	 */
 		
-	public function buildFrom( prefab : Prefab ) : GameObject {
-		prefab.construct(this);
-		return this;
-	}
+	//public function buildFrom( prefab : Prefab ) : GameObject {
+		//prefab.construct(this);
+		//return this;
+	//}
 	
 	/**
 	 * End
@@ -204,7 +131,7 @@ class GameObject
 			comp.destroy();			
 		}
 		
-		NormanApp.gameObjectManager.unregisterGameObject(this);
+		//NormanApp.gameObjectManager.unregisterGameObject(this);
 		_components = null;
 		destroyed = true;
 		
@@ -219,38 +146,38 @@ class GameObject
 		messenger.sendMessage( message, data );
 	}
 	
-	public function get_enabledInTree( ) : Bool {
-		if ( transform.parent != null ) {
-			return enabled && transform.parent.gameObject.enabledInTree;
-		}else {
-			return enabled;
-		}
-	}
+	//public function get_enabledInTree( ) : Bool {
+		//if ( transform.parent != null ) {
+			//return enabled && transform.parent.gameObject.enabledInTree;
+		//}else {
+			//return enabled;
+		//}
+	//}
 	
-	public function get_parent() : GameObject {
-		if ( transform.parent != null ) {
-			return transform.parent.gameObject;
-		}else {
-			return null;
-		}
-	}
+	//public function get_parent() : GameObject {
+		//if ( transform.parent != null ) {
+			//return transform.parent.gameObject;
+		//}else {
+			//return null;
+		//}
+	//}
 	
-	public function addChild( obj : GameObject ) {
-		transform.addChild( obj.transform );
-	}
+	//public function addChild( obj : GameObject ) {
+		//transform.addChild( obj.transform );
+	//}
+	//
+	//public function removeChild( obj : GameObject ) {
+		//transform.removeChild( obj.transform );
+	//}
 	
-	public function removeChild( obj : GameObject ) {
-		transform.removeChild( obj.transform );
-	}
-	
-	public function getChildren() : Array<GameObject> {
-		var results : Array<GameObject> = [];
-		
-		for ( trans in transform.children ) {
-			results.push( trans.gameObject );
-		}
-		
-		return results;
-	}
+	//public function getChildren() : Array<GameObject> {
+		//var results : Array<GameObject> = [];
+		//
+		//for ( trans in transform.children ) {
+			//results.push( trans.gameObject );
+		//}
+		//
+		//return results;
+	//}
 		
 }

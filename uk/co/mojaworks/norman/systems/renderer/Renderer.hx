@@ -3,7 +3,6 @@ import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.display.ImageSprite;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.core.ISystem;
 import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
 import uk.co.mojaworks.norman.systems.renderer.batching.ShaderBatch;
 import uk.co.mojaworks.norman.systems.renderer.batching.TargetBatch;
@@ -20,7 +19,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  */
  
  
-class Renderer implements ISystem
+class Renderer
 {	
 	
 	// Keep a cache of shaders so if the context is lost they can all be recreated quickly.
@@ -172,8 +171,8 @@ class Renderer implements ISystem
 					
 					shader.start = indices.length;
 					
-					vertices = vertices.concat( object.getVertices() );
-					indices = indices.concat( object.getIndices() );
+					//vertices = vertices.concat( object.getVertices() );
+					//indices = indices.concat( object.getIndices() );
 					
 					shader.length = indices.length - shader.start;
 										

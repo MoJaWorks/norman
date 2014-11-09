@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core;
+import uk.co.mojaworks.norman.core.view.GameObject;
 
 /**
  * ...

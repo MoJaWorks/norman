@@ -3,12 +3,8 @@ package uk.co.mojaworks.norman.engine ;
 import lime.app.Application;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.display.Camera;
-import uk.co.mojaworks.norman.components.tick.Ticker;
 import uk.co.mojaworks.norman.core.GameObject;
-import uk.co.mojaworks.norman.core.GameObjectManager;
-import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureManager;
-import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
 import uk.co.mojaworks.norman.systems.renderer.Renderer;
 
@@ -29,7 +25,6 @@ class NormanApp extends Application
 	public static var textureManager : ITextureManager;
 	public static var world : GameObject;
 	public static var camera : GameObject;
-	public static var gameObjectManager : GameObjectManager;
 	
 	public function new( ) 
 	{
