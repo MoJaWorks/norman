@@ -23,20 +23,18 @@ class GLShaderProgram implements IShaderProgram
 	 *
 	 */
 
-	public function new( context : GLRenderContext, vertexShader:ShaderData, fragmentShader:ShaderData ) 
+	public function new( vertexShader:ShaderData, fragmentShader:ShaderData ) 
 	{
 		_context = context;
 		_fsData = fragmentShader;
 		_vsData = vertexShader;
-		
-		compile();
 	}
 	
 	/**
 	 * 
 	 */
 	
-	public function compile() 
+	public function compile( context : GLRenderContext ) : Void
 	{
 		
 		if ( program != null ) _context.deleteProgram( program );

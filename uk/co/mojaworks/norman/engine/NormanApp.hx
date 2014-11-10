@@ -3,7 +3,7 @@ package uk.co.mojaworks.norman.engine ;
 import lime.app.Application;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.display.Camera;
-import uk.co.mojaworks.norman.core.GameObject;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureManager;
 import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
 import uk.co.mojaworks.norman.systems.renderer.Renderer;

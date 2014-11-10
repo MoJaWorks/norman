@@ -3,17 +3,8 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.RenderContext;
-import lime.math.Matrix4;
-import lime.math.Matrix3;
-import lime.math.Vector4;
-import lime.utils.Float32Array;
-import uk.co.mojaworks.norman.components.display.Sprite;
-import uk.co.mojaworks.norman.core.GameObject;
-import lime.math.Rectangle;
 import uk.co.mojaworks.norman.engine.NormanApp;
-import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
 import uk.co.mojaworks.norman.systems.renderer.batching.TargetBatch;
-import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...

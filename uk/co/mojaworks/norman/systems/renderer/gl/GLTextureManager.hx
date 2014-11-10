@@ -9,7 +9,6 @@ import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLTexture;
 import lime.graphics.RenderContext;
 import lime.utils.UInt8Array;
-import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
 
 /**
  * ...
