@@ -4,6 +4,7 @@ import lime.math.Matrix4;
 import lime.math.Vector4;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
@@ -47,14 +48,13 @@ class Transform extends Component
 	 * 
 	 */
 	
-	public function new() 
+	public function new( gameObject : GameObject ) 
 	{
-		super();
+		super( gameObject );
 		
 		_worldTransform = new Matrix4();
 		_localTransform = new Matrix4();
 		_inverseWorldTransform = new Matrix4();
-		
 	}
 		
 	/**
@@ -109,7 +109,7 @@ class Transform extends Component
 	 */
 	
 	public function centerPivot() : Transform {
-		if ( gameObject.has(Sprite) ) {
+		if ( gameObject.sprite != null ) {
 			setPivot( gameObject.sprite.getNaturalWidth() * 0.5, gameObject.sprite.getNaturalHeight() * 0.5 );
 		}else {
 			setPivot(0, 0);
@@ -209,9 +209,7 @@ class Transform extends Component
 	 * Destroy
 	 */
 	
-	override public function destroy() : Void {
-		
-		super.destroy();
+	public function destroy() : Void {
 		
 		_worldTransform = null;
 		_localTransform = null;

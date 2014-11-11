@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.Image;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
@@ -23,6 +24,7 @@ interface IRenderer
 	// Canvas
 	function getCanvas() : ICanvas;
 	function resize( width : Int, height : Int ) : Void;
+	function render( root : GameObject ) : Void;
 	
 	
 }

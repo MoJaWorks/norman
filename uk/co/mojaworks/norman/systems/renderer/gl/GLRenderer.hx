@@ -1,8 +1,6 @@
 package uk.co.mojaworks.norman.systems.renderer.gl;
 import lime.graphics.GLRenderContext;
-import lime.graphics.Image;
-import lime.graphics.ImageBuffer;
-import lime.utils.UInt8Array;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
@@ -28,7 +26,7 @@ class GLRenderer implements IRenderer
 	public function new( context : GLRenderContext ) 
 	{
 		canvas = new GLCanvas();
-		canvas.init( context );
+		canvas.init( cast context );
 	}
 	
 	/**
@@ -46,10 +44,10 @@ class GLRenderer implements IRenderer
 	
 	public function createShader( vs : ShaderData, fs : ShaderData ) : IShaderProgram {
 		
-		var shader GLShaderProgram = new GLShaderProgram( vs, fs );
+		var shader : GLShaderProgram = new GLShaderProgram( vs, fs );
 		
 		if ( canvas.getContext() != null ) {
-			shader.compile( canvas.getContext() ); 
+			shader.compile( cast canvas.getContext() ); 
 		}
 		#if debug
 			else {
@@ -62,6 +60,31 @@ class GLRenderer implements IRenderer
 	}
 	
 	/**
+	 * Render
+	 * @param	root
+	 */
+	
+	public function render( root : GameObject ) : Void {
+		canvas.clear();
+		renderLevel( root );
+	}
+	
+	private function renderLevel( object : GameObject ) : Void {
+		
+		if ( object.sprite != null ) {
+			object.sprite.preRender( canvas );
+			object.sprite.render( canvas );
+		}
+		
+		for ( child in object.children ) {
+			renderLevel( child );
+		}
+		
+		if ( object.sprite != null ) object.sprite.postRender();
+	}
+	
+	/**
+	 * TODO: Sort out textures
 	 * Textures
 	 */
 	

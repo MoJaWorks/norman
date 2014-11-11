@@ -4,7 +4,7 @@ import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.engine.NormanApp;
-import uk.co.mojaworks.norman.systems.renderer.batching.TargetBatch;
+import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
 
 /**
  * ...
@@ -24,11 +24,9 @@ class GLCanvas implements ICanvas
 	
 	private var _vertexBuffer : GLBuffer;
 	private var _indexBuffer : GLBuffer;
-	private var _batches : Array<GLBatchData>;
 	private var _target : GLTextureData;
-	
-	private var currentBatch( get, null ) : GLBatchData;
-	
+
+	private var _batch : RenderBatch;
 	
 	public function new() 
 	{
@@ -39,7 +37,7 @@ class GLCanvas implements ICanvas
 	public function init( context : RenderContext ) : Void 
 	{
 		_context = cast context;
-		_batches = [];
+		_batch = new RenderBatch();
 	}
 	
 	public function resize( width : Int, height : Int ) : Void 
@@ -47,41 +45,9 @@ class GLCanvas implements ICanvas
 		// Create our render target
 		_target = cast NormanApp.textureManager.createTexture( "norman_render", width, height );
 	}
-	
-	public function render( vertices : Array<Float>, indices : Array<Int>, batches : TargetBatch ) : Void 
-	{		
-		_context.clearColor( 0, 0, 0, 1 );
 		
-		for ( textureBatch in batches.items ) {
-			if ( textureBatch.textureData != null ) {
-				_context.bindTexture( GL.TEXTURE_2D, cast( textureBatch.textureData, GLTextureData).texture );
-			}else {
-				_context.bindTexture( GL.TEXTURE_2D, null );
-			}
-			
-			for ( shaderBatch in textureBatch.items ) {
-				
-				_context.useProgram( cast( shaderBatch.shader, GLShaderProgram ).program );
-				
-				
-			}
-		}
-	}
-	
 	public function getContext() : RenderContext {
 		return cast _context;
-	}
-	
-	public function getRenderTarget() : TextureData {
-		return _target;
-	}
-	
-	private function get_currentBatch() : GLBatchData {
-		if ( _batches.length > 0 ) {
-			return _batches[_batches.length - 1];
-		}else {
-			return null;
-		}
 	}
 	
 }

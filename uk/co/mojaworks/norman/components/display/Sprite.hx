@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.components.display ;
 
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.engine.NormanApp;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 
@@ -15,9 +15,9 @@ class Sprite extends Component
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
 	
-	public function new() 
+	public function new( gameObject : GameObject ) 
 	{
-		super();
+		super( gameObject );
 		initShader();
 	}
 	
@@ -29,17 +29,7 @@ class Sprite extends Component
 		// override and return the current shader
 		return null;
 	}
-	
-	override public function onAdded():Void 
-	{
-		super.onAdded();
-	}
-	
-	override public function onRemoved():Void 
-	{
-		super.onRemoved();
-	}
-				
+
 	/**
 	 * Gets the bounds of one object in the space of another. If no space is passed, it will get it's bounds in it's own space
 	 * @param	space

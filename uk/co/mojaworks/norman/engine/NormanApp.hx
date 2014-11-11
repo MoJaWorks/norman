@@ -4,9 +4,8 @@ import lime.app.Application;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.display.Camera;
 import uk.co.mojaworks.norman.core.view.GameObject;
-import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureManager;
-import uk.co.mojaworks.norman.systems.renderer.ITextureManager;
-import uk.co.mojaworks.norman.systems.renderer.Renderer;
+import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
+import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -21,10 +20,8 @@ class NormanApp extends Application
 	private var _hasInit : Bool = false;
 	
 	// Public static vars for easy access
-	public static var renderer : Renderer;
-	public static var textureManager : ITextureManager;
-	public static var world : GameObject;
-	public static var camera : GameObject;
+	public static var renderer : IRenderer;
+	public static var root : GameObject;
 	
 	public function new( ) 
 	{
@@ -33,24 +30,20 @@ class NormanApp extends Application
 	
 	override public function init( context : RenderContext ) {
 		
-		gameObjectManager = new GameObjectManager();
-		world = new GameObject();
-		camera = new GameObject().add( new Camera() );
-		
-		// initialise the renderer
-		renderer = new Renderer( context );
-		renderer.resize( window.width, window.height );
+		root = new GameObject();
 		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
 				
 				// Set up the texture manager
-				textureManager = new GLTextureManager( gl );
+				renderer = new GLRenderer( gl );
 								
 			default:
 				// Nothing yet
 				
 		}
+		
+		renderer.resize( window.width, window.height );
 	}
 	
 	private function initNorman( stageWidth, stageHeight ) : Void {
@@ -95,7 +88,7 @@ class NormanApp extends Application
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
-			renderer.render( camera );
+			renderer.render( root );
 		}
 		
 	}
