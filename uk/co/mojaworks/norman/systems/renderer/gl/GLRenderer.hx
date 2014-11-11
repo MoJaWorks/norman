@@ -3,6 +3,7 @@ import lime.graphics.GLRenderContext;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderProgram;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
@@ -21,12 +22,12 @@ class GLRenderer implements IRenderer
 	private var _shaders : LinkedList<GLShaderProgram>;
 	private var _textures : Map<String, GLTextureData>;
 	
-	public var canvas : GLCanvas;
+	private var _canvas : GLCanvas;
 	
 	public function new( context : GLRenderContext ) 
 	{
-		canvas = new GLCanvas();
-		canvas.init( cast context );
+		_canvas = new GLCanvas();
+		_canvas.init( cast context );
 	}
 	
 	/**
@@ -34,7 +35,7 @@ class GLRenderer implements IRenderer
 	 */
 	
 	public function resize( width : Int, height : Int ) : Void {
-		canvas.resize( width, height );
+		_canvas.resize( width, height );
 	}
 	
 		
@@ -46,8 +47,8 @@ class GLRenderer implements IRenderer
 		
 		var shader : GLShaderProgram = new GLShaderProgram( vs, fs );
 		
-		if ( canvas.getContext() != null ) {
-			shader.compile( cast canvas.getContext() ); 
+		if ( _canvas.getContext() != null ) {
+			shader.compile( cast _canvas.getContext() ); 
 		}
 		#if debug
 			else {
@@ -65,22 +66,24 @@ class GLRenderer implements IRenderer
 	 */
 	
 	public function render( root : GameObject ) : Void {
-		canvas.clear();
+		_canvas.clear();
+		_canvas.begin();
 		renderLevel( root );
+		_canvas.complete();
 	}
 	
 	private function renderLevel( object : GameObject ) : Void {
 		
 		if ( object.sprite != null ) {
-			object.sprite.preRender( canvas );
-			object.sprite.render( canvas );
+			object.sprite.preRender( _canvas );
+			object.sprite.render( _canvas );
 		}
 		
 		for ( child in object.children ) {
 			renderLevel( child );
 		}
 		
-		if ( object.sprite != null ) object.sprite.postRender();
+		if ( object.sprite != null ) object.sprite.postRender( _canvas );
 	}
 	
 	/**
@@ -161,5 +164,9 @@ class GLRenderer implements IRenderer
 	//public function hasTexture( id : String ) : Bool {
 		//return (_textures.get(id) != null);
 	//}
+	
+	public function getCanvas() : ICanvas {
+		return _canvas;
+	}
 	
 }

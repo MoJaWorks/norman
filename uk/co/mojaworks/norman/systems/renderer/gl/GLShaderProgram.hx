@@ -3,6 +3,7 @@ import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
+import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
@@ -13,7 +14,6 @@ import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 class GLShaderProgram implements IShaderProgram
 {
 	
-	private var _context : GLRenderContext;
 	private var _fsData : ShaderData;
 	private var _vsData : ShaderData;
 	
@@ -25,7 +25,6 @@ class GLShaderProgram implements IShaderProgram
 
 	public function new( vertexShader:ShaderData, fragmentShader:ShaderData ) 
 	{
-		_context = context;
 		_fsData = fragmentShader;
 		_vsData = vertexShader;
 	}
@@ -34,38 +33,40 @@ class GLShaderProgram implements IShaderProgram
 	 * 
 	 */
 	
-	public function compile( context : GLRenderContext ) : Void
+	public function compile( ctx : RenderContext ) : Void
 	{
 		
-		if ( program != null ) _context.deleteProgram( program );
+		var context : GLRenderContext = cast ctx;
 		
-		var vs : GLShader = _context.createShader( GL.VERTEX_SHADER );
-		_context.shaderSource( vs, _vsData.getGLSL() );
-		_context.compileShader( vs );
+		if ( program != null ) context.deleteProgram( program );
 		
-		#if shader_debug
-			trace( _context.getShaderInfoLog( vs ) );
-		#end
-		
-		var fs : GLShader = _context.createShader( GL.FRAGMENT_SHADER );
-		_context.shaderSource( fs, _fsData.getGLSL() );
-		_context.compileShader( fs );
+		var vs : GLShader = context.createShader( GL.VERTEX_SHADER );
+		context.shaderSource( vs, _vsData.getGLSL() );
+		context.compileShader( vs );
 		
 		#if shader_debug
-			trace( _context.getShaderInfoLog( fs ) );
+			trace( context.getShaderInfoLog( vs ) );
 		#end
 		
-		program = _context.createProgram();
+		var fs : GLShader = context.createShader( GL.FRAGMENT_SHADER );
+		context.shaderSource( fs, _fsData.getGLSL() );
+		context.compileShader( fs );
+		
+		#if shader_debug
+			trace( context.getShaderInfoLog( fs ) );
+		#end
+		
+		program = context.createProgram();
 		program.attach( vs );
 		program.attach( fs );
-		_context.linkProgram( program );
+		context.linkProgram( program );
 		
 		#if shader_debug
-			trace( _context.getProgramInfoLog( program ) );
+			trace( context.getProgramInfoLog( program ) );
 		#end
 		
-		_context.deleteShader(vs);
-		_context.deleteShader(fs);
+		context.deleteShader(vs);
+		context.deleteShader(fs);
 		
 	}
 	

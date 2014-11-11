@@ -97,16 +97,16 @@ class Sprite extends Component
 	}
 	
 	public function getFinalAlpha() : Float {
-		if ( gameObject.transform.parent != null ) {
-			return gameObject.transform.parent.gameObject.sprite.getFinalAlpha() * alpha;
+		if ( gameObject.parent != null && gameObject.parent.sprite != null ) {
+			return gameObject.parent.sprite.getFinalAlpha() * alpha;
 		}else {
 			return alpha;
 		}
 	}
 	
 	public function getVisibleInTree() : Bool {
-		if ( gameObject.transform.parent != null ) {
-			return visible && gameObject.transform.parent.gameObject.sprite.visible;
+		if ( gameObject.parent != null && gameObject.parent.sprite != null) {
+			return visible && gameObject.parent.sprite.visible;
 		}else {
 			return visible;
 		}

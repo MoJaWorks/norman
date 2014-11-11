@@ -40,7 +40,7 @@ class GameObject extends CoreObject
 		children = [];
 		
 		messenger = new Messenger();
-		transform = new Transform();
+		transform = new Transform( this );
 		
 		//_components = new Map<String,Component>();
 	}

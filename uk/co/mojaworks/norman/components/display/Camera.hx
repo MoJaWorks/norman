@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.components.display ;
 
 import lime.math.Matrix4;
 import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.core.view.GameObject;
  
 enum CameraMode {
 	Orthographic;
@@ -28,9 +29,9 @@ class Camera extends Component
 	private var _projectionMatrixDirty = true;
 	
 
-	public function new() 
+	public function new( owner : GameObject ) 
 	{
-		super();
+		super( owner );
 	}
 	
 	public function set_mode( mode : CameraMode ) : CameraMode {

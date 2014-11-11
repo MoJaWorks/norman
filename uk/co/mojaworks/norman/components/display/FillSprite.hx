@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.display;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillFragmentShader;
@@ -19,10 +20,10 @@ class FillSprite extends Sprite
 	public var width( default, default ) : Float;
 	public var height( default, default ) : Float;
 	
-	public function new( color : Int, width : Float = 100, height : Float = 100 ) 
+	public function new( gameObject : GameObject, color : Int, width : Float = 100, height : Float = 100 ) 
 	{
 		
-		super();
+		super( gameObject );
 		isRenderable = true;
 		this.color = color;
 		this.width = width;

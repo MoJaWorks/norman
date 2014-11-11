@@ -27,7 +27,7 @@ class Model
 	}
 	
 	public function removeModel( id : String ) : Void {
-		return _models.remove( id );
+		_models.remove( id );
 	}
 
 }

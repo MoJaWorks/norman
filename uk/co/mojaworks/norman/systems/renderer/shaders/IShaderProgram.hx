@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.renderer.shaders ;
+import lime.graphics.RenderContext;
 
 /**
  * ...
@@ -6,7 +7,7 @@ package uk.co.mojaworks.norman.systems.renderer.shaders ;
  */
 interface IShaderProgram
 {
-	public function compile() : Void;
+	public function compile( context : RenderContext ) : Void;
 	
 	// If it uses color then it must define an aVertexColor attribute
 	public function getUsesColor( ) : Bool;

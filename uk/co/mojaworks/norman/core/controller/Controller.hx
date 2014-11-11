@@ -16,6 +16,7 @@ class Controller extends CoreObject
 
 	public function new() 
 	{
+		super();
 		_commands = [];
 	}
 	

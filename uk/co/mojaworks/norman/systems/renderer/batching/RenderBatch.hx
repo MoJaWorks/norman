@@ -14,11 +14,20 @@ class RenderBatch
 	public var target : TextureData;
 	public var vertices : Array<Float>;
 	public var indices : Array<Int>;
+	public var started : Bool;
 	
 	public function new() 
 	{
+		reset();
+	}
+	
+	public function reset() : Void {
+		shader = null;
+		texture = null;
+		target = null;
 		vertices = [];
 		indices = [];
+		started = false;
 	}
 	
 }

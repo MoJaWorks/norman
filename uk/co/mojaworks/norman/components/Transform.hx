@@ -30,7 +30,7 @@ class Transform extends Component
 	public var scaleX( default, set ) : Float = 1;
 	public var scaleY( default, set ) : Float = 1;
 	
-	public var rotation( get, set ) : Float;
+	public var rotation( default, set ) : Float;
 	
 	public var worldTransform( get, never ) : Matrix4;
 	public var inverseWorldTransform( get, never ) : Matrix4;
@@ -71,7 +71,7 @@ class Transform extends Component
 		
 		if ( update ) {
 			for ( child in gameObject.children ) {
-				child.invalidateMatrices( false, true );
+				child.transform.invalidateMatrices( false, true );
 			}
 		}
 		
@@ -80,9 +80,9 @@ class Transform extends Component
 	
 	private function recalculateLocalTransform() : Void {
 		_localTransform.identity();
-		_localTransform.prependTranslation( paddingX, paddingY );
+		_localTransform.prependTranslation( paddingX, paddingY, 0 );
 		_localTransform.prependTranslation( -anchorX, -anchorY, -anchorZ );
-		_localTransform.prependScale( scaleX, scaleY );
+		_localTransform.prependScale( scaleX, scaleY, 1 );
 		_localTransform.prependRotation( rotation * MathUtils.RAD2DEG, Vector4.Z_AXIS );
 		_localTransform.prependTranslation( x, y, z );
 		_isLocalDirty = false;
@@ -94,7 +94,7 @@ class Transform extends Component
 		_worldTransform.copyFrom( _localTransform );
 				
 		if ( gameObject.parent != null ) {
-			_worldTransform.prepend( gameObject.parent.worldTransform );
+			_worldTransform.prepend( gameObject.parent.transform.worldTransform );
 		}
 			
 		_inverseWorldTransform.copyFrom(_worldTransform);
@@ -110,9 +110,9 @@ class Transform extends Component
 	
 	public function centerPivot() : Transform {
 		if ( gameObject.sprite != null ) {
-			setPivot( gameObject.sprite.getNaturalWidth() * 0.5, gameObject.sprite.getNaturalHeight() * 0.5 );
+			setAnchor( gameObject.sprite.getNaturalWidth() * 0.5, gameObject.sprite.getNaturalHeight() * 0.5 );
 		}else {
-			setPivot(0, 0);
+			setAnchor(0, 0);
 		}
 		
 		return this;
@@ -209,7 +209,7 @@ class Transform extends Component
 	 * Destroy
 	 */
 	
-	public function destroy() : Void {
+	override public function destroy() : Void {
 		
 		_worldTransform = null;
 		_localTransform = null;

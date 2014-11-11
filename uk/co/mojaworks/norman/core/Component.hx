@@ -16,6 +16,7 @@ class Component extends CoreObject
 	
 	private function new( owner : GameObject ) 
 	{
+		super();
 		this.gameObject = owner;
 	}
 	
