@@ -25,6 +25,8 @@ class DefaultFillFragmentShader extends ShaderData
 		str += "void main(void) {";
 		str += "	gl_FragColor = vVertexColor;";
 		str += "}";
+		
+		return str;
 	}
 	
 }

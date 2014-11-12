@@ -26,6 +26,8 @@ class GLRenderer implements IRenderer
 	
 	public function new( context : GLRenderContext ) 
 	{
+		_shaders = new LinkedList<GLShaderProgram>();
+		
 		_canvas = new GLCanvas();
 		_canvas.init( cast context );
 	}
@@ -66,8 +68,8 @@ class GLRenderer implements IRenderer
 	 */
 	
 	public function render( root : GameObject ) : Void {
-		_canvas.clear();
 		_canvas.begin();
+		_canvas.clear();
 		renderLevel( root );
 		_canvas.complete();
 	}

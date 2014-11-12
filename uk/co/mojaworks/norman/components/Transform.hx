@@ -30,7 +30,7 @@ class Transform extends Component
 	public var scaleX( default, set ) : Float = 1;
 	public var scaleY( default, set ) : Float = 1;
 	
-	public var rotation( default, set ) : Float;
+	public var rotation( default, set ) : Float = 0;
 	
 	public var worldTransform( get, never ) : Matrix4;
 	public var inverseWorldTransform( get, never ) : Matrix4;

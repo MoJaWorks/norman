@@ -20,10 +20,15 @@ class NormanApp extends Application
 	private var _hasInit : Bool = false;
 	
 	// Public static vars for easy access
+	//public static var viewport : Viewport;
 	public static var renderer : IRenderer;
 	public static var root : GameObject;
 	
-	public function new( ) 
+	/**
+	 * 
+	 */
+	
+	public function new( _stageWidth : Int, _stageHeight : Int ) 
 	{
 		super();
 	}
@@ -44,23 +49,15 @@ class NormanApp extends Application
 		}
 		
 		renderer.resize( window.width, window.height );
-	}
-	
-	private function initNorman( stageWidth, stageHeight ) : Void {
-				
-		initRoot( stageWidth, stageHeight );		
-		onStartupComplete();
 		
+		_hasInit = true;
+		onStartupComplete();
 	}
-	
+		
 	/**
 	 * Boot
 	 */
-	
-	private function initRoot( width : Int, height : Int ) : Void {		
-		_hasInit = true;	
-	}
-			
+				
 	private function onStartupComplete() : Void {
 		// Override
 	}

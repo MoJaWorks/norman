@@ -50,6 +50,7 @@ class GLCanvas implements ICanvas
 		_batch = new RenderBatch();
 		_vertexBuffer = _context.createBuffer();
 		_indexBuffer = _context.createBuffer();
+		
 	}
 	
 	public function resize( width : Int, height : Int ) : Void 
@@ -70,31 +71,31 @@ class GLCanvas implements ICanvas
 		_context.clearStencil( 0 );
 	}
 	
-	public function fillRect( color : Color, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
+	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
-		if ( !_batch.started || _batch.shader != shader ) renderBatch();
+		if ( _batch.started && _batch.shader != shader ) renderBatch();
 		
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
 		var points : Array<Float> = [
-			0, 0, 0, 0,
-			0, height, 0, 0,
-			width, 0, 0, 0,
-			width, height, 0, 0		
+			0, 0, 10,
+			0, height, 10,
+			width, 0, 10,
+			width, height, 10		
 		];
 		
 		var points_trans : Float32Array = new Float32Array( points );
 		transform.transformVectors( points_trans, points_trans );
 		
 		for ( i in 0...4 ) {
-			_batch.vertices.push( points_trans.getFloat32( (i * 4) + 0 ) );
-			_batch.vertices.push( points_trans.getFloat32( (i * 4) + 1 ) );
-			_batch.vertices.push( points_trans.getFloat32( (i * 4) + 2 ) );
-			_batch.vertices.push( color.r / 255 );
-			_batch.vertices.push( color.g / 255 );
-			_batch.vertices.push( color.b / 255 );
-			_batch.vertices.push( color.a );
+			_batch.vertices.push( points_trans[(i * 3) + 0] );
+			_batch.vertices.push( points_trans[(i * 3) + 1] );
+			_batch.vertices.push( points_trans[(i * 3) + 2] );
+			_batch.vertices.push( r / 255 );
+			_batch.vertices.push( g / 255 );
+			_batch.vertices.push( b / 255 );
+			_batch.vertices.push( a );
 			// Fake the UV coords just for consistency
 			_batch.vertices.push( 0 );
 			_batch.vertices.push( 0 );
@@ -112,12 +113,12 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(texture:TextureData, transform:Matrix4, color : Color, shader : IShaderProgram ):Void 
+	public function drawImage(texture:TextureData, transform:Matrix4, r : Float, g : Float, b : Float, a : Float, shader : IShaderProgram ):Void 
 	{
 		
 	}
 	
-	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix4, color : Color, shader : IShaderProgram ):Void 
+	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix4, r : Float, g : Float, b : Float, a : Float, shader : IShaderProgram ):Void 
 	{
 		
 	}
@@ -128,34 +129,47 @@ class GLCanvas implements ICanvas
 	}
 	
 	public function complete() : Void {
-		_batch.reset();
+		renderBatch();
 	}
 	
 	private function renderBatch( ) : Void {
 		
-		_context.viewport( 0, 0, _stageWidth, _stageHeight );
+		_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		
 		_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
+		_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.DYNAMIC_DRAW );
+		_context.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.STREAM_DRAW );
-		
+		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.DYNAMIC_DRAW );
+		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
+				
 		var shader : GLShaderProgram = cast _batch.shader;
 		_context.useProgram( shader.program );
 		var vertexAttr = _context.getAttribLocation( shader.program, "aVertexPosition" );
 		var colorAttr = _context.getAttribLocation( shader.program, "aVertexColor" );
 		var projectionUniform = _context.getUniformLocation( shader.program, "uProjectionMatrix" );
-		//var uvAttr = _context.getAttribLocation( _batch.shader, "aVertexUV" );
 		
 		_context.enableVertexAttribArray( vertexAttr );
 		_context.enableVertexAttribArray( colorAttr );
 		_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 		
-		_context.vertexAttribPointer( vertexAttr, 3, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION * 4 );
-		_context.vertexAttribPointer( colorAttr, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4 );
+		_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
+		_context.vertexAttribPointer( vertexAttr, 3, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION  * 4);
+		_context.vertexAttribPointer( colorAttr, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR  * 4);
 		
-		_context.drawElements( GL.TRIANGLES, Std.int(_batch.indices.length / 3), GL.UNSIGNED_BYTE, 0 );
+		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
+		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.DYNAMIC_DRAW );
+		
+		_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
+		
+		
+		_context.disableVertexAttribArray( vertexAttr );
+		_context.disableVertexAttribArray( colorAttr );
+		
+		#if gl_debug
+			if ( _context.getError() > 0 ) trace( "GL Error:", _context.getError() );
+		#end
 		
 		_batch.reset();
 	}

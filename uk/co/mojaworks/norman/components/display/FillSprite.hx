@@ -24,7 +24,6 @@ class FillSprite extends Sprite
 	{
 		
 		super( gameObject );
-		isRenderable = true;
 		this.color = color;
 		this.width = width;
 		this.height = height;
@@ -61,7 +60,7 @@ class FillSprite extends Sprite
 	}
 	
 	override public function render( canvas : ICanvas ) : Void {
-		canvas.fillRect( color.r, color.g, color.b, getFinalAlpha() * color.a, width, height, gameObject.transform.worldTransform );
+		canvas.fillRect( color.r, color.g, color.b, getFinalAlpha() * color.a, width, height, gameObject.transform.worldTransform, getShader() );
 	}
 	
 	

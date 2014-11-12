@@ -4,6 +4,7 @@ import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.RenderContext;
+import lime.utils.GLUtils;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
@@ -44,7 +45,8 @@ class GLShaderProgram implements IShaderProgram
 		context.shaderSource( vs, _vsData.getGLSL() );
 		context.compileShader( vs );
 		
-		#if shader_debug
+		#if gl_debug
+			trace("Compiling vertex shader");
 			trace( context.getShaderInfoLog( vs ) );
 		#end
 		
@@ -52,16 +54,18 @@ class GLShaderProgram implements IShaderProgram
 		context.shaderSource( fs, _fsData.getGLSL() );
 		context.compileShader( fs );
 		
-		#if shader_debug
+		#if gl_debug
+			trace("Compiling fragment shader");
 			trace( context.getShaderInfoLog( fs ) );
 		#end
 		
 		program = context.createProgram();
-		program.attach( vs );
-		program.attach( fs );
+		context.attachShader( program, vs );
+		context.attachShader( program, fs );
 		context.linkProgram( program );
 		
-		#if shader_debug
+		#if gl_debug
+			trace("Linking shader");
 			trace( context.getProgramInfoLog( program ) );
 		#end
 		
