@@ -7,7 +7,7 @@ import lime.graphics.RenderContext;
  */
 interface IShaderProgram
 {
-	public function compile( context : RenderContext ) : Void;
+	public function compile( ) : Void;
 	
 	// If it uses color then it must define an aVertexColor attribute
 	public function getUsesColor( ) : Bool;

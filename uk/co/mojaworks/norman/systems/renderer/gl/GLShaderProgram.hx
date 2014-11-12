@@ -17,6 +17,7 @@ class GLShaderProgram implements IShaderProgram
 	
 	private var _fsData : ShaderData;
 	private var _vsData : ShaderData;
+	private var _context : GLRenderContext;
 	
 	public var program( default, null ) : GLProgram;
 	
@@ -24,53 +25,53 @@ class GLShaderProgram implements IShaderProgram
 	 *
 	 */
 
-	public function new( vertexShader:ShaderData, fragmentShader:ShaderData ) 
+	public function new( context : GLRenderContext, vertexShader:ShaderData, fragmentShader:ShaderData ) 
 	{
 		_fsData = fragmentShader;
 		_vsData = vertexShader;
+		
+		_context = context;
 	}
 	
 	/**
 	 * 
 	 */
 	
-	public function compile( ctx : RenderContext ) : Void
+	public function compile(  ) : Void
 	{
 		
-		var context : GLRenderContext = cast ctx;
+		if ( program != null ) _context.deleteProgram( program );
 		
-		if ( program != null ) context.deleteProgram( program );
-		
-		var vs : GLShader = context.createShader( GL.VERTEX_SHADER );
-		context.shaderSource( vs, _vsData.getGLSL() );
-		context.compileShader( vs );
+		var vs : GLShader = _context.createShader( GL.VERTEX_SHADER );
+		_context.shaderSource( vs, _vsData.getGLSL() );
+		_context.compileShader( vs );
 		
 		#if gl_debug
 			trace("Compiling vertex shader");
-			trace( context.getShaderInfoLog( vs ) );
+			trace( _context.getShaderInfoLog( vs ) );
 		#end
 		
-		var fs : GLShader = context.createShader( GL.FRAGMENT_SHADER );
-		context.shaderSource( fs, _fsData.getGLSL() );
-		context.compileShader( fs );
+		var fs : GLShader = _context.createShader( GL.FRAGMENT_SHADER );
+		_context.shaderSource( fs, _fsData.getGLSL() );
+		_context.compileShader( fs );
 		
 		#if gl_debug
 			trace("Compiling fragment shader");
-			trace( context.getShaderInfoLog( fs ) );
+			trace( _context.getShaderInfoLog( fs ) );
 		#end
 		
-		program = context.createProgram();
-		context.attachShader( program, vs );
-		context.attachShader( program, fs );
-		context.linkProgram( program );
+		program = _context.createProgram();
+		_context.attachShader( program, vs );
+		_context.attachShader( program, fs );
+		_context.linkProgram( program );
 		
 		#if gl_debug
 			trace("Linking shader");
-			trace( context.getProgramInfoLog( program ) );
+			trace( _context.getProgramInfoLog( program ) );
 		#end
 		
-		context.deleteShader(vs);
-		context.deleteShader(fs);
+		_context.deleteShader(vs);
+		_context.deleteShader(fs);
 		
 	}
 	

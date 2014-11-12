@@ -13,10 +13,10 @@ import uk.co.mojaworks.norman.utils.Color;
 interface ICanvas 
 {
 	// Gets
-	function getContext() : RenderContext;
+	//function getContext() : RenderContext;
 	
 	// Setup
-	function init( context : RenderContext ) : Void;
+	//function init( context : RenderContext ) : Void;
 	function resize( width : Int, height : Int ) : Void;
 	
 	// Drawing

@@ -27,9 +27,7 @@ class GLRenderer implements IRenderer
 	public function new( context : GLRenderContext ) 
 	{
 		_shaders = new LinkedList<GLShaderProgram>();
-		
-		_canvas = new GLCanvas();
-		_canvas.init( cast context );
+		_canvas = new GLCanvas( context );
 	}
 	
 	/**
@@ -47,12 +45,12 @@ class GLRenderer implements IRenderer
 	
 	public function createShader( vs : ShaderData, fs : ShaderData ) : IShaderProgram {
 		
-		var shader : GLShaderProgram = new GLShaderProgram( vs, fs );
+		var shader : GLShaderProgram = new GLShaderProgram( _canvas.getContext(), vs, fs );
 		
 		if ( _canvas.getContext() != null ) {
-			shader.compile( cast _canvas.getContext() ); 
+			shader.compile(); 
 		}
-		#if debug
+		#if gl_debug
 			else {
 				trace("Deferred creating shader until context is restored");
 			}

@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.engine ;
 
 import lime.app.Application;
+import lime.graphics.opengl.GL;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.display.Camera;
 import uk.co.mojaworks.norman.core.view.GameObject;
@@ -85,6 +86,14 @@ class NormanApp extends Application
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
+			
+			//switch( context ) {
+				//case RenderContext.OPENGL(gl):
+					//gl.clearColor( 1, 0, 0, 1 );
+					//gl.clear( GL.COLOR_BUFFER_BIT );
+				//default:
+			//}
+			
 			renderer.render( root );
 		}
 		

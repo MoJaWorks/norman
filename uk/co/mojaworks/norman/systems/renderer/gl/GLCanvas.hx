@@ -38,15 +38,11 @@ class GLCanvas implements ICanvas
 
 	private var _batch : RenderBatch;
 	
-	public function new() 
+	public function new( context : GLRenderContext ) : Void 
 	{
-	}
-	
-	/* INTERFACE uk.co.mojaworks.norman.renderer.ICanvas */
-	
-	public function init( context : RenderContext ) : Void 
-	{
+		
 		_context = cast context;
+		
 		_batch = new RenderBatch();
 		_vertexBuffer = _context.createBuffer();
 		_indexBuffer = _context.createBuffer();
@@ -60,15 +56,14 @@ class GLCanvas implements ICanvas
 		_stageHeight = height;
 	}
 		
-	public function getContext() : RenderContext {
-		return cast _context;
+	public function getContext() : GLRenderContext {
+		return _context;
 	}
 	
 	public function clear():Void 
 	{
-		_context.clearColor(0, 0, 0, 1 );
-		_context.clearDepth( 0 );
-		_context.clearStencil( 0 );
+		_context.clearColor( 1, 0, 0, 1 );
+		_context.clear( GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT );
 	}
 	
 	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
@@ -124,7 +119,7 @@ class GLCanvas implements ICanvas
 	}
 	
 	public function begin() : Void {
-		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
+		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -10, 10 );
 		_context.viewport( 0, 0, _stageWidth, _stageHeight );
 	}
 	
@@ -145,6 +140,7 @@ class GLCanvas implements ICanvas
 		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 				
 		var shader : GLShaderProgram = cast _batch.shader;
+		
 		_context.useProgram( shader.program );
 		var vertexAttr = _context.getAttribLocation( shader.program, "aVertexPosition" );
 		var colorAttr = _context.getAttribLocation( shader.program, "aVertexColor" );
@@ -161,7 +157,7 @@ class GLCanvas implements ICanvas
 		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.DYNAMIC_DRAW );
 		
-		_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
+		_context.drawElements( GL.TRIANGLES, 1, GL.UNSIGNED_SHORT, 0 );
 		
 		
 		_context.disableVertexAttribArray( vertexAttr );
