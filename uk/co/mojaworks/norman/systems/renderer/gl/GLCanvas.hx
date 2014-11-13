@@ -60,12 +60,6 @@ class GLCanvas implements ICanvas
 		return _context;
 	}
 	
-	public function clear():Void 
-	{
-		_context.clearColor( 1, 0, 0, 1 );
-		_context.clear( GL.COLOR_BUFFER_BIT | GL.DEPTH_BUFFER_BIT );
-	}
-	
 	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
@@ -74,10 +68,10 @@ class GLCanvas implements ICanvas
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
 		var points : Array<Float> = [
-			0, 0, 10,
-			0, height, 10,
-			width, 0, 10,
-			width, height, 10		
+			width, height, 1,
+			0, height, 1,
+			width, 0, 1,
+			0, 0, 1		
 		];
 		
 		var points_trans : Float32Array = new Float32Array( points );
@@ -118,8 +112,15 @@ class GLCanvas implements ICanvas
 		
 	}
 	
+	public function clear():Void 
+	{
+		_context.clearColor( 0, 0, 0, 1 );
+		_context.clear( GL.COLOR_BUFFER_BIT );
+	}
+	
 	public function begin() : Void {
-		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -10, 10 );
+		trace("Begin render", _stageWidth, _stageHeight );
+		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		_context.viewport( 0, 0, _stageWidth, _stageHeight );
 	}
 	
@@ -128,40 +129,42 @@ class GLCanvas implements ICanvas
 	}
 	
 	private function renderBatch( ) : Void {
-		
-		_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-		
+				
+		// First buffer the data so GL can use it
 		_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 		_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.DYNAMIC_DRAW );
-		_context.bindBuffer( GL.ARRAY_BUFFER, null );
 		
 		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.DYNAMIC_DRAW );
-		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 				
-		var shader : GLShaderProgram = cast _batch.shader;
+		// Set the blend mode
+		_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+		_context.enable( GL.BLEND );
 		
+		// Set up the shaders
+		var shader : GLShaderProgram = cast _batch.shader;
 		_context.useProgram( shader.program );
+		
 		var vertexAttr = _context.getAttribLocation( shader.program, "aVertexPosition" );
 		var colorAttr = _context.getAttribLocation( shader.program, "aVertexColor" );
 		var projectionUniform = _context.getUniformLocation( shader.program, "uProjectionMatrix" );
 		
 		_context.enableVertexAttribArray( vertexAttr );
 		_context.enableVertexAttribArray( colorAttr );
-		_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 		
-		_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
+		// Assign values to the shader
 		_context.vertexAttribPointer( vertexAttr, 3, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION  * 4);
 		_context.vertexAttribPointer( colorAttr, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR  * 4);
+		_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 		
-		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.DYNAMIC_DRAW );
+		// Draw the things
+		_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_BYTE, 0 );
 		
-		_context.drawElements( GL.TRIANGLES, 1, GL.UNSIGNED_SHORT, 0 );
-		
-		
+		// Clean up
 		_context.disableVertexAttribArray( vertexAttr );
 		_context.disableVertexAttribArray( colorAttr );
+		_context.bindBuffer( GL.ARRAY_BUFFER, null );
+		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 		
 		#if gl_debug
 			if ( _context.getError() > 0 ) trace( "GL Error:", _context.getError() );

@@ -29,9 +29,9 @@ class Camera extends Component
 	private var _projectionMatrixDirty = true;
 	
 
-	public function new( owner : GameObject ) 
+	public function new( ) 
 	{
-		super( owner );
+		super(  );
 	}
 	
 	public function set_mode( mode : CameraMode ) : CameraMode {

@@ -20,13 +20,6 @@ class Transform extends Component
 	public var y( default, set ) : Float = 0;
 	public var z( default, set ) : Float = 0;
 	
-	public var anchorX( default, set ) : Float = 0;
-	public var anchorY( default, set ) : Float = 0;
-	public var anchorZ( default, set ) : Float = 0;
-	
-	public var paddingX( default, set ) : Float = 0;
-	public var paddingY( default, set ) : Float = 0;
-	
 	public var scaleX( default, set ) : Float = 1;
 	public var scaleY( default, set ) : Float = 1;
 	
@@ -48,9 +41,9 @@ class Transform extends Component
 	 * 
 	 */
 	
-	public function new( gameObject : GameObject ) 
+	public function new( ) 
 	{
-		super( gameObject );
+		super( );
 		
 		_worldTransform = new Matrix4();
 		_localTransform = new Matrix4();
@@ -80,11 +73,11 @@ class Transform extends Component
 	
 	private function recalculateLocalTransform() : Void {
 		_localTransform.identity();
-		_localTransform.prependTranslation( paddingX, paddingY, 0 );
-		_localTransform.prependTranslation( -anchorX, -anchorY, -anchorZ );
-		_localTransform.prependScale( scaleX, scaleY, 1 );
-		_localTransform.prependRotation( rotation * MathUtils.RAD2DEG, Vector4.Z_AXIS );
-		_localTransform.prependTranslation( x, y, z );
+		//_localTransform.appendTranslation( -anchorX, -anchorY, -anchorZ );
+		//_localTransform.appendTranslation( paddingX, paddingY, 0 );
+		_localTransform.appendScale( scaleX, scaleY, 1 );
+		_localTransform.appendRotation( rotation * MathUtils.RAD2DEG, Vector4.Z_AXIS );
+		_localTransform.appendTranslation( x, y, z );
 		_isLocalDirty = false;
 	}
 	
@@ -92,9 +85,9 @@ class Transform extends Component
 		
 		if ( _isLocalDirty ) recalculateLocalTransform();
 		_worldTransform.copyFrom( _localTransform );
-				
+			
 		if ( gameObject.parent != null ) {
-			_worldTransform.prepend( gameObject.parent.transform.worldTransform );
+			_worldTransform.append( gameObject.parent.transform.worldTransform );
 		}
 			
 		_inverseWorldTransform.copyFrom(_worldTransform);
@@ -104,19 +97,7 @@ class Transform extends Component
 		
 	}
 	
-	/**
-	 * Centers the pivot based on the display
-	 */
 	
-	public function centerPivot() : Transform {
-		if ( gameObject.sprite != null ) {
-			setAnchor( gameObject.sprite.getNaturalWidth() * 0.5, gameObject.sprite.getNaturalHeight() * 0.5 );
-		}else {
-			setAnchor(0, 0);
-		}
-		
-		return this;
-	}
 	
 	/**
 	 * Convenience
@@ -136,19 +117,6 @@ class Transform extends Component
 	public function setScaleXYZ( scaleX : Float, scaleY : Float ) : Transform {
 		this.scaleX = scaleX;
 		this.scaleY = scaleY;
-		return this;
-	}
-	
-	public function setAnchor( x : Float, y : Float, z : Float = 0 ) : Transform {
-		anchorX = x;
-		anchorY = y;
-		anchorZ = z;
-		return this;
-	}
-	
-	public function setPadding( x : Float, y : Float ) : Transform {
-		paddingX = x;
-		paddingY = y;
 		return this;
 	}
 	
@@ -195,11 +163,6 @@ class Transform extends Component
 	private function set_x( _x : Float ) : Float { x = _x; invalidateMatrices(); return x; }
 	private function set_y( _y : Float ) : Float { y = _y; invalidateMatrices(); return y; }
 	private function set_z( _z : Float ) : Float { z = _z; invalidateMatrices(); return z; }
-	private function set_anchorX( _anchorX : Float ) : Float { anchorX = _anchorX; invalidateMatrices(); return anchorX; }
-	private function set_anchorY( _anchorY : Float ) : Float { anchorY = _anchorY; invalidateMatrices(); return anchorY; }
-	private function set_anchorZ( _anchorZ : Float ) : Float { anchorZ = _anchorZ; invalidateMatrices(); return anchorZ; }
-	private function set_paddingX( _paddingX : Float ) : Float { paddingX = _paddingX; invalidateMatrices(); return paddingX; }
-	private function set_paddingY( _paddingY : Float ) : Float { paddingY = _paddingY; invalidateMatrices(); return paddingY; }
 	private function set_scaleX( _scaleX : Float ) : Float { scaleX = _scaleX; invalidateMatrices(); return scaleX; }
 	private function set_scaleY( _scaleY : Float ) : Float { scaleY = _scaleY; invalidateMatrices(); return scaleY; }
 	private function set_rotation( _rotation : Float ) : Float { rotation = _rotation; invalidateMatrices(); return rotation; }

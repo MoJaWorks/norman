@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
-import uk.co.mojaworks.norman.core.view.GameObject;
+import lime.math.Matrix3;
+import lime.math.Matrix4;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillFragmentShader;
@@ -20,10 +21,10 @@ class FillSprite extends Sprite
 	public var width( default, default ) : Float;
 	public var height( default, default ) : Float;
 	
-	public function new( gameObject : GameObject, color : Int, width : Float = 100, height : Float = 100 ) 
+	public function new( color : Int, width : Float = 100, height : Float = 100 ) 
 	{
 		
-		super( gameObject );
+		super( );
 		this.color = color;
 		this.width = width;
 		this.height = height;
@@ -60,7 +61,7 @@ class FillSprite extends Sprite
 	}
 	
 	override public function render( canvas : ICanvas ) : Void {
-		canvas.fillRect( color.r, color.g, color.b, getFinalAlpha() * color.a, width, height, gameObject.transform.worldTransform, getShader() );
+		canvas.fillRect( color.r, color.g, color.b, getFinalAlpha() * color.a, width, height, renderTransform, getShader() );
 	}
 	
 	

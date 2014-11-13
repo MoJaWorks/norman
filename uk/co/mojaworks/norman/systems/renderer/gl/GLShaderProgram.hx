@@ -41,57 +41,37 @@ class GLShaderProgram implements IShaderProgram
 	{
 		
 		if ( program != null ) _context.deleteProgram( program );
+		program = GLUtils.createProgram( _vsData.getGLSL(), _fsData.getGLSL() );
 		
-		var vs : GLShader = _context.createShader( GL.VERTEX_SHADER );
-		_context.shaderSource( vs, _vsData.getGLSL() );
-		_context.compileShader( vs );
-		
-		#if gl_debug
-			trace("Compiling vertex shader");
-			trace( _context.getShaderInfoLog( vs ) );
-		#end
-		
-		var fs : GLShader = _context.createShader( GL.FRAGMENT_SHADER );
-		_context.shaderSource( fs, _fsData.getGLSL() );
-		_context.compileShader( fs );
-		
-		#if gl_debug
-			trace("Compiling fragment shader");
-			trace( _context.getShaderInfoLog( fs ) );
-		#end
-		
-		program = _context.createProgram();
-		_context.attachShader( program, vs );
-		_context.attachShader( program, fs );
-		_context.linkProgram( program );
-		
-		#if gl_debug
-			trace("Linking shader");
-			trace( _context.getProgramInfoLog( program ) );
-		#end
-		
-		_context.deleteShader(vs);
-		_context.deleteShader(fs);
+		//var vs : GLShader = _context.createShader( GL.VERTEX_SHADER );
+		//_context.shaderSource( vs, _vsData.getGLSL() );
+		//_context.compileShader( vs );
+		//
+		//#if gl_debug
+			//trace( _context.getShaderInfoLog( vs ) );
+		//#end
+		//
+		//var fs : GLShader = _context.createShader( GL.FRAGMENT_SHADER );
+		//_context.shaderSource( fs, _fsData.getGLSL() );
+		//_context.compileShader( fs );
+		//
+		//#if gl_debug
+			//trace( _context.getShaderInfoLog( fs ) );
+		//#end
+		//
+		//program = _context.createProgram();
+		//_context.attachShader( program, vs );
+		//_context.attachShader( program, fs );
+		//_context.linkProgram( program );
+		//
+		//#if gl_debug
+			//trace( _context.getProgramInfoLog( program ) );
+		//#end
+		//
+		//_context.deleteShader(vs);
+		//_context.deleteShader(fs);
 		
 	}
 	
-	/**
-	 * 
-	 */
-	
-	public function getUsesColor():Bool 
-	{
-		return _vsData.usesColor;
-	}
-	
-	/**
-	 * 
-	 * @return
-	 */
-	
-	public function getNumTextures():Int 
-	{
-		return Std.int(Math.max( _vsData.numTextures, _fsData.numTextures));
-	}
 		
 }

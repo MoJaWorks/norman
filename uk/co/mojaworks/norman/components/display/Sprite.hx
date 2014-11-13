@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.display ;
 
+import lime.math.Matrix4;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
@@ -15,10 +16,22 @@ class Sprite extends Component
 	public var alpha : Float = 1;
 	public var visible : Bool = true;
 	
-	public function new( gameObject : GameObject ) 
+	public var anchorX( default, set ) : Float = 0;
+	public var anchorY( default, set ) : Float = 0;
+	public var anchorZ( default, set ) : Float = 0;
+	
+	public var paddingX( default, set ) : Float = 0;
+	public var paddingY( default, set ) : Float = 0;
+	
+	public var renderTransform( get, never ) : Matrix4;
+	private var _renderTransform : Matrix4;
+	private var _renderTransformDirty : Bool = true;
+	
+	public function new( ) 
 	{
-		super( gameObject );
+		super( );
 		initShader();
+		_renderTransform = new Matrix4();
 	}
 	
 	private function initShader() {
@@ -28,6 +41,26 @@ class Sprite extends Component
 	public function getShader() : IShaderProgram {
 		// override and return the current shader
 		return null;
+	}
+	
+	override public function onAdded() : Void {
+		addLocalMessageListener( Transform.MATRIX_DIRTY, invalidateMatrices );
+	}
+	
+	override public function onRemoved() : Void {
+		removeLocalMessageListener( Transform.MATRIX_DIRTY, invalidateMatrices );
+	}
+	
+	private function invalidateMatrices( data : Dynamic = null ) : Void 
+	{
+		_renderTransformDirty = true;
+	}
+	
+	private function recalculateRenderTransform() : Void {
+		_renderTransform = gameObject.transform.worldTransform.clone();
+		_renderTransform.prependTranslation( -anchorX, -anchorY, -anchorZ );
+		_renderTransform.prependTranslation( paddingX, paddingY, 0 );
+		_renderTransformDirty = false;
 	}
 
 	/**
@@ -121,5 +154,42 @@ class Sprite extends Component
 	
 	public function postRender( canvas : ICanvas ) : Void {
 	}
+	
+	/**
+	 * Centers the pivot based on the display
+	 */
+	
+	public function centerAnchor() : Sprite {
+		setAnchor( getNaturalWidth() * 0.5, getNaturalHeight() * 0.5 );
+		return this;
+	}
+	
+	public function setAnchor( x : Float, y : Float, z : Float = 0 ) : Sprite {
+		anchorX = x;
+		anchorY = y;
+		anchorZ = z;
+		return this;
+	}
+	
+	public function setPadding( x : Float, y : Float ) : Sprite {
+		paddingX = x;
+		paddingY = y;
+		return this;
+	}
+	
+	/**
+	 * Transform
+	 */
+	
+	public function get_renderTransform() : Matrix4 { 
+		if ( _renderTransformDirty ) recalculateRenderTransform();
+		return _renderTransform;
+	}
+	 
+	private function set_anchorX( _anchorX : Float ) : Float { anchorX = _anchorX; invalidateMatrices(); return anchorX; }
+	private function set_anchorY( _anchorY : Float ) : Float { anchorY = _anchorY; invalidateMatrices(); return anchorY; }
+	private function set_anchorZ( _anchorZ : Float ) : Float { anchorZ = _anchorZ; invalidateMatrices(); return anchorZ; }
+	private function set_paddingX( _paddingX : Float ) : Float { paddingX = _paddingX; invalidateMatrices(); return paddingX; }
+	private function set_paddingY( _paddingY : Float ) : Float { paddingY = _paddingY; invalidateMatrices(); return paddingY; }
 			
 }
