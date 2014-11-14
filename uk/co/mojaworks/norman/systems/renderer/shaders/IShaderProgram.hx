@@ -7,5 +7,4 @@ import lime.graphics.RenderContext;
  */
 interface IShaderProgram
 {
-	public function compile( ) : Void;
 }

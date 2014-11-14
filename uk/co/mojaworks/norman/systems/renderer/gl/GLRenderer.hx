@@ -1,5 +1,12 @@
 package uk.co.mojaworks.norman.systems.renderer.gl;
+import haxe.Json;
+import lime.Assets;
 import lime.graphics.GLRenderContext;
+import lime.graphics.Image;
+import lime.graphics.ImageBuffer;
+import lime.graphics.opengl.GL;
+import lime.graphics.opengl.GLTexture;
+import lime.utils.UInt8Array;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderProgram;
@@ -27,6 +34,7 @@ class GLRenderer implements IRenderer
 	public function new( context : GLRenderContext ) 
 	{
 		_shaders = new LinkedList<GLShaderProgram>();
+		_textures = new Map<String,GLTextureData>();
 		_canvas = new GLCanvas( context );
 	}
 	
@@ -45,10 +53,10 @@ class GLRenderer implements IRenderer
 	
 	public function createShader( vs : ShaderData, fs : ShaderData ) : IShaderProgram {
 		
-		var shader : GLShaderProgram = new GLShaderProgram( _canvas.getContext(), vs, fs );
+		var shader : GLShaderProgram = new GLShaderProgram( vs, fs );
 		
 		if ( _canvas.getContext() != null ) {
-			shader.compile(); 
+			shader.compile( _canvas.getContext() ); 
 		}
 		#if gl_debug
 			else {
@@ -87,21 +95,24 @@ class GLRenderer implements IRenderer
 	}
 	
 	/**
-	 * TODO: Sort out textures
 	 * Textures
 	 */
 	
-	//public function createTexture( id : String, width : Int, height : Int ) : TextureData {
-		//
-		//var data : GLTextureData = new GLTextureData();
-		//data.id = id;
-		//data.sourceImage = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
-		//data.texture = uploadTexture( data );
-		//
-		//return data;
-		//
-	//}
-	//
+	public function createTexture( id : String, width : Int, height : Int ) : TextureData {
+		
+		var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
+		return createTextureFromImage( id, img, null );
+		
+	}
+	
+	public function createTextureFromAsset( id : String ) : TextureData {
+		
+		var map : String = null;
+		if ( Assets.exists( id + ".map" ) ) map = Assets.getText( id + ".map" );
+		
+		return createTextureFromImage( id, Assets.getImage( id ), map );
+	}
+
 	/**
 	 * Creates a texture, also assigns a texture map in the form of a json string
 	 * Given an id, it can be referenced multiple times while only loaded once
@@ -109,24 +120,32 @@ class GLRenderer implements IRenderer
 	 * @param	data
 	 * @param	map
 	 */
-	//public function createTextureFromImage( id : String, image : Image, map : String = null ) : TextureData {
-		//
-		//var data : GLTextureData = new GLTextureData();
-		//data.id = id;
-		//data.sourceImage = image;
-		//if ( map != null ) data.map = Json.parse( map );
-		//if ( _context != null ) data.texture = uploadTexture( data );
-		//
-		//return data;
-	//}
+	public function createTextureFromImage( id : String, image : Image, map : String = null ) : TextureData {
+		
+		var data : GLTextureData = new GLTextureData();
+		data.id = id;
+		data.sourceImage = image;
+		if ( map != null ) data.map = Json.parse( map );
+		
+		if ( _canvas.getContext() != null ) {
+			data.texture = uploadTexture( data );
+		}
+			#if gl_debug
+				else {
+					trace("Deferred creating texture until context is restored", id);
+				}
+			#end
+		
+		return data;
+	}
 	
-	//public function removeTexture( id : String ) : Void {
-		//
-		//var data : GLTextureData = getTexture(id);
-		//_context.deleteTexture( data.texture );
-		//_textures.remove( id );
-		//
-	//}
+	public function destroyTexture( id : String ) : Void {
+		
+		var data : GLTextureData = getTexture(id);
+		if ( _canvas.getContext() != null ) _canvas.getContext().deleteTexture( data.texture );
+		_textures.remove( id );
+		
+	}
 	
 	/**
 	 * 
@@ -134,36 +153,37 @@ class GLRenderer implements IRenderer
 	 * @return
 	 */
 	
-	//private function uploadTexture( data : GLTextureData ) : GLTexture {
-		//
-		//var tex : GLTexture = _context.createTexture();
-		//
-		//_context.bindTexture( GL.TEXTURE_2D, tex );
-		//_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
-		//_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE );
-		//#if html5
-			//_context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceBitmap.src );
-		//#else
-			//_context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, data.sourceImage.buffer.width, data.sourceImage.buffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.data );
-		//#end
-		//_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
-		//_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
-		//_context.bindTexture( GL.TEXTURE_2D, null );
-		//
-		//return tex;
-	//}
+	private function uploadTexture( data : GLTextureData ) : GLTexture {
+		
+		var context : GLRenderContext = _canvas.getContext();
+		var tex : GLTexture = context.createTexture();
+		
+		context.bindTexture( GL.TEXTURE_2D, tex );
+		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
+		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE );
+		#if html5
+			context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceBitmap.src );
+		#else
+			context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, data.sourceImage.buffer.width, data.sourceImage.buffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.data );
+		#end
+		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
+		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
+		context.bindTexture( GL.TEXTURE_2D, null );
+		
+		return tex;
+	}
 	
 	/**
 	 * 
 	 */
 	
-	//public function getTexture( id : String ) : GLTextureData {
-		//return _textures.get(id);
-	//}
-	//
-	//public function hasTexture( id : String ) : Bool {
-		//return (_textures.get(id) != null);
-	//}
+	public function getTexture( id : String ) : GLTextureData {
+		return _textures.get(id);
+	}
+	
+	public function hasTexture( id : String ) : Bool {
+		return (_textures.get(id) != null);
+	}
 	
 	public function getCanvas() : ICanvas {
 		return _canvas;

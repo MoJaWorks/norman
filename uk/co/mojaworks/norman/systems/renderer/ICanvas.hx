@@ -23,7 +23,7 @@ interface ICanvas
 	function clear() : Void;
 	function begin() : Void;
 	function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ) : Void;
-	function drawImage( texture : TextureData, transform:Matrix4, r : Float, g : Float, b : Float, a : Float, shader : IShaderProgram ) : Void;
-	function drawSubImage( texture : TextureData, sourceRect:Rectangle, transform:Matrix4, r : Float, g : Float, b : Float, a : Float, shader : IShaderProgram ) : Void;
+	function drawImage( texture : TextureData, transform:Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ) : Void;
+	function drawSubImage( texture : TextureData, sourceRect:Rectangle, transform:Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ) : Void;
 	function complete() : Void;
 }

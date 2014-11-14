@@ -11,12 +11,12 @@ import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 interface IRenderer 
 {
 	// Textures
-	//function createTexture( id : String, width : Int, height : Int ) : TextureData;
-	//function createTextureFromImage( id : String, src : Image, map : String ) : TextureData;
-	//function createTextureFromAsset( id : String ) : TextureData;
-	//function hasTexture( id : String ) : Bool;
-	//function getTexture( id : String ) : TextureData;
-	//function destroyTexture( id : String ) : Void;
+	function createTexture( id : String, width : Int, height : Int ) : TextureData;
+	function createTextureFromImage( id : String, src : Image, map : String = null ) : TextureData;
+	function createTextureFromAsset( id : String ) : TextureData;
+	function hasTexture( id : String ) : Bool;
+	function getTexture( id : String ) : TextureData;
+	function destroyTexture( id : String ) : Void;
 	
 	// Shaders
 	function createShader( vertexShader : ShaderData, fragmentData : ShaderData ) : IShaderProgram;

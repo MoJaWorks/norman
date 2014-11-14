@@ -63,15 +63,17 @@ class GLCanvas implements ICanvas
 	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
-		if ( _batch.started && _batch.shader != shader ) renderBatch();
+		if ( _batch.started && (_batch.shader != shader || _batch.texture != null ) ) {
+			renderBatch();
+		}
 		
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
 		var points : Array<Float> = [
-			width, height, 1,
-			0, height, 1,
-			width, 0, 1,
-			0, 0, 1		
+			width, height, 0,
+			0, height, 0,
+			width, 0, 0,
+			0, 0, 0		
 		];
 		
 		var points_trans : Float32Array = new Float32Array( points );
@@ -97,19 +99,71 @@ class GLCanvas implements ICanvas
 		_batch.indices.push( startIndex + 3 );
 		_batch.indices.push( startIndex + 2 );
 		
-		_batch.shader = shader;
-		_batch.texture = null;
+		if ( !_batch.started ) {
+			_batch.shader = shader;
+			_batch.texture = null;
+			_batch.started = true;
+		}
 		
 	}
 	
-	public function drawImage(texture:TextureData, transform:Matrix4, r : Float, g : Float, b : Float, a : Float, shader : IShaderProgram ):Void 
+	public function drawImage(texture : TextureData, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
-		
+		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, shader, r, g, b, a );
 	}
 	
-	public function drawSubImage(texture:TextureData, sourceRect:Rectangle, transform:Matrix4, r : Float, g : Float, b : Float, a : Float, shader : IShaderProgram ):Void 
+	public function drawSubImage(texture : TextureData, sourceRect : Rectangle, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
+		// If the last batch is not compatible then render the last batch
+		if ( _batch.started && ( _batch.shader != shader || _batch.texture != texture ) ) {
+			renderBatch();
+		}
 		
+		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
+		var width : Float = sourceRect.width * texture.sourceImage.width;
+		var height : Float = sourceRect.height * texture.sourceImage.height;
+		
+		var points : Array<Float> = [
+			width, height, 0,
+			0, height, 0,
+			width, 0, 0,
+			0, 0, 0		
+		];
+		
+		var points_trans : Float32Array = new Float32Array( points );
+		transform.transformVectors( points_trans, points_trans );
+		
+		var uvs : Array<Float> = [
+			sourceRect.right, sourceRect.bottom,
+			sourceRect.left, sourceRect.bottom,
+			sourceRect.right, sourceRect.top,
+			sourceRect.left, sourceRect.top
+		];
+		
+		for ( i in 0...4 ) {
+			_batch.vertices.push( points_trans[(i * 3) + 0] );
+			_batch.vertices.push( points_trans[(i * 3) + 1] );
+			_batch.vertices.push( points_trans[(i * 3) + 2] );
+			_batch.vertices.push( r / 255 );
+			_batch.vertices.push( g / 255 );
+			_batch.vertices.push( b / 255 );
+			_batch.vertices.push( a );
+			_batch.vertices.push( uvs[ (i*2) + 0 ] );
+			_batch.vertices.push( uvs[ (i*2) + 1 ] );
+		}
+		
+		_batch.indices.push( startIndex + 0 );
+		_batch.indices.push( startIndex + 1 );
+		_batch.indices.push( startIndex + 2 );
+		_batch.indices.push( startIndex + 1 );
+		_batch.indices.push( startIndex + 3 );
+		_batch.indices.push( startIndex + 2 );
+		
+		if ( !_batch.started ) {
+			_batch.shader = shader;
+			_batch.texture = texture;
+			_batch.started = true;
+		}
 	}
 	
 	public function clear():Void 
@@ -119,7 +173,7 @@ class GLCanvas implements ICanvas
 	}
 	
 	public function begin() : Void {
-		trace("Begin render", _stageWidth, _stageHeight );
+		_batch.reset();
 		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		_context.viewport( 0, 0, _stageWidth, _stageHeight );
 	}
@@ -145,6 +199,21 @@ class GLCanvas implements ICanvas
 		var shader : GLShaderProgram = cast _batch.shader;
 		_context.useProgram( shader.program );
 		
+		var uvAttrib : Int = 0;
+		if ( _batch.texture != null ) {
+			
+			uvAttrib = _context.getAttribLocation( shader.program, "aVertexUV" );
+			var uTexture0 = _context.getUniformLocation( shader.program, "uTexture0" );
+			
+			_context.enableVertexAttribArray( uvAttrib );
+			_context.vertexAttribPointer( uvAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_UV * 4 );
+			
+			_context.activeTexture( GL.TEXTURE0 );
+			_context.bindTexture( GL.TEXTURE_2D, cast( _batch.texture, GLTextureData ).texture );
+			_context.uniform1i( uTexture0, 0 );
+			
+		}
+		
 		var vertexAttr = _context.getAttribLocation( shader.program, "aVertexPosition" );
 		var colorAttr = _context.getAttribLocation( shader.program, "aVertexColor" );
 		var projectionUniform = _context.getUniformLocation( shader.program, "uProjectionMatrix" );
@@ -161,10 +230,16 @@ class GLCanvas implements ICanvas
 		_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_BYTE, 0 );
 		
 		// Clean up
+		_context.useProgram( null );
 		_context.disableVertexAttribArray( vertexAttr );
 		_context.disableVertexAttribArray( colorAttr );
 		_context.bindBuffer( GL.ARRAY_BUFFER, null );
 		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
+		
+		if ( _batch.texture != null ) {
+			_context.disableVertexAttribArray( uvAttrib );
+			_context.bindTexture( GL.TEXTURE_2D, null );
+		}
 		
 		#if gl_debug
 			if ( _context.getError() > 0 ) trace( "GL Error:", _context.getError() );

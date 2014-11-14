@@ -86,14 +86,6 @@ class NormanApp extends Application
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
-			
-			//switch( context ) {
-				//case RenderContext.OPENGL(gl):
-					//gl.clearColor( 1, 0, 0, 1 );
-					//gl.clear( GL.COLOR_BUFFER_BIT );
-				//default:
-			//}
-			
 			renderer.render( root );
 		}
 		
