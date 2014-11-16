@@ -14,6 +14,7 @@ import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
+import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -143,6 +144,7 @@ class GLRenderer implements IRenderer
 		
 		var data : GLTextureData = getTexture(id);
 		if ( _canvas.getContext() != null ) _canvas.getContext().deleteTexture( data.texture );
+		data.isValid = false;
 		_textures.remove( id );
 		
 	}
@@ -183,6 +185,14 @@ class GLRenderer implements IRenderer
 	
 	public function hasTexture( id : String ) : Bool {
 		return (_textures.get(id) != null);
+	}
+	
+	public function reviveTexture( data : TextureData ) : Void {
+		
+		var gl_data : GLTextureData = cast data;
+		_textures.set( data.id, gl_data );
+		gl_data.texture = uploadTexture( gl_data );
+		gl_data.isValid = true;
 	}
 	
 	public function getCanvas() : ICanvas {

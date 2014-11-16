@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.core;
 import uk.co.mojaworks.norman.core.controller.Controller;
 import uk.co.mojaworks.norman.core.model.Model;
 import uk.co.mojaworks.norman.core.view.View;
+import uk.co.mojaworks.norman.engine.NormanApp;
 
 /**
  * ...
@@ -12,20 +13,26 @@ class Core
 	
 	private static var _instance : Core;
 	
+	
+	// default framework parts
 	public var messenger( default, null ) : Messenger;
 	public var view( default, null ) : View;
 	public var model( default, null ) : Model;
 	public var controller( default, null ) : Controller;
 	
-	// TODO: Add root
-	// TODO: Add soundEngine
+	// App contains specific systems e.g. root, renderer, soundEngine etc
+	public var app( default, null ) : NormanApp;
 	
-	
+
 	private function new() {
 		messenger = new Messenger();
 		view = new View();
 		model = new Model();
 		controller = new Controller();
+	}
+	
+	public static function init( app : NormanApp ) : Void {
+		getInstance().app = app;
 	}
 	
 	public static function getInstance() : Core {

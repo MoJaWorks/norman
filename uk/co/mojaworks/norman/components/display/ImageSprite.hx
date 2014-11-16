@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
 import lime.Assets;
+import lime.graphics.Image;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
@@ -25,20 +26,18 @@ class ImageSprite extends Sprite
 	// Colour multipliers
 	public var color( default, default ) : Color;
 		
-	public function new( textureId : String, subTextureId : String = null ) 
+	// Make sure setTexture is called after to finish creation
+	public function new( ) 
 	{
 		super();
-		
 		color = 0xFFFFFFFF;
-		setTexture( textureId, subTextureId );
-		
 	}
 	
 	override function initShader() 
 	{
 		super.initShader();
 		if ( ImageSprite.shader == null ) {
-			ImageSprite.shader = NormanApp.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
+			ImageSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
 		}
 	}
 	
@@ -47,17 +46,14 @@ class ImageSprite extends Sprite
 		return ImageSprite.shader;
 	}
 	
-	public function setTexture( textureId : String, subTextureId : String = null ) : ImageSprite {
+	public function setTexture( texture : TextureData, subTextureId : String = null ) : ImageSprite {
 	
 		// Unload the old one first
 		if ( _textureData != null ) unlinkTexture();
 		
-		// Get the new texture
-		if ( !NormanApp.renderer.hasTexture( textureId ) ) {
-			_textureData = NormanApp.renderer.createTextureFromAsset( textureId );
-		}else {
-			_textureData = NormanApp.renderer.getTexture( textureId );
-		}
+		_textureData = texture;
+		
+		if ( !_textureData.isValid ) core.app.renderer.reviveTexture( _textureData );
 		
 		_textureData.useCount++;
 		_uvRect = _textureData.getUVFor( subTextureId );
@@ -69,7 +65,7 @@ class ImageSprite extends Sprite
 	private function unlinkTexture() : Void {
 		_textureData.useCount--;
 		// Unload the texture if it is no longer in use
-		if ( _textureData.useCount <= 0 ) NormanApp.renderer.destroyTexture( _textureData.id );
+		if ( _textureData.useCount <= 0 ) core.app.renderer.destroyTexture( _textureData.id );
 	}
 	
 	override public function onAdded():Void 

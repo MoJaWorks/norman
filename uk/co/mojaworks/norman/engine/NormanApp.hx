@@ -4,6 +4,7 @@ import lime.app.Application;
 import lime.graphics.opengl.GL;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.display.Camera;
+import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
@@ -18,12 +19,16 @@ import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 class NormanApp extends Application
 {
 	
+	public var core( get, never ) : Core;
+	private function get_core() : Core { return Core.getInstance(); };
+	
 	private var _hasInit : Bool = false;
 	
 	// Public static vars for easy access
 	//public static var viewport : Viewport;
-	public static var renderer : IRenderer;
-	public static var root : GameObject;
+	// TODO: Add sound engine
+	public var renderer : IRenderer;
+	public var root : GameObject;
 	
 	/**
 	 * 
@@ -32,6 +37,7 @@ class NormanApp extends Application
 	public function new( _stageWidth : Int, _stageHeight : Int ) 
 	{
 		super();
+		Core.init( this );
 	}
 	
 	override public function init( context : RenderContext ) {

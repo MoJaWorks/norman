@@ -32,7 +32,7 @@ class FillSprite extends Sprite
 	
 	override public function initShader() : Void {
 		if ( shaderProgram == null ) {
-			shaderProgram = NormanApp.renderer.createShader( new DefaultFillVertexShader(), new DefaultFillFragmentShader() );
+			shaderProgram = core.app.renderer.createShader( new DefaultFillVertexShader(), new DefaultFillFragmentShader() );
 		}
 	}
 	
