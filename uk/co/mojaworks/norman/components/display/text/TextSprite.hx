@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.display;
+package uk.co.mojaworks.norman.components.display.text ;
 import lime.graphics.Font;
 import lime.graphics.TextFormat;
 import uk.co.mojaworks.norman.components.renderer.ICanvas;
@@ -22,15 +22,10 @@ class TextSprite extends Sprite
 	// Draws onto this texture constantly re-uses it
 	public var textureData : TextureData;
 	
-	public var width( default, null ) : Float;
-	public var height( default, null ) : Float;
-	public var bold( default, null ) : Bool = false;
-	public var italic( default, null ) : Bool = false;
-	public var underline( default, null ) : Bool = false;
 	public var align( default, null ) : TextAlign = TextAlign.Left;
-	public var fontSize( default, null ) : Int = 12;
 	public var font( default, null ) : Font = "Arial";
 	public var text( default, null ) : String = "";
+	public var wrapWidth( default, null ) : Float = 0;
 		
 	// colour multipliers
 	public var color( default, default ) : Color;
@@ -97,33 +92,6 @@ class TextSprite extends Sprite
 	 * SETTERS
 	 */
 	
-	public function setBold( bold : Bool ) : TextSprite {
-		if ( bold != this.bold ) {
-			this.bold = bold;
-			updateTextFormat();
-			build();
-		}
-		return this;
-	}
-	
-	public function setItalic( italic : Bool ) : TextSprite {
-		if ( italic != this.italic ) {
-			this.italic = italic;
-			updateTextFormat();
-			build();
-		}
-		return this;
-	}
-	
-	public function setUnderline( underline : Bool ) : TextSprite {
-		if ( underline != this.underline ) {
-			this.underline = underline;
-			updateTextFormat();
-			build();
-		}
-		return this;
-	}
-	
 	public function setFontSize( fontSize : Int ) : TextSprite {
 		if ( fontSize != this.fontSize ) {
 			this.fontSize = fontSize;
@@ -133,11 +101,7 @@ class TextSprite extends Sprite
 		return this;
 	}
 	
-	#if flash
-	public function setAlign( align : TextFormatAlign ) : TextSprite {
-	#else
-	public function setAlign( align : String ) : TextSprite {
-	#end
+	public function setAlign( align : TextAlign ) : TextSprite {
 		if ( align != this.align ) {
 			this.align = align;
 			updateTextFormat();
@@ -166,31 +130,7 @@ class TextSprite extends Sprite
 		return this;
 	}
 	
-	public function setWidth( width : Int ) : TextSprite {
-		this.width = width;
-		textField.width = width;
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
-		build();
-		return this;
-	}
-	
-	public function setHeight( height : Int ) : TextSprite {
-		this.height = height;
-		textField.height = height;
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
-		build();
-		return this;
-	}
-	
-	public function setSize( width : Int, height : Int ) : TextSprite {
-		this.width = width;
-		this.height = height;
-		textField.width = width;
-		textField.height = height;
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
-		build();
-		return this;
-	}
+
 	
 	private function updateTextFormat() : Void {
 		var format : TextFormat = new TextFormat( font, fontSize, 0xFFFFFF, bold, italic, underline, null, null, align );
