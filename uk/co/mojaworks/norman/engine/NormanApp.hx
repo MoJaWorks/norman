@@ -3,7 +3,6 @@ package uk.co.mojaworks.norman.engine ;
 import lime.app.Application;
 import lime.graphics.opengl.GL;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.components.display.Camera;
 import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
@@ -28,7 +27,6 @@ class NormanApp extends Application
 	//public static var viewport : Viewport;
 	// TODO: Add sound engine
 	public var renderer : IRenderer;
-	public var root : GameObject;
 	
 	/**
 	 * 
@@ -41,8 +39,6 @@ class NormanApp extends Application
 	}
 	
 	override public function init( context : RenderContext ) {
-		
-		root = new GameObject();
 		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
@@ -92,7 +88,7 @@ class NormanApp extends Application
 	override public function render (context:RenderContext):Void {
 		
 		if ( _hasInit ) {
-			renderer.render( root );
+			renderer.render( core.root );
 		}
 		
 	}

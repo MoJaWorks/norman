@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.core;
 import uk.co.mojaworks.norman.core.controller.Controller;
 import uk.co.mojaworks.norman.core.model.Model;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.core.view.View;
 import uk.co.mojaworks.norman.engine.NormanApp;
 
@@ -15,6 +16,7 @@ class Core
 	
 	
 	// default framework parts
+	public var root( default, null ) : GameObject;
 	public var messenger( default, null ) : Messenger;
 	public var view( default, null ) : View;
 	public var model( default, null ) : Model;
@@ -29,6 +31,9 @@ class Core
 		view = new View();
 		model = new Model();
 		controller = new Controller();
+		
+		// Messenger added to root so will report messages as coming from root
+		root = new GameObject().add( messenger );
 	}
 	
 	public static function init( app : NormanApp ) : Void {

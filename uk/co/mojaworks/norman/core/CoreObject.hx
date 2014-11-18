@@ -29,6 +29,10 @@ class CoreObject
 		core.messenger.addMessageListener( message, callback ); 
 	}
 	
+	private function removeMessageListener( message : String, ?callback : MessageCallback = null ) {
+		core.messenger.removeMessageListener( message, callback ); 
+	}
+	
 	private function getObject( id : String ) {
 		return core.view.getObject( id );
 	}

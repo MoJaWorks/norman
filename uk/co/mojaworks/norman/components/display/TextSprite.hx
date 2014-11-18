@@ -1,9 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
-import openfl.display.BitmapData;
-import openfl.geom.Matrix;
-import openfl.text.TextField;
-import openfl.text.TextFormat;
-import openfl.text.TextFormatAlign;
+import lime.graphics.Font;
+import lime.graphics.TextFormat;
 import uk.co.mojaworks.norman.components.renderer.ICanvas;
 import uk.co.mojaworks.norman.components.renderer.Renderer;
 import uk.co.mojaworks.norman.components.renderer.TextureData;
@@ -13,27 +10,26 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author Simon
  */
+
+enum TextAlign {
+	Left;
+	Right;
+	Center;
+}
+ 
 class TextSprite extends Sprite
 {
-
+	// Draws onto this texture constantly re-uses it
 	public var textureData : TextureData;
 	
-	// when updated draw textfield onto canvas
-	var textField : TextField;
-	var canvas : BitmapData;
-	
-	public var width( default, null ) : Int;
-	public var height( default, null ) : Int;
+	public var width( default, null ) : Float;
+	public var height( default, null ) : Float;
 	public var bold( default, null ) : Bool = false;
 	public var italic( default, null ) : Bool = false;
 	public var underline( default, null ) : Bool = false;
-	#if flash
-	public var align( default, null ) : TextFormatAlign = TextFormatAlign.LEFT;
-	#else
-	public var align( default, null ) : String = TextFormatAlign.LEFT;
-	#end
+	public var align( default, null ) : TextAlign = TextAlign.Left;
 	public var fontSize( default, null ) : Int = 12;
-	public var font( default, null ) : String = "Arial";
+	public var font( default, null ) : Font = "Arial";
 	public var text( default, null ) : String = "";
 		
 	// colour multipliers
@@ -42,7 +38,7 @@ class TextSprite extends Sprite
 	public function new( text : String, width : Int = 200, height : Int = 200 ) 
 	{
 		super();
-		
+			
 		isRenderable = true;
 		
 		color = 0xFFFFFFFF;

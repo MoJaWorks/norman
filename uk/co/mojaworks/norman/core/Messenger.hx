@@ -1,41 +1,64 @@
 package uk.co.mojaworks.norman.core;
+import uk.co.mojaworks.norman.core.view.GameObject;
 
 /**
  * ...
  * @author Simon
  */
 
-typedef MessageCallback = Dynamic->Void;
+class MessageData {
+	
+	var target : GameObject;
+	var message : String;
+	var data : Dynamic;
+	
+	public function new ( target : GameObject, message : String, data : Dynamic ) {
+		this.target = target;
+		this.message = message;
+		this.data = data;
+	}
+}
+
+/**
+ * 
+ */
  
-class Messenger
+typedef MessageCallback = MessageData->Void;
+ 
+/**
+ * 
+ */
+
+class Messenger extends Component
 {
 
 	var _listeners:Map<String, Array<MessageCallback>>;
 	
 	public function new() 
 	{
+		super();
 		_listeners = new Map<String, Array<MessageCallback>>();
 	}
 	
-	public function sendMessage( message : String, ?data : Dynamic = null ) : Void {
+	override public function sendMessage( message : String, ?data : Dynamic = null ) : Void {
 
 		//trace("Sending", message );
 		if ( _listeners.get( message ) != null ) {
 			for ( listener in _listeners.get( message ) ) {
-				listener( data );
+				listener( new MessageData( gameObject, message, data ) );
 			}
 		}
 		
 	}
 	
-	public function addMessageListener( message : String, callback : MessageCallback ) : Void {
+	override public function addMessageListener( message : String, callback : MessageCallback ) : Void {
 		if ( _listeners.get(message) == null ) _listeners.set( message, [] );
 		if ( _listeners.get(message).indexOf( callback ) == -1 ) {
 			_listeners.get(message).push( callback );
 		}
 	}
 	
-	public function removeMessageListener( message : String, ?callback : MessageCallback = null ) : Void {
+	override public function removeMessageListener( message : String, ?callback : MessageCallback = null ) : Void {
 		if ( _listeners.get(message) != null ) {
 			if ( callback != null ) {
 				_listeners.get(message).remove( callback );
@@ -46,7 +69,8 @@ class Messenger
 		}
 	}
 	
-	public function destroy() : Void {
+	override public function destroy() : Void {
+		super.destroy();
 		_listeners = null;
 	}
 	

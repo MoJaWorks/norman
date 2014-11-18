@@ -40,6 +40,7 @@ class GameObject extends CoreObject
 		_components = new Map<String,Component>();
 		
 		messenger = new Messenger();
+		add( messenger );
 		
 		transform = new Transform();
 		add( transform );

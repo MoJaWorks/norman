@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.components.display ;
 
 import lime.math.Matrix4;
 import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.core.Messenger.MessageData;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
@@ -51,15 +52,14 @@ class Sprite extends Component
 		removeLocalMessageListener( Transform.MATRIX_DIRTY, invalidateMatrices );
 	}
 	
-	private function invalidateMatrices( data : Dynamic = null ) : Void 
+	private function invalidateMatrices( data : MessageData = null ) : Void 
 	{
 		_renderTransformDirty = true;
 	}
 	
 	private function recalculateRenderTransform() : Void {
 		_renderTransform = gameObject.transform.worldTransform.clone();
-		_renderTransform.prependTranslation( -anchorX, -anchorY, -anchorZ );
-		_renderTransform.prependTranslation( paddingX, paddingY, 0 );
+		_renderTransform.prependTranslation( paddingX - anchorX, paddingY - anchorY, -anchorZ );
 		_renderTransformDirty = false;
 	}
 
