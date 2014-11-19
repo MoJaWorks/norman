@@ -2,7 +2,6 @@ package uk.co.mojaworks.norman.core.view;
 
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.Messenger;
 
@@ -16,6 +15,10 @@ class GameObject extends CoreObject
 	public static inline var CHILD_REMOVED : String = "CHILD_REMOVED";
 	static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
 	static public inline var REMOVED_AS_CHILD : String = "REMOVED_AS_CHILD";
+	
+	// Unique id
+	public var id : String;
+	private static var _entityAutoIdCounter : Int;
 	
 	// Each gameobject has it's own local messenger for local messages - there's nothing for non-locals here
 	public var messenger : Messenger;
@@ -33,9 +36,13 @@ class GameObject extends CoreObject
 	 * 
 	 */
 
-	public function new() 
+	public function new( id : String = null ) 
 	{
 		super();
+		
+		this.id = id;
+		if ( id == null ) id = _entityAutoIdCounter++;
+		
 		children = [];
 		_components = new Map<String,Component>();
 		

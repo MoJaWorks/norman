@@ -1,9 +1,8 @@
 package uk.co.mojaworks.norman.components.display.text ;
 import lime.graphics.Font;
 import lime.graphics.TextFormat;
-import uk.co.mojaworks.norman.components.renderer.ICanvas;
-import uk.co.mojaworks.norman.components.renderer.Renderer;
-import uk.co.mojaworks.norman.components.renderer.TextureData;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -20,124 +19,116 @@ enum TextAlign {
 class TextSprite extends Sprite
 {
 	// Draws onto this texture constantly re-uses it
-	public var textureData : TextureData;
-	
 	public var align( default, null ) : TextAlign = TextAlign.Left;
-	public var font( default, null ) : Font = "Arial";
 	public var text( default, null ) : String = "";
 	public var wrapWidth( default, null ) : Float = 0;
 		
 	// colour multipliers
 	public var color( default, default ) : Color;
 	
-	public function new( text : String, width : Int = 200, height : Int = 200 ) 
+	var _textureData : TextureData;
+	var _font : Font;
+	var _fontData : NativeFontData;
+	var _dirty : Bool;
+	var _layout : TextLayout;
+	
+	public function new( ) 
 	{
 		super();
-			
-		isRenderable = true;
-		
 		color = 0xFFFFFFFF;
-		
-		textField = new TextField();
-		setText( text );
-		setSize( width, height );
-		updateTextFormat();
-		canvas = new BitmapData( width, height, true, 0x00FFFFFF );
 	}
+	
+	/**
+	 * Add/remove
+	 */
 	
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		build();
+		
+		if ( textureData = null ) {
+			_textureData = core.app.renderer.createTexture( "norman_fonts/" + gameObject.id, 300, 300 );
+		}
+		
+		_dirty = true;
 	}
 	
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		if ( textureData != null ) root.get(Renderer).textureManager.unloadTexture( textureData.id );
-	}
-		
-	private function build() : Void {
-		
-		if ( gameObject != null ) {
-			canvas.fillRect( canvas.rect, 0x00FFFFFF );
-			canvas.draw( textField, new Matrix(), null, null, null, true );
-			textureData = root.get(Renderer).textureManager.loadBitmap( "text/" + gameObject.id, canvas );
-		}
-	
+		if ( textureData != null ) core.app.renderer.destroyTexture( "norman_fonts/" + gameObject.id );
 	}
 	
+	
+	private function rebuild() : Void {
+		_layout.rebuild( _fontData, text, align, wrapWidth );
+	}
+	
+	
+	/**
+	 * Render
+	 * @param	canvas
+	 */
+			
 	override public function render(canvas:ICanvas):Void 
 	{
 		super.render(canvas);
 		canvas.drawImage( textureData, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
+	/**
+	 * Gets the width of the text after layout
+	 * @return
+	 */
+	
 	override public function getNaturalWidth() : Float 
 	{
 		return width;
 	}
+	
+	/**
+	 * Gets the height of the text after layout
+	 * @return
+	 */
 	
 	override public function getNaturalHeight() : Float 
 	{
 		return height;
 	}
 	
-	public function setColor( color : Int ) : TextSprite {
-		this.color = color;
-		return this;
-	}
-		
 	/**
-	 * SETTERS
+	 * Sets the font color
+	 * @return
 	 */
 	
-	public function setFontSize( fontSize : Int ) : TextSprite {
-		if ( fontSize != this.fontSize ) {
-			this.fontSize = fontSize;
-			updateTextFormat();
-			build();
-		}
+	public function setColor( color : Int ) : TextSprite {
+		this.color = color;
+		_dirty = true;
 		return this;
 	}
 	
+	/**
+	 * Sets the font
+	 * @return
+	 */
+	
+	public function setFont( font : Font ) : TextSprite {
+		this._font = font;
+		this._fontData = _font.decompose();
+		_dirty = true;
+		return this;
+	}
+		
 	public function setAlign( align : TextAlign ) : TextSprite {
-		if ( align != this.align ) {
-			this.align = align;
-			updateTextFormat();
-			build();
-		}
+		this.align = align;
+		_dirty = true;
 		return this;
 	}
 	
-	public function setFont( font : String ) : TextSprite {
-		
-		if ( font != this.font ) {
-			this.font = font;
-			updateTextFormat();
-			build();
-		}
-		return this;
-	}
-
 	public function setText( text : String ) : TextSprite {
-		
-		if ( text != this.text ) {
-			this.text = text;
-			textField.text = text;
-			build();
-		}
+		this.text = text;
+		_dirty = true;
 		return this;
-	}
-	
-
-	
-	private function updateTextFormat() : Void {
-		var format : TextFormat = new TextFormat( font, fontSize, 0xFFFFFF, bold, italic, underline, null, null, align );
-		textField.defaultTextFormat = format;
-		textField.setTextFormat( format );
-	}
-	
-	
+	}	
 	
 }
