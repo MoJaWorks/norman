@@ -51,7 +51,7 @@ class NormanApp extends Application
 				
 		}
 		
-		renderer.resize( window.width, window.height );
+		if ( renderer != null ) renderer.resize( window.width, window.height );
 		
 		_hasInit = true;
 		onStartupComplete();

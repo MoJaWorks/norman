@@ -18,7 +18,7 @@ class GameObject extends CoreObject
 	
 	// Unique id
 	public var id : String;
-	private static var _entityAutoIdCounter : Int;
+	private static var _entityAutoIdCounter : Int = 0;
 	
 	// Each gameobject has it's own local messenger for local messages - there's nothing for non-locals here
 	public var messenger : Messenger;
@@ -41,7 +41,7 @@ class GameObject extends CoreObject
 		super();
 		
 		this.id = id;
-		if ( id == null ) id = _entityAutoIdCounter++;
+		if ( id == null ) id = Std.string(_entityAutoIdCounter++);
 		
 		children = [];
 		_components = new Map<String,Component>();

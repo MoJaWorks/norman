@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.display.text;
+package uk.co.mojaworks.norman.components.display.text.layout ;
 import lime.math.Rectangle;
 
 /**

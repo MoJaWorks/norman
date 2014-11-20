@@ -1,6 +1,8 @@
 package uk.co.mojaworks.norman.components.display.text ;
 import lime.graphics.Font;
 import lime.graphics.TextFormat;
+import uk.co.mojaworks.norman.components.display.text.layout.TextLayout;
+import uk.co.mojaworks.norman.components.display.text.layout.TextLayout.TextAlign;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.Color;
@@ -9,12 +11,6 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author Simon
  */
-
-enum TextAlign {
-	Left;
-	Right;
-	Center;
-}
  
 class TextSprite extends Sprite
 {
@@ -46,7 +42,7 @@ class TextSprite extends Sprite
 	{
 		super.onAdded();
 		
-		if ( textureData = null ) {
+		if ( _textureData = null ) {
 			_textureData = core.app.renderer.createTexture( "norman_fonts/" + gameObject.id, 300, 300 );
 		}
 		
@@ -56,7 +52,7 @@ class TextSprite extends Sprite
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		if ( textureData != null ) core.app.renderer.destroyTexture( "norman_fonts/" + gameObject.id );
+		if ( _textureData != null ) core.app.renderer.destroyTexture( "norman_fonts/" + gameObject.id );
 	}
 	
 	
@@ -73,7 +69,7 @@ class TextSprite extends Sprite
 	override public function render(canvas:ICanvas):Void 
 	{
 		super.render(canvas);
-		canvas.drawImage( textureData, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
+		canvas.drawImage( _textureData, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
 	/**
