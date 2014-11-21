@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.display.text.font ;
+package uk.co.mojaworks.norman.components.display.text ;
 
 /**
  * ...
@@ -27,9 +27,9 @@ class KerningData {
 	public function new() { };
 }
  
-class FontData
+class BitmapFont
 {
-	
+	public var id : String;
 	public var face : String;
 	public var size : Int;
 	public var bold : Bool;
@@ -38,14 +38,13 @@ class FontData
 	public var spacing : Array<Int>;
 	public var lineHeight : Int;
 	public var base : Int;
-	public var pageFilenames : Array<String>;
+	public var numPages : Int;
 	public var characters : Array<CharacterData>;
 	public var kernings : Array<KerningData>;
 		
 	public function new() {
 		padding = [];
 		spacing = [];
-		pageFilenames = [];
 		characters = [];
 		kernings = [];
 	}

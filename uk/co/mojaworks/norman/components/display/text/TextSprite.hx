@@ -1,8 +1,10 @@
 package uk.co.mojaworks.norman.components.display.text ;
 import lime.graphics.Font;
 import lime.graphics.TextFormat;
-import uk.co.mojaworks.norman.components.display.text.layout.TextLayout;
-import uk.co.mojaworks.norman.components.display.text.layout.TextLayout.TextAlign;
+import lime.math.Rectangle;
+import uk.co.mojaworks.norman.components.display.text.BitmapFont;
+import uk.co.mojaworks.norman.components.display.text.layout.TextFormat;
+import uk.co.mojaworks.norman.components.display.text.layout.TextFormat.TextAlign;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.Color;
@@ -12,21 +14,32 @@ import uk.co.mojaworks.norman.utils.Color;
  * @author Simon
  */
  
+enum TextAlign {
+	Left;
+	Right;
+	Center;
+}
+ 
 class TextSprite extends Sprite
 {
-	// Draws onto this texture constantly re-uses it
-	public var align( default, null ) : TextAlign = TextAlign.Left;
+	// Get access to formatting through layout
 	public var text( default, null ) : String = "";
-	public var wrapWidth( default, null ) : Float = 0;
-		
-	// colour multipliers
-	public var color( default, default ) : Color;
 	
+	// config
+	public var color( default, default ) : Color;
+	public var font( default, default ) : BitmapFont;
+	public var align( default, default ) : TextAlign;
+	public var wrapWidth( default, default ) : Float;
+	
+	// results
+	public var lineLengths( default, null ) : Array<Float>;
+	public var bounds( default, null ) : Rectangle;
+		
+	// Draws onto this texture constantly re-uses it
 	var _textureData : TextureData;
-	var _font : Font;
-	var _fontData : NativeFontData;
+	var _fontTextures : Array<TextureData>;
+	
 	var _dirty : Bool;
-	var _layout : TextLayout;
 	
 	public function new( ) 
 	{
@@ -43,7 +56,7 @@ class TextSprite extends Sprite
 		super.onAdded();
 		
 		if ( _textureData = null ) {
-			_textureData = core.app.renderer.createTexture( "norman_fonts/" + gameObject.id, 300, 300 );
+			_textureData = core.app.renderer.createTexture( "@norman_fonts/" + gameObject.id, 300, 300 );
 		}
 		
 		_dirty = true;
@@ -52,7 +65,7 @@ class TextSprite extends Sprite
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		if ( _textureData != null ) core.app.renderer.destroyTexture( "norman_fonts/" + gameObject.id );
+		if ( _textureData != null ) core.app.renderer.destroyTexture( "@norman_fonts/" + gameObject.id );
 	}
 	
 	
@@ -68,7 +81,21 @@ class TextSprite extends Sprite
 			
 	override public function render(canvas:ICanvas):Void 
 	{
-		super.render(canvas);
+
+		if ( _dirty ) {
+		
+			var lineStart : Int;
+			var lineEnd : Int;
+			var lineLength : Float;		
+			
+			for ( i in 0...text.length ) {
+				//TODO: Draw characters a line at a time
+				//TODO: Set render texture to textureData
+			}
+		
+			_dirty = false;
+		}
+		
 		canvas.drawImage( _textureData, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
@@ -97,34 +124,34 @@ class TextSprite extends Sprite
 	 * @return
 	 */
 	
-	public function setColor( color : Int ) : TextSprite {
-		this.color = color;
-		_dirty = true;
-		return this;
-	}
+	//public function setColor( color : Int ) : TextSprite {
+		//this.color = color;
+		//_dirty = true;
+		//return this;
+	//}
 	
 	/**
 	 * Sets the font
 	 * @return
 	 */
 	
-	public function setFont( font : Font ) : TextSprite {
-		this._font = font;
-		this._fontData = _font.decompose();
-		_dirty = true;
-		return this;
-	}
-		
-	public function setAlign( align : TextAlign ) : TextSprite {
-		this.align = align;
-		_dirty = true;
-		return this;
-	}
-	
-	public function setText( text : String ) : TextSprite {
-		this.text = text;
-		_dirty = true;
-		return this;
-	}	
+	//public function setFont( font : Font ) : TextSprite {
+		//this._font = font;
+		//this._fontData = _font.decompose();
+		//_dirty = true;
+		//return this;
+	//}
+		//
+	//public function setAlign( align : TextAlign ) : TextSprite {
+		//this.align = align;
+		//_dirty = true;
+		//return this;
+	//}
+	//
+	//public function setText( text : String ) : TextSprite {
+		//this.text = text;
+		//_dirty = true;
+		//return this;
+	//}	
 	
 }

@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.utils;
 import haxe.xml.Fast;
-import uk.co.mojaworks.norman.components.display.text.font.FontData;
+import lime.Assets;
+import uk.co.mojaworks.norman.components.display.text.BitmapFont;
 
 /**
  * ...
@@ -14,11 +15,12 @@ class FontUtils
 		
 	}
 	
-	public static function parseFnt( file : String ) : FontData {
+	public static function loadFnt( id : String ) : BitmapFont {
 		
-		var fast : Fast = new Fast( Xml.parse( file ).firstElement() );
+		var fast : Fast = new Fast( Xml.parse( Assets.getText(id + ".fnt") ).firstElement() );
 		
-		var data : FontData = new FontData();
+		var data : BitmapFont = new BitmapFont();
+		data.id = id;
 		data.face = fast.node.info.att.face;
 		data.size = Std.int(Math.abs( Std.parseInt( fast.node.info.att.size ) ));
 		data.bold = fast.node.info.att.bold == "1";
@@ -35,9 +37,7 @@ class FontUtils
 		data.lineHeight = Std.parseInt(fast.node.common.att.lineHeight);
 		data.base = Std.parseInt(fast.node.common.att.base);
 		
-		for ( page in fast.node.pages.nodes.page ) {
-			data.pageFilenames.push( page.att.file );
-		}
+		data.numPages = fast.node.pages.nodes.page.length;
 		
 		for ( char in fast.node.chars.nodes.char ) {
 			

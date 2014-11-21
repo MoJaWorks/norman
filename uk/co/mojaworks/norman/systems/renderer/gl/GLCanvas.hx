@@ -182,6 +182,10 @@ class GLCanvas implements ICanvas
 		renderBatch();
 	}
 	
+	public function pushRenderTarget( target : TextureData ) : Void {
+		//_context.createFramebuffer
+	}
+	
 	private function renderBatch( ) : Void {
 				
 		// First buffer the data so GL can use it
