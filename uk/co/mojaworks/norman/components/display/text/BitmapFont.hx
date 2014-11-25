@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.display.text ;
+import uk.co.mojaworks.norman.systems.renderer.TextureData;
 
 /**
  * ...
@@ -16,7 +17,9 @@ class CharacterData {
 	public var yOffset : Int;
 	public var xAdvance : Int;
 	public var pageId : Int;
-	public function new() { };
+	public function new( id : Int = 0 ) {
+		this.id = id;
+	};
 	
 }
 
@@ -39,13 +42,15 @@ class BitmapFont
 	public var lineHeight : Int;
 	public var base : Int;
 	public var numPages : Int;
-	public var characters : Array<CharacterData>;
-	public var kernings : Array<KerningData>;
+	public var pages : Array<TextureData>;
+	public var characters : Map<Int,CharacterData>;
+	public var kernings : Map<Int,Map<Int,KerningData>>;
 		
 	public function new() {
 		padding = [];
 		spacing = [];
-		characters = [];
-		kernings = [];
+		characters = new Map<Int,CharacterData>();
+		kernings = new Map<Int, Map<Int,KerningData> >();
+		pages = [];
 	}
 }

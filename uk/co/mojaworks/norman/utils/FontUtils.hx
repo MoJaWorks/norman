@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.utils;
 import haxe.xml.Fast;
 import lime.Assets;
 import uk.co.mojaworks.norman.components.display.text.BitmapFont;
+import uk.co.mojaworks.norman.core.Core;
 
 /**
  * ...
@@ -15,9 +16,9 @@ class FontUtils
 		
 	}
 	
-	public static function loadFnt( id : String ) : BitmapFont {
+	public static function createFontFromFnt( id : String ) : BitmapFont {
 		
-		var fast : Fast = new Fast( Xml.parse( Assets.getText(id + ".fnt") ).firstElement() );
+		var fast : Fast = new Fast( Xml.parse( Assets.getText(id) ).firstElement() );
 		
 		var data : BitmapFont = new BitmapFont();
 		data.id = id;
@@ -39,6 +40,12 @@ class FontUtils
 		
 		data.numPages = fast.node.pages.nodes.page.length;
 		
+		var page_root : String = id.substring(0, id.lastIndexOf("/") );
+		trace("Font root is", page_root);
+		for ( page in fast.node.pages.nodes.page ) {
+			data.pages.push( Core.getInstance().app.renderer.createTextureFromAsset( page_root + "/" + page.att.file ) );
+		}
+		
 		for ( char in fast.node.chars.nodes.char ) {
 			
 			var char_data : CharacterData = new CharacterData();
@@ -51,7 +58,7 @@ class FontUtils
 			char_data.yOffset = Std.parseInt( char.att.yoffset );
 			char_data.xAdvance = Std.parseInt( char.att.xadvance );
 			char_data.pageId = Std.parseInt( char.att.page );
-			data.characters.push( char_data );
+			data.characters.set( char_data.id, char_data );
 			
 		}
 		
@@ -61,7 +68,8 @@ class FontUtils
 			kern_data.first = Std.parseInt( kern.att.first );
 			kern_data.second = Std.parseInt( kern.att.second );
 			kern_data.amount = Std.parseInt( kern.att.amount );
-			data.kernings.push( kern_data );
+			if ( data.kernings.get( kern_data.first ) == null ) data.kernings.set( kern_data.first, new Map<Int, KerningData>() );
+			data.kernings.get( kern_data.first ).set( kern_data.second, kern_data ) ;
 		}
 		
 		return data;

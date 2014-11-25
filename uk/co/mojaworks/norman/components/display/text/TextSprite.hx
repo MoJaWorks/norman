@@ -1,11 +1,12 @@
 package uk.co.mojaworks.norman.components.display.text ;
-import lime.graphics.Font;
-import lime.graphics.TextFormat;
+import lime.math.Matrix3;
+import lime.math.Matrix4;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.display.text.BitmapFont;
-import uk.co.mojaworks.norman.components.display.text.layout.TextFormat;
-import uk.co.mojaworks.norman.components.display.text.layout.TextFormat.TextAlign;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageVertexShader;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.utils.Color;
 
@@ -22,8 +23,10 @@ enum TextAlign {
  
 class TextSprite extends Sprite
 {
+	public static var shader : IShaderProgram;
+	
 	// Get access to formatting through layout
-	public var text( default, null ) : String = "";
+	public var text( default, set ) : String = "";
 	
 	// config
 	public var color( default, default ) : Color;
@@ -32,8 +35,8 @@ class TextSprite extends Sprite
 	public var wrapWidth( default, default ) : Float;
 	
 	// results
-	public var lineLengths( default, null ) : Array<Float>;
-	public var bounds( default, null ) : Rectangle;
+	//public var lineLengths( default, null ) : Array<Float>;
+	//public var bounds( default, null ) : Rectangle;
 		
 	// Draws onto this texture constantly re-uses it
 	var _textureData : TextureData;
@@ -45,6 +48,25 @@ class TextSprite extends Sprite
 	{
 		super();
 		color = 0xFFFFFFFF;
+		wrapWidth = 0;
+		align = TextAlign.Left;
+	}
+	
+	/**
+	 * 
+	 */
+	
+	override function initShader() 
+	{
+		super.initShader();
+		if ( TextSprite.shader == null ) {
+			TextSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
+		}
+	}
+	
+	override public function getShader():IShaderProgram 
+	{
+		return TextSprite.shader;
 	}
 	
 	/**
@@ -55,7 +77,7 @@ class TextSprite extends Sprite
 	{
 		super.onAdded();
 		
-		if ( _textureData = null ) {
+		if ( _textureData == null ) {
 			_textureData = core.app.renderer.createTexture( "@norman_fonts/" + gameObject.id, 300, 300 );
 		}
 		
@@ -67,12 +89,7 @@ class TextSprite extends Sprite
 		super.onRemoved();
 		if ( _textureData != null ) core.app.renderer.destroyTexture( "@norman_fonts/" + gameObject.id );
 	}
-	
-	
-	private function rebuild() : Void {
-		_layout.rebuild( _fontData, text, align, wrapWidth );
-	}
-	
+		
 	
 	/**
 	 * Render
@@ -82,21 +99,73 @@ class TextSprite extends Sprite
 	override public function render(canvas:ICanvas):Void 
 	{
 
-		if ( _dirty ) {
+		// TODO: render to texture for easy caching
+				
+		var lineStart : Int = 0;
+		var lineLength : Float = 0;	
+		var y = 0;
 		
-			var lineStart : Int;
-			var lineEnd : Int;
-			var lineLength : Float;		
+		
+		for ( i in 0...text.length ) {
 			
-			for ( i in 0...text.length ) {
-				//TODO: Draw characters a line at a time
-				//TODO: Set render texture to textureData
+			var char : CharacterData =  font.characters.get( text.charCodeAt(i) );
+			if ( char == null ) char = new CharacterData( text.charCodeAt(i) );
+			
+			//Draw characters a line at a time
+			if ( char.id != 10 && char.id != 13 && ( wrapWidth == 0 || lineLength + char.xAdvance < wrapWidth ) && i < text.length - 1 ) {
+				// We will draw this line all together
+				lineLength += font.characters.get( text.charCodeAt(i) ).xAdvance;
+				continue;
+			}else {
+				// draw the line
+				drawLine( canvas, text.substring( lineStart, i+1 ), y );
+				lineStart = i;
+				y += font.lineHeight;
 			}
+		}
+	}
+	
+	private function drawLine( canvas : ICanvas, string : String, y : Float ) : Void {
+	
+		//trace("Drawing line of text ", string );
 		
-			_dirty = false;
+		var x : Float = 0;
+		var prev_char : CharacterData = null;
+		
+		// TODO: align this line to the left, right or center
+		for ( i in 0...string.length ) {
+			
+			var char : CharacterData =  font.characters.get( string.charCodeAt(i) );
+			if ( char != null ) {
+				
+				var kerning : KerningData = null;
+				if ( prev_char != null && font.kernings.get( prev_char.id ) != null ) {
+					kerning = font.kernings.get( prev_char.id ).get( char.id );
+				}
+				
+				var texture : TextureData = font.pages[ char.pageId ];
+				var m : Matrix4 = renderTransform.clone();
+				if ( kerning != null ) {
+					m.prependTranslation( x + char.xOffset + kerning.amount, y + char.yOffset, 0 );
+				}else {
+					m.prependTranslation( x + char.xOffset, y + char.yOffset, 0 );
+				}
+				
+				canvas.drawSubImage( texture, 
+									 new Rectangle( 
+										char.x / texture.sourceImage.width, 
+										char.y / texture.sourceImage.width, 
+										char.width / texture.sourceImage.width,
+										char.height / texture.sourceImage.height
+									 ), m, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
+									 
+				x += char.xAdvance;
+			}
+			
+			prev_char = char;
+								 
 		}
 		
-		canvas.drawImage( _textureData, gameObject.transform.renderTransform, color.a * getFinalAlpha(), color.r, color.g, color.b );
 	}
 	
 	/**
@@ -106,7 +175,7 @@ class TextSprite extends Sprite
 	
 	override public function getNaturalWidth() : Float 
 	{
-		return width;
+		return 0;
 	}
 	
 	/**
@@ -116,7 +185,7 @@ class TextSprite extends Sprite
 	
 	override public function getNaturalHeight() : Float 
 	{
-		return height;
+		return 0;
 	}
 	
 	/**
@@ -124,24 +193,29 @@ class TextSprite extends Sprite
 	 * @return
 	 */
 	
-	//public function setColor( color : Int ) : TextSprite {
-		//this.color = color;
-		//_dirty = true;
-		//return this;
-	//}
+	public function setColor( color : Int ) : TextSprite {
+		this.color = color;
+		_dirty = true;
+		return this;
+	}
 	
 	/**
 	 * Sets the font
 	 * @return
 	 */
 	
-	//public function setFont( font : Font ) : TextSprite {
-		//this._font = font;
-		//this._fontData = _font.decompose();
-		//_dirty = true;
-		//return this;
-	//}
-		//
+	public function setFont( font : BitmapFont ) : TextSprite {
+		this.font = font;
+		_dirty = true;
+		return this;
+	}
+	
+	public function set_text( text : String ) : String {
+		// Make all new lines the same
+		this.text = StringTools.replace( text, "\r\n", "\n" );
+		this.text = StringTools.replace( this.text, "\r", "\n" );
+		return this.text;
+	}
 	//public function setAlign( align : TextAlign ) : TextSprite {
 		//this.align = align;
 		//_dirty = true;
