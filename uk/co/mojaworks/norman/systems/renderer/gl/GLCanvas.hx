@@ -9,6 +9,7 @@ import lime.math.Matrix4;
 import lime.math.Vector4;
 import lime.utils.Float32Array;
 import lime.utils.Int8Array;
+import lime.utils.UInt16Array;
 import lime.utils.UInt8Array;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.batching.RenderBatch;
@@ -188,13 +189,15 @@ class GLCanvas implements ICanvas
 	
 	private function renderBatch( ) : Void {
 				
+		//trace("Drawing batch", _batch.vertices.length / 36 );
+		
 		// First buffer the data so GL can use it
 		_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-		_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.DYNAMIC_DRAW );
+		_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
 		
 		_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt8Array( _batch.indices ), GL.DYNAMIC_DRAW );
-				
+		_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt16Array( _batch.indices ), GL.STREAM_DRAW );
+		
 		// Set the blend mode
 		_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		_context.enable( GL.BLEND );
@@ -231,7 +234,7 @@ class GLCanvas implements ICanvas
 		_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 		
 		// Draw the things
-		_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_BYTE, 0 );
+		_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
 		
 		// Clean up
 		_context.useProgram( null );

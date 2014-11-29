@@ -19,6 +19,14 @@ enum TextAlign {
 	Left;
 	Right;
 	Center;
+	Justify;
+}
+
+enum WrapType {
+	None;
+	Word;
+	Letter;
+	Auto;
 }
  
 class TextSprite extends Sprite
@@ -32,6 +40,7 @@ class TextSprite extends Sprite
 	public var color( default, default ) : Color;
 	public var font( default, default ) : BitmapFont;
 	public var align( default, default ) : TextAlign;
+	public var wrapType( default, default ) : WrapType;
 	public var wrapWidth( default, default ) : Float;
 	
 	// results
@@ -50,6 +59,7 @@ class TextSprite extends Sprite
 		color = 0xFFFFFFFF;
 		wrapWidth = 0;
 		align = TextAlign.Left;
+		wrapType = WrapType.Auto;
 		_bounds = new Rectangle();
 	}
 	
@@ -102,76 +112,78 @@ class TextSprite extends Sprite
 		_bounds.setEmpty();
 		_lineStops = [0];
 		
+		var previousCharacter : CharacterData = null;
 		var lineStart : Int = 0;
 		var wordStart : Int = 0;
-		var lineLength : Float = 0;	
-		var lineLengthToLastWord : Float = 0;
+		var currentX : Float = 0; // Counts apaces	
+		var lineLength : Float = 0;	// Doesn't count spaces unless there are more letters after
+		var lineLengthToLastWord : Float = 0; // Counts to end of last word
 		var isFirstWord : Bool = true;
 				
-		trace("Starting layout", text.length, text);
-		
 		for ( i in 0...text.length ) {
 			
 			var char : CharacterData =  font.characters.get( text.charCodeAt(i) );
 			if ( char == null ) char = new CharacterData( text.charCodeAt(i) );
 			
-			if ( char.id == 32 || char.id == 10 ) {
+			var kerning : KerningData = null;
+			if ( previousCharacter != null && font.kernings.get( previousCharacter.id ) != null ) {
+				kerning = font.kernings.get( previousCharacter.id ).get( char.id );
+				if ( kerning != null ) currentX -= kerning.amount;
+			}
+			
+			if ( char.id == 32 ) {
+				// Check for a space - this marks the start of a new word
 				wordStart = i + 1;
 				isFirstWord = false;
 				lineLengthToLastWord = lineLength;
-				trace( "Found a space, setting word start to", i );
+				currentX += char.xAdvance;
+				previousCharacter = char;
 			}
-			
-			//Draw characters a line at a time
-			if ( i == text.length - 1 ) {
-				
-				if ( char.id != 10 && ( wrapWidth == 0 || lineLength + char.xAdvance < wrapWidth ) ) {
-					//drawLine( canvas, text.substring( lineStart ), y );
-					_bounds.width = Math.max( _bounds.width, lineLength );
-					trace( "Drawing last letter on existing line" );
-				}else {
-					_lineStops.push( wordStart );
-					_bounds.width = Math.max( _bounds.width, lineLengthToLastWord );
-					_bounds.width = Math.max( _bounds.width, lineLength - lineLengthToLastWord );
-					trace( "Last letter pushed last word onto new line" );
-				}
-				
-			}else if ( char.id != 10 && ( wrapWidth == 0 || (lineLength + char.xAdvance < wrapWidth) ) ) {
-				// We will draw this line all together
-				
-				
-				lineLength += char.xAdvance;
-				trace("Line length is now " + lineLength );
+			else if ( char.id == 10 ) {
+				// New line - make it break onto the next line
+				wordStart = i + 1;
+				isFirstWord = true;
+				lineLengthToLastWord = 0;
+				currentX = 0;
+				previousCharacter = null;
+				_bounds.width = Math.max( _bounds.width, lineLength );
+				lineLength = 0;
+				_lineStops.push( i );
+			}
+			else if ( wrapType == WrapType.None || (wrapType == WrapType.Auto && wrapWidth == 0 ) || (isFirstWord && wrapType == WrapType.Word) || (currentX + char.xAdvance < wrapWidth) ) {
+				// Character fits on current line - let it be
+				currentX += char.xAdvance;
+				lineLength = currentX;
+				previousCharacter = char;
 				
 			}else {
-								
-				trace( "Creating new line", wordStart, text.substring( wordStart ) );
-						
-				if ( !isFirstWord ) {
-					_bounds.width = Math.max( _bounds.width, lineLengthToLastWord );
-					lineStart = wordStart;
-					lineLength = lineLength - lineLengthToLastWord;
-					_lineStops.push( wordStart );
+				// Couldn't fit it on the line	
+				
+				if ( isFirstWord || wrapType == WrapType.Letter ) {
+					// This is the first word on the line should we split it?
+					wordStart = i;
+					lineLengthToLastWord = lineLength;
+					lineLength = char.xAdvance;
 				}else {
-					lineStart = i;
-					_bounds.width = Math.max( _bounds.width, lineLength );
-					lineLength = 0;
-					_lineStops.push( i );
+					lineLength -= lineLengthToLastWord;
 				}
 				
-				if ( char.id != 10 ) {
-					wordStart = i;
-				}else {
-					wordStart = i + 1;
-				}
+				// move to next line
+				_bounds.width = Math.max( _bounds.width, lineLengthToLastWord );
+				_lineStops.push( wordStart );
+				currentX = lineLength;
 				isFirstWord = true;
+				previousCharacter = null;
+				lineLengthToLastWord = 0;
+				
 			}
+			
 		}
 		
-		_bounds.height = _lineStops.length * font.lineHeight;
-		_dirty = false;
 		
-		trace("Final calculation", _lineStops, _bounds );
+		_bounds.height = _lineStops.length * font.lineHeight;
+		_lineStops.push( text.length );
+		_dirty = false;
 		
 	}
 			
@@ -186,50 +198,18 @@ class TextSprite extends Sprite
 		var lineLength : Float = 0;	
 		var y = 0;
 		
-		//trace("Drawing", _lineStops, _bounds );
-		
-		for ( i in 0..._lineStops.length ) {
-			
-			if ( i == _lineStops.length - 1 ) {
-				drawLine( canvas, text.substring( _lineStops[i] ), i * font.lineHeight );
-			}else {
-				drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * font.lineHeight );
-			}
-			
-			//var char : CharacterData =  font.characters.get( text.charCodeAt(i) );
-			//if ( char == null ) char = new CharacterData( text.charCodeAt(i) );
-			//
-			//if ( char.id == 32 ) wordStart = i + 1;
-			////Draw characters a line at a time
-			//if ( i == text.length - 1 ) {
-				//
-				//if ( ( wrapWidth == 0 || lineLength + char.xAdvance < wrapWidth ) ) {
-					//drawLine( canvas, text.substring( lineStart ), y );
-				//}else {
-					//drawLine( canvas, text.substring( lineStart, wordStart - 1 ), y );
-					//drawLine( canvas, text.substring( wordStart ), y + font.lineHeight );
-				//}
-			//}
-			//if ( char.id != 10 && char.id != 13 && ( wrapWidth == 0 || lineLength + char.xAdvance < wrapWidth ) ) {
-				//// We will draw this line all together
-				//lineLength += font.characters.get( text.charCodeAt(i) ).xAdvance;
-				//continue;
-				//
-			//}else {
-				//// draw the line
-				//drawLine( canvas, text.substring( lineStart, wordStart - 1 ), y );
-				//lineStart = wordStart;
-				//lineLength = 0;
-				//y += font.lineHeight;
-			//}
+		for ( i in 0..._lineStops.length - 1 ) {
+			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * font.lineHeight );
 		}
+		
 	}
 	
 	private function drawLine( canvas : ICanvas, string : String, y : Float ) : Void {
 	
-		//trace("Drawing line of text ", string );
+		string = StringTools.rtrim( string );
 		
 		var x : Float = 0;
+		var padding : Float = 0;
 		var prev_char : CharacterData = null;
 		
 		// First go through and get line length
@@ -248,6 +228,7 @@ class TextSprite extends Sprite
 			prev_char = char;				 
 		}
 		
+		// Put any padding at start of line for align
 		switch( align ) {
 			case TextAlign.Left:
 				x = 0;
@@ -255,11 +236,13 @@ class TextSprite extends Sprite
 				x = (wrapWidth - x) * 0.5;
 			case TextAlign.Right:
 				x = wrapWidth - x;
+			case TextAlign.Justify:
+				padding = (wrapWidth - x) / (string.length - 1);
+				x = 0;
 		}
 		
 		prev_char = null;
 		
-		// TODO: align this line to the left, right or center
 		for ( i in 0...string.length ) {
 			
 			var char : CharacterData =  font.characters.get( string.charCodeAt(i) );
@@ -268,25 +251,25 @@ class TextSprite extends Sprite
 				var kerning : KerningData = null;
 				if ( prev_char != null && font.kernings.get( prev_char.id ) != null ) {
 					kerning = font.kernings.get( prev_char.id ).get( char.id );
+					if ( kerning != null ) x -= kerning.amount;
 				}
 				
 				var texture : TextureData = font.pages[ char.pageId ];
 				var m : Matrix4 = renderTransform.clone();
-				if ( kerning != null ) {
-					m.prependTranslation( x + char.xOffset + kerning.amount, y + char.yOffset, 0 );
-				}else {
-					m.prependTranslation( x + char.xOffset, y + char.yOffset, 0 );
-				}
+				m.prependTranslation( x + char.xOffset, y + char.yOffset, 0 );
 				
-				canvas.drawSubImage( texture, 
-									 new Rectangle( 
-										char.x / texture.sourceImage.width, 
-										char.y / texture.sourceImage.width, 
-										char.width / texture.sourceImage.width,
-										char.height / texture.sourceImage.height
-									 ), m, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
+				// Dont bother drawing spaces and new lines
+				if ( char.id != 10 && char.id != 32 ) {
+					canvas.drawSubImage( texture, 
+										 new Rectangle( 
+											char.x / texture.sourceImage.width, 
+											char.y / texture.sourceImage.width, 
+											char.width / texture.sourceImage.width,
+											char.height / texture.sourceImage.height
+										 ), m, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
+				}
 									 
-				x += char.xAdvance;
+				x += char.xAdvance + padding;
 			}
 			
 			prev_char = char;

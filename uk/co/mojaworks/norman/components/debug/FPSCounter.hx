@@ -36,6 +36,8 @@ class FPSCounter extends Component
 		totalTime += seconds;
 		
 		text.text = Math.round( totalFrames / totalTime ) + "fps";
+		
+		trace( text.text );
 	}
 	
 }
