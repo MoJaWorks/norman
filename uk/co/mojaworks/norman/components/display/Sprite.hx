@@ -145,16 +145,34 @@ class Sprite extends Component
 		}
 	}
 		
-	public function preRender( canvas : ICanvas ) : Void {
+	/**
+	 * Pre-render returns whether this object and it's children should be rendered
+	 * Can also perform canvs tasks prior to rendering an item and it's children
+	 * @param	canvas
+	 * @return
+	 */ 
+	public function preRender( canvas : ICanvas ) : Bool {
+		return visible && (getFinalAlpha() > 0);
 	}
 	
+	/**
+	 * Render renders this item. This usually happens before all of it's children have been rendered
+	 * @param	canvas
+	 * @return
+	 */ 
 	public function render( canvas : ICanvas ) : Void {
 		// Override to render content
 	}
 	
+	/**
+	 * Post render happens after all children have been rendered
+	 * @param	canvas
+	 * @return
+	 */ 
 	public function postRender( canvas : ICanvas ) : Void {
+		// Override 
 	}
-	
+		
 	/**
 	 * Centers the pivot based on the display
 	 */

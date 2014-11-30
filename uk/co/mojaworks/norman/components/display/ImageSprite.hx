@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageVertexShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -18,8 +18,7 @@ class ImageSprite extends Sprite
 {
 
 	public static var shader : IShaderProgram = null;
-	
-	private var _textureData : TextureData = null;
+	private var _textureData : ITextureData = null;
 	private var _uvRect : Rectangle = null;
 	private var _rect : Rectangle = null;
 		
@@ -37,6 +36,7 @@ class ImageSprite extends Sprite
 	{
 		super.initShader();
 		if ( ImageSprite.shader == null ) {
+			#if gl_debug trace( "Compiling ImageSprite shader" ); #end
 			ImageSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
 		}
 	}
@@ -46,7 +46,7 @@ class ImageSprite extends Sprite
 		return ImageSprite.shader;
 	}
 	
-	public function setTexture( texture : TextureData, subTextureId : String = null ) : ImageSprite {
+	public function setTexture( texture : ITextureData, subTextureId : String = null ) : ImageSprite {
 	
 		// Unload the old one first
 		if ( _textureData != null ) unlinkTexture();

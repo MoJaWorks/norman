@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.components.display.text ;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 
 /**
  * ...
@@ -42,7 +42,7 @@ class BitmapFont
 	public var lineHeight : Int;
 	public var base : Int;
 	public var numPages : Int;
-	public var pages : Array<TextureData>;
+	public var pages : Array<ITextureData>;
 	public var characters : Map<Int,CharacterData>;
 	public var kernings : Map<Int,Map<Int,KerningData>>;
 		

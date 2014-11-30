@@ -16,7 +16,7 @@ class DefaultImageFragmentShader extends ShaderData
 	{
 		var str : String = "";
 		
-		#if mobile
+		#if !desktop
 			str += "precision mediump float;";
 		#end
 

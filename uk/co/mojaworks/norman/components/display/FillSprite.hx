@@ -32,6 +32,7 @@ class FillSprite extends Sprite
 	
 	override public function initShader() : Void {
 		if ( shaderProgram == null ) {
+			#if gl_debug trace( "Compiling FillSprite shader" ); #end
 			shaderProgram = core.app.renderer.createShader( new DefaultFillVertexShader(), new DefaultFillFragmentShader() );
 		}
 	}

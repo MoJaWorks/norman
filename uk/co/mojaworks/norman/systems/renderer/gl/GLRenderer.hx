@@ -14,7 +14,7 @@ import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -84,29 +84,38 @@ class GLRenderer implements IRenderer
 	private function renderLevel( object : GameObject ) : Void {
 		
 		if ( object.sprite != null ) {
-			object.sprite.preRender( _canvas );
-			object.sprite.render( _canvas );
+			
+			if ( object.sprite.preRender( _canvas ) ) {
+				object.sprite.render( _canvas );
+				for ( child in object.children ) {
+					renderLevel( child );
+				}
+			}else {
+			}
+			
+			object.sprite.postRender( _canvas );
+		}else {
+			// No Sprite to report to just render the Children
+			for ( child in object.children ) {
+				renderLevel( child );
+			}
 		}
 		
-		for ( child in object.children ) {
-			renderLevel( child );
-		}
-		
-		if ( object.sprite != null ) object.sprite.postRender( _canvas );
 	}
 	
 	/**
 	 * Textures
 	 */
 	
-	public function createTexture( id : String, width : Int, height : Int ) : TextureData {
+	public function createTexture( id : String, width : Int, height : Int ) : ITextureData {
 		
-		var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
+		//var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
+		var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height, 4), 0, 0, width, height );
 		return createTextureFromImage( id, img, null );
 		
 	}
 	
-	public function createTextureFromAsset( id : String ) : TextureData {
+	public function createTextureFromAsset( id : String ) : ITextureData {
 		
 		var map : String = null;
 		if ( Assets.exists( id + ".map" ) ) map = Assets.getText( id + ".map" );
@@ -121,7 +130,7 @@ class GLRenderer implements IRenderer
 	 * @param	data
 	 * @param	map
 	 */
-	public function createTextureFromImage( id : String, image : Image, map : String = null ) : TextureData {
+	public function createTextureFromImage( id : String, image : Image, map : String = null ) : ITextureData {
 		
 		var data : GLTextureData = new GLTextureData();
 		data.id = id;
@@ -143,9 +152,13 @@ class GLRenderer implements IRenderer
 	public function destroyTexture( id : String ) : Void {
 		
 		var data : GLTextureData = getTexture(id);
-		if ( _canvas.getContext() != null ) _canvas.getContext().deleteTexture( data.texture );
-		data.isValid = false;
-		_textures.remove( id );
+		if ( data != null ) {
+			if ( _canvas.getContext() != null ) {
+				_canvas.getContext().deleteTexture( data.texture );
+			}
+			data.isValid = false;
+			_textures.remove( id );
+		}
 		
 	}
 	
@@ -187,7 +200,7 @@ class GLRenderer implements IRenderer
 		return (_textures.get(id) != null);
 	}
 	
-	public function reviveTexture( data : TextureData ) : Void {
+	public function reviveTexture( data : ITextureData ) : Void {
 		
 		var gl_data : GLTextureData = cast data;
 		_textures.set( data.id, gl_data );

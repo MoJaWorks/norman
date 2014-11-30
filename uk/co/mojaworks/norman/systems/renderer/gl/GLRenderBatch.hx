@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.systems.renderer.batching;
+package uk.co.mojaworks.norman.systems.renderer.gl ;
 import lime.utils.Float32Array;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 
@@ -6,12 +6,11 @@ import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
  * ...
  * @author Simon
  */
-class RenderBatch
+class GLRenderBatch
 {
 
-	public var shader : IShaderProgram;
-	public var texture : TextureData;
-	public var target : TextureData;
+	public var shader : GLShaderProgram;
+	public var texture : GLTextureData;
 	public var vertices : Array<Float>;
 	public var indices : Array<Int>;
 	public var started : Bool;
@@ -24,7 +23,6 @@ class RenderBatch
 	public function reset() : Void {
 		shader = null;
 		texture = null;
-		target = null;
 		vertices = [];
 		indices = [];
 		started = false;

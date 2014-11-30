@@ -25,6 +25,10 @@ class Transform extends Component
 	
 	public var rotation( default, set ) : Float = 0;
 	
+	// If a transform is a root then it will ignore it's parents transform
+	// This is used for render targets to set up a new root structure
+	public var isRoot( default, set ) : Bool = false;
+	
 	public var worldTransform( get, never ) : Matrix4;
 	public var inverseWorldTransform( get, never ) : Matrix4;
 	public var localTransform( get, never ) : Matrix4;
@@ -86,7 +90,7 @@ class Transform extends Component
 		if ( _isLocalDirty ) recalculateLocalTransform();
 		_worldTransform.copyFrom( _localTransform );
 			
-		if ( gameObject.parent != null ) {
+		if ( gameObject.parent != null && !gameObject.parent.transform.isRoot ) {
 			_worldTransform.append( gameObject.parent.transform.worldTransform );
 		}
 			
@@ -166,6 +170,7 @@ class Transform extends Component
 	private function set_scaleX( _scaleX : Float ) : Float { scaleX = _scaleX; invalidateMatrices(); return scaleX; }
 	private function set_scaleY( _scaleY : Float ) : Float { scaleY = _scaleY; invalidateMatrices(); return scaleY; }
 	private function set_rotation( _rotation : Float ) : Float { rotation = _rotation; invalidateMatrices(); return rotation; }
+	private function set_isRoot( _isRoot : Bool ) : Bool { isRoot = _isRoot; invalidateMatrices(); return isRoot; }
 	
 		
 	/**

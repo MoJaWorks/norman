@@ -3,7 +3,7 @@ import lime.graphics.Image;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 
 /**
  * @author Simon
@@ -12,13 +12,13 @@ import uk.co.mojaworks.norman.systems.renderer.TextureData;
 interface IRenderer 
 {
 	// Textures
-	function createTexture( id : String, width : Int, height : Int ) : TextureData;
-	function createTextureFromImage( id : String, src : Image, map : String = null ) : TextureData;
-	function createTextureFromAsset( id : String ) : TextureData;
+	function createTexture( id : String, width : Int, height : Int ) : ITextureData;
+	function createTextureFromImage( id : String, src : Image, map : String = null ) : ITextureData;
+	function createTextureFromAsset( id : String ) : ITextureData;
 	function hasTexture( id : String ) : Bool;
-	function getTexture( id : String ) : TextureData;
+	function getTexture( id : String ) : ITextureData;
 	function destroyTexture( id : String ) : Void;
-	function reviveTexture( textureData:TextureData ) : Void;
+	function reviveTexture( texture:ITextureData ) : Void;
 	
 	// Shaders
 	function createShader( vertexShader : ShaderData, fragmentData : ShaderData ) : IShaderProgram;

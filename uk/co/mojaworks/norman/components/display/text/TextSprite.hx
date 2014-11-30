@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageVertexShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -29,15 +29,12 @@ enum WrapType {
 	Auto;
 }
  
-class TextSprite extends Sprite
+class TextSprite extends RenderSprite
 {
-	public static var shader : IShaderProgram;
-	
 	// Get access to formatting through layout
 	public var text( default, set ) : String = "";
 	
 	// config
-	public var color( default, default ) : Color;
 	public var font( default, default ) : BitmapFont;
 	public var align( default, default ) : TextAlign;
 	public var wrapType( default, default ) : WrapType;
@@ -47,11 +44,8 @@ class TextSprite extends Sprite
 	private var _lineStops : Array<Int>;
 	private var _bounds : Rectangle;
 		
-	// Draws onto this texture constantly re-uses it
-	var _textureData : TextureData;
-	var _fontTextures : Array<TextureData>;
-	
-	var _dirty : Bool;
+	var _fontTextures : Array<ITextureData>;
+	var _layoutDirty : Bool = true;
 	
 	public function new( ) 
 	{
@@ -70,14 +64,15 @@ class TextSprite extends Sprite
 	override function initShader() 
 	{
 		super.initShader();
-		if ( TextSprite.shader == null ) {
-			TextSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
+		if ( ImageSprite.shader == null ) {
+			#if gl_debug trace( "Compiling TextSprite shader" ); #end
+			ImageSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
 		}
 	}
 	
 	override public function getShader():IShaderProgram 
 	{
-		return TextSprite.shader;
+		return ImageSprite.shader;
 	}
 	
 	/**
@@ -87,18 +82,12 @@ class TextSprite extends Sprite
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		
-		if ( _textureData == null ) {
-			_textureData = core.app.renderer.createTexture( "@norman_fonts/" + gameObject.id, 300, 300 );
-		}
-		
-		_dirty = true;
+		_layoutDirty = true;
 	}
 	
 	override public function onRemoved():Void 
 	{
 		super.onRemoved();
-		if ( _textureData != null ) core.app.renderer.destroyTexture( "@norman_fonts/" + gameObject.id );
 	}
 		
 	
@@ -183,23 +172,33 @@ class TextSprite extends Sprite
 		
 		_bounds.height = _lineStops.length * font.lineHeight;
 		_lineStops.push( text.length );
-		_dirty = false;
+		_layoutDirty = false;
+		setSize( _bounds.width, _bounds.height );
 		
 	}
 			
+	
+	override public function preRender(canvas:ICanvas):Bool 
+	{
+		
+		if ( _layoutDirty ) regenerateLayout();
+		return super.preRender(canvas);
+		
+	}
+	
 	override public function render(canvas:ICanvas):Void 
 	{
-
-		// TODO: render to texture for easy caching
-		if ( _dirty ) regenerateLayout();
-				
-		var lineStart : Int = 0;
-		var wordStart : Int = 0;
-		var lineLength : Float = 0;	
-		var y = 0;
+		if ( _dirty ) {
 		
-		for ( i in 0..._lineStops.length - 1 ) {
-			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * font.lineHeight );
+			var lineStart : Int = 0;
+			var wordStart : Int = 0;
+			var lineLength : Float = 0;	
+			var y = 0;
+			
+			for ( i in 0..._lineStops.length - 1 ) {
+				drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * font.lineHeight );
+			}
+			
 		}
 		
 	}
@@ -211,6 +210,7 @@ class TextSprite extends Sprite
 		var x : Float = 0;
 		var padding : Float = 0;
 		var prev_char : CharacterData = null;
+		var m : Matrix4 = new Matrix4();
 		
 		// First go through and get line length
 		for ( i in 0...string.length ) {
@@ -254,8 +254,8 @@ class TextSprite extends Sprite
 					if ( kerning != null ) x -= kerning.amount;
 				}
 				
-				var texture : TextureData = font.pages[ char.pageId ];
-				var m : Matrix4 = renderTransform.clone();
+				var texture : ITextureData = font.pages[ char.pageId ];
+				m.identity();
 				m.prependTranslation( x + char.xOffset, y + char.yOffset, 0 );
 				
 				// Dont bother drawing spaces and new lines
@@ -298,6 +298,7 @@ class TextSprite extends Sprite
 	public function setFont( font : BitmapFont ) : TextSprite {
 		this.font = font;
 		_dirty = true;
+		_layoutDirty = true;
 		return this;
 	}
 	
@@ -306,19 +307,24 @@ class TextSprite extends Sprite
 		var old_text : String = this.text;
 		this.text = StringTools.replace( text, "\r\n", "\n" );
 		this.text = StringTools.replace( this.text, "\r", "\n" );
-		if ( old_text != text ) _dirty = true;
+		if ( old_text != text ) {
+			_dirty = true;
+			_layoutDirty = true;
+		}
 		return this.text;
 	}
 	
 	public function setAlign( align : TextAlign ) : TextSprite {
 		this.align = align;
 		_dirty = true;
+		_layoutDirty = true;
 		return this;
 	}
 	
 	public function setText( text : String ) : TextSprite {
 		this.text = text;
 		_dirty = true;
+		_layoutDirty = true;
 		return this;
 	}	
 	

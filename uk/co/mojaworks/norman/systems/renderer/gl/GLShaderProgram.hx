@@ -36,10 +36,8 @@ class GLShaderProgram implements IShaderProgram
 	
 	public function compile( context : GLRenderContext ) : Void
 	{
-		
 		if ( program != null ) context.deleteProgram( program );
 		program = GLUtils.createProgram( _vsData.getGLSL(), _fsData.getGLSL() );
-		
 	}
 	
 		
