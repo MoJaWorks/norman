@@ -110,7 +110,7 @@ class RenderSprite extends Sprite
 	{
 		
 		if ( _dirty && super.preRender(canvas) ) {
-			trace("Doing full render");
+			//trace("Doing full render");
 			canvas.pushRenderTarget( _target );
 			canvas.clear(0, 0, 0, 0);
 			_isCleaning = true;

@@ -39,6 +39,7 @@ class TextSprite extends RenderSprite
 	public var align( default, default ) : TextAlign;
 	public var wrapType( default, default ) : WrapType;
 	public var wrapWidth( default, default ) : Float;
+	public var cacheAsBitmap( default, set ) : Bool = true;
 	
 	// results
 	private var _lineStops : Array<Int>;
@@ -108,13 +109,14 @@ class TextSprite extends RenderSprite
 		var lineLength : Float = 0;	// Doesn't count spaces unless there are more letters after
 		var lineLengthToLastWord : Float = 0; // Counts to end of last word
 		var isFirstWord : Bool = true;
+		var kerning : KerningData = null;
 				
 		for ( i in 0...text.length ) {
 			
 			var char : CharacterData =  font.characters.get( text.charCodeAt(i) );
 			if ( char == null ) char = new CharacterData( text.charCodeAt(i) );
 			
-			var kerning : KerningData = null;
+			kerning = null;
 			if ( previousCharacter != null && font.kernings.get( previousCharacter.id ) != null ) {
 				kerning = font.kernings.get( previousCharacter.id ).get( char.id );
 				if ( kerning != null ) currentX -= kerning.amount;
@@ -140,6 +142,7 @@ class TextSprite extends RenderSprite
 				_lineStops.push( i );
 			}
 			else if ( wrapType == WrapType.None || (wrapType == WrapType.Auto && wrapWidth == 0 ) || (isFirstWord && wrapType == WrapType.Word) || (currentX + char.xAdvance < wrapWidth) ) {
+				
 				// Character fits on current line - let it be
 				currentX += char.xAdvance;
 				lineLength = currentX;
@@ -154,7 +157,8 @@ class TextSprite extends RenderSprite
 					lineLengthToLastWord = lineLength;
 					lineLength = char.xAdvance;
 				}else {
-					lineLength -= lineLengthToLastWord;
+					// Carry letters onto next line and don't count the space between them
+					lineLength -= lineLengthToLastWord - char.xAdvance;
 				}
 				
 				// move to next line
@@ -169,11 +173,11 @@ class TextSprite extends RenderSprite
 			
 		}
 		
-		
-		_bounds.height = _lineStops.length * font.lineHeight;
+		_bounds.width = Math.max( _bounds.width, lineLength );
+		_bounds.height = (_lineStops.length) * font.lineHeight;
 		_lineStops.push( text.length );
 		_layoutDirty = false;
-		setSize( _bounds.width, _bounds.height );
+		setSize( Math.max(_bounds.width, 1), Math.max(_bounds.height, 1) );
 		
 	}
 			
@@ -182,7 +186,11 @@ class TextSprite extends RenderSprite
 	{
 		
 		if ( _layoutDirty ) regenerateLayout();
-		return super.preRender(canvas);
+		if ( cacheAsBitmap ) {
+			return super.preRender(canvas);
+		}else {
+			return visible && getFinalAlpha() > 0;
+		}
 		
 	}
 	
@@ -203,6 +211,13 @@ class TextSprite extends RenderSprite
 		
 	}
 	
+	override public function postRender(canvas:ICanvas):Void 
+	{
+		if ( cacheAsBitmap ) {
+			super.postRender(canvas);
+		}
+	}
+	
 	private function drawLine( canvas : ICanvas, string : String, y : Float ) : Void {
 	
 		string = StringTools.rtrim( string );
@@ -211,6 +226,7 @@ class TextSprite extends RenderSprite
 		var padding : Float = 0;
 		var prev_char : CharacterData = null;
 		var m : Matrix4 = new Matrix4();
+		var kerning : KerningData;
 		
 		// First go through and get line length
 		for ( i in 0...string.length ) {
@@ -218,7 +234,7 @@ class TextSprite extends RenderSprite
 			var char : CharacterData =  font.characters.get( string.charCodeAt(i) );
 			if ( char != null ) {
 				
-				var kerning : KerningData = null;
+				kerning = null;
 				if ( prev_char != null && font.kernings.get( prev_char.id ) != null ) {
 					kerning = font.kernings.get( prev_char.id ).get( char.id );
 					if ( kerning != null ) x -= kerning.amount;
@@ -227,6 +243,7 @@ class TextSprite extends RenderSprite
 			}
 			prev_char = char;				 
 		}
+		
 		
 		// Put any padding at start of line for align
 		switch( align ) {
@@ -248,14 +265,18 @@ class TextSprite extends RenderSprite
 			var char : CharacterData =  font.characters.get( string.charCodeAt(i) );
 			if ( char != null ) {
 				
-				var kerning : KerningData = null;
+				kerning = null;
 				if ( prev_char != null && font.kernings.get( prev_char.id ) != null ) {
 					kerning = font.kernings.get( prev_char.id ).get( char.id );
 					if ( kerning != null ) x -= kerning.amount;
 				}
 				
 				var texture : ITextureData = font.pages[ char.pageId ];
-				m.identity();
+				if ( cacheAsBitmap ) {
+					m.identity();
+				}else {
+					m.copyFrom( renderTransform );
+				}
 				m.prependTranslation( x + char.xOffset, y + char.yOffset, 0 );
 				
 				// Dont bother drawing spaces and new lines
@@ -327,6 +348,12 @@ class TextSprite extends RenderSprite
 		_layoutDirty = true;
 		return this;
 	}	
+	
+	public function set_cacheAsBitmap( bool : Bool ) : Bool {
+		cacheAsBitmap = bool;
+		gameObject.transform.isRoot = bool;
+		return bool;
+	}
 	
 	/**
 	 * Sizes

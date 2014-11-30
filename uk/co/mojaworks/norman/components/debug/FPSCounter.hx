@@ -26,6 +26,8 @@ class FPSCounter extends Component
 		
 		text = new TextSprite().setFont( FontUtils.createFontFromFnt( "default/arial.fnt" ) );
 		gameObject.add( text );
+		
+		text.cacheAsBitmap = false;
 	}
 	
 	override public function onUpdate(seconds:Float):Void 
@@ -37,7 +39,7 @@ class FPSCounter extends Component
 		
 		text.text = Math.round( totalFrames / totalTime ) + "fps";
 		
-		trace( text.text );
+		//trace( text.text );
 	}
 	
 }

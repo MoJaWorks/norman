@@ -1,37 +1,27 @@
-package uk.co.mojaworks.norman.systems.renderer.gl;
-import haxe.Json;
-import lime.Assets;
-import lime.graphics.GLRenderContext;
-import lime.graphics.Image;
-import lime.graphics.ImageBuffer;
-import lime.graphics.opengl.GL;
-import lime.graphics.opengl.GLTexture;
-import lime.utils.UInt16Array;
-import lime.utils.UInt8Array;
+package uk.co.mojaworks.norman.systems.renderer.stage3d;
+import flash.display.Stage3D;
 import uk.co.mojaworks.norman.core.view.GameObject;
-import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
-import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
-import uk.co.mojaworks.norman.systems.renderer.IRenderer;
-import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
-import uk.co.mojaworks.norman.systems.renderer.ITextureData;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.utils.LinkedList;
+
+import lime.graphics.Image;
+import uk.co.mojaworks.norman.systems.renderer.IRenderer;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 
 /**
  * ...
- * @author Simon
+ * @author ...
  */
- 
- 
-class GLRenderer implements IRenderer
-{	
-	
+class Stage3DRenderer implements IRenderer
+{
+
 	// Keep a cache of shaders so if the context is lost they can all be recreated quickly.
 	private var _shaders : LinkedList<GLShaderProgram>;
 	private var _textures : Map<String, GLTextureData>;
 	
-	private var _canvas : GLCanvas;
+	private var _canvas : Stage3D;
 	
 	public function new( context : GLRenderContext ) 
 	{
