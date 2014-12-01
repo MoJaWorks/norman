@@ -30,4 +30,15 @@ class DefaultFillVertexShader extends ShaderData
 		return str;
 	}
 	
+	override public function getAGAL():String 
+	{
+		var str : String = "";
+		
+		str += "m44 op, va0, vc0\n";
+		str += "mov v2, va1\n";
+		str += "mov v0, va1";
+		
+		return str;
+	}
+	
 }

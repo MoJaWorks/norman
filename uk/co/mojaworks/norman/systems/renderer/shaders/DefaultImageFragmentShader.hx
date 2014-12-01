@@ -31,4 +31,14 @@ class DefaultImageFragmentShader extends ShaderData
 		return str;
 	}
 	
+	override public function getAGAL():String 
+	{
+		var str : String = "";
+		
+		str += "text ft0, v1, fs0 <2d, linear, nomip>\n";
+		str += "mul oc, ft0, v0";
+		
+		return str;
+	}
+	
 }

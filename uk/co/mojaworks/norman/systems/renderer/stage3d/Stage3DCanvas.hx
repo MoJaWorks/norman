@@ -177,6 +177,7 @@ class Stage3DCanvas implements ICanvas
 	
 	public function complete() : Void {
 		if ( _batch.started ) renderBatch();
+		_context.present();
 	}
 	
 	public function pushRenderTarget( target : ITextureData ) : Void {

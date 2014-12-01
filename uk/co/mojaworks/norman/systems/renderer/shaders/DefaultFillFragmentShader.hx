@@ -29,4 +29,11 @@ class DefaultFillFragmentShader extends ShaderData
 		return str;
 	}
 	
+	override public function getAGAL():String 
+	{
+		return "mov oc, v0";
+	}
+	
+	
+	
 }
