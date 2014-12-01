@@ -29,7 +29,7 @@ class Stage3DRenderer implements IRenderer
 	private var _shaders : LinkedList<Stage3DShaderProgram>;
 	private var _textures : Map<String, Stage3DTextureData>;
 	
-	private var _canvas : Stage3D;
+	private var _canvas : Stage3DCanvas;
 	
 	public function new( context : Context3D ) 
 	{
@@ -152,9 +152,7 @@ class Stage3DRenderer implements IRenderer
 		
 		var data : Stage3DTextureData = getTexture(id);
 		if ( data != null ) {
-			if ( _canvas.getContext() != null ) {
-				_canvas.getContext().dispose( data.texture );
-			}
+			data.texture.dispose();
 			data.isValid = false;
 			_textures.remove( id );
 		}
@@ -171,6 +169,7 @@ class Stage3DRenderer implements IRenderer
 		
 		var context : Context3D = _canvas.getContext();
 		var tex : Texture = context.createTexture( data.sourceImage.width, data.sourceImage.height, Context3DTextureFormat.BGRA, false );
+		tex.uploadFromBitmapData( data.sourceImage.src );
 		return tex;
 	}
 	

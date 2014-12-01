@@ -40,12 +40,31 @@ class NormanApp extends Application
 	
 	override public function init( context : RenderContext ) {
 		
+		var canCompleteStartup : Bool = true;
+		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
 				
 				// Set up the texture manager
 				renderer = new GLRenderer( gl );
-								
+					
+				
+			case RenderContext.FLASH(sprite):
+				
+				#if flash
+					
+					// This should be the only bit that needs masking because we cant use flash while not in the flash runtime
+					var stage3D : flash.display.Stage3D = sprite.stage.stage3Ds[0];
+					stage3D.addEventListener( flash.events.Event.CONTEXT3D_CREATE, function( e : flash.events.Event ) {
+						renderer = new uk.co.mojaworks.norman.systems.renderer.stage3d.Stage3DRenderer( stage3D.context3D );
+						_hasInit = true;
+						onStartupComplete();
+					});
+					canCompleteStartup = false;
+					
+				#end
+				
+				
 			default:
 				// Nothing yet
 				
@@ -53,8 +72,10 @@ class NormanApp extends Application
 		
 		if ( renderer != null ) renderer.resize( window.width, window.height );
 		
-		_hasInit = true;
-		onStartupComplete();
+		if ( canCompleteStartup ) {
+			_hasInit = true;
+			onStartupComplete();
+		}
 	}
 		
 	/**

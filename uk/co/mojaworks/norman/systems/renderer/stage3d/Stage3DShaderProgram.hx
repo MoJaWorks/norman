@@ -40,8 +40,8 @@ class Stage3DShaderProgram implements IShaderProgram
 		#end
 		
 		var assembler : AGALMiniAssembler = new AGALMiniAssembler( debug );
-		if ( program != null ) context.dispose( program );
-		program = assembler.assemble2( context, 1, _vsData.getAGAL(), _fsData.getGLSL() ); 
+		if ( program != null ) program.dispose();
+		program = assembler.assemble2( context, 1, _vsData.getAGAL(), _fsData.getGLSL() );
 		
 	}
 	

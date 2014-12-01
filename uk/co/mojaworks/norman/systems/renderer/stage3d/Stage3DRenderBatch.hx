@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.renderer.stage3d;
+import haxe.ds.Vector;
 
 /**
  * ...
@@ -9,8 +10,8 @@ class Stage3DRenderBatch
 
 	public var shader : Stage3DShaderProgram;
 	public var texture : Stage3DTextureData;
-	public var vertices : Array<Float>;
-	public var indices : Array<Int>;
+	public var vertices : flash.Vector<Float>;
+	public var indices : flash.Vector<UInt>;
 	public var started : Bool;
 	
 	public function new() 
@@ -21,8 +22,8 @@ class Stage3DRenderBatch
 	public function reset() : Void {
 		shader = null;
 		texture = null;
-		vertices = [];
-		indices = [];
+		vertices = new flash.Vector<Float>();
+		indices = new flash.Vector<UInt>();
 		started = false;
 	}
 	

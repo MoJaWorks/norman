@@ -4,10 +4,12 @@ import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
+import flash.geom.Matrix3D;
+import lime.math.Matrix4;
 import lime.math.Rectangle;
+import lime.utils.Float32Array;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import lime.math.Matrix4;
 import uk.co.mojaworks.norman.systems.renderer.stage3d.Stage3DFrameBufferData;
 
 /**
@@ -26,7 +28,7 @@ class Stage3DCanvas implements ICanvas
 	private var _stageWidth : Int;
 	private var _stageHeight : Int;
 		
-	private var _projectionMatrix : Matrix4;
+	private var _projectionMatrix : Matrix3D;
 
 	private var _batch : Stage3DRenderBatch;
 	private var _frameBufferStack : Array<Stage3DFrameBufferData>;
@@ -52,7 +54,7 @@ class Stage3DCanvas implements ICanvas
 		_stageHeight = height;
 	}
 		
-	public function getContext() : GLRenderContext {
+	public function getContext() : Context3D {
 		return _context;
 	}
 	
@@ -169,7 +171,7 @@ class Stage3DCanvas implements ICanvas
 	
 	public function begin() : Void {
 		_batch.reset();
-		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
+		_projectionMatrix = createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		_context.configureBackBuffer( _stageWidth, _stageHeight, 0 );
 	}
 	
@@ -185,7 +187,7 @@ class Stage3DCanvas implements ICanvas
 		frameBuffer.texture = cast target;
 		
 		_context.setRenderToTexture( frameBuffer.texture.texture, true );
-		_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
+		_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
 		_frameBufferStack.push( frameBuffer );
 		
 	}
@@ -202,11 +204,11 @@ class Stage3DCanvas implements ICanvas
 		if ( _frameBufferStack.length > 0 ) {
 			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
 			_context.setRenderToTexture( frameBuffer.texture.texture, true );
-			_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
+			_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
 		}else {
 			// Back to stage
 			_context.setRenderToBackBuffer();
-			_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
+			_projectionMatrix = createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		}
 		
 	}
@@ -232,8 +234,8 @@ class Stage3DCanvas implements ICanvas
 			var uvAttrib : Int = 0;
 			if ( _batch.texture != null ) {
 				
-				uvAttrib = _context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_UV, Context3DVertexBufferFormat.FLOAT_2 );
-				_context.setTextureAt( 0, _batch.texture );
+				_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_UV, Context3DVertexBufferFormat.FLOAT_2 );
+				_context.setTextureAt( 0, _batch.texture.texture );
 				
 			}
 			
@@ -261,6 +263,22 @@ class Stage3DCanvas implements ICanvas
 		}
 		
 		_batch.reset();
+	}
+	
+	// Stolen from Lime Matrix4 native class so flash can use it too
+	public static function createOrtho (x0:Float, x1:Float,  y0:Float, y1:Float, zNear:Float, zFar:Float):Matrix3D {
+		
+		var sx = 1.0 / (x1 - x0);
+		var sy = 1.0 / (y1 - y0);
+		var sz = 1.0 / (zFar - zNear);
+				
+		return new Matrix3D ( flash.Vector.ofArray([
+			2.0 * sx, 0, 0, 0,
+			0, 2.0 * sy, 0, 0,
+			0, 0, -2.0 * sz, 0,
+			-(x0 + x1) * sx, -(y0 + y1) * sy, -(zNear + zFar) * sz, 1
+		]));
+		
 	}
 	
 }
