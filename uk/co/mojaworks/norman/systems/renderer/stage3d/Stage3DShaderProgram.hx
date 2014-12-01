@@ -1,7 +1,9 @@
 package uk.co.mojaworks.norman.systems.renderer.stage3d;
 import com.adobe.utils.AGALMiniAssembler;
 import flash.display3D.Context3D;
+import flash.display3D.Context3DProgramType;
 import flash.display3D.Program3D;
+import lime.utils.ByteArray;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
@@ -39,9 +41,13 @@ class Stage3DShaderProgram implements IShaderProgram
 			var debug : Bool = false;
 		#end
 		
-		var assembler : AGALMiniAssembler = new AGALMiniAssembler( debug );
 		if ( program != null ) program.dispose();
-		program = assembler.assemble2( context, 1, _vsData.getAGAL(), _fsData.getGLSL() );
+		
+		var assembler : AGALMiniAssembler = new AGALMiniAssembler();
+		var vs : ByteArray = assembler.assemble( Context3DProgramType.VERTEX, _vsData.getAGAL() );
+		var fs : ByteArray = assembler.assemble( Context3DProgramType.FRAGMENT, _fsData.getAGAL() );
+		program = context.createProgram();
+		program.upload( vs, fs );
 		
 	}
 	
