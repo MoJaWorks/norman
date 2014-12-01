@@ -16,6 +16,10 @@ class Stage3DTextureData implements ITextureData
 	public var useCount : Int = 0;
 	public var isValid : Bool = true;
 	public var texture : Texture;
+	public var xPerc : Float = 1;
+	public var yPerc : Float = 1;
+	public var width( get, never ) : Float;
+	public var height( get, never ) : Float;
 	
 	public function new() {
 		
@@ -26,7 +30,7 @@ class Stage3DTextureData implements ITextureData
 		var result : Rectangle = null;
 		
 		if ( subImageId == null ) {
-			result = new Rectangle( 0, 0, sourceImage.width, sourceImage.height );
+			result = new Rectangle( 0, 0, sourceImage.width * xPerc, sourceImage.height * yPerc );
 		}else if ( map != null ) {
 			var img : Dynamic = Reflect.field( map.frames, subImageId );
 			if ( img != null ) {
@@ -44,16 +48,16 @@ class Stage3DTextureData implements ITextureData
 		
 		var result : Rectangle = null;
 		if ( subImageId == null ) {
-			result = new Rectangle( 0, 0, 1, 1 );
+			result = new Rectangle( 0, 0, xPerc, yPerc );
 			
 		}else if ( map != null ) {
 			var img : Dynamic = Reflect.field( map.frames, subImageId );
 			if ( img != null ) {
 				result = new Rectangle( 
-					(img.frame.x / sourceImage.width),
-					(img.frame.y / sourceImage.height),
-					(img.frame.w / sourceImage.width),
-					(img.frame.h / sourceImage.height)
+					(img.frame.x * xPerc / sourceImage.width),
+					(img.frame.y * yPerc / sourceImage.height),
+					(img.frame.w * xPerc / sourceImage.width),
+					(img.frame.h * yPerc / sourceImage.height)
 				);
 			}else {
 				trace("No subimage " + subImageId + " in texture " + id );
@@ -61,6 +65,14 @@ class Stage3DTextureData implements ITextureData
 		}
 		
 		return result;
+	}
+	
+	private function get_width() : Float {
+		return sourceImage.width;
+	}
+	
+	private function get_height() : Float {
+		return sourceImage.height;
 	}
 	
 }

@@ -61,7 +61,6 @@ class RenderSprite extends Sprite
 		
 		if ( _target != null ) core.app.renderer.destroyTexture( _target.id );
 		_target = core.app.renderer.createTexture( "@norman/rendertexture/" + gameObject.id, Std.int(_width), Std.int(_height) );
-		trace("Target set to", _target );
 	}
 	
 	public function setSize( width : Float, height : Float ) : RenderSprite {

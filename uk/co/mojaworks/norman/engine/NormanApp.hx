@@ -55,11 +55,14 @@ class NormanApp extends Application
 					
 					// This should be the only bit that needs masking because we cant use flash while not in the flash runtime
 					var stage3D : flash.display.Stage3D = flash.Lib.current.stage.stage3Ds[0];
-					stage3D.addEventListener( flash.events.Event.CONTEXT3D_CREATE, function( e : flash.events.Event ) {
+					stage3D.addEventListener( flash.events.Event.CONTEXT3D_CREATE, function( _ ) {
 						renderer = new uk.co.mojaworks.norman.systems.renderer.stage3d.Stage3DRenderer( stage3D.context3D );
+						renderer.resize( window.width, window.height );
 						_hasInit = true;
+						trace("Context created - initialising");
 						onStartupComplete();
 					});
+					stage3D.requestContext3D( /*flash.display3D.Context3DRenderMode.AUTO, flash.display3D.Context3DProfile.BASELINE*/ );
 					canCompleteStartup = false;
 					
 				#end

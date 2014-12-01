@@ -17,6 +17,8 @@ class GLTextureData implements ITextureData
 	public var useCount : Int = 0;
 	public var isValid : Bool = true;
 	public var texture : GLTexture;
+	public var width( get, never ) : Float;
+	public var height( get, never ) : Float;
 	
 	public function new() {
 		
@@ -62,6 +64,14 @@ class GLTextureData implements ITextureData
 		}
 		
 		return result;
+	}
+	
+	private function get_width() : Float {
+		return sourceImage.width;
+	}
+	
+	private function get_height() : Float {
+		return sourceImage.height;
 	}
 	
 }

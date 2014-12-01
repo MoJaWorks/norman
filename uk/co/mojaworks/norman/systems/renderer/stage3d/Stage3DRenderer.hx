@@ -7,6 +7,7 @@ import haxe.Json;
 import lime.Assets;
 import lime.graphics.Image;
 import lime.graphics.ImageBuffer;
+import lime.math.Vector2;
 import lime.utils.UInt8Array;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureData;
@@ -16,6 +17,7 @@ import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.utils.LinkedList;
+import uk.co.mojaworks.norman.utils.MathUtils;
 
 
 /**
@@ -109,7 +111,8 @@ class Stage3DRenderer implements IRenderer
 	public function createTexture( id : String, width : Int, height : Int ) : ITextureData {
 		
 		//var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
-		var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height, 4), 0, 0, width, height );
+		//var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height, 4), 0, 0, width, height );
+		var img : Image = new Image( null, 0, 0, width, height );
 		return createTextureFromImage( id, img, null );
 		
 	}
@@ -168,8 +171,15 @@ class Stage3DRenderer implements IRenderer
 	private function uploadTexture( data : Stage3DTextureData ) : Texture {
 		
 		var context : Context3D = _canvas.getContext();
-		var tex : Texture = context.createTexture( data.sourceImage.width, data.sourceImage.height, Context3DTextureFormat.BGRA, false );
+		var size : Vector2 = new Vector2( MathUtils.roundToNextPow2( data.sourceImage.width ), MathUtils.roundToNextPow2( data.sourceImage.height ) );
+		var tex : Texture = context.createTexture( Std.int(size.x), Std.int(size.y), Context3DTextureFormat.BGRA, false );
 		tex.uploadFromBitmapData( data.sourceImage.src );
+		
+		data.xPerc = data.sourceImage.width / size.x;
+		data.yPerc = data.sourceImage.height / size.y;
+		
+		trace("Uploaded texture with size ", size.x, size.y, data.xPerc, data.yPerc );
+		
 		return tex;
 	}
 	

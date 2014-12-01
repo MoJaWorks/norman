@@ -110,8 +110,7 @@ class GLRenderer implements IRenderer
 	
 	public function createTexture( id : String, width : Int, height : Int ) : ITextureData {
 		
-		//var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
-		var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height, 4), 0, 0, width, height );
+		var img : Image = new Image( null, 0, 0, width, height );
 		return createTextureFromImage( id, img, null );
 		
 	}

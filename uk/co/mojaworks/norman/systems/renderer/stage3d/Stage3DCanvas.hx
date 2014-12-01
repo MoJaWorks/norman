@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.systems.renderer.stage3d;
 import flash.display3D.Context3D;
+import flash.display3D.Context3DBlendFactor;
 import flash.display3D.Context3DProgramType;
 import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
@@ -7,6 +8,7 @@ import flash.display3D.VertexBuffer3D;
 import flash.geom.Matrix3D;
 import lime.math.Matrix4;
 import lime.math.Rectangle;
+import lime.math.Vector4;
 import lime.utils.Float32Array;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
@@ -67,20 +69,25 @@ class Stage3DCanvas implements ICanvas
 		
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
-		var points : Array<Float> = [
-			width, height, 0,
-			0, height, 0,
-			width, 0, 0,
-			0, 0, 0		
+		var points : Array<Vector4> = [
+			new Vector4( width, height, 0 ),
+			new Vector4( 0, height, 0 ),
+			new Vector4( width, 0, 0 ),
+			new Vector4( 0, 0, 0 )
 		];
 		
-		var points_trans : Float32Array = new Float32Array( points );
-		transform.transformVectors( points_trans, points_trans );
+		//trace("Before", points[0]);
+		//
+		//for ( i in 0...points.length ) {
+			//points[i] = transform.transformVector( points[i] );
+		//}
+		//trace("After", points[0]);
+		
 		
 		for ( i in 0...4 ) {
-			_batch.vertices.push( points_trans[(i * 3) + 0] );
-			_batch.vertices.push( points_trans[(i * 3) + 1] );
-			_batch.vertices.push( points_trans[(i * 3) + 2] );
+			_batch.vertices.push( points[i].x );
+			_batch.vertices.push( points[i].y );
+			_batch.vertices.push( points[i].z );
 			_batch.vertices.push( r / 255 );
 			_batch.vertices.push( g / 255 );
 			_batch.vertices.push( b / 255 );
@@ -107,7 +114,8 @@ class Stage3DCanvas implements ICanvas
 	
 	public function drawImage(texture : ITextureData, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
-		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, shader, r, g, b, a );
+		var stage3DTexture : Stage3DTextureData = cast texture;
+		drawSubImage( texture, new Rectangle(0, 0, stage3DTexture.xPerc, stage3DTexture.yPerc), transform, shader, r, g, b, a );
 	}
 	
 	public function drawSubImage(texture : ITextureData, sourceRect : Rectangle, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
@@ -117,19 +125,21 @@ class Stage3DCanvas implements ICanvas
 			renderBatch();
 		}
 		
+		var stage3DTexture : Stage3DTextureData = cast texture;
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
-		var width : Float = sourceRect.width * texture.sourceImage.width;
-		var height : Float = sourceRect.height * texture.sourceImage.height;
+		var width : Float = (sourceRect.width / stage3DTexture.xPerc) * stage3DTexture.sourceImage.width;
+		var height : Float = (sourceRect.height / stage3DTexture.yPerc) * stage3DTexture.sourceImage.height;
 		
-		var points : Array<Float> = [
-			width, height, 0,
-			0, height, 0,
-			width, 0, 0,
-			0, 0, 0		
+		var points : Array<Vector4> = [
+			new Vector4( width, height, 0 ),
+			new Vector4( 0, height, 0 ),
+			new Vector4( width, 0, 0 ),
+			new Vector4( 0, 0, 0 )
 		];
 		
-		var points_trans : Float32Array = new Float32Array( points );
-		transform.transformVectors( points_trans, points_trans );
+		//for ( i in 0...points.length ) {
+			//points[i] = transform.transformVector( points[i] );
+		//}
 		
 		var uvs : Array<Float> = [
 			sourceRect.right, sourceRect.bottom,
@@ -139,9 +149,9 @@ class Stage3DCanvas implements ICanvas
 		];
 		
 		for ( i in 0...4 ) {
-			_batch.vertices.push( points_trans[(i * 3) + 0] );
-			_batch.vertices.push( points_trans[(i * 3) + 1] );
-			_batch.vertices.push( points_trans[(i * 3) + 2] );
+			_batch.vertices.push( points[i].x );
+			_batch.vertices.push( points[i].y );
+			_batch.vertices.push( points[i].z );
 			_batch.vertices.push( r / 255 );
 			_batch.vertices.push( g / 255 );
 			_batch.vertices.push( b / 255 );
@@ -159,7 +169,7 @@ class Stage3DCanvas implements ICanvas
 		
 		if ( !_batch.started ) {
 			_batch.shader = cast shader;
-			_batch.texture = cast texture;
+			_batch.texture = stage3DTexture;
 			_batch.started = true;
 		}
 	}
@@ -173,6 +183,9 @@ class Stage3DCanvas implements ICanvas
 		_batch.reset();
 		_projectionMatrix = createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		_context.configureBackBuffer( _stageWidth, _stageHeight, 0 );
+		
+		// Set the blend mode
+		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
 	}
 	
 	public function complete() : Void {
@@ -218,6 +231,8 @@ class Stage3DCanvas implements ICanvas
 				
 		if ( _batch.vertices.length > 0 ) {
 			
+			//trace("Rendering ", _batch.vertices);
+			
 			// First buffer the data so GL can use it
 			var _vertexBuffer : VertexBuffer3D = _context.createVertexBuffer( Std.int(_batch.vertices.length / VERTEX_SIZE), VERTEX_SIZE );
 			_vertexBuffer.uploadFromVector( _batch.vertices, 0, Std.int(_batch.vertices.length / VERTEX_SIZE) );
@@ -225,14 +240,11 @@ class Stage3DCanvas implements ICanvas
 			var _indexBuffer : IndexBuffer3D = _context.createIndexBuffer( _batch.indices.length );
 			_indexBuffer.uploadFromVector( _batch.indices, 0, _batch.indices.length );
 			
-			// Set the blend mode
-			//_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			//_context.enable( GL.BLEND );
+			
 			
 			// Set up the shaders
 			_context.setProgram( _batch.shader.program );
 			
-			var uvAttrib : Int = 0;
 			if ( _batch.texture != null ) {
 				
 				_context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_UV, Context3DVertexBufferFormat.FLOAT_2 );
@@ -249,7 +261,6 @@ class Stage3DCanvas implements ICanvas
 			_context.drawTriangles( _indexBuffer );
 			
 			// Clean up
-			_context.setProgram( null );
 			_context.setVertexBufferAt( 0, null );
 			_context.setVertexBufferAt( 1, null );
 			
@@ -258,6 +269,7 @@ class Stage3DCanvas implements ICanvas
 				_context.setTextureAt( 0, null );
 			}
 			
+			_context.setProgram( null );
 			_vertexBuffer.dispose();
 			_indexBuffer.dispose();
 			
@@ -281,5 +293,6 @@ class Stage3DCanvas implements ICanvas
 		]));
 		
 	}
+
 	
 }

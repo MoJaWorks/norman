@@ -35,7 +35,7 @@ class DefaultImageFragmentShader extends ShaderData
 	{
 		var str : String = "";
 		
-		str += "text ft0, v1, fs0 <2d, linear, nomip>\n";
+		str += "tex ft0, v1, fs0 <2d, linear, nomip>\n";
 		str += "mul oc, ft0, v0";
 		
 		return str;

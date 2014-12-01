@@ -59,6 +59,8 @@ class ImageSprite extends Sprite
 		_uvRect = _textureData.getUVFor( subTextureId );
 		_rect = _textureData.getRectFor( subTextureId );
 		
+		trace("Created image", _rect.width, _rect.height );
+		
 		return this;
 	}
 	
