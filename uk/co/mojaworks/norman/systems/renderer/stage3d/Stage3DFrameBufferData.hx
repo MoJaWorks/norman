@@ -8,7 +8,7 @@ import flash.display3D.textures.Texture;
 class Stage3DFrameBufferData
 {
 	
-	public var texture : Texture;
+	public var texture : Stage3DTextureData;
 	public var width : Float;
 	public var height : Float;
 

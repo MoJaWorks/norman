@@ -1,8 +1,14 @@
 package uk.co.mojaworks.norman.systems.renderer.stage3d;
+import flash.display3D.Context3D;
+import flash.display3D.Context3DProgramType;
+import flash.display3D.Context3DVertexBufferFormat;
+import flash.display3D.IndexBuffer3D;
+import flash.display3D.VertexBuffer3D;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import lime.math.Matrix4;
+import uk.co.mojaworks.norman.systems.renderer.stage3d.Stage3DFrameBufferData;
 
 /**
  * ...
@@ -16,26 +22,26 @@ class Stage3DCanvas implements ICanvas
 	private static inline var VERTEX_COLOR : Int = 3;
 	private static inline var VERTEX_UV : Int = 7;
 	
-	private var _context : GLRenderContext;
+	private var _context : Context3D;
 	private var _stageWidth : Int;
 	private var _stageHeight : Int;
-	
-	private var _vertexBuffer : GLBuffer;
-	private var _indexBuffer : GLBuffer;
+		
 	private var _projectionMatrix : Matrix4;
 
-	private var _batch : GLRenderBatch;
-	private var _frameBufferStack : Array<GLFrameBufferData>;
+	private var _batch : Stage3DRenderBatch;
+	private var _frameBufferStack : Array<Stage3DFrameBufferData>;
 	
-	public function new( context : GLRenderContext ) : Void 
+	public function new( context : Context3D ) : Void 
 	{
 		
 		_frameBufferStack = [];
-		_context = cast context;
+		_context = context;
 		
-		_batch = new GLRenderBatch();
-		_vertexBuffer = _context.createBuffer();
-		_indexBuffer = _context.createBuffer();
+		_batch = new Stage3DRenderBatch();
+		
+		#if gl_debug
+			_context.enableErrorChecking = true;
+		#end
 		
 	}
 	
@@ -158,14 +164,13 @@ class Stage3DCanvas implements ICanvas
 	
 	public function clear( r : Int = 0, g : Int = 0, b : Int = 0, a : Float = 1 ):Void 
 	{
-		_context.clearColor( r/255, g/255, b/255, a );
-		_context.clear( GL.COLOR_BUFFER_BIT );
+		_context.clear( r/255, g/255, b/255, a );
 	}
 	
 	public function begin() : Void {
 		_batch.reset();
 		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
-		_context.viewport( 0, 0, _stageWidth, _stageHeight );
+		_context.configureBackBuffer( _stageWidth, _stageHeight, 0 );
 	}
 	
 	public function complete() : Void {
@@ -176,24 +181,18 @@ class Stage3DCanvas implements ICanvas
 		
 		if ( _batch.started ) renderBatch();
 		
-		var frameBuffer : GLFrameBufferData = new GLFrameBufferData();
-		
-		frameBuffer.buffer = _context.createFramebuffer();
+		var frameBuffer : Stage3DFrameBufferData = new Stage3DFrameBufferData();
 		frameBuffer.texture = cast target;
 		
-		_context.bindFramebuffer( GL.FRAMEBUFFER, frameBuffer.buffer );
-		_context.framebufferTexture2D( GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, frameBuffer.texture.texture, 0 );
-		
+		_context.setRenderToTexture( frameBuffer.texture.texture, true );
 		_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
-		_context.viewport( 0, 0, frameBuffer.texture.sourceImage.width, frameBuffer.texture.sourceImage.height );
-		
 		_frameBufferStack.push( frameBuffer );
 		
 	}
 	
 	public function popRenderTarget( ) : Void {
 		
-		var frameBuffer : GLFrameBufferData = _frameBufferStack.pop();
+		var frameBuffer : Stage3DFrameBufferData = _frameBufferStack.pop();
 		// Don't think we need to do anything with this framebuffer?
 		
 		// Render the last batch to the frameBuffer
@@ -202,14 +201,12 @@ class Stage3DCanvas implements ICanvas
 		// Go back to the previous buffer
 		if ( _frameBufferStack.length > 0 ) {
 			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
-			_context.bindFramebuffer( GL.FRAMEBUFFER, frameBuffer.buffer );
+			_context.setRenderToTexture( frameBuffer.texture.texture, true );
 			_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
-			_context.viewport( 0, 0, frameBuffer.texture.sourceImage.width, frameBuffer.texture.sourceImage.height );
 		}else {
 			// Back to stage
-			_context.bindFramebuffer( GL.FRAMEBUFFER, null );
+			_context.setRenderToBackBuffer();
 			_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
-			_context.viewport( 0, 0, _stageWidth, _stageHeight );
 		}
 		
 	}
@@ -217,65 +214,50 @@ class Stage3DCanvas implements ICanvas
 	private function renderBatch( ) : Void {
 				
 		if ( _batch.vertices.length > 0 ) {
-			// First buffer the data so GL can use it
-			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
 			
-			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt16Array( _batch.indices ), GL.STREAM_DRAW );
+			// First buffer the data so GL can use it
+			var _vertexBuffer : VertexBuffer3D = _context.createVertexBuffer( Std.int(_batch.vertices.length / VERTEX_SIZE), VERTEX_SIZE );
+			_vertexBuffer.uploadFromVector( _batch.vertices, 0, Std.int(_batch.vertices.length / VERTEX_SIZE) );
+			
+			var _indexBuffer : IndexBuffer3D = _context.createIndexBuffer( _batch.indices.length );
+			_indexBuffer.uploadFromVector( _batch.indices, 0, _batch.indices.length );
 			
 			// Set the blend mode
-			_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			_context.enable( GL.BLEND );
+			//_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+			//_context.enable( GL.BLEND );
 			
 			// Set up the shaders
-			_context.useProgram( _batch.shader.program );
+			_context.setProgram( _batch.shader.program );
 			
 			var uvAttrib : Int = 0;
 			if ( _batch.texture != null ) {
 				
-				uvAttrib = _context.getAttribLocation( _batch.shader.program, "aVertexUV" );
-				var uTexture0 = _context.getUniformLocation( _batch.shader.program, "uTexture0" );
-				
-				_context.enableVertexAttribArray( uvAttrib );
-				_context.vertexAttribPointer( uvAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_UV * 4 );
-				
-				_context.activeTexture( GL.TEXTURE0 );
-				_context.bindTexture( GL.TEXTURE_2D, cast( _batch.texture, GLTextureData ).texture );
-				_context.uniform1i( uTexture0, 0 );
+				uvAttrib = _context.setVertexBufferAt( 2, _vertexBuffer, VERTEX_UV, Context3DVertexBufferFormat.FLOAT_2 );
+				_context.setTextureAt( 0, _batch.texture );
 				
 			}
-			
-			var vertexAttr = _context.getAttribLocation( _batch.shader.program, "aVertexPosition" );
-			var colorAttr = _context.getAttribLocation( _batch.shader.program, "aVertexColor" );
-			var projectionUniform = _context.getUniformLocation( _batch.shader.program, "uProjectionMatrix" );
-			
-			_context.enableVertexAttribArray( vertexAttr );
-			_context.enableVertexAttribArray( colorAttr );
 			
 			// Assign values to the shader
-			_context.vertexAttribPointer( vertexAttr, 3, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION  * 4);
-			_context.vertexAttribPointer( colorAttr, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR  * 4);
-			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
+			_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POSITION, Context3DVertexBufferFormat.FLOAT_3 );
+			_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
+			_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _projectionMatrix, true );
 			
 			// Draw the things
-			_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
+			_context.drawTriangles( _indexBuffer );
 			
 			// Clean up
-			_context.useProgram( null );
-			_context.disableVertexAttribArray( vertexAttr );
-			_context.disableVertexAttribArray( colorAttr );
-			_context.bindBuffer( GL.ARRAY_BUFFER, null );
-			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
+			_context.setProgram( null );
+			_context.setVertexBufferAt( 0, null );
+			_context.setVertexBufferAt( 1, null );
 			
 			if ( _batch.texture != null ) {
-				_context.disableVertexAttribArray( uvAttrib );
-				_context.bindTexture( GL.TEXTURE_2D, null );
+				_context.setVertexBufferAt( 2, null );
+				_context.setTextureAt( 0, null );
 			}
 			
-			#if gl_debug
-				if ( _context.getError() > 0 ) trace( "GL Error:", _context.getError() );
-			#end
+			_vertexBuffer.dispose();
+			_indexBuffer.dispose();
+			
 		}
 		
 		_batch.reset();

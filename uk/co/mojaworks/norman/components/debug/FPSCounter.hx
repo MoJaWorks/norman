@@ -34,6 +34,12 @@ class FPSCounter extends Component
 	{
 		super.onUpdate(seconds);
 		
+		// Reset every 5 seconds
+		if ( totalTime > 5 ) {
+			totalFrames = 0;
+			totalTime = 0;
+		}
+		
 		totalFrames++;
 		totalTime += seconds;
 		

@@ -1,14 +1,22 @@
 package uk.co.mojaworks.norman.systems.renderer.stage3d;
 import flash.display.Stage3D;
-import uk.co.mojaworks.norman.core.view.GameObject;
-import uk.co.mojaworks.norman.systems.renderer.ICanvas;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
-import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.utils.LinkedList;
-
+import flash.display3D.Context3D;
+import flash.display3D.Context3DTextureFormat;
+import flash.display3D.textures.Texture;
+import haxe.Json;
+import lime.Assets;
 import lime.graphics.Image;
+import lime.graphics.ImageBuffer;
+import lime.utils.UInt8Array;
+import uk.co.mojaworks.norman.core.view.GameObject;
+import uk.co.mojaworks.norman.systems.renderer.gl.GLTextureData;
+import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
+import uk.co.mojaworks.norman.utils.LinkedList;
+
 
 /**
  * ...
@@ -18,16 +26,16 @@ class Stage3DRenderer implements IRenderer
 {
 
 	// Keep a cache of shaders so if the context is lost they can all be recreated quickly.
-	private var _shaders : LinkedList<GLShaderProgram>;
-	private var _textures : Map<String, GLTextureData>;
+	private var _shaders : LinkedList<Stage3DShaderProgram>;
+	private var _textures : Map<String, Stage3DTextureData>;
 	
 	private var _canvas : Stage3D;
 	
-	public function new( context : GLRenderContext ) 
+	public function new( context : Context3D ) 
 	{
-		_shaders = new LinkedList<GLShaderProgram>();
-		_textures = new Map<String,GLTextureData>();
-		_canvas = new GLCanvas( context );
+		_shaders = new LinkedList<Stage3DShaderProgram>();
+		_textures = new Map<String,Stage3DTextureData>();
+		_canvas = new Stage3DCanvas( context );
 	}
 	
 	/**
@@ -45,7 +53,7 @@ class Stage3DRenderer implements IRenderer
 	
 	public function createShader( vs : ShaderData, fs : ShaderData ) : IShaderProgram {
 		
-		var shader : GLShaderProgram = new GLShaderProgram( vs, fs );
+		var shader : Stage3DShaderProgram = new Stage3DShaderProgram( vs, fs );
 		
 		if ( _canvas.getContext() != null ) {
 			shader.compile( _canvas.getContext() ); 
@@ -123,7 +131,7 @@ class Stage3DRenderer implements IRenderer
 	 */
 	public function createTextureFromImage( id : String, image : Image, map : String = null ) : ITextureData {
 		
-		var data : GLTextureData = new GLTextureData();
+		var data : Stage3DTextureData = new Stage3DTextureData();
 		data.id = id;
 		data.sourceImage = image;
 		if ( map != null ) data.map = Json.parse( map );
@@ -142,10 +150,10 @@ class Stage3DRenderer implements IRenderer
 	
 	public function destroyTexture( id : String ) : Void {
 		
-		var data : GLTextureData = getTexture(id);
+		var data : Stage3DTextureData = getTexture(id);
 		if ( data != null ) {
 			if ( _canvas.getContext() != null ) {
-				_canvas.getContext().deleteTexture( data.texture );
+				_canvas.getContext().dispose( data.texture );
 			}
 			data.isValid = false;
 			_textures.remove( id );
@@ -159,23 +167,10 @@ class Stage3DRenderer implements IRenderer
 	 * @return
 	 */
 	
-	private function uploadTexture( data : GLTextureData ) : GLTexture {
+	private function uploadTexture( data : Stage3DTextureData ) : Texture {
 		
-		var context : GLRenderContext = _canvas.getContext();
-		var tex : GLTexture = context.createTexture();
-		
-		context.bindTexture( GL.TEXTURE_2D, tex );
-		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
-		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE );
-		#if html5
-			context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.src );
-		#else
-			context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, data.sourceImage.buffer.width, data.sourceImage.buffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.data );
-		#end
-		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
-		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
-		context.bindTexture( GL.TEXTURE_2D, null );
-		
+		var context : Context3D = _canvas.getContext();
+		var tex : Texture = context.createTexture( data.sourceImage.width, data.sourceImage.height, Context3DTextureFormat.BGRA, false );
 		return tex;
 	}
 	
@@ -183,7 +178,7 @@ class Stage3DRenderer implements IRenderer
 	 * 
 	 */
 	
-	public function getTexture( id : String ) : GLTextureData {
+	public function getTexture( id : String ) : Stage3DTextureData {
 		return _textures.get(id);
 	}
 	
@@ -193,10 +188,10 @@ class Stage3DRenderer implements IRenderer
 	
 	public function reviveTexture( data : ITextureData ) : Void {
 		
-		var gl_data : GLTextureData = cast data;
-		_textures.set( data.id, gl_data );
-		gl_data.texture = uploadTexture( gl_data );
-		gl_data.isValid = true;
+		var stage3d_data : Stage3DTextureData = cast data;
+		_textures.set( data.id, stage3d_data );
+		stage3d_data.texture = uploadTexture( stage3d_data );
+		stage3d_data.isValid = true;
 	}
 	
 	public function getCanvas() : ICanvas {
