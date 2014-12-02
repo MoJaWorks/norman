@@ -6,6 +6,7 @@ import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
 import flash.geom.Matrix3D;
+import flash.geom.Vector3D;
 import lime.math.Matrix4;
 import lime.math.Rectangle;
 import lime.math.Vector4;
@@ -76,7 +77,7 @@ class Stage3DCanvas implements ICanvas
 			new Vector4( 0, 0, 0 )
 		];
 		
-		//trace("Before", points[0]);
+		//trace("Before", points[0], transform[0] );
 		//
 		//for ( i in 0...points.length ) {
 			//points[i] = transform.transformVector( points[i] );
@@ -182,7 +183,7 @@ class Stage3DCanvas implements ICanvas
 	public function begin() : Void {
 		_batch.reset();
 		_projectionMatrix = createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
-		_context.configureBackBuffer( _stageWidth, _stageHeight, 0 );
+		_context.configureBackBuffer( _stageWidth, _stageHeight, 0, false );
 		
 		// Set the blend mode
 		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
@@ -217,7 +218,7 @@ class Stage3DCanvas implements ICanvas
 		// Go back to the previous buffer
 		if ( _frameBufferStack.length > 0 ) {
 			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
-			_context.setRenderToTexture( frameBuffer.texture.texture, true );
+			_context.setRenderToTexture( frameBuffer.texture.texture );
 			_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
 		}else {
 			// Back to stage
