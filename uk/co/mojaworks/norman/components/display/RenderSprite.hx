@@ -27,16 +27,7 @@ class RenderSprite extends Sprite
 	{
 		super();		
 	}
-	
-	override function initShader() 
-	{
-		super.initShader();
-		if ( ImageSprite.shader == null ) {
-			#if gl_debug trace( "Compiling ImageSprite shader" ); #end
-			ImageSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
-		}
-	}
-	
+		
 	override public function getShader():IShaderProgram 
 	{
 		return ImageSprite.shader;

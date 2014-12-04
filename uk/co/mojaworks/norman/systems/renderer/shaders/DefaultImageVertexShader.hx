@@ -16,7 +16,7 @@ class DefaultImageVertexShader extends ShaderData
 	{
 		var str : String = "";
 		
-		str += "attribute vec3 aVertexPosition;";
+		str += "attribute vec2 aVertexPosition;";
 		str += "attribute vec4 aVertexColor;";
 		str += "attribute vec2 aVertexUV;";
 		str += "uniform mat4 uProjectionMatrix;";
@@ -27,7 +27,7 @@ class DefaultImageVertexShader extends ShaderData
 		str += "void main(void) {";
 		str += "	vVertexColor = aVertexColor;";
 		str += "	vVertexUV = aVertexUV;";
-		str += "	gl_Position = uProjectionMatrix * vec4(aVertexPosition, 1.0);";
+		str += "	gl_Position = uProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0);";
 		str += "}";
 		
 		return str;

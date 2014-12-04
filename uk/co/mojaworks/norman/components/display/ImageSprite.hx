@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.components.display;
 import lime.Assets;
 import lime.graphics.Image;
 import lime.math.Rectangle;
+import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
@@ -17,7 +18,7 @@ import uk.co.mojaworks.norman.utils.Color;
 class ImageSprite extends Sprite
 {
 
-	public static var shader : IShaderProgram = null;
+	public static var shader( get, null ) : IShaderProgram = null;
 	private var _textureData : ITextureData = null;
 	private var _uvRect : Rectangle = null;
 	private var _rect : Rectangle = null;
@@ -32,13 +33,12 @@ class ImageSprite extends Sprite
 		color = 0xFFFFFFFF;
 	}
 	
-	override function initShader() 
-	{
-		super.initShader();
+	private static function get_shader() : IShaderProgram {
 		if ( ImageSprite.shader == null ) {
 			#if gl_debug trace( "Compiling ImageSprite shader" ); #end
-			ImageSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
+			ImageSprite.shader = Core.getInstance().app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
 		}
+		return ImageSprite.shader;
 	}
 	
 	override public function getShader():IShaderProgram 

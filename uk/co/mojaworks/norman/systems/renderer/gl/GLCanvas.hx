@@ -1,12 +1,14 @@
 package uk.co.mojaworks.norman.systems.renderer.gl ;
 import haxe.ds.Vector;
 import lime.graphics.opengl.GLFramebuffer;
+import lime.math.Matrix3;
 import lime.math.Rectangle;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
 import lime.graphics.RenderContext;
 import lime.math.Matrix4;
+import lime.math.Vector2;
 import lime.math.Vector4;
 import lime.utils.Float32Array;
 import lime.utils.Int8Array;
@@ -25,10 +27,10 @@ import uk.co.mojaworks.norman.utils.Color;
 class GLCanvas implements ICanvas
 {
 	
-	private static inline var VERTEX_SIZE : Int = 9;
+	private static inline var VERTEX_SIZE : Int = 8;
 	private static inline var VERTEX_POSITION : Int = 0;
-	private static inline var VERTEX_COLOR : Int = 3;
-	private static inline var VERTEX_UV : Int = 7;
+	private static inline var VERTEX_COLOR : Int = 2;
+	private static inline var VERTEX_UV : Int = 6;
 	
 	private var _context : GLRenderContext;
 	private var _stageWidth : Int;
@@ -64,7 +66,7 @@ class GLCanvas implements ICanvas
 		return _context;
 	}
 	
-	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
+	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix3, shader : IShaderProgram ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
 		if ( _batch.started && (_batch.shader != shader || _batch.texture != null ) ) {
@@ -73,20 +75,20 @@ class GLCanvas implements ICanvas
 		
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
-		var points : Array<Float> = [
-			width, height, 0,
-			0, height, 0,
-			width, 0, 0,
-			0, 0, 0		
+		var points : Array<Vector2> = [
+			new Vector2( width, height ),
+			new Vector2( 0, height ),
+			new Vector2( width, 0 ),
+			new Vector2( 0, 0 )		
 		];
 		
-		var points_trans : Float32Array = new Float32Array( points );
-		transform.transformVectors( points_trans, points_trans );
+		for ( i in 0...points.length ) {
+			points[i] = transform.transformVector2( points[i] );
+		}
 		
 		for ( i in 0...4 ) {
-			_batch.vertices.push( points_trans[(i * 3) + 0] );
-			_batch.vertices.push( points_trans[(i * 3) + 1] );
-			_batch.vertices.push( points_trans[(i * 3) + 2] );
+			_batch.vertices.push( points[i].x );
+			_batch.vertices.push( points[i].y );
 			_batch.vertices.push( r / 255 );
 			_batch.vertices.push( g / 255 );
 			_batch.vertices.push( b / 255 );
@@ -111,12 +113,12 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(texture : ITextureData, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
+	public function drawImage(texture : ITextureData, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
 		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, shader, r, g, b, a );
 	}
 	
-	public function drawSubImage(texture : ITextureData, sourceRect : Rectangle, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
+	public function drawSubImage(texture : ITextureData, sourceRect : Rectangle, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
 		if ( _batch.started && ( _batch.shader != shader || _batch.texture != texture ) ) {
@@ -127,15 +129,16 @@ class GLCanvas implements ICanvas
 		var width : Float = sourceRect.width * texture.sourceImage.width;
 		var height : Float = sourceRect.height * texture.sourceImage.height;
 		
-		var points : Array<Float> = [
-			width, height, 0,
-			0, height, 0,
-			width, 0, 0,
-			0, 0, 0		
+		var points : Array<Vector2> = [
+			new Vector2( width, height ),
+			new Vector2( 0, height ),
+			new Vector2( width, 0 ),
+			new Vector2( 0, 0 )		
 		];
 		
-		var points_trans : Float32Array = new Float32Array( points );
-		transform.transformVectors( points_trans, points_trans );
+		for ( i in 0...points.length ) {
+			points[i] = transform.transformVector2( points[i] );
+		}
 		
 		var uvs : Array<Float> = [
 			sourceRect.right, sourceRect.bottom,
@@ -145,9 +148,8 @@ class GLCanvas implements ICanvas
 		];
 		
 		for ( i in 0...4 ) {
-			_batch.vertices.push( points_trans[(i * 3) + 0] );
-			_batch.vertices.push( points_trans[(i * 3) + 1] );
-			_batch.vertices.push( points_trans[(i * 3) + 2] );
+			_batch.vertices.push( points[i].x );
+			_batch.vertices.push( points[i].y );
 			_batch.vertices.push( r / 255 );
 			_batch.vertices.push( g / 255 );
 			_batch.vertices.push( b / 255 );
@@ -268,7 +270,7 @@ class GLCanvas implements ICanvas
 			_context.enableVertexAttribArray( colorAttr );
 			
 			// Assign values to the shader
-			_context.vertexAttribPointer( vertexAttr, 3, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION  * 4);
+			_context.vertexAttribPointer( vertexAttr, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION  * 4);
 			_context.vertexAttribPointer( colorAttr, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR  * 4);
 			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 			

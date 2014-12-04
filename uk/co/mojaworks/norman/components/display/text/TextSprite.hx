@@ -62,15 +62,6 @@ class TextSprite extends RenderSprite
 	 * 
 	 */
 	
-	override function initShader() 
-	{
-		super.initShader();
-		if ( ImageSprite.shader == null ) {
-			#if gl_debug trace( "Compiling TextSprite shader" ); #end
-			ImageSprite.shader = core.app.renderer.createShader( new DefaultImageVertexShader(), new DefaultImageFragmentShader() );
-		}
-	}
-	
 	override public function getShader():IShaderProgram 
 	{
 		return ImageSprite.shader;
@@ -225,7 +216,7 @@ class TextSprite extends RenderSprite
 		var x : Float = 0;
 		var padding : Float = 0;
 		var prev_char : CharacterData = null;
-		var m : Matrix4 = new Matrix4();
+		var m : Matrix3 = new Matrix3();
 		var kerning : KerningData;
 		
 		// First go through and get line length
@@ -272,15 +263,13 @@ class TextSprite extends RenderSprite
 				}
 				
 				var texture : ITextureData = font.pages[ char.pageId ];
-				if ( cacheAsBitmap ) {
-					m.identity();
-				}else {
-					m.copyFrom( renderTransform );
-				}
-				m.prependTranslation( x + char.xOffset, y + char.yOffset, 0 );
+				m.identity();
+				m.translate( x + char.xOffset, y + char.yOffset );
+				if ( !cacheAsBitmap ) m.concat( renderTransform );
 				
 				// Dont bother drawing spaces and new lines
 				if ( char.id != 10 && char.id != 32 ) {
+					
 					canvas.drawSubImage( texture, 
 										 new Rectangle( 
 											char.x / texture.sourceImage.width, 

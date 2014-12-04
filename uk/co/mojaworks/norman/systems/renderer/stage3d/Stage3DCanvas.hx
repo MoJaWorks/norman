@@ -7,8 +7,10 @@ import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
 import flash.geom.Matrix3D;
 import flash.geom.Vector3D;
+import lime.math.Matrix3;
 import lime.math.Matrix4;
 import lime.math.Rectangle;
+import lime.math.Vector2;
 import lime.math.Vector4;
 import lime.utils.Float32Array;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
@@ -22,10 +24,10 @@ import uk.co.mojaworks.norman.systems.renderer.stage3d.Stage3DFrameBufferData;
 class Stage3DCanvas implements ICanvas
 {
 
-	private static inline var VERTEX_SIZE : Int = 9;
+	private static inline var VERTEX_SIZE : Int = 8;
 	private static inline var VERTEX_POSITION : Int = 0;
-	private static inline var VERTEX_COLOR : Int = 3;
-	private static inline var VERTEX_UV : Int = 7;
+	private static inline var VERTEX_COLOR : Int = 2;
+	private static inline var VERTEX_UV : Int = 6;
 	
 	private var _context : Context3D;
 	private var _stageWidth : Int;
@@ -61,7 +63,7 @@ class Stage3DCanvas implements ICanvas
 		return _context;
 	}
 	
-	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix4, shader : IShaderProgram ):Void 
+	public function fillRect( r : Float, g : Float, b : Float, a : Float, width : Float, height : Float, transform : Matrix3, shader : IShaderProgram ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
 		if ( _batch.started && (_batch.shader != shader || _batch.texture != null ) ) {
@@ -70,25 +72,20 @@ class Stage3DCanvas implements ICanvas
 		
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
-		var points : Array<Vector4> = [
-			new Vector4( width, height, 0 ),
-			new Vector4( 0, height, 0 ),
-			new Vector4( width, 0, 0 ),
-			new Vector4( 0, 0, 0 )
+		var points : Array<Vector2> = [
+			new Vector2( width, height ),
+			new Vector2( 0, height ),
+			new Vector2( width, 0 ),
+			new Vector2( 0, 0 )
 		];
 		
-		//trace("Before", points[0], transform[0] );
-		//
-		//for ( i in 0...points.length ) {
-			//points[i] = transform.transformVector( points[i] );
-		//}
-		//trace("After", points[0]);
-		
+		for ( i in 0...points.length ) {
+			points[i] = transform.transformVector2( points[i] );
+		}
 		
 		for ( i in 0...4 ) {
 			_batch.vertices.push( points[i].x );
 			_batch.vertices.push( points[i].y );
-			_batch.vertices.push( points[i].z );
 			_batch.vertices.push( r / 255 );
 			_batch.vertices.push( g / 255 );
 			_batch.vertices.push( b / 255 );
@@ -113,13 +110,13 @@ class Stage3DCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(texture : ITextureData, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
+	public function drawImage(texture : ITextureData, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
 		var stage3DTexture : Stage3DTextureData = cast texture;
-		drawSubImage( texture, new Rectangle(0, 0, stage3DTexture.xPerc, stage3DTexture.yPerc), transform, shader, r, g, b, a );
+		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, shader, r, g, b, a );
 	}
 	
-	public function drawSubImage(texture : ITextureData, sourceRect : Rectangle, transform : Matrix4, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
+	public function drawSubImage(texture : ITextureData, sourceRect : Rectangle, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
 		if ( _batch.started && ( _batch.shader != shader || _batch.texture != texture ) ) {
@@ -128,31 +125,32 @@ class Stage3DCanvas implements ICanvas
 		
 		var stage3DTexture : Stage3DTextureData = cast texture;
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
-		var width : Float = (sourceRect.width / stage3DTexture.xPerc) * stage3DTexture.sourceImage.width;
-		var height : Float = (sourceRect.height / stage3DTexture.yPerc) * stage3DTexture.sourceImage.height;
+		var width : Float = (sourceRect.width) * texture.width;
+		var height : Float = (sourceRect.height) * texture.height;
 		
-		var points : Array<Vector4> = [
-			new Vector4( width, height, 0 ),
-			new Vector4( 0, height, 0 ),
-			new Vector4( width, 0, 0 ),
-			new Vector4( 0, 0, 0 )
+		trace("Drawing subimage with width", width, height );
+		
+		var points : Array<Vector2> = [
+			new Vector2( width, height ),
+			new Vector2( 0, height ),
+			new Vector2( width, 0 ),
+			new Vector2( 0, 0 )
 		];
 		
-		//for ( i in 0...points.length ) {
-			//points[i] = transform.transformVector( points[i] );
-		//}
+		for ( i in 0...points.length ) {
+			points[i] = transform.transformVector2( points[i] );
+		}
 		
 		var uvs : Array<Float> = [
-			sourceRect.right, sourceRect.bottom,
-			sourceRect.left, sourceRect.bottom,
-			sourceRect.right, sourceRect.top,
-			sourceRect.left, sourceRect.top
+			sourceRect.right * stage3DTexture.xPerc, sourceRect.bottom * stage3DTexture.yPerc,
+			sourceRect.left * stage3DTexture.xPerc, sourceRect.bottom * stage3DTexture.yPerc,
+			sourceRect.right * stage3DTexture.xPerc, sourceRect.top * stage3DTexture.yPerc,
+			sourceRect.left * stage3DTexture.xPerc, sourceRect.top * stage3DTexture.yPerc
 		];
 		
 		for ( i in 0...4 ) {
 			_batch.vertices.push( points[i].x );
 			_batch.vertices.push( points[i].y );
-			_batch.vertices.push( points[i].z );
 			_batch.vertices.push( r / 255 );
 			_batch.vertices.push( g / 255 );
 			_batch.vertices.push( b / 255 );
@@ -202,7 +200,7 @@ class Stage3DCanvas implements ICanvas
 		frameBuffer.texture = cast target;
 		
 		_context.setRenderToTexture( frameBuffer.texture.texture, true );
-		_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
+		_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, frameBuffer.texture.sourceImage.height, 0, -1000, 1000 );
 		_frameBufferStack.push( frameBuffer );
 		
 	}
@@ -219,7 +217,7 @@ class Stage3DCanvas implements ICanvas
 		if ( _frameBufferStack.length > 0 ) {
 			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
 			_context.setRenderToTexture( frameBuffer.texture.texture );
-			_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, 0, frameBuffer.texture.sourceImage.height, -1000, 1000 );
+			_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, frameBuffer.texture.sourceImage.height, 0, -1000, 1000 );
 		}else {
 			// Back to stage
 			_context.setRenderToBackBuffer();
@@ -230,6 +228,9 @@ class Stage3DCanvas implements ICanvas
 	
 	private function renderBatch( ) : Void {
 				
+		
+		//trace("Rendering batch", _batch.vertices );
+		
 		if ( _batch.vertices.length > 0 ) {
 			
 			//trace("Rendering ", _batch.vertices);
@@ -254,7 +255,7 @@ class Stage3DCanvas implements ICanvas
 			}
 			
 			// Assign values to the shader
-			_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POSITION, Context3DVertexBufferFormat.FLOAT_3 );
+			_context.setVertexBufferAt( 0, _vertexBuffer, VERTEX_POSITION, Context3DVertexBufferFormat.FLOAT_2 );
 			_context.setVertexBufferAt( 1, _vertexBuffer, VERTEX_COLOR, Context3DVertexBufferFormat.FLOAT_4 );
 			_context.setProgramConstantsFromMatrix( Context3DProgramType.VERTEX, 0, _projectionMatrix, true );
 			

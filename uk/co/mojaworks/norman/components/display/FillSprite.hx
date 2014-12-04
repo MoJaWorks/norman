@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.components.display;
 import lime.math.Matrix3;
 import lime.math.Matrix4;
+import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillFragmentShader;
@@ -15,7 +16,7 @@ import uk.co.mojaworks.norman.utils.Color;
 class FillSprite extends Sprite
 {
 
-	public static var shaderProgram : IShaderProgram;
+	public static var shader(get,null) : IShaderProgram = null;
 	
 	public var color( default, default ) : Color;
 	public var width( default, default ) : Float;
@@ -30,17 +31,30 @@ class FillSprite extends Sprite
 		this.height = height;
 	}
 	
-	override public function initShader() : Void {
-		if ( shaderProgram == null ) {
+	/**
+	 * Shader
+	 * @return
+	 */
+	
+	private static function get_shader() : IShaderProgram {
+		if ( FillSprite.shader == null ) {
 			#if gl_debug trace( "Compiling FillSprite shader" ); #end
-			shaderProgram = core.app.renderer.createShader( new DefaultFillVertexShader(), new DefaultFillFragmentShader() );
+			FillSprite.shader = Core.getInstance().app.renderer.createShader( new DefaultFillVertexShader(), new DefaultFillFragmentShader() );
 		}
+		return FillSprite.shader;
 	}
 	
 	override public function getShader():IShaderProgram 
 	{
-		return shaderProgram;
+		return shader;
 	}
+	
+	/**
+	 * 
+	 * @param	width
+	 * @param	height
+	 * @return
+	 */
 	
 	public function setSize( width : Float, height : Float ) : FillSprite {
 		this.width = width;

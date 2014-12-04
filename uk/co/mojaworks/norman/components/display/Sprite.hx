@@ -1,9 +1,9 @@
 package uk.co.mojaworks.norman.components.display ;
 
+import lime.math.Matrix3;
 import lime.math.Matrix4;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Messenger.MessageData;
-import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 
@@ -19,24 +19,19 @@ class Sprite extends Component
 	
 	public var anchorX( default, set ) : Float = 0;
 	public var anchorY( default, set ) : Float = 0;
-	public var anchorZ( default, set ) : Float = 0;
+	//public var anchorZ( default, set ) : Float = 0;
 	
 	public var paddingX( default, set ) : Float = 0;
 	public var paddingY( default, set ) : Float = 0;
 	
-	public var renderTransform( get, never ) : Matrix4;
-	private var _renderTransform : Matrix4;
+	public var renderTransform( get, never ) : Matrix3;
+	private var _renderTransform : Matrix3;
 	private var _renderTransformDirty : Bool = true;
 	
 	public function new( ) 
 	{
 		super( );
-		initShader();
-		_renderTransform = new Matrix4();
-	}
-	
-	private function initShader() {
-		// Initialise the shader
+		_renderTransform = new Matrix3();
 	}
 	
 	public function getShader() : IShaderProgram {
@@ -58,8 +53,14 @@ class Sprite extends Component
 	}
 	
 	private function recalculateRenderTransform() : Void {
-		_renderTransform = gameObject.transform.worldTransform.clone();
-		_renderTransform.prependTranslation( paddingX - anchorX, paddingY - anchorY, -anchorZ );
+		_renderTransform.identity();
+		_renderTransform.translate( paddingX - anchorX, paddingY - anchorY );
+		
+		if ( gameObject.parent != null && gameObject.parent.transform.isRoot ) {
+			_renderTransform.concat( gameObject.transform.localTransform );
+		}else{
+			_renderTransform.concat( gameObject.transform.worldTransform );
+		}
 		_renderTransformDirty = false;
 	}
 
@@ -182,10 +183,10 @@ class Sprite extends Component
 		return this;
 	}
 	
-	public function setAnchor( x : Float, y : Float, z : Float = 0 ) : Sprite {
+	public function setAnchor( x : Float, y : Float ) : Sprite {
 		anchorX = x;
 		anchorY = y;
-		anchorZ = z;
+		//anchorZ = z;
 		return this;
 	}
 	
@@ -199,14 +200,14 @@ class Sprite extends Component
 	 * Transform
 	 */
 	
-	public function get_renderTransform() : Matrix4 { 
+	public function get_renderTransform() : Matrix3 { 
 		if ( _renderTransformDirty ) recalculateRenderTransform();
 		return _renderTransform;
 	}
 	 
 	private function set_anchorX( _anchorX : Float ) : Float { anchorX = _anchorX; invalidateMatrices(); return anchorX; }
 	private function set_anchorY( _anchorY : Float ) : Float { anchorY = _anchorY; invalidateMatrices(); return anchorY; }
-	private function set_anchorZ( _anchorZ : Float ) : Float { anchorZ = _anchorZ; invalidateMatrices(); return anchorZ; }
+	//private function set_anchorZ( _anchorZ : Float ) : Float { anchorZ = _anchorZ; invalidateMatrices(); return anchorZ; }
 	private function set_paddingX( _paddingX : Float ) : Float { paddingX = _paddingX; invalidateMatrices(); return paddingX; }
 	private function set_paddingY( _paddingY : Float ) : Float { paddingY = _paddingY; invalidateMatrices(); return paddingY; }
 			

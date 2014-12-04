@@ -30,7 +30,7 @@ class Stage3DTextureData implements ITextureData
 		var result : Rectangle = null;
 		
 		if ( subImageId == null ) {
-			result = new Rectangle( 0, 0, sourceImage.width * xPerc, sourceImage.height * yPerc );
+			result = new Rectangle( 0, 0, sourceImage.width, sourceImage.height );
 		}else if ( map != null ) {
 			var img : Dynamic = Reflect.field( map.frames, subImageId );
 			if ( img != null ) {
@@ -54,10 +54,10 @@ class Stage3DTextureData implements ITextureData
 			var img : Dynamic = Reflect.field( map.frames, subImageId );
 			if ( img != null ) {
 				result = new Rectangle( 
-					(img.frame.x * xPerc / sourceImage.width),
-					(img.frame.y * yPerc / sourceImage.height),
-					(img.frame.w * xPerc / sourceImage.width),
-					(img.frame.h * yPerc / sourceImage.height)
+					(img.frame.x / sourceImage.width),
+					(img.frame.y / sourceImage.height),
+					(img.frame.w / sourceImage.width),
+					(img.frame.h / sourceImage.height)
 				);
 			}else {
 				trace("No subimage " + subImageId + " in texture " + id );

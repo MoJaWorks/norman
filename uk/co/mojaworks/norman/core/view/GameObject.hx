@@ -4,6 +4,7 @@ import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.Messenger;
+import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -31,7 +32,7 @@ class GameObject extends CoreObject
 	
 	// Children
 	public var parent : GameObject;
-	public var children : Array<GameObject>;
+	public var children : LinkedList<GameObject>;
 	
 	/**
 	 * 
@@ -44,7 +45,7 @@ class GameObject extends CoreObject
 		this.id = id;
 		autoId = _entityAutoIdCounter++;
 		
-		children = [];
+		children = new LinkedList<GameObject>();
 		_components = new Map<String,Component>();
 		
 		messenger = new Messenger();
