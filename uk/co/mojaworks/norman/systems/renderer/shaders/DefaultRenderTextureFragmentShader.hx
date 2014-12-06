@@ -2,18 +2,20 @@ package uk.co.mojaworks.norman.systems.renderer.shaders;
 
 /**
  * ...
- * @author Simon
+ * @author ...
  */
-class DefaultImageFragmentShader extends ShaderData
+class DefaultRenderTextureFragmentShader extends ShaderData
 {
 
 	public function new() 
 	{
 		super();
+		
 	}
 	
 	override public function getGLSL():String 
 	{
+		
 		var str : String = "";
 		
 		#if !desktop
@@ -25,12 +27,11 @@ class DefaultImageFragmentShader extends ShaderData
 		str += "uniform sampler2D uTexture0;";
 		
 		str += "void main(void) {";
-		str += "	vec4 texColor = texture2D( uTexture0, vVertexUV );";
-		str += "	texColor.rgb = texColor.rgb * texColor.a;";
-		str += "	gl_FragColor = vVertexColor * texColor;";
+		str += "	gl_FragColor = vVertexColor * texture2D( uTexture0, vVertexUV );";
 		str += "}";
 		
 		return str;
+		
 	}
 	
 	override public function getAGAL():String 

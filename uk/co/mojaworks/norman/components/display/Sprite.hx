@@ -132,7 +132,11 @@ class Sprite extends Component
 	
 	public function getFinalAlpha() : Float {
 		if ( gameObject.parent != null && gameObject.parent.sprite != null ) {
-			return gameObject.parent.sprite.getFinalAlpha() * alpha;
+			if ( gameObject.parent.transform.isRoot ) {
+				return gameObject.parent.sprite.alpha * alpha;
+			}else {
+				return gameObject.parent.sprite.getFinalAlpha() * alpha;
+			}
 		}else {
 			return alpha;
 		}

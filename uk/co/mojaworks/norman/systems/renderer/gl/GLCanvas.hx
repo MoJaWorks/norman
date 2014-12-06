@@ -93,9 +93,9 @@ class GLCanvas implements ICanvas
 		for ( i in 0...4 ) {
 			_batch.vertices.push( points[i].x );
 			_batch.vertices.push( points[i].y );
-			_batch.vertices.push( r / 255 );
-			_batch.vertices.push( g / 255 );
-			_batch.vertices.push( b / 255 );
+			_batch.vertices.push( (r / 255) * a );
+			_batch.vertices.push( (g / 255) * a );
+			_batch.vertices.push( (b / 255) * a );
 			_batch.vertices.push( a );
 			// Fake the UV coords just for consistency
 			_batch.vertices.push( 0 );
@@ -117,12 +117,12 @@ class GLCanvas implements ICanvas
 		
 	}
 	
-	public function drawImage(texture : ITextureData, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
+	public function drawImage( texture : ITextureData, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
 		drawSubImage( texture, new Rectangle(0, 0, 1, 1), transform, shader, r, g, b, a );
 	}
 	
-	public function drawSubImage(texture : ITextureData, sourceRect : Rectangle, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
+	public function drawSubImage( texture : ITextureData, sourceRect : Rectangle, transform : Matrix3, shader : IShaderProgram, r : Float = 255, g : Float = 255, b : Float = 255, a : Float = 1 ):Void 
 	{
 		// If the last batch is not compatible then render the last batch
 		if ( _batch.started && ( _batch.shader != shader || _batch.texture != texture ) ) {
@@ -154,9 +154,9 @@ class GLCanvas implements ICanvas
 		for ( i in 0...4 ) {
 			_batch.vertices.push( points[i].x );
 			_batch.vertices.push( points[i].y );
-			_batch.vertices.push( r / 255 );
-			_batch.vertices.push( g / 255 );
-			_batch.vertices.push( b / 255 );
+			_batch.vertices.push( (r / 255) * a );
+			_batch.vertices.push( (g / 255) * a );
+			_batch.vertices.push( (b / 255) * a );
 			_batch.vertices.push( a );
 			_batch.vertices.push( uvs[ (i*2) + 0 ] );
 			_batch.vertices.push( uvs[ (i*2) + 1 ] );
@@ -202,7 +202,7 @@ class GLCanvas implements ICanvas
 		// Set the blend mode
 		//_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
 		_context.enable( GL.BLEND );
-		setBlendMode( BlendFactor.SOURCE_ALPHA, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
+		setBlendMode( BlendFactor.ONE, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
 	}
 	
 	public function complete() : Void {

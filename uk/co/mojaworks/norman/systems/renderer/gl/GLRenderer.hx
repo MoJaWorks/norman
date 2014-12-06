@@ -16,6 +16,7 @@ import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
+import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**

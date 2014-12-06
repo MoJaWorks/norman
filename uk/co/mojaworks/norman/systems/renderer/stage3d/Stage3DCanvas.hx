@@ -36,6 +36,9 @@ class Stage3DCanvas implements ICanvas
 	private var _batch : Stage3DRenderBatch;
 	private var _frameBufferStack : Array<Stage3DFrameBufferData>;
 	
+	public var sourceBlendFactor( default, null ) : BlendFactor;
+	public var destinationBlendFactor( default, null ) : BlendFactor;
+	
 	public function new( context : Context3D ) : Void 
 	{
 		
@@ -84,9 +87,9 @@ class Stage3DCanvas implements ICanvas
 		for ( i in 0...4 ) {
 			_batch.vertices.push( points[i].x );
 			_batch.vertices.push( points[i].y );
-			_batch.vertices.push( r / 255 );
-			_batch.vertices.push( g / 255 );
-			_batch.vertices.push( b / 255 );
+			_batch.vertices.push( (r / 255) * a );
+			_batch.vertices.push( (g / 255) * a );
+			_batch.vertices.push( (b / 255) * a );
 			_batch.vertices.push( a );
 			// Fake the UV coords just for consistency
 			_batch.vertices.push( 0 );
@@ -149,9 +152,9 @@ class Stage3DCanvas implements ICanvas
 		for ( i in 0...4 ) {
 			_batch.vertices.push( points[i].x );
 			_batch.vertices.push( points[i].y );
-			_batch.vertices.push( r / 255 );
-			_batch.vertices.push( g / 255 );
-			_batch.vertices.push( b / 255 );
+			_batch.vertices.push( (r / 255) * a );
+			_batch.vertices.push( (g / 255) * a );
+			_batch.vertices.push( (b / 255) * a );
 			_batch.vertices.push( a );
 			_batch.vertices.push( uvs[ (i*2) + 0 ] );
 			_batch.vertices.push( uvs[ (i*2) + 1 ] );
@@ -187,8 +190,7 @@ class Stage3DCanvas implements ICanvas
 		_context.configureBackBuffer( _stageWidth, _stageHeight, 0, false );
 		
 		// Set the blend mode
-		//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
-		setBlendMode( BlendFactor.SOURCE_ALPHA, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
+		setBlendMode( BlendFactor.ONE, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
 	}
 	
 	public function complete() : Void {

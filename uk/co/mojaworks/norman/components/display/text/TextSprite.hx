@@ -214,6 +214,7 @@ class TextSprite extends RenderSprite
 		string = StringTools.rtrim( string );
 		
 		var x : Float = 0;
+		var a : Float = 0;
 		var padding : Float = 0;
 		var prev_char : CharacterData = null;
 		var m : Matrix3 = new Matrix3();
@@ -265,7 +266,13 @@ class TextSprite extends RenderSprite
 				var texture : ITextureData = font.pages[ char.pageId ];
 				m.identity();
 				m.translate( x + char.xOffset, y + char.yOffset );
-				if ( !cacheAsBitmap ) m.concat( renderTransform );
+				if ( !cacheAsBitmap ) {
+					m.concat( renderTransform );
+					a = getFinalAlpha() * color.a;
+				}else {
+					a = alpha * color.a;
+				}
+				
 				
 				// Dont bother drawing spaces and new lines
 				if ( char.id != 10 && char.id != 32 ) {
@@ -276,7 +283,7 @@ class TextSprite extends RenderSprite
 											char.y / texture.width, 
 											char.width / texture.width,
 											char.height / texture.height
-										 ), m, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
+										 ), m, getShader(), color.r, color.g, color.b, a );
 				}
 									 
 				x += char.xAdvance + padding;

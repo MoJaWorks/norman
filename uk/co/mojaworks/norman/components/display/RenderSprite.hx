@@ -1,9 +1,11 @@
 package uk.co.mojaworks.norman.components.display;
+import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.systems.renderer.Constants.BlendFactor;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageVertexShader;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultRenderTextureFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.utils.Color;
 
@@ -14,6 +16,8 @@ import uk.co.mojaworks.norman.utils.Color;
 class RenderSprite extends Sprite
 {
 
+	public static var shader( get, null ) : IShaderProgram = null;
+	
 	var _target : ITextureData;
 	var _dirty : Bool = true;
 	var _isCleaning : Bool = false;
@@ -28,10 +32,17 @@ class RenderSprite extends Sprite
 	{
 		super();		
 	}
+	
+	private static function get_shader() : IShaderProgram {
+		if ( RenderSprite.shader == null ) {
+			RenderSprite.shader = Core.getInstance().app.renderer.createShader( new DefaultImageVertexShader(), new DefaultRenderTextureFragmentShader() );
+		}
+		return RenderSprite.shader;
+	}
 		
 	override public function getShader():IShaderProgram 
 	{
-		return ImageSprite.shader;
+		return RenderSprite.shader;
 	}
 	
 	override public function onAdded():Void 
