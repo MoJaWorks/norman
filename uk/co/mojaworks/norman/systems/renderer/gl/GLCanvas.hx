@@ -16,6 +16,7 @@ import lime.utils.UInt16Array;
 import lime.utils.UInt8Array;
 import uk.co.mojaworks.norman.components.display.ImageSprite;
 import uk.co.mojaworks.norman.engine.NormanApp;
+import uk.co.mojaworks.norman.systems.renderer.Constants.BlendFactor;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.utils.Color;
@@ -42,6 +43,9 @@ class GLCanvas implements ICanvas
 
 	private var _batch : GLRenderBatch;
 	private var _frameBufferStack : Array<GLFrameBufferData>;
+	
+	public var sourceBlendFactor( default, null ) : BlendFactor;
+	public var destinationBlendFactor( default, null ) : BlendFactor;
 	
 	public function new( context : GLRenderContext ) : Void 
 	{
@@ -178,10 +182,27 @@ class GLCanvas implements ICanvas
 		_context.clear( GL.COLOR_BUFFER_BIT );
 	}
 	
+	public function setBlendMode( sourceFactor : BlendFactor, destinationFactor : BlendFactor ) : Void {
+		if ( sourceFactor != sourceBlendFactor || destinationFactor != destinationBlendFactor ) {
+			
+			// Setting blend mode modifies state
+			if ( _batch.started ) renderBatch();
+			
+			sourceBlendFactor = sourceFactor;
+			destinationBlendFactor = destinationFactor;
+			_context.blendFunc( cast sourceFactor, cast destinationFactor );
+		}
+	}
+	
 	public function begin() : Void {
 		_batch.reset();
 		_projectionMatrix = Matrix4.createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		_context.viewport( 0, 0, _stageWidth, _stageHeight );
+		
+		// Set the blend mode
+		//_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
+		_context.enable( GL.BLEND );
+		setBlendMode( BlendFactor.SOURCE_ALPHA, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
 	}
 	
 	public function complete() : Void {
@@ -240,9 +261,7 @@ class GLCanvas implements ICanvas
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt16Array( _batch.indices ), GL.STREAM_DRAW );
 			
-			// Set the blend mode
-			_context.blendFunc(GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA);
-			_context.enable( GL.BLEND );
+			
 			
 			// Set up the shaders
 			_context.useProgram( _batch.shader.program );

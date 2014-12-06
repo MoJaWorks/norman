@@ -108,19 +108,19 @@ class GLRenderer implements IRenderer
 	 * Textures
 	 */
 	
-	public function createTexture( id : String, width : Int, height : Int ) : ITextureData {
+	public function createTexture( id : String, width : Int, height : Int, asRenderTexture : Bool = false ) : ITextureData {
 		
 		var img : Image = new Image( null, 0, 0, width, height );
-		return createTextureFromImage( id, img, null );
+		return createTextureFromImage( id, img, null, asRenderTexture );
 		
 	}
 	
-	public function createTextureFromAsset( id : String ) : ITextureData {
+	public function createTextureFromAsset( id : String, asRenderTexture : Bool = false ) : ITextureData {
 		
 		var map : String = null;
 		if ( Assets.exists( id + ".map" ) ) map = Assets.getText( id + ".map" );
 		
-		return createTextureFromImage( id, Assets.getImage( id ), map );
+		return createTextureFromImage( id, Assets.getImage( id ), map, asRenderTexture );
 	}
 
 	/**
@@ -130,11 +130,12 @@ class GLRenderer implements IRenderer
 	 * @param	data
 	 * @param	map
 	 */
-	public function createTextureFromImage( id : String, image : Image, map : String = null ) : ITextureData {
+	public function createTextureFromImage( id : String, image : Image, map : String = null, asRenderTexture : Bool = false ) : ITextureData {
 		
 		var data : GLTextureData = new GLTextureData();
 		data.id = id;
 		data.sourceImage = image;
+		data.isRenderTexture = asRenderTexture;
 		if ( map != null ) data.map = Json.parse( map );
 		
 		if ( _canvas.getContext() != null ) {
@@ -181,8 +182,13 @@ class GLRenderer implements IRenderer
 		#else
 			context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, data.sourceImage.buffer.width, data.sourceImage.buffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.data );
 		#end
-		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
-		context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
+		if ( !data.isRenderTexture ) {
+			context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
+			context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
+		}else {
+			context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST );
+			context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST );
+		}
 		context.bindTexture( GL.TEXTURE_2D, null );
 		
 		return tex;

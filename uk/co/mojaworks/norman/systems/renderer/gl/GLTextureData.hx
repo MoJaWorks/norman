@@ -19,6 +19,7 @@ class GLTextureData implements ITextureData
 	public var texture : GLTexture;
 	public var width( get, never ) : Float;
 	public var height( get, never ) : Float;
+	public var isRenderTexture : Bool;
 	
 	public function new() {
 		

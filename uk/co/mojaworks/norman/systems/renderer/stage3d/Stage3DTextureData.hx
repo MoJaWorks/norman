@@ -20,6 +20,7 @@ class Stage3DTextureData implements ITextureData
 	public var yPerc : Float = 1;
 	public var width( get, never ) : Float;
 	public var height( get, never ) : Float;
+	public var isRenderTexture : Bool;
 	
 	public function new() {
 		

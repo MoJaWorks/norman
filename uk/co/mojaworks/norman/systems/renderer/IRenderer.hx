@@ -12,9 +12,9 @@ import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 interface IRenderer 
 {
 	// Textures
-	function createTexture( id : String, width : Int, height : Int ) : ITextureData;
-	function createTextureFromImage( id : String, src : Image, map : String = null ) : ITextureData;
-	function createTextureFromAsset( id : String ) : ITextureData;
+	function createTexture( id : String, width : Int, height : Int, asRenderTexture : Bool = false ) : ITextureData;
+	function createTextureFromImage( id : String, src : Image, map : String = null, asRenderTexture : Bool = false ) : ITextureData;
+	function createTextureFromAsset( id : String, asRenderTexture : Bool = false ) : ITextureData;
 	function hasTexture( id : String ) : Bool;
 	function getTexture( id : String ) : ITextureData;
 	function destroyTexture( id : String ) : Void;

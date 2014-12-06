@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.display;
+import uk.co.mojaworks.norman.systems.renderer.Constants.BlendFactor;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
@@ -50,8 +51,10 @@ class RenderSprite extends Sprite
 	public function updateCache() : Void {
 		_dirty = true;
 		
-		if ( _target != null ) core.app.renderer.destroyTexture( _target.id );
-		_target = core.app.renderer.createTexture( "@norman/rendertexture/" + gameObject.id, Std.int(_width), Std.int(_height) );
+		if ( gameObject != null ) {
+			if ( _target != null ) core.app.renderer.destroyTexture( _target.id );
+			_target = core.app.renderer.createTexture( "@norman/rendertexture/" + gameObject.id, Std.int(_width), Std.int(_height) );
+		}
 	}
 	
 	public function setSize( width : Float, height : Float ) : RenderSprite {
@@ -119,7 +122,15 @@ class RenderSprite extends Sprite
 			_dirty = false;
 		}
 		
-		if ( visible ) canvas.drawImage( _target, renderTransform, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
+		if ( visible ) {
+			
+			//var prev_src : BlendFactor = canvas.sourceBlendFactor;
+			//var prev_dst : BlendFactor = canvas.destinationBlendFactor;
+			
+			//canvas.setBlendMode( BlendFactor.ONE, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
+			canvas.drawImage( _target, renderTransform, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
+			//canvas.setBlendMode( prev_src, prev_dst );
+		}
 			
 	}
 	

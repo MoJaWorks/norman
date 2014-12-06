@@ -108,21 +108,21 @@ class Stage3DRenderer implements IRenderer
 	 * Textures
 	 */
 	
-	public function createTexture( id : String, width : Int, height : Int ) : ITextureData {
+	public function createTexture( id : String, width : Int, height : Int, asRenderTexture : Bool = false ) : ITextureData {
 		
 		//var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height ), 0, 0, width, height );
 		//var img : Image = new Image( new ImageBuffer( new UInt8Array( width * height * 4 ), width, height, 4), 0, 0, width, height );
 		var img : Image = new Image( null, 0, 0, width, height );
-		return createTextureFromImage( id, img, null );
+		return createTextureFromImage( id, img, null, asRenderTexture );
 		
 	}
 	
-	public function createTextureFromAsset( id : String ) : ITextureData {
+	public function createTextureFromAsset( id : String, asRenderTexture : Bool = false ) : ITextureData {
 		
 		var map : String = null;
 		if ( Assets.exists( id + ".map" ) ) map = Assets.getText( id + ".map" );
 		
-		return createTextureFromImage( id, Assets.getImage( id ), map );
+		return createTextureFromImage( id, Assets.getImage( id ), map, asRenderTexture );
 	}
 
 	/**
@@ -132,11 +132,12 @@ class Stage3DRenderer implements IRenderer
 	 * @param	data
 	 * @param	map
 	 */
-	public function createTextureFromImage( id : String, image : Image, map : String = null ) : ITextureData {
+	public function createTextureFromImage( id : String, image : Image, map : String = null, asRenderTexture : Bool = false ) : ITextureData {
 		
 		var data : Stage3DTextureData = new Stage3DTextureData();
 		data.id = id;
 		data.sourceImage = image;
+		data.isRenderTexture = asRenderTexture;
 		if ( map != null ) data.map = Json.parse( map );
 		
 		if ( _canvas.getContext() != null ) {
@@ -172,7 +173,7 @@ class Stage3DRenderer implements IRenderer
 		
 		var context : Context3D = _canvas.getContext();
 		var size : Vector2 = new Vector2( MathUtils.roundToNextPow2( data.sourceImage.width ), MathUtils.roundToNextPow2( data.sourceImage.height ) );
-		var tex : Texture = context.createTexture( Std.int(size.x), Std.int(size.y), Context3DTextureFormat.BGRA, false );
+		var tex : Texture = context.createTexture( Std.int(size.x), Std.int(size.y), Context3DTextureFormat.BGRA, data.isRenderTexture );
 		tex.uploadFromBitmapData( data.sourceImage.src );
 		
 		data.xPerc = data.sourceImage.width / size.x;

@@ -6,16 +6,14 @@ import flash.display3D.Context3DVertexBufferFormat;
 import flash.display3D.IndexBuffer3D;
 import flash.display3D.VertexBuffer3D;
 import flash.geom.Matrix3D;
-import flash.geom.Vector3D;
 import lime.math.Matrix3;
-import lime.math.Matrix4;
 import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.math.Vector4;
-import lime.utils.Float32Array;
+import uk.co.mojaworks.norman.systems.renderer.Constants.BlendFactor;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.stage3d.Stage3DFrameBufferData;
+
 
 /**
  * ...
@@ -128,7 +126,7 @@ class Stage3DCanvas implements ICanvas
 		var width : Float = (sourceRect.width) * texture.width;
 		var height : Float = (sourceRect.height) * texture.height;
 		
-		trace("Drawing subimage with width", width, height );
+		//trace("Drawing subimage with width", width, height );
 		
 		var points : Array<Vector2> = [
 			new Vector2( width, height ),
@@ -178,13 +176,19 @@ class Stage3DCanvas implements ICanvas
 		_context.clear( r/255, g/255, b/255, a );
 	}
 	
+	public function setBlendMode( sourceFactor : BlendFactor, destinationFactor : BlendFactor ) : Void {
+		
+		_context.setBlendFactors( sourceFactor, destinationFactor );
+	}
+	
 	public function begin() : Void {
 		_batch.reset();
 		_projectionMatrix = createOrtho( 0, _stageWidth, _stageHeight, 0, -1000, 1000 );
 		_context.configureBackBuffer( _stageWidth, _stageHeight, 0, false );
 		
 		// Set the blend mode
-		_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
+		//_context.setBlendFactors( Context3DBlendFactor.SOURCE_ALPHA, Context3DBlendFactor.ONE_MINUS_SOURCE_ALPHA );
+		setBlendMode( BlendFactor.SOURCE_ALPHA, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
 	}
 	
 	public function complete() : Void {
@@ -199,8 +203,8 @@ class Stage3DCanvas implements ICanvas
 		var frameBuffer : Stage3DFrameBufferData = new Stage3DFrameBufferData();
 		frameBuffer.texture = cast target;
 		
-		_context.setRenderToTexture( frameBuffer.texture.texture, true );
-		_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, frameBuffer.texture.sourceImage.height, 0, -1000, 1000 );
+		_context.setRenderToTexture( frameBuffer.texture.texture, false );
+		_projectionMatrix = createOrtho( 0, frameBuffer.texture.width / frameBuffer.texture.xPerc, frameBuffer.texture.height / frameBuffer.texture.yPerc, 0, -1000, 1000 );
 		_frameBufferStack.push( frameBuffer );
 		
 	}
@@ -217,7 +221,7 @@ class Stage3DCanvas implements ICanvas
 		if ( _frameBufferStack.length > 0 ) {
 			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
 			_context.setRenderToTexture( frameBuffer.texture.texture );
-			_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width, frameBuffer.texture.sourceImage.height, 0, -1000, 1000 );
+			_projectionMatrix = createOrtho( 0, frameBuffer.texture.sourceImage.width / frameBuffer.texture.xPerc, frameBuffer.texture.sourceImage.height / frameBuffer.texture.yPerc, 0, -1000, 1000 );
 		}else {
 			// Back to stage
 			_context.setRenderToBackBuffer();

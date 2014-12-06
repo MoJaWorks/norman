@@ -45,7 +45,7 @@ class TextSprite extends RenderSprite
 	private var _lineStops : Array<Int>;
 	private var _bounds : Rectangle;
 		
-	var _fontTextures : Array<ITextureData>;
+	//var _fontTextures : Array<ITextureData>;
 	var _layoutDirty : Bool = true;
 	
 	public function new( ) 
@@ -272,10 +272,10 @@ class TextSprite extends RenderSprite
 					
 					canvas.drawSubImage( texture, 
 										 new Rectangle( 
-											char.x / texture.sourceImage.width, 
-											char.y / texture.sourceImage.width, 
-											char.width / texture.sourceImage.width,
-											char.height / texture.sourceImage.height
+											char.x / texture.width, 
+											char.y / texture.width, 
+											char.width / texture.width,
+											char.height / texture.height
 										 ), m, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
 				}
 									 

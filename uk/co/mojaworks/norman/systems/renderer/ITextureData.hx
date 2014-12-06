@@ -15,6 +15,7 @@ interface ITextureData
 	public var isValid : Bool;
 	public var width( get, never ) : Float;
 	public var height( get, never ) : Float;
+	public var isRenderTexture : Bool;
 		
 	function getRectFor( subImageId : String ) : Rectangle;
 	function getUVFor( subImageId : String ) : Rectangle;
