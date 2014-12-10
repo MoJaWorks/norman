@@ -5,6 +5,7 @@ import lime.graphics.opengl.GL;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.core.view.GameObject;
+import uk.co.mojaworks.norman.core.view.Viewport;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.ticker.TickerSystem;
@@ -24,9 +25,10 @@ class NormanApp extends Application
 	
 	private var _hasInit : Bool = false;
 	
-	// Public static vars for easy access
-	//public static var viewport : Viewport;
 	// TODO: Add sound engine
+	
+	// Public vars for easy access
+	public var viewport( default, null ) : Viewport;
 	public var renderer( default, null ) : IRenderer;
 	public var ticker( default, null ) : TickerSystem;
 	
@@ -40,6 +42,9 @@ class NormanApp extends Application
 		Core.init( this );
 		
 		ticker = new TickerSystem();
+		viewport = new Viewport();
+		viewport.setTargetSize( _stageWidth, _stageHeight );
+		
 	}
 	
 	override public function init( context : RenderContext ) {
@@ -101,7 +106,10 @@ class NormanApp extends Application
 	override public function onWindowResize( width : Int, height : Int ) : Void {
 		
 		if ( _hasInit ) {
+			viewport.resize( width, height );
 			
+			core.root.transform.setScale( viewport.scale );
+			core.root.transform.setPosition( viewport.marginLeft, viewport.marginTop );
 		}
 		
 	}
