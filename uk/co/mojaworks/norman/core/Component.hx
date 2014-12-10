@@ -2,13 +2,14 @@ package uk.co.mojaworks.norman.core;
 import uk.co.mojaworks.norman.core.Messenger.MessageCallback;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.core.view.GameObject;
+import uk.co.mojaworks.norman.systems.ticker.ITickable;
 
 /**
  * ...
  * @author Simon
  */
 #if !macro @:autoBuild( uk.co.mojaworks.norman.core.ComponentBuilder.build() ) #end
-class Component extends CoreObject
+class Component extends CoreObject implements ITickable
 {
 	
 	public var gameObject : GameObject;
@@ -45,6 +46,7 @@ class Component extends CoreObject
 	}
 	
 	public function onUpdate( seconds : Float ) : Void {
+		// Nothing by default - this is not called unless added to the ticker
 	}
 	
 	public function onAdded( ) : Void {

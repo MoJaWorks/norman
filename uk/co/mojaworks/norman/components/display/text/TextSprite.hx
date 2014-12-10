@@ -358,13 +358,13 @@ class TextSprite extends RenderSprite
 	
 	override public function getNaturalWidth() : Float 
 	{
-		if ( _dirty ) regenerateLayout();
+		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.width;
 	}
 	
 	override public function getNaturalHeight() : Float 
 	{
-		if ( _dirty ) regenerateLayout();
+		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.height;
 	}
 	

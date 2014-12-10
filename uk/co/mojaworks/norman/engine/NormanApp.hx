@@ -7,6 +7,7 @@ import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
+import uk.co.mojaworks.norman.systems.ticker.TickerSystem;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -26,7 +27,8 @@ class NormanApp extends Application
 	// Public static vars for easy access
 	//public static var viewport : Viewport;
 	// TODO: Add sound engine
-	public var renderer : IRenderer;
+	public var renderer( default, null ) : IRenderer;
+	public var ticker( default, null ) : TickerSystem;
 	
 	/**
 	 * 
@@ -36,6 +38,8 @@ class NormanApp extends Application
 	{
 		super();
 		Core.init( this );
+		
+		ticker = new TickerSystem();
 	}
 	
 	override public function init( context : RenderContext ) {
@@ -106,6 +110,7 @@ class NormanApp extends Application
 	{
 		if ( _hasInit ) {
 			super.update( deltaTime );
+			ticker.tick( deltaTime * 0.001 );
 		}
 	}
 	
