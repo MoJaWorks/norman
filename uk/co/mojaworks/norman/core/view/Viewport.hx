@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.core.view;
 import lime.math.Rectangle;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.CoreObject;
 
 /**
@@ -48,11 +49,9 @@ class Viewport extends CoreObject
 	}
 	
 	private function updateDimensions() : Void {
-		
-		scale = Math.min( screenWidth / stageWidth, screenHeight / screenHeight );
+		scale = Math.min( screenWidth / stageWidth, screenHeight / stageHeight );
 		marginLeft = ((screenWidth / scale) - stageWidth) * 0.5;
 		marginTop = ((screenHeight / scale) - stageHeight) * 0.5;
-		
 	}
 	
 	private function get_left( ) : Float { return -marginLeft; }

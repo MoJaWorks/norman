@@ -22,15 +22,15 @@ class CoreObject
 	#end
 	
 	private function sendMessage( message : String, data : Dynamic = null ) {
-		core.messenger.sendMessage( message, data );
+		core.sendMessage( message, data );
 	}
 	
 	private function addMessageListener( message : String, callback : MessageCallback ) {
-		core.messenger.addMessageListener( message, callback ); 
+		core.addMessageListener( message, callback ); 
 	}
 	
 	private function removeMessageListener( message : String, ?callback : MessageCallback = null ) {
-		core.messenger.removeMessageListener( message, callback ); 
+		core.removeMessageListener( message, callback ); 
 	}
 	
 	private function getObject( id : String ) {

@@ -73,9 +73,6 @@ class Transform extends Component
 	
 	private function recalculateLocalTransform() : Void {
 		_localTransform.identity();
-		
-		trace("Scaling", scaleX, scaleY );
-		
 		_localTransform.scale( scaleX, scaleY );
 		_localTransform.rotate( rotation );
 		_localTransform.translate( x, y );

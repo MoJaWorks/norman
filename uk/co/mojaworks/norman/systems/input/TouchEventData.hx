@@ -1,5 +1,5 @@
-package uk.co.mojaworks.norman.components.input ;
-import openfl.geom.Point;
+package uk.co.mojaworks.norman.systems.input ;
+import lime.math.Vector2;
 
 /**
  * ...
@@ -10,11 +10,11 @@ class TouchEventData
 
 	public var type : String;
 	public var touchId : Int;
-	public var position : Point;
-	public var localPosition : Point;
+	public var position : Vector2;
+	public var localPosition : Vector2;
 	public var isSuppressed : Bool = false;
 	
-	public function new( type : String, touchId : Int, position : Point, localPosition : Point ) 
+	public function new( type : String, touchId : Int, position : Vector2, localPosition : Vector2 ) 
 	{
 		this.type = type;
 		this.touchId = touchId;

@@ -6,6 +6,7 @@ import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.core.view.Viewport;
+import uk.co.mojaworks.norman.systems.input.InputSystem;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.ticker.TickerSystem;
@@ -20,6 +21,8 @@ import uk.co.mojaworks.norman.systems.ticker.TickerSystem;
 class NormanApp extends Application
 {
 	
+	public static inline var RESIZE : String = "resize";
+	
 	public var core( get, never ) : Core;
 	private function get_core() : Core { return Core.getInstance(); };
 	
@@ -31,6 +34,7 @@ class NormanApp extends Application
 	public var viewport( default, null ) : Viewport;
 	public var renderer( default, null ) : IRenderer;
 	public var ticker( default, null ) : TickerSystem;
+	public var input( default, null ) : InputSystem;
 	
 	/**
 	 * 
@@ -42,6 +46,7 @@ class NormanApp extends Application
 		Core.init( this );
 		
 		ticker = new TickerSystem();
+		input = new InputSystem();
 		viewport = new Viewport();
 		viewport.setTargetSize( _stageWidth, _stageHeight );
 		
@@ -106,10 +111,13 @@ class NormanApp extends Application
 	override public function onWindowResize( width : Int, height : Int ) : Void {
 		
 		if ( _hasInit ) {
+			renderer.resize( width, height );
 			viewport.resize( width, height );
 			
 			core.root.transform.setScale( viewport.scale );
-			core.root.transform.setPosition( viewport.marginLeft, viewport.marginTop );
+			core.root.transform.setPosition( viewport.marginLeft * viewport.scale, viewport.marginTop * viewport.scale );
+			
+			core.sendMessage( RESIZE );
 		}
 		
 	}
@@ -137,6 +145,58 @@ class NormanApp extends Application
 	public function destroy():Void 
 	{
 
+	}
+	
+	/**
+	 * Input
+	 */
+	
+	override public function onKeyDown(keyCode:Int, modifier:Int):Void 
+	{
+		super.onKeyDown(keyCode, modifier);
+		input.onKeyDown( keyCode );
+	}
+	
+	override public function onKeyUp(keyCode:Int, modifier:Int):Void 
+	{
+		super.onKeyUp(keyCode, modifier);
+		input.onKeyUp( keyCode );
+	}
+	
+	override public function onMouseDown(x:Float, y:Float, button:Int):Void 
+	{
+		super.onMouseDown(x, y, button);
+		input.onPointerDown( x, y );
+	}
+	
+	override public function onMouseUp(x:Float, y:Float, button:Int):Void 
+	{
+		super.onMouseUp(x, y, button);
+		input.onPointerUp( x, y );
+	}
+	
+	override public function onMouseMove(x:Float, y:Float, button:Int):Void 
+	{
+		super.onMouseMove(x, y, button);
+		input.onPointerMove( x, y );
+	}
+	
+	override public function onTouchStart(x:Float, y:Float, id:Int):Void 
+	{
+		super.onTouchStart(x, y, id);
+		input.onPointerDown( x, y, id );
+	}
+	
+	override public function onTouchEnd(x:Float, y:Float, id:Int):Void 
+	{
+		super.onTouchEnd(x, y, id);
+		input.onPointerUp( x, y, id );
+	}
+	
+	override public function onTouchMove(x:Float, y:Float, id:Int):Void 
+	{
+		super.onTouchMove(x, y, id);
+		input.onPointerMove( x, y, id );
 	}
 	
 }
