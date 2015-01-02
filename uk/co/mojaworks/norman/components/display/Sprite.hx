@@ -2,10 +2,14 @@ package uk.co.mojaworks.norman.components.display ;
 
 import lime.math.Matrix3;
 import lime.math.Matrix4;
+import lime.math.Rectangle;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.Component;
 import uk.co.mojaworks.norman.core.Messenger.MessageData;
+import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
+import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -69,50 +73,52 @@ class Sprite extends Component
 	 * @param	space
 	 * @return
 	 */
-	//public function getBounds( space : GameObject = null ) : Rectangle {
-		//
-		//// Get the total bounds in this coordinate space with children and clippingRect applied
-		//var bounds : Rectangle = getTotalBounds( gameObject );
-		//
-		//// Transform to the target coordinate space
-		//if ( space != null && space != gameObject ) {
-			//MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
-			//MathUtils.transformRect( bounds, space.transform.inverseWorldTransform );
-		//}
-//
-		//return bounds;
-		//
-	//}
+	public function getBounds( space : GameObject = null ) : Rectangle {
+		
+		// Get the total bounds in this coordinate space with children applied
+		var bounds : Rectangle = getTotalBounds( gameObject );
+		
+		// Transform to the target coordinate space
+		if ( space != null && space != gameObject ) {
+			MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
+			MathUtils.transformRect( bounds, space.transform.inverseWorldTransform );
+		}
+
+		return bounds;
+		
+	}
 	
-	//private function getTotalBounds( space : GameObject ) : Rectangle {
-		//
-		//var bounds : Rectangle = new Rectangle( 0, 0, getNaturalWidth(), getNaturalHeight() );
-				//
-		//// Get own bounds in this space
-		//if ( space != gameObject ) {
-			//MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
-			//MathUtils.transformRect( bounds, space.transform.inverseWorldTransform );
-		//}
-				//
-		//// Adjust min and max for children
-		//for ( child in gameObject.children ) {
-			//if ( child.display != null ) {
-				//bounds = bounds.union( child.display.getTotalBounds( space ) );
-			//}
-		//}
-		//
-		//// Clip if necessary
+	private function getTotalBounds( space : GameObject ) : Rectangle {
+		
+		var bounds : Rectangle = new Rectangle( 0, 0, getNaturalWidth(), getNaturalHeight() );
+				
+		// Get own bounds in this space
+		if ( space != gameObject ) {
+			MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
+			MathUtils.transformRect( bounds, space.transform.inverseWorldTransform );
+		}
+				
+		// Adjust min and max for children
+		for ( child in gameObject.children ) {
+			if ( child.sprite != null ) {
+				bounds = bounds.union( child.sprite.getTotalBounds( space ) );
+			}
+		}
+		
+		// Clip if necessary
 		//if ( clipRect != null ) {
 			//return bounds.intersection( clipRect );
 		//}else {
 			//return bounds;
 		//}
-		//
-	//}
+		
+		return bounds;
+		
+	}
 	
-	//public function hitTestPoint( global : Vector2 ) : Bool {
-		//return getBounds().containsPoint( gameObject.transform.globalToLocal( global ) );
-	//}
+	public function hitTestPoint( global : Vector2 ) : Bool {
+		return getBounds().containsPoint( gameObject.transform.globalToLocal( global ) );
+	}
 	
 	public function getNaturalWidth() : Float {
 		return 0;

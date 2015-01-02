@@ -10,6 +10,7 @@ import uk.co.mojaworks.norman.systems.input.InputSystem;
 import uk.co.mojaworks.norman.systems.renderer.gl.GLRenderer;
 import uk.co.mojaworks.norman.systems.renderer.IRenderer;
 import uk.co.mojaworks.norman.systems.ticker.TickerSystem;
+import uk.co.mojaworks.norman.systems.ui.UISystem;
 
 /**
  * This class is intended to be extended and used as a root controller
@@ -35,6 +36,7 @@ class NormanApp extends Application
 	public var renderer( default, null ) : IRenderer;
 	public var ticker( default, null ) : TickerSystem;
 	public var input( default, null ) : InputSystem;
+	public var ui( default, null ) : UISystem;
 	
 	/**
 	 * 
@@ -47,6 +49,7 @@ class NormanApp extends Application
 		
 		ticker = new TickerSystem();
 		input = new InputSystem();
+		ui = new UISystem();
 		viewport = new Viewport();
 		viewport.setTargetSize( _stageWidth, _stageHeight );
 		
@@ -54,14 +57,14 @@ class NormanApp extends Application
 	
 	override public function init( context : RenderContext ) {
 		
-		var canCompleteStartup : Bool = true;
-		
 		switch( context ) {
 			case RenderContext.OPENGL(gl):
 				
 				// Set up the texture manager
 				renderer = new GLRenderer( gl );
-					
+				renderer.resize( window.width, window.height );
+				_hasInit = true;
+				onStartupComplete();
 				
 			case RenderContext.FLASH(sprite):
 				
@@ -77,7 +80,6 @@ class NormanApp extends Application
 						onStartupComplete();
 					});
 					stage3D.requestContext3D( /*flash.display3D.Context3DRenderMode.AUTO, flash.display3D.Context3DProfile.BASELINE*/ );
-					canCompleteStartup = false;
 					
 				#end
 				
@@ -87,12 +89,6 @@ class NormanApp extends Application
 				
 		}
 		
-		if ( renderer != null ) renderer.resize( window.width, window.height );
-		
-		if ( canCompleteStartup ) {
-			_hasInit = true;
-			onStartupComplete();
-		}
 	}
 		
 	/**
@@ -126,6 +122,7 @@ class NormanApp extends Application
 	{
 		if ( _hasInit ) {
 			super.update( deltaTime );
+			ui.update( deltaTime * 0.001 );
 			ticker.tick( deltaTime * 0.001 );
 		}
 	}

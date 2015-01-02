@@ -21,6 +21,10 @@ class InputSystem extends CoreObject
 		super();
 		_keyRegister = new Map<Int,Bool>();
 		_touchRegister = new Map<Int,TouchData>();
+		
+		for ( i in 0...MAX_TOUCHES ) {
+			_touchRegister.set( i, new TouchData(i) );
+		}
 	}
 		
 	/**
@@ -48,10 +52,10 @@ class InputSystem extends CoreObject
 	public function onPointerDown( x : Float, y : Float, touchId : Int = 0 ) : Void {
 		var touch : TouchData = _touchRegister.get( touchId );		
 		
-		if ( touch == null ) {
-			touch = new TouchData( touchId );
-			_touchRegister.set( touchId, touch );
-		}
+		//if ( touch == null ) {
+			//touch = new TouchData( touchId );
+			//_touchRegister.set( touchId, touch );
+		//}
 		
 		touch.isDown = true;
 		touch.lastTouchStart.setTo( x, y );
@@ -65,10 +69,10 @@ class InputSystem extends CoreObject
 	public function onPointerUp( x : Float, y : Float, touchId : Int = 0 ) : Void {
 		var touch : TouchData = _touchRegister.get( touchId );
 		
-		if ( touch == null ) {
-			touch = new TouchData( touchId );
-			_touchRegister.set( touchId, touch );
-		}
+		//if ( touch == null ) {
+			//touch = new TouchData( touchId );
+			//_touchRegister.set( touchId, touch );
+		//}
 		
 		touch.isDown = false;
 		touch.lastTouchEnd.setTo( x, y );
@@ -99,11 +103,11 @@ class InputSystem extends CoreObject
 		return _touchRegister.get( id );
 	}
 	 
-	public function isTouchDown( id : Int = 0 ) : Bool {
+	public function isPointerDown( id : Int = 0 ) : Bool {
 		return _touchRegister.get( id ).isDown;
 	}
 	
-	public function getTouchPosition( id : Int = 0 ) : Vector2 {
+	public function getPointerPosition( id : Int = 0 ) : Vector2 {
 		return _touchRegister.get( id ).position;
 	}	 
 		

@@ -1,4 +1,6 @@
 package uk.co.mojaworks.norman.components.display;
+import uk.co.mojaworks.norman.core.view.GameObject;
+import lime.math.Rectangle;
 import uk.co.mojaworks.norman.core.Core;
 import uk.co.mojaworks.norman.systems.renderer.Constants.BlendFactor;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
@@ -153,6 +155,11 @@ class RenderSprite extends Sprite
 	override public function getNaturalHeight():Float 
 	{
 		return _height;
+	}
+	
+	override function getTotalBounds(space:GameObject):Rectangle 
+	{
+		return super.getTotalBounds(space).intersection( new Rectangle( 0, 0, width, height ) );
 	}
 	
 }
