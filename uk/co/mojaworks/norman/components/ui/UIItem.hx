@@ -30,4 +30,10 @@ class UIItem extends Component
 		core.app.ui.remove( this );
 	}
 	
+	public function onMouseDown( event : PointerEvent) : Void {
+		
+	}
+	
+	
+	
 }
