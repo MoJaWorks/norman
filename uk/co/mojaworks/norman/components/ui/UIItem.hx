@@ -10,6 +10,8 @@ class UIItem extends Component
 {
 
 	public var isPointerEnabled : Bool = true;
+	public var isPointerDown : Bool = false;
+	public var isPointerOver : Bool = false;
 	
 	public function new() 
 	{
