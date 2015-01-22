@@ -10,6 +10,11 @@ import uk.co.mojaworks.norman.core.CoreObject;
 class InputSystem extends CoreObject
 {
 
+	public static inline var KEY_DOWN : String = "InputKeyDown";
+	public static inline var KEY_UP : String = "InputKeyUp";
+	public static inline var POINTER_DOWN : String = "InputPointerDown";
+	public static inline var POINTER_UP : String = "InputPointerUp";
+	
 	public static inline var MAX_TOUCHES : Int = 5;
 	
 	public var touchCount( default, null ) : Int = 0;
@@ -34,11 +39,13 @@ class InputSystem extends CoreObject
 	public function onKeyDown( code : Int ):Void 
 	{
 		_keyRegister.set( code, true );
+		sendMessage( InputSystem.KEY_DOWN, code );
 	}
 	
 	public function onKeyUp( code : Int ):Void 
 	{
 		_keyRegister.set( code, false );
+		sendMessage( InputSystem.KEY_UP, code );
 	}
 	
 	public function isKeyDown( code : Int ) : Bool {
@@ -51,17 +58,13 @@ class InputSystem extends CoreObject
 		
 	public function onPointerDown( x : Float, y : Float, touchId : Int = 0 ) : Void {
 		var touch : TouchData = _touchRegister.get( touchId );		
-		
-		//if ( touch == null ) {
-			//touch = new TouchData( touchId );
-			//_touchRegister.set( touchId, touch );
-		//}
-		
+				
 		touch.isDown = true;
 		touch.lastTouchStart.setTo( x, y );
 		touch.position.setTo( x, y );
 		
 		touchCount++;
+		sendMessage( POINTER_DOWN, touch );
 	}
 	
 	/**/
@@ -69,16 +72,12 @@ class InputSystem extends CoreObject
 	public function onPointerUp( x : Float, y : Float, touchId : Int = 0 ) : Void {
 		var touch : TouchData = _touchRegister.get( touchId );
 		
-		//if ( touch == null ) {
-			//touch = new TouchData( touchId );
-			//_touchRegister.set( touchId, touch );
-		//}
-		
 		touch.isDown = false;
 		touch.lastTouchEnd.setTo( x, y );
 		touch.position.setTo( x, y );
 		
 		touchCount--;
+		sendMessage( POINTER_UP, touch );
 	}	
 	
 	/**/

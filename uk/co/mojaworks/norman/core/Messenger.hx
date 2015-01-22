@@ -8,9 +8,9 @@ import uk.co.mojaworks.norman.core.view.GameObject;
 
 class MessageData {
 	
-	var target : GameObject;
-	var message : String;
-	var data : Dynamic;
+	public var target : GameObject;
+	public var message : String;
+	public var data : Dynamic;
 	
 	public function new ( target : GameObject, message : String, data : Dynamic ) {
 		this.target = target;

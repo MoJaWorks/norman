@@ -12,6 +12,8 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  */
 class GameObject extends CoreObject
 {
+	public static inline var ACTIVATE : String = "ACTIVATE";
+	public static inline var DEACTIVATE : String = "DEACTIVATE";
 	public static inline var CHILD_ADDED : String = "CHILD_ADDED";
 	public static inline var CHILD_REMOVED : String = "CHILD_REMOVED";
 	static public inline var ADDED_AS_CHILD : String = "ADDED_AS_CHILD";
@@ -21,6 +23,7 @@ class GameObject extends CoreObject
 	public var id : String;
 	public var autoId : Int;
 	private static var _entityAutoIdCounter : Int = 0;
+	public var active( default, set ) : Bool;
 	
 	// Each gameobject has it's own local messenger for local messages - there's nothing for non-locals here
 	public var messenger : Messenger;
@@ -157,6 +160,16 @@ class GameObject extends CoreObject
 	public function get_displayIndex( ) : String {
 		if ( parent != null ) return parent.displayIndex + ":" + StringTools.lpad( Std.string( parent.children.indexOf( this ) ), "0", 5 );
 		return "00000";
+	}
+	
+	public function set_active( bool : Bool ) : Bool {
+		this.active = bool;
+		if ( bool ) {
+			sendLocalMessage( ACTIVATE );
+		}else {
+			sendLocalMessage( DEACTIVATE );
+		}
+		return this.active;
 	}
 	
 }
