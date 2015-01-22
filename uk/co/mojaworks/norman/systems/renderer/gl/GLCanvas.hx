@@ -1,25 +1,16 @@
 package uk.co.mojaworks.norman.systems.renderer.gl ;
-import haxe.ds.Vector;
-import lime.graphics.opengl.GLFramebuffer;
-import lime.math.Matrix3;
-import lime.math.Rectangle;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
-import lime.graphics.RenderContext;
+import lime.math.Matrix3;
 import lime.math.Matrix4;
+import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.math.Vector4;
 import lime.utils.Float32Array;
-import lime.utils.Int8Array;
 import lime.utils.UInt16Array;
-import lime.utils.UInt8Array;
-import uk.co.mojaworks.norman.components.display.ImageSprite;
-import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.Constants.BlendFactor;
-import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 import uk.co.mojaworks.norman.systems.renderer.ITextureData;
-import uk.co.mojaworks.norman.utils.Color;
+import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
 
 /**
  * ...

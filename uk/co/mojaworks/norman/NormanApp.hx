@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.engine ;
+package uk.co.mojaworks.norman ;
 
 import lime.app.Application;
 import lime.graphics.opengl.GL;

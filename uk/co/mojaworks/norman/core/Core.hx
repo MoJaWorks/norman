@@ -5,7 +5,7 @@ import uk.co.mojaworks.norman.core.Messenger.MessageCallback;
 import uk.co.mojaworks.norman.core.model.Model;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.core.view.View;
-import uk.co.mojaworks.norman.engine.NormanApp;
+import uk.co.mojaworks.norman.NormanApp;
 
 /**
  * ...

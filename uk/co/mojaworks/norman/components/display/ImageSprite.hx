@@ -1,14 +1,11 @@
 package uk.co.mojaworks.norman.components.display;
-import lime.Assets;
-import lime.graphics.Image;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.core.Core;
-import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
+import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultImageVertexShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.IShaderProgram;
-import uk.co.mojaworks.norman.systems.renderer.ITextureData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**

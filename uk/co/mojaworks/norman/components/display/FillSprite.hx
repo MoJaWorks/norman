@@ -1,8 +1,5 @@
 package uk.co.mojaworks.norman.components.display;
-import lime.math.Matrix3;
-import lime.math.Matrix4;
 import uk.co.mojaworks.norman.core.Core;
-import uk.co.mojaworks.norman.engine.NormanApp;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillFragmentShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillVertexShader;
