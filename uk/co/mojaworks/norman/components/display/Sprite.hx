@@ -23,7 +23,6 @@ class Sprite extends Component
 	
 	public var anchorX( default, set ) : Float = 0;
 	public var anchorY( default, set ) : Float = 0;
-	//public var anchorZ( default, set ) : Float = 0;
 	
 	public var paddingX( default, set ) : Float = 0;
 	public var paddingY( default, set ) : Float = 0;
@@ -67,57 +66,9 @@ class Sprite extends Component
 		}
 		_renderTransformDirty = false;
 	}
-
-	/**
-	 * Gets the bounds of one object in the space of another. If no space is passed, it will get it's bounds in it's own space
-	 * @param	space
-	 * @return
-	 */
-	public function getBounds( space : GameObject = null ) : Rectangle {
-		
-		// Get the total bounds in this coordinate space with children applied
-		var bounds : Rectangle = getTotalBounds( gameObject );
-		
-		// Transform to the target coordinate space
-		if ( space != null && space != gameObject ) {
-			MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
-			MathUtils.transformRect( bounds, space.transform.inverseWorldTransform );
-		}
-
-		return bounds;
-		
-	}
-	
-	private function getTotalBounds( space : GameObject ) : Rectangle {
-		
-		var bounds : Rectangle = new Rectangle( 0, 0, getNaturalWidth(), getNaturalHeight() );
-				
-		// Get own bounds in this space
-		if ( space != gameObject ) {
-			MathUtils.transformRect( bounds, gameObject.transform.worldTransform );
-			MathUtils.transformRect( bounds, space.transform.inverseWorldTransform );
-		}
-				
-		// Adjust min and max for children
-		for ( child in gameObject.children ) {
-			if ( child.sprite != null ) {
-				bounds = bounds.union( child.sprite.getTotalBounds( space ) );
-			}
-		}
-		
-		// Clip if necessary
-		//if ( clipRect != null ) {
-			//return bounds.intersection( clipRect );
-		//}else {
-			//return bounds;
-		//}
-		
-		return bounds;
-		
-	}
 	
 	public function hitTestPoint( global : Vector2 ) : Bool {
-		return getBounds().containsPoint( gameObject.transform.globalToLocal( global ) );
+		return (new Rectangle( 0, 0, getNaturalWidth(), getNaturalHeight() )).containsPoint( gameObject.transform.globalToLocal( global ) );
 	}
 	
 	public function getNaturalWidth() : Float {

@@ -42,7 +42,7 @@ class RenderSprite extends Sprite
 		return RenderSprite.shader;
 	}
 		
-	override public function getShader():IShaderProgram 
+	override public function getShader() : IShaderProgram 
 	{
 		return RenderSprite.shader;
 	}
@@ -133,16 +133,11 @@ class RenderSprite extends Sprite
 		if ( _dirty && _isCleaning ) {
 			canvas.popRenderTarget();
 			_dirty = false;
+			_isCleaning = false;
 		}
 		
 		if ( visible ) {
-			
-			//var prev_src : BlendFactor = canvas.sourceBlendFactor;
-			//var prev_dst : BlendFactor = canvas.destinationBlendFactor;
-			
-			//canvas.setBlendMode( BlendFactor.ONE, BlendFactor.ONE_MINUS_SOURCE_ALPHA );
 			canvas.drawImage( _target, renderTransform, getShader(), color.r, color.g, color.b, color.a * getFinalAlpha() );
-			//canvas.setBlendMode( prev_src, prev_dst );
 		}
 			
 	}
@@ -157,9 +152,9 @@ class RenderSprite extends Sprite
 		return _height;
 	}
 	
-	override function getTotalBounds(space:GameObject):Rectangle 
-	{
-		return super.getTotalBounds(space).intersection( new Rectangle( 0, 0, width, height ) );
-	}
+	//override function getTotalBounds(space:GameObject):Rectangle 
+	//{
+		//return super.getTotalBounds(space).intersection( new Rectangle( 0, 0, width, height ) );
+	//}
 	
 }

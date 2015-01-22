@@ -107,8 +107,61 @@ class LinkedList<T>
 		
 	}
 	
+	public function indexOf( item : T ) : Int {
+		
+		var i : Int = 0;
+		var current : LinkedListItem<T> = first;
+		
+		while ( current != null ) {
+			if ( current.item == item ) {
+				return i;
+			}
+			current = current.next;
+			++i;
+		}
+		
+		return -1;
+		
+	}
+	
+	public function swap( item1 : T, item2 : T ) : Bool {
+		
+		var current : LinkedListItem<T> = first;
+		var target1 : LinkedListItem<T> = null;
+		var target2 : LinkedListItem<T> = null;
+		
+		while ( current != null && ( target1 == null || target2 == null ) ) {
+			if ( target1 == null && current.item == item1 ) target1 = current;
+			else if ( target2 == null && current.item == item2 ) target2 = current;
+			current = current.next;
+		}
+		
+		if ( target1 != null && target2 != null ) {
+			
+			if ( first == target1 ) first == target2;
+			else if ( first == target2 ) first == target1;
+			
+			if ( last == target1 ) last == target2;
+			else if ( last == target2 ) last = target1;
+			
+			var t1Prev : LinkedListItem<T> = target1.prev;
+			var t1Next : LinkedListItem<T> = target1.next;
+			
+			target1.next = target2.next;
+			target1.prev = target2.prev;
+			
+			target2.next = t1Next;
+			target2.prev = t1Prev;
+			
+			return true;
+		}
+		
+		return false;
+		
+	}
+	
 	/**
-	 * Returns true if the item was fount and removed
+	 * Returns true if the item was found and removed
 	 * @param	item
 	 * @return
 	 */
@@ -129,7 +182,31 @@ class LinkedList<T>
 		
 	}
 	
-	public function removeItem( item : LinkedListItem<T> ) : Void {
+	public function clear() 
+	{
+		var current : LinkedListItem<T> = first;
+		var next : LinkedListItem<T>;
+		
+		while ( current != null ) {
+			
+			// Only destroys references to actual items, not the items themselves
+			next = current.next;
+			current.destroy();
+			current = next;
+			
+		}
+		
+		first = null;
+		last = null;
+		length = 0;
+	}
+	
+	/**
+	 * Working with LinkedListItems
+	 * @param	item
+	 */
+	
+	private function removeItem( item : LinkedListItem<T> ) : Void {
 		
 		if ( item.prev != null ) {
 			item.prev.next = item.next;
@@ -148,7 +225,7 @@ class LinkedList<T>
 		length--;
 	}
 	
-	public function insertAfterItem( item : T, after : LinkedListItem<T> ) : Void {
+	private function insertAfterItem( item : T, after : LinkedListItem<T> ) : Void {
 		
 		var link : LinkedListItem<T> = new LinkedListItem<T>(item);
 		
@@ -164,7 +241,7 @@ class LinkedList<T>
 		
 	}
 	
-	public function insertBeforeItem( item : T, before : LinkedListItem<T> ) : Void {
+	private function insertBeforeItem( item : T, before : LinkedListItem<T> ) : Void {
 		
 		var link : LinkedListItem<T> = new LinkedListItem<T>(item);
 		
@@ -178,25 +255,6 @@ class LinkedList<T>
 		
 		length++;
 		
-	}
-	
-	public function clear() 
-	{
-		var current : LinkedListItem<T> = first;
-		var next : LinkedListItem<T>;
-		
-		while ( current != null ) {
-			
-			// Only destroys references to actual items, not the items themselves
-			next = current.next;
-			current.destroy();
-			current = next;
-			
-		}
-		
-		first = null;
-		last = null;
-		length = 0;
 	}
 	
 }

@@ -33,7 +33,7 @@ class GameObject extends CoreObject
 	// Children
 	public var parent : GameObject;
 	public var children : LinkedList<GameObject>;
-	
+	public var displayIndex( get, never ) : String;
 	/**
 	 * 
 	 */
@@ -152,6 +152,11 @@ class GameObject extends CoreObject
 	
 	public function has( classType : Class<Component> ) : Bool {
 		return Std.is( _components.get( Reflect.field( classType, "TYPE" )), classType );
-	}	
+	}
+	
+	public function get_displayIndex( ) : String {
+		if ( parent != null ) return parent.displayIndex + ":" + StringTools.lpad( Std.string( parent.children.indexOf( this ) ), "0", 5 );
+		return "00000";
+	}
 	
 }

@@ -1,6 +1,8 @@
 package uk.co.mojaworks.norman.components.ui;
 
 import uk.co.mojaworks.norman.core.Component;
+import uk.co.mojaworks.norman.core.Messenger.MessageData;
+import uk.co.mojaworks.norman.core.view.GameObject;
 
 /**
  * ...
@@ -30,9 +32,9 @@ class UIItem extends Component
 		core.app.ui.remove( this );
 	}
 	
-	public function onMouseDown( event : PointerEvent) : Void {
-		
-	}
+	//public function onMouseDown( event : PointerEvent ) : Void {
+		//
+	//}
 	
 	
 	
