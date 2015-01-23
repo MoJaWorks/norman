@@ -3,7 +3,7 @@ package uk.co.mojaworks.norman.systems.ui;
 import lime.math.Vector2;
 import lime.ui.Mouse;
 import lime.ui.MouseCursor;
-import uk.co.mojaworks.norman.components.ui.UIItem;
+import uk.co.mojaworks.norman.components.ui.UITouchListener;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.Messenger.MessageData;
 import uk.co.mojaworks.norman.core.view.GameObject;
@@ -18,100 +18,74 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class UISystem extends CoreObject
 {
 
-	public var items : LinkedList<UIItem>; 
+	public var items : LinkedList<UITouchListener>;
+	public var primaryPointerTarget : UITouchListener;
 	
 	public function new() 
 	{
 		super();
-		items = new LinkedList<UIItem>();
+		items = new LinkedList<UITouchListener>();
 		
-		addMessageListener( InputSystem.POINTER_DOWN, onPointerDown );
-		addMessageListener( InputSystem.POINTER_UP, onPointerUp );
+		core.app.input.pointerDown.add( onPointerDown );
+		core.app.input.pointerUp.add( onPointerUp );
 	}
 	
-	public function add( item : UIItem ) : Void {
+	/**
+	 * Adding/removing
+	 */
+	
+	public function add( item : UITouchListener ) : Void {
 		items.push( item );
 	}
 	
-	public function remove( item : UIItem ) : Void {
+	public function remove( item : UITouchListener ) : Void {
 		items.remove( item );
 	}
+	
+	/**
+	 * Updating
+	 */
 	
 	public function update( seconds : Float ) : Void {
 		
 		var pointer : Vector2 = core.app.input.getPointerPosition(0);
-		var hitItem : UIItem = null;
+		primaryPointerTarget = null;
 		
 		for ( item in items ) {
 			
-			item.isPointerOver = false;
-			if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
-				if ( hitItem != null ) hitItem.update( seconds );
-				hitItem = item;
+			if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) ) {
+				item.isPointerOver = true;
+				if( hasPriority( item, primaryPointerTarget ) ) primaryPointerTarget = item;
 			}else {
-				item.update( seconds );
+				item.isPointerOver = false;
 			}
 		}
 		
-		if ( hitItem != null ) {
-			hitItem.isPointerOver = true;
-			hitItem.update( seconds );
-			
-			if ( hitItem.isInteractive ) Mouse.cursor = MouseCursor.POINTER;
-			else Mouse.cursor = MouseCursor.ARROW;
-			//trace("Mouse over " + hitItem.gameObject.autoId );
+		if ( primaryPointerTarget != null ) {
+			Mouse.cursor = MouseCursor.POINTER;
 		}else {
 			Mouse.cursor = MouseCursor.ARROW;
 		}
 	}
 	
-	public function onPointerDown( messageData : MessageData ) : Void {
-		
-		var pointerData : TouchData = cast messageData.data;
+	public function onPointerDown( pointerData : TouchData ) : Void {
 		
 		if ( pointerData.touchId == 0 ) {
 			var pointer : Vector2 = pointerData.lastTouchStart;
-			var hitItem : UIItem = null;
-			
-			for ( item in items ) {
-				
-				item.isPointerDown = false;
-				if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
-					if ( hitItem != null ) hitItem.update( 0 );
-					hitItem = item;
-				}else{
-					item.update( 0 );
-				}
-			}
-			
-			if ( hitItem != null ) {
-				hitItem.isPointerDown = true;
-				hitItem.update( 0 );
-				//trace("Mouse down " + hitItem.gameObject.autoId );
-			}
+			if ( primaryPointerTarget != null ) primaryPointerTarget.pointerDown.dispatch();
 		}
+
 	}
 	
-	public function onPointerUp( messageData : MessageData ) : Void {
-		
-		var pointerData : TouchData = cast messageData.data;
+	public function onPointerUp( pointerData : TouchData ) : Void {
 		
 		if ( pointerData.touchId == 0 ) {
 			var pointer : Vector2 = pointerData.lastTouchEnd;
-			var hitItem : UIItem = null;
-			
-			for ( item in items ) {
-				item.isPointerDown = false;
-				if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
-					hitItem = item;
-				}
-				item.update( 0 );
-			}
-			
+			if ( primaryPointerTarget != null ) primaryPointerTarget.pointerUp.dispatch();
 		}
 	}
 	
-	public function hasPriority( item : UIItem, vs : UIItem ) : Bool {
+	public function hasPriority( item : UITouchListener, vs : UITouchListener ) : Bool {
 		// check whether this item would override the last item through being rendered on top
 		if ( vs == null ) {
 			return true;

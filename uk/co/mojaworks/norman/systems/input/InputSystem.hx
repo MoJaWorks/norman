@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.systems.input;
 
 import lime.math.Vector2;
+import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.core.CoreObject;
 
 /**
@@ -10,16 +11,16 @@ import uk.co.mojaworks.norman.core.CoreObject;
 class InputSystem extends CoreObject
 {
 
-	public static inline var KEY_DOWN : String = "InputKeyDown";
-	public static inline var KEY_UP : String = "InputKeyUp";
-	public static inline var POINTER_DOWN : String = "InputPointerDown";
-	public static inline var POINTER_UP : String = "InputPointerUp";
-	
 	public static inline var MAX_TOUCHES : Int = 5;
 	
 	public var touchCount( default, null ) : Int = 0;
 	var _touchRegister : Map<Int,TouchData>;
 	var _keyRegister : Map<Int,Bool>;
+	
+	public var keyDown( default, null ) : Signal1<Int>;
+	public var keyUp( default, null ) : Signal1<Int>;
+	public var pointerDown( default, null ) : Signal1<TouchData>;
+	public var pointerUp( default, null ) : Signal1<TouchData>;
 	
 	public function new() 
 	{
@@ -30,6 +31,12 @@ class InputSystem extends CoreObject
 		for ( i in 0...MAX_TOUCHES ) {
 			_touchRegister.set( i, new TouchData(i) );
 		}
+		
+		keyDown = new Signal1<Int>();
+		keyUp = new Signal1<Int>();
+		pointerDown = new Signal1<TouchData>();
+		pointerUp = new Signal1<TouchData>();
+		
 	}
 		
 	/**
@@ -39,13 +46,13 @@ class InputSystem extends CoreObject
 	public function onKeyDown( code : Int ):Void 
 	{
 		_keyRegister.set( code, true );
-		sendMessage( InputSystem.KEY_DOWN, code );
+		keyDown.dispatch( code );
 	}
 	
 	public function onKeyUp( code : Int ):Void 
 	{
 		_keyRegister.set( code, false );
-		sendMessage( InputSystem.KEY_UP, code );
+		keyUp.dispatch( code );
 	}
 	
 	public function isKeyDown( code : Int ) : Bool {
@@ -64,7 +71,8 @@ class InputSystem extends CoreObject
 		touch.position.setTo( x, y );
 		
 		touchCount++;
-		sendMessage( POINTER_DOWN, touch );
+		
+		pointerDown.dispatch( touch );
 	}
 	
 	/**/
@@ -77,7 +85,8 @@ class InputSystem extends CoreObject
 		touch.position.setTo( x, y );
 		
 		touchCount--;
-		sendMessage( POINTER_UP, touch );
+		
+		pointerUp.dispatch( touch );
 	}	
 	
 	/**/

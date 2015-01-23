@@ -172,4 +172,21 @@ class GameObject extends CoreObject
 		return this.active;
 	}
 	
+	public function destroy() : Void {
+		
+		if ( parent != null ) parent.removeChild( this );
+		
+		for ( component in _components ) {
+			component.destroy();
+		}
+		_components = null;
+		
+		for ( child in children ) {
+			child.destroy();
+		}
+		children.clear();
+		children = null;
+				
+	}
+	
 }

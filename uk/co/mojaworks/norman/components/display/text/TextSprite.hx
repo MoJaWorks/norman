@@ -175,12 +175,16 @@ class TextSprite extends RenderSprite
 	
 	override public function preRender(canvas:ICanvas):Bool 
 	{
-		
-		if ( _layoutDirty ) regenerateLayout();
-		if ( cacheAsBitmap ) {
-			return super.preRender(canvas);
+		if ( font != null ) {
+			
+			if ( _layoutDirty ) regenerateLayout();
+			if ( cacheAsBitmap ) {
+				return super.preRender(canvas);
+			}else {
+				return visible && getFinalAlpha() > 0;
+			}
 		}else {
-			return visible && getFinalAlpha() > 0;
+			return false;
 		}
 		
 	}

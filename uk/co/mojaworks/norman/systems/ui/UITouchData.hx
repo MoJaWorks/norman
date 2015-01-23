@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.systems.ui;
-import uk.co.mojaworks.norman.components.ui.UIItem;
+import uk.co.mojaworks.norman.components.ui.UITouchListener;
 import uk.co.mojaworks.norman.systems.input.TouchData;
 
 /**
@@ -9,7 +9,7 @@ import uk.co.mojaworks.norman.systems.input.TouchData;
 class UITouchData extends TouchData
 {
 
-	var primaryTarget : UIItem;
+	var primaryTarget : UITouchListener;
 	
 	public function new() 
 	{
