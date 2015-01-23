@@ -1,6 +1,8 @@
 package uk.co.mojaworks.norman.systems.ui;
 
 import lime.math.Vector2;
+import lime.ui.Mouse;
+import lime.ui.MouseCursor;
 import uk.co.mojaworks.norman.components.ui.UIItem;
 import uk.co.mojaworks.norman.core.CoreObject;
 import uk.co.mojaworks.norman.core.Messenger.MessageData;
@@ -43,14 +45,23 @@ class UISystem extends CoreObject
 		for ( item in items ) {
 			
 			item.isPointerOver = false;
-			if ( item.gameObject.active && item.isPointerEnabled && item.gameObject.sprite != null && item.gameObject.sprite.hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
+			if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
+				if ( hitItem != null ) hitItem.update( seconds );
 				hitItem = item;
+			}else {
+				item.update( seconds );
 			}
 		}
 		
 		if ( hitItem != null ) {
 			hitItem.isPointerOver = true;
-			trace("Mouse over " + hitItem.gameObject.autoId );
+			hitItem.update( seconds );
+			
+			if ( hitItem.isInteractive ) Mouse.cursor = MouseCursor.POINTER;
+			else Mouse.cursor = MouseCursor.ARROW;
+			//trace("Mouse over " + hitItem.gameObject.autoId );
+		}else {
+			Mouse.cursor = MouseCursor.ARROW;
 		}
 	}
 	
@@ -65,14 +76,18 @@ class UISystem extends CoreObject
 			for ( item in items ) {
 				
 				item.isPointerDown = false;
-				if ( item.isPointerEnabled && item.gameObject.sprite != null && item.gameObject.sprite.hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
+				if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
+					if ( hitItem != null ) hitItem.update( 0 );
 					hitItem = item;
+				}else{
+					item.update( 0 );
 				}
 			}
 			
 			if ( hitItem != null ) {
 				hitItem.isPointerDown = true;
-				trace("Mouse down " + hitItem.gameObject.autoId );
+				hitItem.update( 0 );
+				//trace("Mouse down " + hitItem.gameObject.autoId );
 			}
 		}
 	}
@@ -87,14 +102,12 @@ class UISystem extends CoreObject
 			
 			for ( item in items ) {
 				item.isPointerDown = false;
-				if ( item.isPointerEnabled && item.gameObject.sprite != null && item.gameObject.sprite.hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
+				if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) && hasPriority( item, hitItem ) ) {
 					hitItem = item;
 				}
+				item.update( 0 );
 			}
 			
-			if ( hitItem != null ) {
-				trace("Mouse up " + hitItem.gameObject.autoId );
-			}
 		}
 	}
 	

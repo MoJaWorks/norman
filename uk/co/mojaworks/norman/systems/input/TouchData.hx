@@ -16,9 +16,9 @@ class TouchData
 	public function new( id : Int ) 
 	{
 		touchId = id;
-		position = new Vector2();
-		lastTouchStart = new Vector2();
-		lastTouchEnd = new Vector2();
+		position = new Vector2( -1, -1 );
+		lastTouchStart = new Vector2( -1, -1 );
+		lastTouchEnd = new Vector2( -1, -1 );
 	}
 	
 }

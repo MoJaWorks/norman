@@ -33,8 +33,8 @@ class CoreObject
 		core.removeMessageListener( message, callback ); 
 	}
 	
-	private function getView( id : String ) {
-		return core.view.getView( id );
+	private function getObject( id : String ) {
+		return core.view.getObject( id );
 	}
 	
 	private function getModel( id : String ) {
