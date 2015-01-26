@@ -2,7 +2,6 @@ package uk.co.mojaworks.norman.components.ui.mediators ;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.components.ui.UITouchListener;
 import uk.co.mojaworks.norman.core.view.GameObject;
-import uk.co.mojaworks.norman.systems.ticker.ITickable;
 
 /**
  * ...
@@ -61,15 +60,16 @@ class UIButton extends Mediator
 	{
 		
 		var _isPointerDown : Bool = core.app.input.getPointerInfo(0).isDown;
+		var _isPointerOver : Bool = _listener.isPointerOver && (core.app.ui.primaryPointerTarget == _listener);
 		
-		if ( _isPointerDown && _listener.isPointerOver ) {
+		if ( _isPointerDown && _isPointerOver ) {
 			if ( container.sprite != _down ) {
 				container.add( _down );
 				container.transform.setPosition( 5, 5 );
 			}
 		}else {
 			container.transform.setPosition( 0, 0 );
-			if ( _listener.isPointerOver  ) {
+			if ( _isPointerOver  ) {
 				if ( container.sprite != _over ) container.add( _over );
 			}else {
 				if ( container.sprite != _up ) container.add( _up );

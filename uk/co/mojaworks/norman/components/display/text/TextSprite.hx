@@ -168,7 +168,7 @@ class TextSprite extends RenderSprite
 		_bounds.height = (_lineStops.length) * font.lineHeight;
 		_lineStops.push( text.length );
 		_layoutDirty = false;
-		setSize( Math.max(_bounds.width, 1), Math.max(_bounds.height, 1) );
+		setSize( Math.max(_bounds.width, Math.max( 1, wrapWidth ) ), Math.max(_bounds.height, 1) );
 		
 	}
 			

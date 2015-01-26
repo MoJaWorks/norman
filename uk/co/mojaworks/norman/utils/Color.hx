@@ -18,6 +18,15 @@ abstract Color( Int ) to Int from Int
 		this = i;
 	}
 	
+	public static function from( r : Int, g : Int, b : Int, a : Float ) : Color {
+		var color : Color = new Color( 0 );
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		color.a = a;
+		return color;
+	}
+	
 	private inline function get_a() : Float { return ((this & 0xFF000000) >>> 24 ) * RATIO_255; }
 	private inline function get_r() : Int { return (this & 0xFF0000) >> 16; }
 	private inline function get_g() : Int { return (this & 0xFF00) >> 8; }

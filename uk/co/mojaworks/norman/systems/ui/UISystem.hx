@@ -53,7 +53,10 @@ class UISystem extends CoreObject
 		
 		for ( item in items ) {
 			
+			//trace("Checking ", item.gameObject.autoId, item.isPointerEnabled, item.getHitSprite() );
+			
 			if ( item.isPointerEnabled && item.getHitSprite() != null && item.getHitSprite().hitTestPoint( pointer ) ) {
+				//trace("Pointer over", item.gameObject.autoId );
 				item.isPointerOver = true;
 				if( hasPriority( item, primaryPointerTarget ) ) primaryPointerTarget = item;
 			}else {

@@ -48,7 +48,7 @@ class UITouchListener extends Component
 	}
 	
 	public function getHitSprite() : Sprite {
-		if ( hitSprite != null ) {
+		if ( hitSprite == null ) {
 			return gameObject.sprite;
 		}else {
 			return hitSprite;
