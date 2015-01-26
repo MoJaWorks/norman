@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.utils;
-import openfl.geom.Matrix;
-import openfl.geom.Rectangle;
+import lime.math.Matrix3;
+import lime.math.Rectangle;
 
 /**
  * ...
@@ -18,8 +18,8 @@ class MathUtils
 	
 	// Stolen from OpenFL Rectangle.
 	// Gets the bounding box of a rectangle after a matrix transformation
-	public static function transformRect( rect : Rectangle, m : Matrix ) : Void {
-
+	public static function transformRect( rect : Rectangle, m : Matrix3 ) : Void {
+		
 		var tx0 = m.a * rect.x + m.c * rect.y;
 		var tx1 = tx0;
 		var ty0 = m.b * rect.x + m.d * rect.y;

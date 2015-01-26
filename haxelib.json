@@ -8,6 +8,6 @@
   "releasenote": "",
   "contributors": ["Simon Morris"],
   "dependencies": {
-    "openfl": ""
+    "lime": ""
   }
 }

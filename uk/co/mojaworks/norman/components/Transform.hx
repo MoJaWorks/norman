@@ -1,11 +1,8 @@
 package uk.co.mojaworks.norman.components ;
 
-import openfl.geom.Matrix;
-import openfl.geom.Point;
-import uk.co.mojaworks.norman.components.display.Display;
-import uk.co.mojaworks.norman.components.messenger.MessageData;
+import lime.math.Matrix3;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.core.Component;
-import uk.co.mojaworks.norman.core.GameObject;
 
 /**
  * ...
@@ -13,65 +10,51 @@ import uk.co.mojaworks.norman.core.GameObject;
  */
 class Transform extends Component
 {
-
+	
 	public static inline var MATRIX_DIRTY : String = "MATRIX_DIRTY";
 	
 	public var x( default, set ) : Float = 0;
 	public var y( default, set ) : Float = 0;
-	
-	public var pivotX( default, set ) : Float = 0;
-	public var pivotY( default, set ) : Float = 0;
-	
-	public var paddingX( default, set ) : Float = 0;
-	public var paddingY( default, set ) : Float = 0;
 	
 	public var scaleX( default, set ) : Float = 1;
 	public var scaleY( default, set ) : Float = 1;
 	
 	public var rotation( default, set ) : Float = 0;
 	
-	public var worldTransform( get, never ) : Matrix;
-	public var inverseWorldTransform( get, never ) : Matrix;
-	public var localTransform( get, never ) : Matrix;
-	public var renderTransform( get, never ) : Matrix;
+	// If a transform is a root then it will ignore it's parents transform
+	// This is used for render targets to set up a new root structure
+	public var isRoot( default, set ) : Bool = false;
 	
-	var _worldTransform : Matrix;
-	var _inverseWorldTransform : Matrix;
-	var _localTransform : Matrix;
-	var _renderTransform : Matrix;
+	public var worldTransform( get, never ) : Matrix3;
+	public var inverseWorldTransform( get, never ) : Matrix3;
+	public var localTransform( get, never ) : Matrix3;
+	
+	var _worldTransform : Matrix3;
+	var _inverseWorldTransform : Matrix3;
+	var _localTransform : Matrix3;
 	
 	var _isLocalDirty : Bool = true;
 	var _isWorldDirty : Bool = true;
 	
-	public function new() 
+	
+	/**
+	 * 
+	 */
+	
+	public function new( ) 
 	{
-		super();
+		super( );
 		
-		_worldTransform = new Matrix();
-		_localTransform = new Matrix();
-		_inverseWorldTransform = new Matrix();
-		_renderTransform = new Matrix();
+		_worldTransform = new Matrix3();
+		_localTransform = new Matrix3();
+		_inverseWorldTransform = new Matrix3();
 	}
-	
-	override public function onAdded():Void 
-	{
-		super.onAdded();
-		//trace("OnAdded", gameObject.messenger );
-		gameObject.messenger.attachListener( GameObject.ADDED_AS_CHILD, onParentChanged );
-		gameObject.messenger.attachListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
-	}
-	
-	override public function onRemoved():Void 
-	{
-		super.onRemoved();
-		//trace("OnAdded", gameObject.messenger );
-		gameObject.messenger.removeListener( GameObject.ADDED_AS_CHILD, onParentChanged );
-		gameObject.messenger.removeListener( GameObject.REMOVED_AS_CHILD, onParentChanged );
-	}
-	
-	private function onParentChanged( data : MessageData ) : Void {
-		invalidateMatrices();
-	}
+		
+	/**
+	 * 
+	 * @param	local
+	 * @param	world
+	 */
 	
 	public function invalidateMatrices( local : Bool = true, world : Bool = true ) : Void {
 		
@@ -90,8 +73,6 @@ class Transform extends Component
 	
 	private function recalculateLocalTransform() : Void {
 		_localTransform.identity();
-		_localTransform.translate( paddingX, paddingY );
-		_localTransform.translate( -pivotX, -pivotY );
 		_localTransform.scale( scaleX, scaleY );
 		_localTransform.rotate( rotation );
 		_localTransform.translate( x, y );
@@ -102,21 +83,9 @@ class Transform extends Component
 		
 		if ( _isLocalDirty ) recalculateLocalTransform();
 		_worldTransform.copyFrom( _localTransform );
-		_renderTransform.identity();
-		
-		// If an object is masked, global transforms will all be in this coordinate
-		var isMasked : Bool = gameObject.display != null && gameObject.display.clipRect != null;
-		
-		if ( gameObject.parent != null ) {
+			
+		if ( gameObject.parent != null && !gameObject.parent.transform.isRoot ) {
 			_worldTransform.concat( gameObject.parent.transform.worldTransform );
-			if ( !isMasked ) {
-				_renderTransform.copyFrom( _localTransform );
-				_renderTransform.concat( gameObject.parent.transform.renderTransform );
-			}else {
-				_renderTransform.translate( -gameObject.display.clipRect.x, -gameObject.display.clipRect.y );
-			}
-		}else {
-			_renderTransform.copyFrom( _worldTransform );
 		}
 			
 		_inverseWorldTransform.copyFrom(_worldTransform);
@@ -126,18 +95,7 @@ class Transform extends Component
 		
 	}
 	
-	/**
-	 * Centers the pivot based on the display
-	 */
-	public function centerPivot() : Transform {
-		if ( gameObject.has(Display) ) {
-			setPivot( gameObject.display.getNaturalWidth() * 0.5, gameObject.display.getNaturalHeight() * 0.5 );
-		}else {
-			setPivot(0, 0);
-		}
-		
-		return this;
-	}
+	
 	
 	/**
 	 * Convenience
@@ -160,23 +118,11 @@ class Transform extends Component
 		return this;
 	}
 	
-	public function setPivot( x : Float, y : Float ) : Transform {
-		pivotX = x;
-		pivotY = y;
-		return this;
-	}
-	
-	public function setPadding( x : Float, y : Float ) : Transform {
-		paddingX = x;
-		paddingY = y;
-		return this;
-	}
-	
 	/**
 	 * Getters
 	 */
 	
-	private function get_worldTransform( ) : Matrix {
+	private function get_worldTransform( ) : Matrix3 {
 		
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
@@ -184,7 +130,7 @@ class Transform extends Component
 		return _worldTransform;
 	}
 	
-	private function get_localTransform( ) : Matrix {
+	private function get_localTransform( ) : Matrix3 {
 		
 		if ( _isLocalDirty ) {
 			recalculateLocalTransform();
@@ -192,7 +138,7 @@ class Transform extends Component
 		return _localTransform;
 	}
 	
-	private function get_inverseWorldTransform( ) : Matrix {
+	private function get_inverseWorldTransform( ) : Matrix3 {
 		
 		if ( _isWorldDirty || _isLocalDirty ) {
 			recalculateWorldTransform();
@@ -200,20 +146,12 @@ class Transform extends Component
 		return _inverseWorldTransform;
 	}
 	
-	private function get_renderTransform() : Matrix {
-		
-		if ( _isWorldDirty || _isLocalDirty ) {
-			recalculateWorldTransform();
-		}
-		return _renderTransform;
+	public function localToGlobal( point : Vector2 ) : Vector2 {
+		return worldTransform.transformVector2( point );
 	}
 	
-	public function localToGlobal( point : Point ) : Point {
-		return worldTransform.transformPoint( point );
-	}
-	
-	public function globalToLocal( point : Point ) : Point {
-		return inverseWorldTransform.transformPoint( point );
+	public function globalToLocal( point : Vector2 ) : Vector2 {
+		return inverseWorldTransform.transformVector2( point );
 	}
 	
 	/**
@@ -222,12 +160,23 @@ class Transform extends Component
 		
 	private function set_x( _x : Float ) : Float { x = _x; invalidateMatrices(); return x; }
 	private function set_y( _y : Float ) : Float { y = _y; invalidateMatrices(); return y; }
-	private function set_pivotX( _pivotX : Float ) : Float { pivotX = _pivotX; invalidateMatrices(); return pivotX; }
-	private function set_pivotY( _pivotY : Float ) : Float { pivotY = _pivotY; invalidateMatrices(); return pivotY; }
-	private function set_paddingX( _paddingX : Float ) : Float { paddingX = _paddingX; invalidateMatrices(); return paddingX; }
-	private function set_paddingY( _paddingY : Float ) : Float { paddingY = _paddingY; invalidateMatrices(); return paddingY; }
 	private function set_scaleX( _scaleX : Float ) : Float { scaleX = _scaleX; invalidateMatrices(); return scaleX; }
 	private function set_scaleY( _scaleY : Float ) : Float { scaleY = _scaleY; invalidateMatrices(); return scaleY; }
 	private function set_rotation( _rotation : Float ) : Float { rotation = _rotation; invalidateMatrices(); return rotation; }
+	private function set_isRoot( _isRoot : Bool ) : Bool { isRoot = _isRoot; invalidateMatrices(); return isRoot; }
+	
+		
+	/**
+	 * Destroy
+	 */
+	
+	override public function destroy() : Void {
+		
+		_worldTransform = null;
+		_localTransform = null;
+		//_renderTransform = null;
+		_inverseWorldTransform = null;
+	
+	}
 	
 }

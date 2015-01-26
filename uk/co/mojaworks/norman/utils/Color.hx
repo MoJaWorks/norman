@@ -18,27 +18,36 @@ abstract Color( Int ) to Int from Int
 		this = i;
 	}
 	
-	public inline function get_a() : Float { return ((this & 0xFF000000) >>> 24 ) * RATIO_255; }
-	public inline function get_r() : Int { return (this & 0xFF0000) >> 16; }
-	public inline function get_g() : Int { return (this & 0xFF00) >> 8; }
-	public inline function get_b() : Int { return (this & 0xFF); }
+	public static function from( r : Int, g : Int, b : Int, a : Float ) : Color {
+		var color : Color = new Color( 0 );
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		color.a = a;
+		return color;
+	}
 	
-	public inline function set_a( a : Float ) : Float {
+	private inline function get_a() : Float { return ((this & 0xFF000000) >>> 24 ) * RATIO_255; }
+	private inline function get_r() : Int { return (this & 0xFF0000) >> 16; }
+	private inline function get_g() : Int { return (this & 0xFF00) >> 8; }
+	private inline function get_b() : Int { return (this & 0xFF); }
+	
+	private inline function set_a( a : Float ) : Float {
 		this = (this & 0x00FFFFFF) + (Math.round(a * 255) << 24 );
 		return a;
 	}
 	
-	public inline function set_r( r : Int ) : Int {
+	private inline function set_r( r : Int ) : Int {
 		this = (this & 0xFF00FFFF) + (r << 16);
 		return r;
 	}
 	
-	public inline function set_g( g : Int ) : Int {
+	private inline function set_g( g : Int ) : Int {
 		this = (this & 0xFFFF00FF) + (g << 8);
 		return g;
 	}
 	
-	public inline function set_b( b : Int ) : Int {
+	private inline function set_b( b : Int ) : Int {
 		this = (this & 0xFFFFFF00) + b;
 		return b;
 	}
