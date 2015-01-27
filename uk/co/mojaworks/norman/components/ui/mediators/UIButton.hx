@@ -30,7 +30,7 @@ class UIButton extends Mediator
 		
 	}
 	
-	override public function onAdded():Void 
+	override private function construct():Void 
 	{
 		super.onAdded();
 		

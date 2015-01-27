@@ -75,7 +75,10 @@ class UISystem extends CoreObject
 		
 		if ( pointerData.touchId == 0 ) {
 			var pointer : Vector2 = pointerData.lastTouchStart;
-			if ( primaryPointerTarget != null ) primaryPointerTarget.pointerDown.dispatch();
+			if ( primaryPointerTarget != null ) {
+				primaryPointerTarget.pointerDown.dispatch();
+				primaryPointerTarget.isPointerDown = true;
+			}
 		}
 
 	}
@@ -84,7 +87,14 @@ class UISystem extends CoreObject
 		
 		if ( pointerData.touchId == 0 ) {
 			var pointer : Vector2 = pointerData.lastTouchEnd;
-			if ( primaryPointerTarget != null ) primaryPointerTarget.pointerUp.dispatch();
+			if ( primaryPointerTarget != null ) {
+				primaryPointerTarget.pointerUp.dispatch();
+				if ( primaryPointerTarget.isPointerDown ) primaryPointerTarget.clicked.dispatch();
+			}
+		}
+		
+		for ( target in items ) {
+			target.isPointerDown = false;
 		}
 	}
 	
