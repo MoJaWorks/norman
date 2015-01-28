@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core.controller;
+import uk.co.mojaworks.norman.core.Messenger.MessageData;
 
 /**
  * @author Simon
@@ -6,5 +7,5 @@ package uk.co.mojaworks.norman.core.controller;
 
 interface ICommand 
 {
-	function execute( data : Dynamic = null ) : Void;
+	function execute( data : MessageData ) : Void;
 }

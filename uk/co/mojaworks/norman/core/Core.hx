@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.core;
 import uk.co.mojaworks.norman.components.display.Sprite;
 import uk.co.mojaworks.norman.core.controller.Controller;
 import uk.co.mojaworks.norman.core.Messenger.MessageCallback;
+import uk.co.mojaworks.norman.core.Messenger.MessageCallback;
 import uk.co.mojaworks.norman.core.model.Model;
 import uk.co.mojaworks.norman.core.view.GameObject;
 import uk.co.mojaworks.norman.core.view.View;

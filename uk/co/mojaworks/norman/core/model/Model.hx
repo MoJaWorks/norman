@@ -7,27 +7,27 @@ package uk.co.mojaworks.norman.core.model;
 class Model
 {
 
-	private var _models : Map<String,IDataModel>;
+	private var _proxies : Map<String,Proxy>;
 	
 	public function new() 
 	{
-		_models = new Map<String,IDataModel>();
+		_proxies = new Map<String,Proxy>();
 	}
 	
-	public function addModel( model : IDataModel ) : Void {
+	public function addProxy( proxy : Proxy ) : Void {
 		#if debug 
-			if ( _models.get( model.getId() ) != null ) trace("Overwriting model with ID ", model.getId() );
+			if ( _proxies.get( proxy.getId() ) != null ) trace("Overwriting model with ID ", proxy.getId() );
 		#end
 		
-		_models.set( model.getId(), model );		
+		_proxies.set( proxy.getId(), proxy );		
 	}
 	
-	public function getModel( id : String ) : IDataModel {
-		return _models.get( id );
+	public function getProxy( id : String ) : Proxy {
+		return _proxies.get( id );
 	}
 	
-	public function removeModel( id : String ) : Void {
-		_models.remove( id );
+	public function removeProxy( id : String ) : Void {
+		_proxies.remove( id );
 	}
 
 }

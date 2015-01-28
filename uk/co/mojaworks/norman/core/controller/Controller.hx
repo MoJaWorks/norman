@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.core.controller;
-import haxe.ds.StringMap;
 import uk.co.mojaworks.norman.core.CoreObject;
 
 /**
