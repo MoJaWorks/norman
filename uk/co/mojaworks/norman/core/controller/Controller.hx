@@ -22,6 +22,7 @@ class Controller extends CoreObject
 	public function addCommand( message : String, command : ICommand ) : Void {
 		
 		_commands.push( command );
+		core.addMessageListener( message, command.execute );
 	}
 	
 }

@@ -37,8 +37,8 @@ class CoreObject
 		return core.view.getObject( id );
 	}
 	
-	private function getModel( id : String ) {
-		return core.model.getModel( id );
+	private function getProxy( id : String ) {
+		return core.model.getProxy( id );
 	}
 	
 	

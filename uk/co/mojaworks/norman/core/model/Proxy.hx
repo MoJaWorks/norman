@@ -12,7 +12,7 @@ class Proxy
 		
 	}
 	
-	public funciton getId() : String {
+	public function getId() : String {
 		// override
 		return "";
 	}
