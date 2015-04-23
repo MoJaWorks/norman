@@ -28,3 +28,6 @@ This will aim to use WebGL but may fall back to canvas if required. Compiled to 
 ##Norman
 The norman engine will be built on top of these other technologies to provide a single abstracted layer to use when coding games. It will be object oriented in approach and focus on 2D rendering and interactions. Everything is theoretical up to now so don't expect any major progress in the near future.
 
+##Development
+Development will initially focus on the Flash and Android targets as these will provide enough diversity to lay the ground for the other targets.
+
