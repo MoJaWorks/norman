@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension>
+
+	<haxelib name="lime" />
+
+	<assets path="assets" exclude="*.svg" />
+	<icon path="assets/lime.svg" />
+
+</extension>
