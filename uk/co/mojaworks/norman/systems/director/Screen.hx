@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.systems.director;
-import openfl.display.Sprite;
 import uk.co.mojaworks.norman.view.GameSprite;
 
 /**
@@ -23,7 +22,7 @@ class Screen extends GameSprite
 		
 		build();
 		
-		visible = false;
+		//visible = false;
 		active = false;
 		enabled = false;
 	}
@@ -43,7 +42,7 @@ class Screen extends GameSprite
 	
 	public function show( delay : Float = 0 ) : Void {
 		
-		visible = true;
+		//visible = true;
 		active = true;
 		animateIn( delay );
 		
@@ -89,7 +88,7 @@ class Screen extends GameSprite
 	}
 	
 	public function onHidden() : Void {
-		visible = false;
+		//visible = false;
 		active = false;
 	}
 	

@@ -7,13 +7,13 @@ package uk.co.mojaworks.norman.utils;
 abstract Color( Int ) to Int from Int
 {
 	
-	public static inline var RED : UInt = 0xFF0000;
-	public static inline var GREEN : UInt = 0x00FF00;
-	public static inline var BLUE : UInt = 0x0000FF;
-	public static inline var BLACK : UInt = 0x000000;
-	public static inline var WHITE : UInt = 0xFFFFFF;
-	public static inline var YELLOW : UInt = 0xFFFF00;
-	public static inline var PURPLE : UInt = 0xFF00FF;
+	public static inline var RED : UInt = 0xFFFF0000;
+	public static inline var GREEN : UInt = 0xFF00FF00;
+	public static inline var BLUE : UInt = 0xFF0000FF;
+	public static inline var BLACK : UInt = 0xFF000000;
+	public static inline var WHITE : UInt = 0xFFFFFFFF;
+	public static inline var YELLOW : UInt = 0xFFFFFF00;
+	public static inline var PURPLE : UInt = 0xFFFF00FF;
 	
 	
 	public static inline var RATIO_255 = (1 / 255);
@@ -25,6 +25,24 @@ abstract Color( Int ) to Int from Int
 	
 	public inline function new( i : Int ) {
 		this = i;
+	}
+	
+	public inline static function rgb( r : Int, g : Int, b : Int ) : Color {
+		var color : Color = new Color();
+		color.a = 1;
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		return color;
+	}
+	
+	public inline static function rgba( r : Int, g : Int, b : Int, a : Float ) : Color {
+		var color : Color = new Color();
+		color.a = a;
+		color.r = r;
+		color.g = g;
+		color.b = b;
+		return color;
 	}
 	
 	private inline function get_a() : Float { return ((this & 0xFF000000) >>> 24 ) * RATIO_255; }

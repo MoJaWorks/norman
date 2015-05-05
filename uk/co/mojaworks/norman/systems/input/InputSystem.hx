@@ -1,9 +1,5 @@
 package uk.co.mojaworks.norman.systems.input;
-import openfl.events.AccelerometerEvent;
-import openfl.events.MouseEvent;
-import openfl.geom.Point;
-import openfl.Lib;
-import openfl.sensors.Accelerometer;
+import lime.math.Vector2;
 
 /**
  * ...
@@ -12,57 +8,60 @@ import openfl.sensors.Accelerometer;
 class InputSystem
 {
 
-	var accelerometer : Accelerometer;
+	//var accelerometer : Accelerometer;
 	
 	public var accelerationX : Float;
 	public var accelerationY : Float;
 	public var accelerationZ : Float;
 	
 	public var mouseIsDown : Bool;
-	public var mousePosition : Point;
+	public var mousePosition : Vector2;
 	
 	public function new() 
 	{
-		if ( Accelerometer.isSupported ) {
-			accelerometer = new Accelerometer();
-			accelerometer.addEventListener( AccelerometerEvent.UPDATE, onAccelerometerUpdate );
-		}else {
-			trace("No accelerometer...");
-		}
+		//if ( Accelerometer.isSupported ) {
+			//accelerometer = new Accelerometer();
+			//accelerometer.addEventListener( AccelerometerEvent.UPDATE, onAccelerometerUpdate );
+		//}else {
+			//trace("No accelerometer...");
+		//}
 		
-		mousePosition = new Point();
-		Lib.current.stage.addEventListener( MouseEvent.MOUSE_DOWN, onMouseDown );
-		Lib.current.stage.addEventListener( MouseEvent.MOUSE_UP, onMouseUp );
-		Lib.current.stage.addEventListener( MouseEvent.MOUSE_MOVE, onMouseMove );
+		mousePosition = new Vector2();
+		//Lib.current.stage.addEventListener( MouseEvent.MOUSE_DOWN, onMouseDown );
+		//Lib.current.stage.addEventListener( MouseEvent.MOUSE_UP, onMouseUp );
+		//Lib.current.stage.addEventListener( MouseEvent.MOUSE_MOVE, onMouseMove );
 	}
 	
 	/**
 	 * Accelerometer
 	 */
 	
-	private function onAccelerometerUpdate( e : AccelerometerEvent ) : Void 
-	{
-		accelerationX = e.accelerationX;
-		accelerationY = e.accelerationY;
-		accelerationZ = e.accelerationZ;
-		
-		trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
-	}
+	//private function onAccelerometerUpdate( e : AccelerometerEvent ) : Void 
+	//{
+		//accelerationX = e.accelerationX;
+		//accelerationY = e.accelerationY;
+		//accelerationZ = e.accelerationZ;
+		//
+		//trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
+	//}
 	
 	/**
 	 * Mouse
 	 */
 	
-	private function onMouseDown( e : MouseEvent ) : Void {
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onMouseDown( x : Float, y : Float ) : Void {
 		mouseIsDown = true;
 	}
 	
-	private function onMouseUp( e : MouseEvent ) : Void {
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onMouseUp( x : Float, y : Float ) : Void {
 		mouseIsDown = false;
 	}
 	
-	private function onMouseMove( e : MouseEvent ) : Void {
-		mousePosition.setTo( e.stageX, e.stageY );
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onMouseMove( x : Float, y : Float ) : Void {
+		mousePosition.setTo( x, y );
 	}
 	
 }

@@ -1,16 +1,14 @@
 package uk.co.mojaworks.norman.systems.director;
-import openfl.display.Sprite;
 
 /**
  * ...
  * @author Simon
  */
-class Transition extends Sprite
+class Transition
 {
 
 	public function new() 
 	{
-		super();
 	}
 	
 	public function transition( to : Screen, from : Screen = null, delay : Float = 0, callback : Void->Void = null ) : Void {

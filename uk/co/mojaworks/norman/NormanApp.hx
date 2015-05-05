@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman;
 
 import haxe.Timer;
 import lime.app.Application;
+import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.systems.Systems;
 
@@ -13,93 +14,99 @@ class NormanApp extends Application
 {
 
 	// This may only be valid at startup as it is not updated with changes and any changes made will not be reflected in the app
-	public var config( default, null ) : NormanConfigData;
+	public var normanConfig( default, null ) : NormanConfigData;
 	
 	// Running vars
-	public var deltaTime( default, null ) : Float = 0;
-	var _lastUpdateTime : Float = 0;
-	
-	var view : Sprite;
+	//var view : Sprite;
+	var startupComplete : Bool = false;
 	
 	public function new( config : NormanConfigData ) 
 	{
 		super();
 		
+		this.normanConfig = config;
+		
+	}
+	
+	public override function init( context : RenderContext ) : Void 
+	{
+		
 		Systems.init( );
-		Systems.viewport.setTargetSize( config.targetScreenWidth, config.targetScreenHeight );
+		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		
-		// Set the timer to now
-		_lastUpdateTime = Timer.stamp();
+		switch (context) 
+		{
+			case OPENGL(gl):
+				// TODO: Set up GL render system (main focus)
+			case FLASH(sprite):
+				// TODO: Set up Stage3D  render system (eventually)
+			case CANVAS(context):
+				// TODO: Set up canvas render system (eventually)
+			case DOM(context):
+				// TODO: Set up DOM render system (eventually)
+			default:
+		}
 		
-		// Setup the app
-		setupCommands();
-		setupSystems();
-		setupModel();
-		setupView();
+		initApp();
 		
-		resize();
-		
+		onWindowResize( window.width, window.height );
 		onStartupComplete();
+		
+	}
+	
+	private function initApp() : Void {
+		// Override for any additional init steps
 	}
 	
 	private function onStartupComplete() 
 	{
-		
+		// Override for when startup is complete
+		startupComplete = true;
 	}
 	
-	/**
-	 * Setup
-	 */
-	
-	private function setupCommands() : Void {
-		// Override
-	}
-	
-	private function setupModel() : Void {
-		// Override
-	}
-	
-	private function setupSystems() : Void {
-		// Override
-	}
-	
-	private function setupView() : Void {
-		// Override
-		view = new Sprite();
-		addChild( view );
-		
-	}
-	 
 	/**
 	 * Ongoing
 	 */
-	 
-	public function resize( e : Event = null ) : Void {
+	
+	override public function onWindowResize(width:Int, height:Int):Void 
+	{
 		
-		Systems.viewport.resize( Lib.current.stage.stageWidth, Lib.current.stage.stageHeight );
-		view.scaleX = Systems.viewport.scale;
-		view.scaleY = Systems.viewport.scale;
-		view.x = Systems.viewport.marginLeft * Systems.viewport.scale;
-		view.y = Systems.viewport.marginTop * Systems.viewport.scale;
+		Systems.viewport.resize( width, height );
+		//view.scaleX = Systems.viewport.scale;
+		//view.scaleY = Systems.viewport.scale;
+		//view.x = Systems.viewport.marginLeft * Systems.viewport.scale;
+		//view.y = Systems.viewport.marginTop * Systems.viewport.scale;
 		
 		Systems.director.resize();
 		
 	}
 	
-	var gameUpdateId : Int = 0;
+	override public function update( deltaTime : Int ) : Void 
+	{
+		super.update( deltaTime );
+			
+		var seconds : Float = deltaTime * 0.001;
+		Systems.director.update( seconds );
+		Systems.scripting.update( seconds );
+		
+	}
 	
-	function update( e : Event = null ) : Void {
-		
-		//trace("Start of game update", Timer.stamp(), gameUpdateId );
-		
-		deltaTime = Timer.stamp() - _lastUpdateTime;
-		_lastUpdateTime = Timer.stamp();
-		
-		Systems.director.update( deltaTime );
-		Systems.scripting.update( deltaTime );
-		
-		//trace("End of game update", Timer.stamp(), gameUpdateId++ );
-
+	override public function onMouseDown( x : Float, y : Float, button : Int ) : Void 
+	{
+		super.onMouseDown(x, y, button);
+		Systems.input.onMouseDown( x, y );
+	}
+	
+	override public function onMouseUp( x : Float, y : Float, button : Int ) : Void 
+	{
+		super.onMouseUp( x, y, button);
+		Systems.input.onMouseUp( x, y );
+	}
+	
+	override public function onMouseMove( x : Float, y : Float ) : Void 
+	{
+		super.onMouseMove( x, y );
+		Systems.input.onMouseMove( x, y );
 	}
 	
 	
