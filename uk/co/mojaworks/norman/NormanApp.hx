@@ -30,23 +30,12 @@ class NormanApp extends Application
 	
 	public override function init( context : RenderContext ) : Void 
 	{
-		
+
 		Systems.init( );
 		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		
-		switch (context) 
-		{
-			case OPENGL(gl):
-				// TODO: Set up GL render system (main focus)
-			case FLASH(sprite):
-				// TODO: Set up Stage3D  render system (eventually)
-			case CANVAS(context):
-				// TODO: Set up canvas render system (eventually)
-			case DOM(context):
-				// TODO: Set up DOM render system (eventually)
-			default:
-		}
-		
+		Systems.renderer.init( context );
+				
 		initApp();
 		
 		onWindowResize( window.width, window.height );
@@ -108,7 +97,6 @@ class NormanApp extends Application
 		super.onMouseMove( x, y );
 		Systems.input.onMouseMove( x, y );
 	}
-	
 	
 	
 }
