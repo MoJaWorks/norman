@@ -8,6 +8,7 @@ class GLRenderBatch
 {
 
 	public var vertices : Array<Float>;
+	public var indices : Array<Int>;
 	public var shaderId : String;
 	public var started : Bool = false;
 	
@@ -21,6 +22,7 @@ class GLRenderBatch
 	
 	public function reset() : Void {
 		vertices = [];
+		indices = [];
 		shaderId = "";
 	}
 	
