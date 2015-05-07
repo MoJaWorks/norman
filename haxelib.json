@@ -8,7 +8,6 @@
   "releasenote": "",
   "contributors": ["Simon Morris"],
   "dependencies": {
-    "lime": "",
-	"msignal": ""
+    "lime": ""
   }
 }

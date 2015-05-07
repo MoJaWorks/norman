@@ -48,8 +48,6 @@ class Viewport
 		scale = Math.min( screenWidth / stageWidth, screenHeight / stageHeight );
 		marginLeft = ((screenWidth / scale) - stageWidth) * 0.5;
 		marginTop = ((screenHeight / scale) - stageHeight) * 0.5;
-		
-		trace("Resizing", screenWidth, screenHeight, stageWidth, stageHeight, scale, marginLeft, marginTop );
 	}
 	
 	private function get_left( ) : Float { return -marginLeft; }
