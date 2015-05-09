@@ -20,21 +20,37 @@ class GLShaderManager implements IShaderManager
 	
 	public function new() 
 	{
+	}
+	
+	public function init(  ) : Void {
 		_programs = new Map<String,GLProgram>();
 		_shaders = new Map<String,ShaderData>();
 	}
 	
-	public function init( context : GLRenderContext ) : Void {
-		_context = context;
+	public function onContextCreated( context : Dynamic ) : Void {
+		_context = cast context;
+		
+		// Make sure all shaders are compiled and uploaded
+		for ( id in _shaders.keys() ) {
+			uploadShader( id, _shaders.get( id ) );
+		}
 	}
 	
 	public function addShader( id:String, shaderData:ShaderData ) : Void 
 	{
+		if ( _context != null ) {
+			
+			_shaders.set( id, shaderData );
+			uploadShader( id, shaderData );
+			
+		}
 		
-		_shaders.set( id, shaderData );
-		
+	}
+	
+	private function uploadShader( id : String, shader : ShaderData ) : Void {
+	
 		var vs = _context.createShader( GL.VERTEX_SHADER );
-		_context.shaderSource( vs, shaderData.vertexSource );
+		_context.shaderSource( vs, shader.vertexSource );
 		_context.compileShader( vs );
 		
 		var error : Int = _context.getError();
@@ -43,7 +59,7 @@ class GLShaderManager implements IShaderManager
 		}
 		
 		var fs = _context.createShader( GL.FRAGMENT_SHADER );
-		_context.shaderSource( fs, shaderData.fragmentSource );
+		_context.shaderSource( fs, shader.fragmentSource );
 		_context.compileShader( fs );
 		
 		error = _context.getError();

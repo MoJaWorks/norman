@@ -7,6 +7,9 @@ import lime.math.Matrix3;
 import lime.math.Matrix4;
 import lime.math.Rectangle;
 import lime.math.Vector2;
+import lime.utils.ArrayBufferView;
+import lime.utils.Float32Array;
+import lime.utils.Int16Array;
 import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.utils.Color;
 
@@ -103,6 +106,15 @@ class GLCanvas implements ICanvas
 	private function renderBatch() : Void {
 		
 		if ( _batch.vertices.length > 0 ) {
+			
+			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
+			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
+			
+			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
+			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( _batch.indices ), GL.STREAM_DRAW );
+			
+			
+			
 		}
 	}
 	

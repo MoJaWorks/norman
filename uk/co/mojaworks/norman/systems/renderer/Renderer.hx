@@ -32,7 +32,8 @@ class Renderer
 				_canvas = glCanvas;
 				
 				var shaderManager : GLShaderManager = new GLShaderManager();
-				shaderManager.init( gl );
+				shaderManager.init( );
+				shaderManager.onContextCreated( gl );
 				this.shaderManager = shaderManager;
 				
 			case FLASH(sprite):
