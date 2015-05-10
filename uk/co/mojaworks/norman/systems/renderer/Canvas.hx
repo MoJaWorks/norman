@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.systems.renderer.gl;
+package uk.co.mojaworks.norman.systems.renderer;
 
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
@@ -17,7 +17,7 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author test
  */
-class GLCanvas implements ICanvas
+class Canvas implements ICanvas
 {
 	
 	public static inline var VERTEX_SIZE : Int = 8;
@@ -26,7 +26,7 @@ class GLCanvas implements ICanvas
 	public static inline var VERTEX_UV : Int = 6;
 
 	var _context : GLRenderContext;
-	var _batch : GLRenderBatch;
+	var _batch : RenderBatch;
 	
 	var _vertexBuffer : GLBuffer;
 	var _indexBuffer : GLBuffer;
@@ -40,7 +40,7 @@ class GLCanvas implements ICanvas
 	public function init( gl : GLRenderContext ) {
 		_context = gl;
 		
-		_batch = new GLRenderBatch();
+		_batch = new RenderBatch();
 		_vertexBuffer = _context.createBuffer();
 		_indexBuffer = _context.createBuffer();
 	}

@@ -1,8 +1,9 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.opengl.GLShader;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.systems.renderer.gl.GLCanvas;
-import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderManager;
+import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
+import uk.co.mojaworks.norman.systems.renderer.TextureManager;
 
 /**
  * ...
@@ -11,10 +12,10 @@ import uk.co.mojaworks.norman.systems.renderer.gl.GLShaderManager;
 class Renderer
 {
 
-	private var _canvas : ICanvas;
+	private var _canvas : Canvas;
 	
-	public var shaderManager( default, null ) : IShaderManager;
-	public var textureManager( default, null ) : TextureManager;
+	public var shaderManager( default, null ) : ShaderManager;
+	public var textureManager( default, null ) : GLTextureManager;
 	
 	public function new() {
 		textureManager = new TextureManager();
@@ -27,11 +28,11 @@ class Renderer
 		{
 			case OPENGL(gl):
 				// TODO: Set up GL render system (main focus)
-				var glCanvas : GLCanvas = new GLCanvas();
+				var glCanvas : Canvas = new Canvas();
 				glCanvas.init( gl );
 				_canvas = glCanvas;
 				
-				var shaderManager : GLShaderManager = new GLShaderManager();
+				var shaderManager : ShaderManager = new ShaderManager();
 				shaderManager.init( );
 				shaderManager.onContextCreated( gl );
 				this.shaderManager = shaderManager;

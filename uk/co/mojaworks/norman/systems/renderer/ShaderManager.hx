@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.systems.renderer.gl;
+package uk.co.mojaworks.norman.systems.renderer;
 
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
@@ -10,7 +10,7 @@ import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
  * ...
  * @author Simon
  */
-class GLShaderManager implements IShaderManager
+class ShaderManager implements IShaderManager
 {
 
 	var _context : GLRenderContext;

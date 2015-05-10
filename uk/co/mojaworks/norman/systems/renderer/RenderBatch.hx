@@ -1,10 +1,10 @@
-package uk.co.mojaworks.norman.systems.renderer.gl;
+package uk.co.mojaworks.norman.systems.renderer;
 
 /**
  * ...
  * @author test
  */
-class GLRenderBatch
+class RenderBatch
 {
 
 	public var vertices : Array<Float>;
