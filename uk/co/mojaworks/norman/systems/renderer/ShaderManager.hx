@@ -3,19 +3,17 @@ package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
-import uk.co.mojaworks.norman.systems.renderer.IShaderManager;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
 /**
  * ...
  * @author Simon
  */
-class ShaderManager implements IShaderManager
+class ShaderManager
 {
 
 	var _context : GLRenderContext;
-	
-	var _programs : Map<String, GLProgram>;
 	var _shaders : Map<String, ShaderData>;
 	
 	public function new() 
@@ -23,31 +21,41 @@ class ShaderManager implements IShaderManager
 	}
 	
 	public function init(  ) : Void {
-		_programs = new Map<String,GLProgram>();
+		
 		_shaders = new Map<String,ShaderData>();
+		
+		// Create default shaders
+		addShader( new DefaultFillShader() );
 	}
 	
-	public function onContextCreated( context : Dynamic ) : Void {
-		_context = cast context;
+	public function onContextCreated( context : GLRenderContext ) : Void {
+		
+		_context = context;
 		
 		// Make sure all shaders are compiled and uploaded
 		for ( id in _shaders.keys() ) {
-			uploadShader( id, _shaders.get( id ) );
+			uploadShader( _shaders.get( id ) );
 		}
+		
 	}
 	
-	public function addShader( id:String, shaderData:ShaderData ) : Void 
+	public function addShader( shaderData : ShaderData ) : Void 
 	{
 		if ( _context != null ) {
 			
-			_shaders.set( id, shaderData );
-			uploadShader( id, shaderData );
+			_shaders.set( shaderData.id, shaderData );
+			uploadShader( shaderData );
 			
 		}
 		
 	}
 	
-	private function uploadShader( id : String, shader : ShaderData ) : Void {
+	public function getProgram( shaderId : String) : GLProgram
+	{
+		return _shaders.get( shaderId ).program;
+	}
+	
+	private function uploadShader( shader : ShaderData ) : Void {
 	
 		var vs = _context.createShader( GL.VERTEX_SHADER );
 		_context.shaderSource( vs, shader.vertexSource );
@@ -55,7 +63,7 @@ class ShaderManager implements IShaderManager
 		
 		var error : Int = _context.getError();
 		if ( error > 0 ) {
-			trace("Error compiling vertex shader for ", id );
+			trace("Error compiling vertex shader for ", shader.id );
 		}
 		
 		var fs = _context.createShader( GL.FRAGMENT_SHADER );
@@ -64,7 +72,7 @@ class ShaderManager implements IShaderManager
 		
 		error = _context.getError();
 		if ( error > 0 ) {
-			trace("Error compiling fragment shader for ", id );
+			trace("Error compiling fragment shader for ", shader.id );
 		}
 		
 		var program : GLProgram = _context.createProgram();
@@ -74,10 +82,10 @@ class ShaderManager implements IShaderManager
 		
 		error = _context.getError();
 		if ( error > 0 ) {
-			trace("Error linking shaders for ", id );
+			trace("Error linking shaders for ", shader.id );
 		}
 		
-		_programs.set( id, program );	
+		_shaders.get( shader.id ).program = program;	
 		
 	}
 	

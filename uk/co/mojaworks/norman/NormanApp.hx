@@ -33,7 +33,6 @@ class NormanApp extends Application
 
 		Systems.init( );
 		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
-		
 		Systems.renderer.init( context );
 				
 		initApp();

@@ -3,21 +3,19 @@ package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLBuffer;
+import lime.graphics.opengl.GLProgram;
 import lime.math.Matrix3;
 import lime.math.Matrix4;
-import lime.math.Rectangle;
 import lime.math.Vector2;
-import lime.utils.ArrayBufferView;
 import lime.utils.Float32Array;
 import lime.utils.Int16Array;
-import uk.co.mojaworks.norman.systems.renderer.ICanvas;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...
  * @author test
  */
-class Canvas implements ICanvas
+class Canvas
 {
 	
 	public static inline var VERTEX_SIZE : Int = 8;
@@ -37,10 +35,12 @@ class Canvas implements ICanvas
 		
 	}
 	
-	public function init( gl : GLRenderContext ) {
-		_context = gl;
-		
+	public function init() : Void {
 		_batch = new RenderBatch();
+	}
+	
+	public function onContextCreated( gl : GLRenderContext ) : Void {
+		_context = gl;
 		_vertexBuffer = _context.createBuffer();
 		_indexBuffer = _context.createBuffer();
 	}
@@ -52,7 +52,6 @@ class Canvas implements ICanvas
 	
 	public function begin() : Void {
 		_batch.reset();
-		
 		_context.viewport( 0, 0, Std.int(Systems.viewport.stageWidth), Std.int(Systems.viewport.stageHeight) );
 		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.stageWidth, Systems.viewport.stageHeight, 0, -1000, 1000 );
 		
@@ -114,6 +113,16 @@ class Canvas implements ICanvas
 			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( _batch.indices ), GL.STREAM_DRAW );
 			
 			
+			var program : GLProgram = Systems.renderer.shaderManager.getProgram( _batch.shaderId );
+			_context.useProgram( program );
+			
+			var vertexAttrib = _context.getAttribLocation( program, "aVertexPosition" );
+			var colorAttrib = _context.getAttribLocation( program, "aVertexColor" );
+			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
+			
+			_context.enableVertexAttribArray( vertexAttrib );
+			_context.enableVertexAttribArray( colorAttrib );
+						
 			
 		}
 	}

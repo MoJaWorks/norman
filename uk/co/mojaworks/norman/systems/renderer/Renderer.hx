@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.systems.renderer;
-import lime.graphics.opengl.GLShader;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
@@ -12,10 +11,9 @@ import uk.co.mojaworks.norman.systems.renderer.TextureManager;
 class Renderer
 {
 
-	private var _canvas : Canvas;
-	
+	public var canvas( default, null ) : Canvas;
 	public var shaderManager( default, null ) : ShaderManager;
-	public var textureManager( default, null ) : GLTextureManager;
+	public var textureManager( default, null ) : TextureManager;
 	
 	public function new() {
 		textureManager = new TextureManager();
@@ -27,22 +25,21 @@ class Renderer
 		switch (context) 
 		{
 			case OPENGL(gl):
-				// TODO: Set up GL render system (main focus)
-				var glCanvas : Canvas = new Canvas();
-				glCanvas.init( gl );
-				_canvas = glCanvas;
 				
-				var shaderManager : ShaderManager = new ShaderManager();
+				canvas = new Canvas();
+				canvas.init( );
+				canvas.onContextCreated( gl );
+				
+				shaderManager = new ShaderManager();
 				shaderManager.init( );
 				shaderManager.onContextCreated( gl );
-				this.shaderManager = shaderManager;
 				
 			case FLASH(sprite):
-				// TODO: Set up Stage3D  render system (eventually)
+				// TODO: Set up Stage3D  render system (eventually, maybe never)
 			case CANVAS(context):
-				// TODO: Set up canvas render system (eventually)
+				// TODO: Set up canvas render system (never)
 			case DOM(context):
-				// TODO: Set up DOM render system (eventually)
+				// TODO: Set up DOM render system (never)
 			default:
 		}
 		
