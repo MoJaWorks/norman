@@ -41,9 +41,10 @@ class ShaderManager
 	
 	public function addShader( shaderData : ShaderData ) : Void 
 	{
+		
+		_shaders.set( shaderData.id, shaderData );
 		if ( _context != null ) {
 			
-			_shaders.set( shaderData.id, shaderData );
 			uploadShader( shaderData );
 			
 		}
@@ -85,7 +86,11 @@ class ShaderManager
 			trace("Error linking shaders for ", shader.id );
 		}
 		
-		_shaders.get( shader.id ).program = program;	
+		_shaders.get( shader.id ).program = program;
+		
+		if ( error == 0 ) {
+			trace("Uploaded shader for", shader.id );
+		}
 		
 	}
 	

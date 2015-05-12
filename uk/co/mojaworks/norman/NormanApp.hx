@@ -77,6 +77,9 @@ class NormanApp extends Application
 		Systems.director.update( seconds );
 		Systems.scripting.update( seconds );
 		
+		
+		Systems.renderer.render();
+		
 	}
 	
 	override public function onMouseDown( x : Float, y : Float, button : Int ) : Void 
@@ -97,5 +100,16 @@ class NormanApp extends Application
 		Systems.input.onMouseMove( x, y );
 	}
 	
+	override public function onRenderContextRestored(context:RenderContext):Void 
+	{
+		super.onRenderContextRestored(context);
+		trace("OnContextRestored");
+	}
 	
+	override public function onRenderContextLost():Void 
+	{
+		super.onRenderContextLost();
+		trace("OnContextLost");
+	}
+		
 }

@@ -1,8 +1,11 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.RenderContext;
+import lime.math.Matrix3;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
+import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
 import uk.co.mojaworks.norman.systems.renderer.TextureManager;
+import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...
@@ -43,6 +46,13 @@ class Renderer
 			default:
 		}
 		
+	}
+	
+	public function render() : Void {
+		
+		canvas.begin();
+		canvas.fillRect( Color.rgb( 255, 0, 0 ), new Matrix3( 200, 0, 0, 200, 200, 200 ), DefaultFillShader.ID );
+		canvas.end();
 	}
 	
 }

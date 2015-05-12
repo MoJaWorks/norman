@@ -7,9 +7,12 @@ package uk.co.mojaworks.norman.systems.renderer.shaders;
 class DefaultFillShader extends ShaderData
 {
 
+	public static inline var ID : String = "DefaultFillShader";
+	
 	public function new() 
 	{
 		super();
+		id = ID;
 	}
 	
 	override function setupVertexSource():Void 

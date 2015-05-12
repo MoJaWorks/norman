@@ -9,6 +9,7 @@ import lime.math.Matrix4;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
 import lime.utils.Int16Array;
+import lime.utils.UInt16Array;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -40,6 +41,7 @@ class Canvas
 	}
 	
 	public function onContextCreated( gl : GLRenderContext ) : Void {
+		trace("Setting up gl context");
 		_context = gl;
 		_vertexBuffer = _context.createBuffer();
 		_indexBuffer = _context.createBuffer();
@@ -51,9 +53,15 @@ class Canvas
 	}
 	
 	public function begin() : Void {
+		
 		_batch.reset();
-		_context.viewport( 0, 0, Std.int(Systems.viewport.stageWidth), Std.int(Systems.viewport.stageHeight) );
-		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.stageWidth, Systems.viewport.stageHeight, 0, -1000, 1000 );
+		_context.clearColor( 0, 1, 0, 1 );
+		_context.clear( GL.COLOR_BUFFER_BIT );
+		_context.viewport( 0, 0, Std.int(Systems.viewport.screenWidth), Std.int(Systems.viewport.screenHeight) );
+		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
+		
+		_context.enable( GL.BLEND );
+		_context.blendFunc( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 		
 	}
 	
@@ -71,11 +79,13 @@ class Canvas
 		_batch.started = true;
 		_batch.shaderId = shaderId;
 		
+		var startIndex = _batch.vertices.length;
+		
 		var points : Array<Vector2> = [
-			new Vector2(0, 0),
-			new Vector2(1, 0),
+			new Vector2(1, 1),
 			new Vector2(0, 1),
-			new Vector2(1, 1)
+			new Vector2(1, 0),
+			new Vector2(0, 0)
 		];
 		
 		// Make points global with transform
@@ -92,26 +102,27 @@ class Canvas
 		}
 		
 		// Add the vertices
-		var startIndex = _batch.vertices.length;
 		_batch.indices.push( startIndex + 0 );
 		_batch.indices.push( startIndex + 1 );
 		_batch.indices.push( startIndex + 2 );
 		_batch.indices.push( startIndex + 1 );
-		_batch.indices.push( startIndex + 2 );
-		_batch.indices.push( startIndex + 3 );		
+		_batch.indices.push( startIndex + 3 );
+		_batch.indices.push( startIndex + 2 );		
 		
 	}
 	
 	private function renderBatch() : Void {
 		
+		
 		if ( _batch.vertices.length > 0 ) {
+			
+			trace("Rendering batch", _batch.vertices );
 			
 			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
 			
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new Int16Array( _batch.indices ), GL.STREAM_DRAW );
-			
+			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt16Array( _batch.indices ), GL.STREAM_DRAW );
 			
 			var program : GLProgram = Systems.renderer.shaderManager.getProgram( _batch.shaderId );
 			_context.useProgram( program );
@@ -122,7 +133,23 @@ class Canvas
 			
 			_context.enableVertexAttribArray( vertexAttrib );
 			_context.enableVertexAttribArray( colorAttrib );
+			
+			_context.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION * 4);
+			_context.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4);
+			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
+			
+			_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
+			
+			_context.useProgram( null );
+			_context.disableVertexAttribArray( vertexAttrib );
+			_context.disableVertexAttribArray( colorAttrib );
+			
+			_context.bindBuffer( GL.ARRAY_BUFFER, null );
+			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 						
+			if ( _context.getError() > 0 ) trace( "GL Error:", _context.getError() );
+			
+			_batch.reset();
 			
 		}
 	}
