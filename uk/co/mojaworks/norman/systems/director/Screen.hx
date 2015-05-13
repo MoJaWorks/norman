@@ -1,11 +1,11 @@
 package uk.co.mojaworks.norman.systems.director;
-import uk.co.mojaworks.norman.view.GameSprite;
+import uk.co.mojaworks.norman.display.Sprite;
 
 /**
  * ...
  * @author Simon
  */
-class Screen extends GameSprite
+class Screen extends Sprite
 {
 
 	// Active controls animations and if the screen should be "alive"
