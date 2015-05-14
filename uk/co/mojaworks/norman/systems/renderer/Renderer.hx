@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.RenderContext;
 import lime.math.Matrix3;
+import uk.co.mojaworks.norman.geom.Transform;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
@@ -51,7 +52,12 @@ class Renderer
 	public function render() : Void {
 		
 		canvas.begin();
-		canvas.fillRect( Color.rgb( 255, 0, 0 ), new Matrix3( 200, 0, 0, 200, 200, 200 ), DefaultFillShader.ID );
+		
+		var transform : Transform = new Transform();
+		transform.x = 100;
+		transform.y = 100;
+		
+		canvas.fillRect( 100, 100, Color.rgb( 255, 0, 0 ), transform.worldMatrix, DefaultFillShader.ID );
 		canvas.end();
 	}
 	

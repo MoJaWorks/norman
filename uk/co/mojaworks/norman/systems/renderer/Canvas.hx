@@ -69,7 +69,7 @@ class Canvas
 		if ( _batch.started ) renderBatch();
 	}
 	
-	public function fillRect( color : Color, transform : Matrix3, shaderId : String = "defaultFill" ) : Void 
+	public function fillRect( width : Float, height : Float, color : Color, transform : Matrix3, shaderId : String = "defaultFill" ) : Void 
 	{
 		if ( _batch.started && _batch.shaderId != shaderId ) {
 			renderBatch();
@@ -82,6 +82,13 @@ class Canvas
 		var startIndex = _batch.vertices.length;
 		
 		var points : Array<Vector2> = [
+			new Vector2(width, height),
+			new Vector2(0, height),
+			new Vector2(width, 0),
+			new Vector2(0, 0)
+		];
+		
+		var uv : Array<Vector2> = [
 			new Vector2(1, 1),
 			new Vector2(0, 1),
 			new Vector2(1, 0),
@@ -97,8 +104,8 @@ class Canvas
 			_batch.vertices.push( color.g / 255.0 );
 			_batch.vertices.push( color.b / 255.0 );
 			_batch.vertices.push( color.a );
-			_batch.vertices.push( points[i].x );
-			_batch.vertices.push( points[i].y );
+			_batch.vertices.push( uv[i].x );
+			_batch.vertices.push( uv[i].y );
 		}
 		
 		// Add the vertices
