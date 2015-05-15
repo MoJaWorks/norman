@@ -7,6 +7,7 @@ import uk.co.mojaworks.norman.systems.model.Model;
 import uk.co.mojaworks.norman.systems.renderer.Renderer;
 import uk.co.mojaworks.norman.systems.script.ScriptRunner;
 import uk.co.mojaworks.norman.systems.switchboard.Switchboard;
+import uk.co.mojaworks.norman.systems.view.View;
 
 /**
  * ...
@@ -23,6 +24,8 @@ class Systems
 	static public var input( default, null ) : InputSystem;
 	static public var components( default, null ) : ComponentSystem;
 	static public var renderer( default, null ) : Renderer;
+	static public var view( default, null ) : View;
+	
 	
 	public function new()
 	{
@@ -42,6 +45,7 @@ class Systems
 		input = new InputSystem();
 		components = new ComponentSystem();
 		renderer = new Renderer();
+		view = new View();
 	}
 	
 }

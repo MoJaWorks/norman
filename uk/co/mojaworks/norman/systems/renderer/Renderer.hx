@@ -1,12 +1,14 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.RenderContext;
 import lime.math.Matrix3;
+import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.geom.Transform;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
 import uk.co.mojaworks.norman.systems.renderer.TextureManager;
 import uk.co.mojaworks.norman.utils.Color;
+import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -49,16 +51,36 @@ class Renderer
 		
 	}
 	
-	public function render() : Void {
+	public function render( root : Sprite ) : Void {
 		
 		canvas.begin();
 		
-		var transform : Transform = new Transform();
-		transform.x = 100;
-		transform.y = 100;
+		renderLevel( root );
 		
-		canvas.fillRect( 100, 100, Color.rgb( 255, 0, 0 ), transform.worldMatrix, DefaultFillShader.ID );
+		//var parent : Transform = new Transform();
+		//parent.rotationDegrees = 30;
+		//
+		//var transform : Transform = new Transform();
+		//transform.parent = parent;
+		//transform.x = 100;
+		//transform.y = 100;
+		//transform.rotationDegrees = 30;
+		//transform.scaleX = 2;
+		//
+		//canvas.fillRect( 100, 100, Color.rgb( 255, 0, 0 ), transform.worldMatrix, DefaultFillShader.ID );
 		canvas.end();
+	}
+	
+	private function renderLevel( sprite : Sprite ) : Void {
+		
+		sprite.preRender( canvas );
+		sprite.render( canvas );
+		
+		for ( child in sprite.children ) {
+			renderLevel( child );
+		}
+		
+		sprite.postRender( canvas );
 	}
 	
 }

@@ -36,7 +36,7 @@ class Screen extends Sprite
 		// Override
 	}
 	
-	public function resize( ) : Void {
+	override public function resize( ) : Void {
 		// Override
 	}
 	

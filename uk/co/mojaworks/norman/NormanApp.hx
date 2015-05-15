@@ -4,6 +4,7 @@ import haxe.Timer;
 import lime.app.Application;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.data.NormanConfigData;
+import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.Systems;
 
 /**
@@ -17,7 +18,7 @@ class NormanApp extends Application
 	public var normanConfig( default, null ) : NormanConfigData;
 	
 	// Running vars
-	//var view : Sprite;
+	var view : Sprite;
 	var startupComplete : Bool = false;
 	
 	public function new( config : NormanConfigData ) 
@@ -34,6 +35,7 @@ class NormanApp extends Application
 		Systems.init( );
 		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		Systems.renderer.init( context );
+		Systems.view.init();
 				
 		initApp();
 		
@@ -60,10 +62,7 @@ class NormanApp extends Application
 	{
 		
 		Systems.viewport.resize( width, height );
-		//view.scaleX = Systems.viewport.scale;
-		//view.scaleY = Systems.viewport.scale;
-		//view.x = Systems.viewport.marginLeft * Systems.viewport.scale;
-		//view.y = Systems.viewport.marginTop * Systems.viewport.scale;
+		Systems.view.resize();
 		
 		Systems.director.resize();
 		
@@ -76,9 +75,7 @@ class NormanApp extends Application
 		var seconds : Float = deltaTime * 0.001;
 		Systems.director.update( seconds );
 		Systems.scripting.update( seconds );
-		
-		
-		Systems.renderer.render();
+		Systems.renderer.render( Systems.view.root );
 		
 	}
 	

@@ -31,8 +31,8 @@ class Transform
 	var _worldMatrix : Matrix3;
 	
 	
-	public var isLocalDirty : Bool = true;
-	public var isWorldDirty : Bool = true;
+	public var isLocalDirty( default, null ) : Bool = true;
+	public var isWorldDirty( default, null ) : Bool = true;
 	
 	public function new( ) 
 	{
@@ -74,7 +74,7 @@ class Transform
 	public function set_scaleX( val : Float ) : Float { this.scaleX = val; isWorldDirty = true; isLocalDirty = true; return val; } 
 	public function set_scaleY( val : Float ) : Float { this.scaleY = val; isWorldDirty = true; isLocalDirty = true; return val; } 
 	public function set_rotation( val : Float ) : Float { this.rotation = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_rotationDegrees( val : Float ) : Float { this.rotation = val * MathUtils.RAD2DEG; isWorldDirty = true; isLocalDirty = true; return val; } 
+	public function set_rotationDegrees( val : Float ) : Float { this.rotation = val * MathUtils.DEG2RAD; isWorldDirty = true; isLocalDirty = true; return val; } 
 	public function get_rotationDegrees( ) : Float { return this.rotation * MathUtils.RAD2DEG; } 
 	
 	public function get_worldMatrix( ) : Matrix3 {
@@ -84,6 +84,13 @@ class Transform
 	public function get_localMatrix( ) : Matrix3 {
 		if ( isLocalDirty ) return recalculateLocalMatrix();
 		else return _localMatrix;
+	}
+	
+	
+	public function destroy() : Void {
+		_worldMatrix = null;
+		_localMatrix = null;
+		parent = null;
 	}
 	
 }
