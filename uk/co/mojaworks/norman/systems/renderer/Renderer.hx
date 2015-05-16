@@ -6,6 +6,7 @@ import uk.co.mojaworks.norman.geom.Transform;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
 import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.TextureManager;
 import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.MathUtils;
@@ -70,6 +71,14 @@ class Renderer
 		}
 		
 		sprite.postRender( canvas );
+	}
+	
+	public function createTexture() : Void {
+		
+	}
+	
+	public function createShader( shaderData : ShaderData ) : ShaderData {
+		return null;
 	}
 	
 }

@@ -12,6 +12,7 @@ class FillSprite extends Sprite
 {
 	
 	public var color( default, default ) : Color;
+	public var shader( default, default ) : ShaderData; 
 
 	public function new( color : Color, width : Float, height : Float, id : String = null ) 
 	{
