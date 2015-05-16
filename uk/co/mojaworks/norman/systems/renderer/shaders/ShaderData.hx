@@ -7,8 +7,6 @@ import lime.graphics.opengl.GLProgram;
  */
 class ShaderData
 {
-	public static inline var DEFAULT_IMAGE : String = "DefaultImage";
-	public static inline var DEFAULT_FILL : String = "DefaultImage";
 	
 	public var id : String;
 	public var fragmentSource : String;

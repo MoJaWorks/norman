@@ -55,13 +55,13 @@ class Canvas
 	public function begin() : Void {
 		
 		_batch.reset();
-		_context.clearColor( 0, 1, 0, 1 );
+		_context.clearColor( 0, 0, 0, 1 );
 		_context.clear( GL.COLOR_BUFFER_BIT );
 		_context.viewport( 0, 0, Std.int(Systems.viewport.screenWidth), Std.int(Systems.viewport.screenHeight) );
 		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
 		
 		_context.enable( GL.BLEND );
-		_context.blendFunc( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
+		_context.blendFunc( GL.DST_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
 		
 	}
 	

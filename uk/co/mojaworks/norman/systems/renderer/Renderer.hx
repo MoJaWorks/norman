@@ -56,18 +56,7 @@ class Renderer
 		canvas.begin();
 		
 		renderLevel( root );
-		
-		//var parent : Transform = new Transform();
-		//parent.rotationDegrees = 30;
-		//
-		//var transform : Transform = new Transform();
-		//transform.parent = parent;
-		//transform.x = 100;
-		//transform.y = 100;
-		//transform.rotationDegrees = 30;
-		//transform.scaleX = 2;
-		//
-		//canvas.fillRect( 100, 100, Color.rgb( 255, 0, 0 ), transform.worldMatrix, DefaultFillShader.ID );
+
 		canvas.end();
 	}
 	

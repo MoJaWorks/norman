@@ -53,7 +53,12 @@ class ShaderManager
 	
 	public function getProgram( shaderId : String) : GLProgram
 	{
-		return _shaders.get( shaderId ).program;
+		if ( _shaders.exists( shaderId )) {
+			return _shaders.get( shaderId ).program;
+		}else {
+			trace("No shader found with ID ", shaderId );
+			return null;
+		}
 	}
 	
 	private function uploadShader( shader : ShaderData ) : Void {

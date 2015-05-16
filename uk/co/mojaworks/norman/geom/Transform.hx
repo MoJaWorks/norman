@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.geom;
 import lime.math.Matrix3;
 import uk.co.mojaworks.norman.display.Sprite;
+import uk.co.mojaworks.norman.systems.components.Component;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
@@ -9,7 +10,6 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  */
 class Transform
 {
-	
 	public var parent( default, set ) : Transform;
 	
 	public var anchorX( default, set ) : Float = 0;
