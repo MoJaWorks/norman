@@ -12,12 +12,8 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class Sprite
 {
 	
-	private static var autoIncrement : Int = 0;
-	
 	public var alpha( default, default ) : Float = 1;
 	public var finalAlpha( get, never ) : Float;
-	
-	public var id( default, null ) : String;
 	
 	public var parent( default, set ) : Sprite;
 	public var children( default, null ) : LinkedList<Sprite>;
@@ -26,18 +22,10 @@ class Sprite
 	public var height( get, null ) : Float = 0;	
 	public var transform( default, null ) : Transform;
 
-	public function new( id : String = null ) 
-	{
-		if ( id != null ) {
-			this.id = id;
-		}else {
-			this.id = "autoId_" + autoIncrement++;
-		}
-		
+	public function new( ) 
+	{		
 		children = new LinkedList<Sprite>();
-		
 		transform = new Transform();
-		Systems.view.registerSprite( this );
 	}
 	
 	public function get_width() : Float {
@@ -96,7 +84,6 @@ class Sprite
 	
 	public function destroy() : Void {
 		
-		Systems.view.removeSprite( id );
 		for ( child in children ) {
 			child.destroy();
 		}

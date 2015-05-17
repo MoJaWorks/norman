@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.renderer;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
 /**
  * ...
@@ -9,7 +10,7 @@ class RenderBatch
 
 	public var vertices : Array<Float>;
 	public var indices : Array<Int>;
-	public var shaderId : String;
+	public var shader : ShaderData;
 	public var started : Bool = false;
 	
 	// public var target : RenderTexture;
@@ -23,7 +24,7 @@ class RenderBatch
 	public function reset() : Void {
 		vertices = [];
 		indices = [];
-		shaderId = "";
+		shader = null;
 	}
 	
 }

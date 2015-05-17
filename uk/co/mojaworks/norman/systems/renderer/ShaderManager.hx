@@ -7,12 +7,15 @@ import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
 import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 
 /**
+ * Responsible for uploading and maintaing shaders
  * ...
  * @author Simon
  */
 class ShaderManager
 {
 
+	//  
+	
 	var _context : GLRenderContext;
 	var _shaders : Map<String, ShaderData>;
 	
@@ -23,9 +26,6 @@ class ShaderManager
 	public function init(  ) : Void {
 		
 		_shaders = new Map<String,ShaderData>();
-		
-		// Create default shaders
-		addShader( new DefaultFillShader() );
 	}
 	
 	public function onContextCreated( context : GLRenderContext ) : Void {
@@ -54,7 +54,7 @@ class ShaderManager
 	public function getProgram( shaderId : String) : GLProgram
 	{
 		if ( _shaders.exists( shaderId )) {
-			return _shaders.get( shaderId ).program;
+			return _shaders.get( shaderId ).glProgram;
 		}else {
 			trace("No shader found with ID ", shaderId );
 			return null;
@@ -91,7 +91,7 @@ class ShaderManager
 			trace("Error linking shaders for ", shader.id );
 		}
 		
-		_shaders.get( shader.id ).program = program;
+		_shaders.get( shader.id ).glProgram = program;
 		
 		if ( error == 0 ) {
 			trace("Uploaded shader for", shader.id );

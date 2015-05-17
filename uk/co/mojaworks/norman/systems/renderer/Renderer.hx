@@ -78,7 +78,8 @@ class Renderer
 	}
 	
 	public function createShader( shaderData : ShaderData ) : ShaderData {
-		return null;
+		shaderManager.addShader( shaderData );
+		return shaderData;
 	}
 	
 }

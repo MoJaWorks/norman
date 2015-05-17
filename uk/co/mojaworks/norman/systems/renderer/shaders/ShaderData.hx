@@ -11,7 +11,7 @@ class ShaderData
 	public var id : String;
 	public var fragmentSource : String;
 	public var vertexSource : String;
-	public var program : GLProgram;
+	public var glProgram : GLProgram;
 	
 	public function new() 
 	{

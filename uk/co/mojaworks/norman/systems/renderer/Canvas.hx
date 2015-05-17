@@ -10,6 +10,7 @@ import lime.math.Vector2;
 import lime.utils.Float32Array;
 import lime.utils.Int16Array;
 import lime.utils.UInt16Array;
+import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -69,15 +70,15 @@ class Canvas
 		if ( _batch.started ) renderBatch();
 	}
 	
-	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shaderId : String = "defaultFill" ) : Void 
+	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
 	{
-		if ( _batch.started && _batch.shaderId != shaderId ) {
+		if ( _batch.started && _batch.shader != shader ) {
 			renderBatch();
 			_batch.reset();
 		}
 		
 		_batch.started = true;
-		_batch.shaderId = shaderId;
+		_batch.shader = shader;
 		
 		var startIndex = _batch.vertices.length;
 		
@@ -131,7 +132,7 @@ class Canvas
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
 			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt16Array( _batch.indices ), GL.STREAM_DRAW );
 			
-			var program : GLProgram = Systems.renderer.shaderManager.getProgram( _batch.shaderId );
+			var program : GLProgram = _batch.shader.glProgram;
 			_context.useProgram( program );
 			
 			var vertexAttrib = _context.getAttribLocation( program, "aVertexPosition" );

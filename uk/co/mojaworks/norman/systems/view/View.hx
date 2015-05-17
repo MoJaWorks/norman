@@ -26,8 +26,8 @@ class View
 		}
 	}
 	
-	public function registerSprite( sprite : Sprite ) : Void {
-		sprites.set( sprite.id, sprite );
+	public function registerSprite( id : String, sprite : Sprite ) : Void {
+		sprites.set( id, sprite );
 	}
 	
 	public function getSpriteWithID( id : String ) : Void {
