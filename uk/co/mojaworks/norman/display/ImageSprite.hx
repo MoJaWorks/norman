@@ -12,8 +12,8 @@ class ImageSprite extends Sprite
 
 	public var color( default, default ) : Color;
 	
-	public var texture( default, set ) : TextureData;
-	public var subTextureId( default, set ) : String;
+	public var texture( default, null ) : TextureData;
+	public var subTextureId( default, null ) : String;
 	
 	public var imageRect( default, null ) : Rectangle;
 	public var imageUVRect( default, null ) : Rectangle;
@@ -21,11 +21,18 @@ class ImageSprite extends Sprite
 	public function new( texture : TextureData, subTextureId : String = null ) 
 	{
 		super( );
-		
+		setTexture( texture, subTextureId );
 		
 	}
 	
-	public function textureId() : Void {
+	public function setTexture( texture : TextureData, subTextureId : String = null ) : Void {
+		
+		if ( this.texture != texture ) {
+			this.texture = texture;
+		}
+		
+		imageRect = texture.getRectFor( subTextureId );
+		imageUVRect = texture.getUVFor( subTextureId );
 		
 	}
 	

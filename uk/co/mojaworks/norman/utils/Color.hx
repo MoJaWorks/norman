@@ -23,11 +23,11 @@ abstract Color( Int ) to Int from Int
 	public var b( get, set ) : Int;
 	public var a( get, set ) : Float;
 	
-	public inline function new( i : Int ) {
+	public function new( i : Int ) {
 		this = i;
 	}
 	
-	public inline static function rgb( r : Int, g : Int, b : Int ) : Color {
+	public static function rgb( r : Int, g : Int, b : Int ) : Color {
 		var color : Color = 0;
 		color.a = 1;
 		color.r = r;
@@ -36,7 +36,7 @@ abstract Color( Int ) to Int from Int
 		return color;
 	}
 	
-	public inline static function rgba( r : Int, g : Int, b : Int, a : Float ) : Color {
+	public static function rgba( r : Int, g : Int, b : Int, a : Float ) : Color {
 		var color : Color = 0;
 		color.a = a;
 		color.r = r;
