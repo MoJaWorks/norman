@@ -45,4 +45,52 @@ class ShaderUtils
 		return fragmentSource;
 	}
 	
+	/**
+	 * Image shader
+	 * @return
+	 */
+	
+	public static function getDefaultImageVertexSource():String 
+	{
+		var str : String = "";
+		
+		str += "attribute vec2 aVertexPosition;";
+		str += "attribute vec4 aVertexColor;";
+		str += "attribute vec2 aVertexUV;";
+		str += "uniform mat4 uProjectionMatrix;";
+		
+		str += "varying vec4 vVertexColor;";
+		str += "varying vec2 vVertexUV;";
+
+		str += "void main(void) {";
+		str += "	vVertexColor = aVertexColor;";
+		str += "	vVertexUV = aVertexUV;";
+		str += "	gl_Position = uProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0);";
+		str += "}";
+		
+		return str;
+	}
+	
+	
+	public static function getDefaultImageFragSource():String 
+	{
+		var str : String = "";
+		
+		#if !desktop
+			str += "precision mediump float;";
+		#end
+
+		str += "varying vec4 vVertexColor;";
+		str += "varying vec2 vVertexUV;";
+		str += "uniform sampler2D uTexture0;";
+		
+		str += "void main(void) {";
+		str += "	vec4 texColor = texture2D( uTexture0, vVertexUV );";
+		str += "	texColor.rgb = texColor.rgb * texColor.a;";
+		str += "	gl_FragColor = vVertexColor * texColor;";
+		str += "}";
+		
+		return str;
+	}
+	
 }

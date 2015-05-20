@@ -6,6 +6,7 @@ import lime.graphics.opengl.GLBuffer;
 import lime.graphics.opengl.GLProgram;
 import lime.math.Matrix3;
 import lime.math.Matrix4;
+import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
 import lime.utils.UInt16Array;
@@ -23,12 +24,15 @@ class Canvas
 	public static inline var VERTEX_COLOR : Int = 2;
 	public static inline var VERTEX_UV : Int = 6;
 
+	public static var WHOLE_IMAGE : Rectangle = new Rectangle( 0, 0, 1, 1 );
+	
 	var _context : GLRenderContext;
 	var _batch : RenderBatch;
 	
 	var _vertexBuffer : GLBuffer;
 	var _indexBuffer : GLBuffer;
 	var _projectionMatrix : Matrix4;
+	
 	
 	public function new() 
 	{
@@ -65,18 +69,25 @@ class Canvas
 	}
 	
 	public function end() : Void {
-		if ( _batch.started ) renderBatch();
+		if ( _batch.started ) {
+			renderBatch();
+			_batch.reset();
+		}
 	}
 	
 	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
 	{
-		if ( _batch.started && _batch.shader != shader ) {
-			renderBatch();
-			_batch.reset();
-		}
 		
-		_batch.started = true;
-		_batch.shader = shader;
+		if ( !_batch.isCompatible( shader, null ) ) {
+			
+			if ( _batch.started ) {
+				renderBatch();
+				_batch.reset();
+			}
+			
+			_batch.started = true;
+			_batch.shader = shader;
+		}
 		
 		var startIndex = _batch.vertices.length;
 		
@@ -117,12 +128,73 @@ class Canvas
 		
 	}
 	
+	
+	public function drawTexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	{
+		drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader ); 
+	}
+	
+	
+	public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	{
+		
+		if ( !_batch.isCompatible( shader, texture )  ) {
+			
+			if ( _batch.started ) {
+				renderBatch();
+				_batch.reset();
+			}
+			
+			_batch.started = true;
+			_batch.shader = shader;
+			_batch.texture = texture;
+		}
+			
+		var startIndex = _batch.vertices.length;
+		
+		var points : Array<Vector2> = [
+			new Vector2( texture.width, texture.height),
+			new Vector2(0, texture.height),
+			new Vector2(texture.width, 0),
+			new Vector2(0, 0)
+		];
+		
+		var uv : Array<Vector2> = [
+			new Vector2(sourceRect.right, sourceRect.bottom),
+			new Vector2(sourceRect.left, sourceRect.bottom),
+			new Vector2(sourceRect.right, sourceRect.top ),
+			new Vector2(sourceRect.left, sourceRect.top )
+		];
+		
+		// Make points global with transform
+		for ( i in 0...points.length ) {
+			var transformed = transform.transformVector2( points[i] );
+			_batch.vertices.push( transformed.x );
+			_batch.vertices.push( transformed.y );
+			_batch.vertices.push( r / 255.0 );
+			_batch.vertices.push( g / 255.0 );
+			_batch.vertices.push( b / 255.0 );
+			_batch.vertices.push( a );
+			_batch.vertices.push( uv[i].x );
+			_batch.vertices.push( uv[i].y );
+		}
+		
+		// Add the vertices
+		_batch.indices.push( startIndex + 0 );
+		_batch.indices.push( startIndex + 1 );
+		_batch.indices.push( startIndex + 2 );
+		_batch.indices.push( startIndex + 1 );
+		_batch.indices.push( startIndex + 3 );
+		_batch.indices.push( startIndex + 2 );		
+		
+	}
+	
 	private function renderBatch() : Void {
 		
 		
 		if ( _batch.vertices.length > 0 ) {
 			
-			//trace("Rendering batch", _batch.vertices );
+			trace("Rendering batch", _batch.vertices );
 			
 			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
@@ -136,6 +208,23 @@ class Canvas
 			var vertexAttrib = _context.getAttribLocation( program, "aVertexPosition" );
 			var colorAttrib = _context.getAttribLocation( program, "aVertexColor" );
 			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
+			
+			var uvAttrib : Int = 0;
+			if ( _batch.texture != null ) {
+				
+				trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
+				
+				uvAttrib = _context.getAttribLocation( program, "aVertexUV" );
+				var uTexture0 = _context.getUniformLocation( program, "uTexture0" );
+				
+				_context.enableVertexAttribArray( uvAttrib );
+				_context.vertexAttribPointer( uvAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_UV * 4 );
+				
+				_context.activeTexture( GL.TEXTURE0 );
+				_context.bindTexture( GL.TEXTURE_2D, _batch.texture.texture );
+				_context.uniform1i( uTexture0, 0 );
+				
+			}
 			
 			_context.enableVertexAttribArray( vertexAttrib );
 			_context.enableVertexAttribArray( colorAttrib );
@@ -152,10 +241,14 @@ class Canvas
 			
 			_context.bindBuffer( GL.ARRAY_BUFFER, null );
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
-						
-			if ( _context.getError() > 0 ) trace( "GL Error:", _context.getError() );
 			
-			_batch.reset();
+			if ( _batch.texture != null ) {
+				_context.disableVertexAttribArray( uvAttrib );
+				_context.bindTexture( GL.TEXTURE_2D, null );
+			}
+						
+			var error : Int = _context.getError();
+			if ( error > 0 ) trace( "GL Error:", error );
 			
 		}
 	}

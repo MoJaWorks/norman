@@ -70,14 +70,18 @@ class Renderer
 	
 	private function renderLevel( sprite : Sprite ) : Void {
 		
-		sprite.preRender( canvas );
-		sprite.render( canvas );
+		if ( sprite.shouldRenderSelf )	sprite.preRender( canvas );
 		
-		for ( child in sprite.children ) {
-			renderLevel( child );
+		// Check again incase this changes in preRender function
+		if ( sprite.shouldRenderSelf ) sprite.render( canvas );
+		
+		if ( sprite.shouldRenderChildren ) {
+			for ( child in sprite.children ) {
+				renderLevel( child );
+			}
 		}
 		
-		sprite.postRender( canvas );
+		if ( sprite.shouldRenderSelf ) sprite.postRender( canvas );
 	}
 	
 	//////////////

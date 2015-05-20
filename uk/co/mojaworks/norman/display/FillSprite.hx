@@ -31,14 +31,13 @@ class FillSprite extends Sprite
 		this.color = color;
 		this.width = width;
 		this.height = height;
+		
+		shouldRenderSelf = true;
 	}
 	
 	override public function render(canvas:Canvas):Void 
 	{
-		
-		//trace("Render fillsprite");
-		
-		super.render(canvas);
+		trace("Render fill sprite");
 		canvas.fillRect( width, height, transform.worldMatrix, color.r, color.g, color.b, color.a * finalAlpha, FillSprite.defaultShader );
 	}
 	

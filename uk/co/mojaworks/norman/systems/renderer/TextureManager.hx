@@ -73,7 +73,7 @@ class TextureManager
 	
 	public function createTexture( id : String, width : Float, height : Float, fill : Color ) : TextureData {
 		
-		var image : Image = new Image( null, null, null, Std.int(width), Std.int(height), fill, null );
+		var image : Image = new Image( null, 0, 0, Std.int(width), Std.int(height), fill, null );
 		return createTextureFromImage( id, image, null );
 		
 	}
@@ -95,6 +95,8 @@ class TextureManager
 	
 	private function uploadTexture( data : TextureData ) : Void {
 		
+		trace("Uploading ", data.id );
+		
 		var texture : GLTexture = _context.createTexture( );
 		
 		_context.bindTexture( GL.TEXTURE_2D, texture );
@@ -114,7 +116,7 @@ class TextureManager
 		//}
 		_context.bindTexture( GL.TEXTURE_2D, null );
 		
-		
+		data.texture = texture;
 	}
 	
 }
