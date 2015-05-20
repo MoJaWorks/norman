@@ -3,8 +3,7 @@ package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;
 import lime.graphics.opengl.GLProgram;
-import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
+import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 
 /**
  * Responsible for uploading and maintaing shaders
@@ -14,10 +13,8 @@ import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 class ShaderManager
 {
 
-	//  
-	
 	var _context : GLRenderContext;
-	var _shaders : Map<String, ShaderData>;
+	var _shaders : Array<ShaderData>;
 	
 	public function new() 
 	{
@@ -25,7 +22,7 @@ class ShaderManager
 	
 	public function init(  ) : Void {
 		
-		_shaders = new Map<String,ShaderData>();
+		_shaders = [];
 	}
 	
 	public function onContextCreated( context : GLRenderContext ) : Void {
@@ -33,33 +30,26 @@ class ShaderManager
 		_context = context;
 		
 		// Make sure all shaders are compiled and uploaded
-		for ( id in _shaders.keys() ) {
-			uploadShader( _shaders.get( id ) );
+		for ( shader in _shaders ) {
+			uploadShader( shader );
 		}
 		
 	}
 	
-	public function addShader( shaderData : ShaderData ) : Void 
+	public function createShader( vs : String, fs : String ) : ShaderData 
 	{
+				
+		var shader : ShaderData = new ShaderData( vs, fs );
 		
-		_shaders.set( shaderData.id, shaderData );
+		_shaders.push( shader );
 		if ( _context != null ) {
-			
-			uploadShader( shaderData );
-			
+			uploadShader( shader );
 		}
 		
+		return shader;
+		
 	}
-	
-	public function getProgram( shaderId : String) : GLProgram
-	{
-		if ( _shaders.exists( shaderId )) {
-			return _shaders.get( shaderId ).glProgram;
-		}else {
-			trace("No shader found with ID ", shaderId );
-			return null;
-		}
-	}
+
 	
 	private function uploadShader( shader : ShaderData ) : Void {
 	
@@ -69,7 +59,7 @@ class ShaderManager
 		
 		var error : Int = _context.getError();
 		if ( error > 0 ) {
-			trace("Error compiling vertex shader for ", shader.id );
+			trace("Error compiling vertex shader" );
 		}
 		
 		var fs = _context.createShader( GL.FRAGMENT_SHADER );
@@ -78,7 +68,7 @@ class ShaderManager
 		
 		error = _context.getError();
 		if ( error > 0 ) {
-			trace("Error compiling fragment shader for ", shader.id );
+			trace("Error compiling fragment shader" );
 		}
 		
 		var program : GLProgram = _context.createProgram();
@@ -88,13 +78,13 @@ class ShaderManager
 		
 		error = _context.getError();
 		if ( error > 0 ) {
-			trace("Error linking shaders for ", shader.id );
+			trace("Error linking shaders" );
 		}
 		
-		_shaders.get( shader.id ).glProgram = program;
+		shader.glProgram = program;
 		
 		if ( error == 0 ) {
-			trace("Uploaded shader for", shader.id );
+			trace("Uploaded shader" );
 		}
 		
 	}

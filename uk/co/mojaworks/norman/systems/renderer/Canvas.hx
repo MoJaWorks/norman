@@ -8,10 +8,8 @@ import lime.math.Matrix3;
 import lime.math.Matrix4;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
-import lime.utils.Int16Array;
 import lime.utils.UInt16Array;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
-import uk.co.mojaworks.norman.utils.Color;
+import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 
 /**
  * ...
@@ -42,7 +40,7 @@ class Canvas
 	}
 	
 	public function onContextCreated( gl : GLRenderContext ) : Void {
-		trace("Setting up gl context");
+		//trace("Setting up gl context");
 		_context = gl;
 		_vertexBuffer = _context.createBuffer();
 		_indexBuffer = _context.createBuffer();
@@ -124,7 +122,7 @@ class Canvas
 		
 		if ( _batch.vertices.length > 0 ) {
 			
-			trace("Rendering batch", _batch.vertices );
+			//trace("Rendering batch", _batch.vertices );
 			
 			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );

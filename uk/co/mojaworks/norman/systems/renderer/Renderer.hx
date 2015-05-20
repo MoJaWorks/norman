@@ -1,15 +1,12 @@
 package uk.co.mojaworks.norman.systems.renderer;
+import lime.graphics.Image;
 import lime.graphics.RenderContext;
-import lime.math.Matrix3;
 import uk.co.mojaworks.norman.display.Sprite;
-import uk.co.mojaworks.norman.geom.Transform;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
-import uk.co.mojaworks.norman.systems.renderer.shaders.DefaultFillShader;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.TextureManager;
 import uk.co.mojaworks.norman.utils.Color;
-import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -19,8 +16,12 @@ class Renderer
 {
 
 	public var canvas( default, null ) : Canvas;
-	public var shaderManager( default, null ) : ShaderManager;
-	public var textureManager( default, null ) : TextureManager;
+	public var shaderManager( null, null ) : ShaderManager;
+	public var textureManager( null, null ) : TextureManager;
+	
+	//////////////
+	///  INIT
+	/////////////
 	
 	public function new() {
 		textureManager = new TextureManager();
@@ -41,6 +42,10 @@ class Renderer
 				shaderManager.init( );
 				shaderManager.onContextCreated( gl );
 				
+				textureManager = new TextureManager();
+				textureManager.init();
+				textureManager.onContextCreated( gl );
+				
 			case FLASH(sprite):
 				// TODO: Set up Stage3D  render system (eventually, maybe never)
 			case CANVAS(context):
@@ -52,12 +57,14 @@ class Renderer
 		
 	}
 	
+	//////////////
+	///  RENDER
+	/////////////
+	
 	public function render( root : Sprite ) : Void {
 		
 		canvas.begin();
-		
 		renderLevel( root );
-
 		canvas.end();
 	}
 	
@@ -73,13 +80,36 @@ class Renderer
 		sprite.postRender( canvas );
 	}
 	
-	public function createTexture() : Void {
-		
+	//////////////
+	///  TEXTURES
+	/////////////
+	
+	public function createTextureFromAsset( id : String ) : TextureData {
+		return textureManager.createTextureFromAsset( id );
 	}
 	
-	public function createShader( shaderData : ShaderData ) : ShaderData {
-		shaderManager.addShader( shaderData );
-		return shaderData;
+	public function createTextureFromImage( id : String, image : Image, map : Dynamic = null ) : TextureData {
+		return textureManager.createTextureFromImage( id, image, map );
+	}
+	
+	public function createTexture( id : String, width : Float, height : Float, fill : Color ) : TextureData {
+		return textureManager.createTexture( id, width, height, fill );
+	}
+	
+	
+	//////////////
+	///  SHADERS
+	/////////////
+	
+	/**
+	 * Create a shader to use in drawer operations
+	 * @param	vertexSource
+	 * @param	fragmentSource
+	 * @return
+	 */
+	
+	public function createShader( vertexSource : String, fragmentSource : String ) : ShaderData {
+		return shaderManager.createShader( vertexSource, fragmentSource );
 	}
 	
 }

@@ -1,24 +1,20 @@
-package uk.co.mojaworks.norman.systems.renderer.shaders;
+package uk.co.mojaworks.norman.utils;
 
 /**
  * ...
  * @author Simon
  */
-class DefaultFillShader extends ShaderData
+class ShaderUtils
 {
 
-	public static inline var ID : String = "DefaultFillShader";
-	
 	public function new() 
 	{
-		super();
-		id = ID;
+		
 	}
 	
-	override function setupVertexSource():Void 
-	{
+	public static function getDefaultFillVertexSource() : String {
 		
-		vertexSource = "";
+		var vertexSource : String = "";
 		vertexSource += "attribute vec2 aVertexPosition;";
 		vertexSource += "attribute vec4 aVertexColor;";
 		vertexSource += "uniform mat4 uProjectionMatrix;";
@@ -30,11 +26,13 @@ class DefaultFillShader extends ShaderData
 		vertexSource += "  gl_Position = uProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0);";
 		vertexSource += "}";
 		
+		return vertexSource;
+		
 	}
 	
-	override function setupFragmentSource():Void 
+	public static function getDefaultFillFragSource() : String 
 	{
-		fragmentSource = "";
+		var fragmentSource : String = "";
 		#if !desktop
 			fragmentSource += "precision mediump float;";
 		#end
@@ -43,6 +41,8 @@ class DefaultFillShader extends ShaderData
 		fragmentSource += "void main(void) {";
 		fragmentSource += "  gl_FragColor = vVertexColor;";
 		fragmentSource += "}";
+		
+		return fragmentSource;
 	}
 	
 }

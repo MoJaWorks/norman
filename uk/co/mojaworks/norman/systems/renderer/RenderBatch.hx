@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.systems.renderer;
-import uk.co.mojaworks.norman.systems.renderer.shaders.ShaderData;
+import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 
 /**
  * ...
