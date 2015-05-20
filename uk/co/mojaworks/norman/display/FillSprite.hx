@@ -37,7 +37,6 @@ class FillSprite extends Sprite
 	
 	override public function render(canvas:Canvas):Void 
 	{
-		trace("Render fill sprite");
 		canvas.fillRect( width, height, transform.worldMatrix, color.r, color.g, color.b, color.a * finalAlpha, FillSprite.defaultShader );
 	}
 	

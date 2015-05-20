@@ -29,7 +29,7 @@ class Sprite
 	public function new( ) 
 	{		
 		children = new LinkedList<Sprite>();
-		transform = new Transform();
+		transform = new Transform( this );
 	}
 	
 	public function get_width() : Float {
@@ -78,7 +78,6 @@ class Sprite
 	
 	public function set_parent( parent : Sprite ) : Sprite {
 		this.parent = parent;
-		this.transform.parent = parent != null ? parent.transform : null;
 		return parent;
 	}
 	

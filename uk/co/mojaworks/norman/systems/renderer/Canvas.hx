@@ -194,7 +194,7 @@ class Canvas
 		
 		if ( _batch.vertices.length > 0 ) {
 			
-			trace("Rendering batch", _batch.vertices );
+			//trace("Rendering batch", _batch.vertices );
 			
 			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
@@ -212,7 +212,7 @@ class Canvas
 			var uvAttrib : Int = 0;
 			if ( _batch.texture != null ) {
 				
-				trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
+				//trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
 				
 				uvAttrib = _context.getAttribLocation( program, "aVertexUV" );
 				var uTexture0 = _context.getUniformLocation( program, "uTexture0" );

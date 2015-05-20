@@ -10,7 +10,8 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  */
 class Transform
 {
-	public var parent( default, set ) : Transform;
+	
+	var _sprite : Sprite;
 	
 	public var anchorX( default, set ) : Float = 0;
 	public var anchorY( default, set ) : Float = 0;
@@ -34,8 +35,9 @@ class Transform
 	public var isLocalDirty( default, null ) : Bool = true;
 	public var isWorldDirty( default, null ) : Bool = true;
 	
-	public function new( ) 
+	public function new( sprite : Sprite ) 
 	{
+		_sprite = sprite;
 		_worldMatrix = new Matrix3();
 		_localMatrix = new Matrix3();
 	}
@@ -57,8 +59,8 @@ class Transform
 		
 		_worldMatrix.copyFrom( localMatrix );
 		
-		if ( parent != null ) {
-			_worldMatrix.concat( parent.worldMatrix );
+		if ( _sprite.parent != null ) {
+			_worldMatrix.concat( _sprite.parent.transform.worldMatrix );
 		}
 		
 		isWorldDirty = false;
@@ -66,15 +68,24 @@ class Transform
 		
 	}
 	
-	public function set_parent( trans : Transform ) : Transform { parent = trans; isWorldDirty = true; return trans; } 
-	public function set_anchorX( val : Float ) : Float { this.anchorX = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_anchorY( val : Float ) : Float { this.anchorY = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_x( val : Float ) : Float { this.x = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_y( val : Float ) : Float { this.y = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_scaleX( val : Float ) : Float { this.scaleX = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_scaleY( val : Float ) : Float { this.scaleY = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_rotation( val : Float ) : Float { this.rotation = val; isWorldDirty = true; isLocalDirty = true; return val; } 
-	public function set_rotationDegrees( val : Float ) : Float { this.rotation = val * MathUtils.DEG2RAD; isWorldDirty = true; isLocalDirty = true; return val; } 
+	public function invalidateMatrices( world : Bool, local : Bool ) : Void {
+		if ( world ) {
+			isWorldDirty = true;
+			for ( child in _sprite.children ) {
+				child.transform.invalidateMatrices( true, false );
+			}
+		}
+		if ( local ) isLocalDirty = true;
+	}
+	
+	public function set_anchorX( val : Float ) : Float { this.anchorX = val; invalidateMatrices( true, true ); return val; } 
+	public function set_anchorY( val : Float ) : Float { this.anchorY = val; invalidateMatrices( true, true ); return val; } 
+	public function set_x( val : Float ) : Float { this.x = val; invalidateMatrices( true, true ); return val; } 
+	public function set_y( val : Float ) : Float { this.y = val; invalidateMatrices( true, true ); return val; } 
+	public function set_scaleX( val : Float ) : Float { this.scaleX = val; invalidateMatrices( true, true ); return val; } 
+	public function set_scaleY( val : Float ) : Float { this.scaleY = val; invalidateMatrices( true, true ); return val; } 
+	public function set_rotation( val : Float ) : Float { this.rotation = val; invalidateMatrices( true, true ); return val; } 
+	public function set_rotationDegrees( val : Float ) : Float { this.rotation = val * MathUtils.DEG2RAD; invalidateMatrices( true, true ); return val; } 
 	public function get_rotationDegrees( ) : Float { return this.rotation * MathUtils.RAD2DEG; } 
 	
 	public function get_worldMatrix( ) : Matrix3 {
@@ -90,7 +101,6 @@ class Transform
 	public function destroy() : Void {
 		_worldMatrix = null;
 		_localMatrix = null;
-		parent = null;
 	}
 	
 }

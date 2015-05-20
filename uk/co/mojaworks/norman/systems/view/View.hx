@@ -21,6 +21,19 @@ class View
 	}
 	
 	public function resize() : Void {
+		
+		trace( "Resizing view", Systems.viewport.scale );
+			
+		root.transform.scaleX = Systems.viewport.scale;
+		root.transform.scaleY = Systems.viewport.scale;
+		root.transform.x = Systems.viewport.marginLeft * Systems.viewport.scale;
+		root.transform.y = Systems.viewport.marginTop * Systems.viewport.scale;
+		
+		trace( root.transform.worldMatrix );
+		if ( root.children.length > 0 ) {
+			trace( root.children.get(0).transform.worldMatrix );
+		}
+		
 		for ( sprite in sprites ) {
 			sprite.resize();
 		}
