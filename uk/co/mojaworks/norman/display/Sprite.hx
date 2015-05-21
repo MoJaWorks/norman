@@ -22,6 +22,8 @@ class Sprite
 	public var height( get, null ) : Float = 0;	
 	public var transform( default, null ) : Transform;
 	
+	public var visible( default, default ) : Bool = true;
+	
 	// Render flags
 	public var shouldRenderSelf : Bool = false;
 	public var shouldRenderChildren : Bool = true;
@@ -86,6 +88,8 @@ class Sprite
 	}
 	
 	public function destroy() : Void {
+		
+		if ( parent != null ) parent.removeChild( this );
 		
 		for ( child in children ) {
 			child.destroy();

@@ -54,6 +54,9 @@ class ImageSprite extends Sprite
 		imageRect = texture.getRectFor( subTextureId );
 		imageUVRect = texture.getUVFor( subTextureId );
 		
+		this.width = imageRect.width;
+		this.height = imageRect.height;
+		
 	}
 	
 	override public function render(canvas:Canvas):Void 

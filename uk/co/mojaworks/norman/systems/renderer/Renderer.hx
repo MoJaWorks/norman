@@ -63,12 +63,16 @@ class Renderer
 	
 	public function render( root : Sprite ) : Void {
 		
+		//trace("Render begin");
+		
 		canvas.begin();
 		renderLevel( root );
 		canvas.end();
 	}
 	
 	private function renderLevel( sprite : Sprite ) : Void {
+		
+		//trace("Rendering level starting at", sprite.transform.x, sprite.transform.y );
 		
 		if ( sprite.shouldRenderSelf )	sprite.preRender( canvas );
 		
