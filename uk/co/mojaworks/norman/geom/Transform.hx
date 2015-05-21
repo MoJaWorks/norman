@@ -10,19 +10,26 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  */
 class Transform
 {
-	
+	// Must make separate variables so reflection works with setters
 	var _sprite : Sprite;
+	var _anchorX : Float = 0;
+	var _anchorY : Float = 0;
+	var _x : Float = 0;
+	var _y : Float = 0;
+	var _scaleX : Float = 1;
+	var _scaleY : Float = 1;
+	var _rotation : Float = 0;
 	
-	public var anchorX( default, set ) : Float = 0;
-	public var anchorY( default, set ) : Float = 0;
+	public var anchorX( get, set ) : Float;
+	public var anchorY( get, set ) : Float;
 	
-	public var x( default, set ) : Float = 0;
-	public var y( default, set ) : Float = 0;
+	public var x( get, set ) : Float;
+	public var y( get, set ) : Float;
 	
-	public var scaleX( default, set ) : Float = 1;
-	public var scaleY( default, set ) : Float = 1;
+	public var scaleX( get, set ) : Float;
+	public var scaleY( get, set ) : Float;
 	
-	public var rotation( default, set ) : Float = 0;
+	public var rotation( get, set ) : Float;
 	public var rotationDegrees( get, set ) : Float;
 	
 	public var worldMatrix( get, never ) : Matrix3;
@@ -78,15 +85,23 @@ class Transform
 		if ( local ) isLocalDirty = true;
 	}
 	
-	public function set_anchorX( val : Float ) : Float { this.anchorX = val; invalidateMatrices( true, true ); return val; } 
-	public function set_anchorY( val : Float ) : Float { this.anchorY = val; invalidateMatrices( true, true ); return val; } 
-	public function set_x( val : Float ) : Float { this.x = val; invalidateMatrices( true, true ); return val; } 
-	public function set_y( val : Float ) : Float { this.y = val; invalidateMatrices( true, true ); return val; } 
-	public function set_scaleX( val : Float ) : Float { this.scaleX = val; invalidateMatrices( true, true ); return val; } 
-	public function set_scaleY( val : Float ) : Float { this.scaleY = val; invalidateMatrices( true, true ); return val; } 
-	public function set_rotation( val : Float ) : Float { this.rotation = val; invalidateMatrices( true, true ); return val; } 
-	public function set_rotationDegrees( val : Float ) : Float { this.rotation = val * MathUtils.DEG2RAD; invalidateMatrices( true, true ); return val; } 
-	public function get_rotationDegrees( ) : Float { return this.rotation * MathUtils.RAD2DEG; } 
+	public function set_anchorX( val : Float ) : Float { _anchorX = val; invalidateMatrices( true, true ); return val; } 
+	public function set_anchorY( val : Float ) : Float { _anchorY = val; invalidateMatrices( true, true ); return val; } 
+	public function set_x( val : Float ) : Float { _x = val; invalidateMatrices( true, true ); return val; } 
+	public function set_y( val : Float ) : Float { _y = val; invalidateMatrices( true, true ); return val; } 
+	public function set_scaleX( val : Float ) : Float { _scaleX = val; invalidateMatrices( true, true ); trace("Calling setter scaleX", _scaleX); return val; } 
+	public function set_scaleY( val : Float ) : Float { _scaleY = val; invalidateMatrices( true, true ); return val; } 
+	public function set_rotation( val : Float ) : Float { _rotation = val; invalidateMatrices( true, true ); return val; } 
+	public function set_rotationDegrees( val : Float ) : Float { _rotation = val * MathUtils.DEG2RAD; invalidateMatrices( true, true ); return val; } 
+	
+	public function get_rotationDegrees( ) : Float { return _rotation * MathUtils.RAD2DEG; } 
+	public function get_anchorX() : Float { return _anchorX; };
+	public function get_anchorY() : Float { return _anchorY; };
+	public function get_x() : Float { return _x; };
+	public function get_y() : Float { return _y; };
+	public function get_scaleX() : Float { return _scaleX; };
+	public function get_scaleY() : Float { return _scaleY; };
+	public function get_rotation() : Float { return _rotation; };
 	
 	public function get_worldMatrix( ) : Matrix3 {
 		if ( isWorldDirty || isLocalDirty ) return recalculateWorldMatrix();

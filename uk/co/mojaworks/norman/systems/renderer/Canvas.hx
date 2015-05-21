@@ -89,7 +89,7 @@ class Canvas
 			_batch.shader = shader;
 		}
 		
-		var startIndex = _batch.vertices.length;
+		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
 		var points : Array<Vector2> = [
 			new Vector2(width, height),
@@ -150,7 +150,7 @@ class Canvas
 			_batch.texture = texture;
 		}
 			
-		var startIndex = _batch.vertices.length;
+		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
 		var points : Array<Vector2> = [
 			new Vector2( texture.width, texture.height),
@@ -194,7 +194,8 @@ class Canvas
 		
 		if ( _batch.vertices.length > 0 ) {
 			
-			//trace("Rendering batch", _batch.vertices );
+			//trace("Rendering verts", _batch.vertices );
+			//trace("Rendering indices", _batch.indices );
 			
 			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
 			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
