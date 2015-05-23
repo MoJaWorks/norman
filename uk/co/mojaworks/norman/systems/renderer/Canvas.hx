@@ -11,6 +11,7 @@ import lime.math.Vector2;
 import lime.utils.Float32Array;
 import lime.utils.UInt16Array;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
+import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...
@@ -33,6 +34,10 @@ class Canvas
 	var _indexBuffer : GLBuffer;
 	var _projectionMatrix : Matrix4;
 	
+	var _frameBufferStack : Array<FrameBuffer>;
+	
+	public var sourceBlendFactor( default, null ) : Int;
+	public var destinationBlendFactor( default, null ) : Int;
 	
 	public function new() 
 	{
@@ -41,6 +46,7 @@ class Canvas
 	
 	public function init() : Void {
 		_batch = new RenderBatch();
+		_frameBufferStack = [];
 	}
 	
 	public function onContextCreated( gl : GLRenderContext ) : Void {
@@ -55,16 +61,32 @@ class Canvas
 		// Get dimensions from the viewport
 	}
 	
+	public function clear( color : Color ) : Void {
+		_context.clearColor( color.r / 255, color.g / 255, color.b / 255, color.a );
+		_context.clear( GL.COLOR_BUFFER_BIT );
+	}
+	
+	public function setBlendMode( sourceFactor : Int, destinationFactor : Int ) : Void {
+		if ( sourceFactor != sourceBlendFactor || destinationFactor != destinationBlendFactor ) {
+			
+			// Setting blend mode modifies state
+			if ( _batch.started ) renderBatch();
+			
+			sourceBlendFactor = sourceFactor;
+			destinationBlendFactor = destinationFactor;
+			_context.blendFunc( sourceFactor, destinationFactor );
+		}
+	}
+	
 	public function begin() : Void {
 		
 		_batch.reset();
-		_context.clearColor( 0, 0, 0, 1 );
-		_context.clear( GL.COLOR_BUFFER_BIT );
+		
 		_context.viewport( 0, 0, Std.int(Systems.viewport.screenWidth), Std.int(Systems.viewport.screenHeight) );
 		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
 		
 		_context.enable( GL.BLEND );
-		_context.blendFunc( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
+		setBlendMode( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
 		
 	}
 	
@@ -78,7 +100,7 @@ class Canvas
 	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
 	{
 		
-		if ( !_batch.isCompatible( shader, null ) ) {
+		if ( !_batch.isCompatible( shader, null  ) ) {
 			
 			if ( _batch.started ) {
 				renderBatch();
@@ -188,6 +210,51 @@ class Canvas
 		_batch.indices.push( startIndex + 2 );		
 		
 	}
+	
+	
+	public function pushRenderTarget( target : TextureData ) : Void {
+		
+		if ( _batch.started ) renderBatch();
+		
+		var frameBuffer : FrameBuffer = new FrameBuffer();
+		
+		frameBuffer.buffer = _context.createFramebuffer();
+		frameBuffer.texture = target;
+		
+		_context.bindFramebuffer( GL.FRAMEBUFFER, frameBuffer.buffer );
+		_context.framebufferTexture2D( GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, frameBuffer.texture.texture, 0 );
+		
+		_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.width, 0, frameBuffer.texture.height, -1000, 1000 );
+		_context.viewport( 0, 0, Std.int(frameBuffer.texture.width), Std.int(frameBuffer.texture.height) );
+		
+		_frameBufferStack.push( frameBuffer );
+		
+	}
+	
+	public function popRenderTarget( ) : Void {
+		
+		var frameBuffer : FrameBuffer = _frameBufferStack.pop();
+		// Don't think we need to do anything with this framebuffer?
+		
+		// Render the last batch to the frameBuffer
+		if ( _batch.started ) renderBatch();
+		
+		// Go back to the previous buffer
+		if ( _frameBufferStack.length > 0 ) {
+			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
+			_context.bindFramebuffer( GL.FRAMEBUFFER, frameBuffer.buffer );
+			_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.width, 0, frameBuffer.texture.height, -1000, 1000 );
+			_context.viewport( 0, 0, Std.int(frameBuffer.texture.width), Std.int(frameBuffer.texture.height) );
+		}else {
+			// Back to stage
+			_context.bindFramebuffer( GL.FRAMEBUFFER, null );
+			_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
+			_context.viewport( 0, 0, Std.int(Systems.viewport.screenWidth), Std.int(Systems.viewport.screenHeight) );
+		}
+		
+	}
+	
+	
 	
 	private function renderBatch() : Void {
 		

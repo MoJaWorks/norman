@@ -15,6 +15,8 @@ import uk.co.mojaworks.norman.utils.Color;
 class Renderer
 {
 
+	public var clearColor : Color = Color.BLACK;
+	
 	public var canvas( default, null ) : Canvas;
 	public var shaderManager( null, null ) : ShaderManager;
 	public var textureManager( null, null ) : TextureManager;
@@ -64,9 +66,10 @@ class Renderer
 	public function render( root : Sprite ) : Void {
 		
 		//trace("Render begin");
+		canvas.clear( clearColor );
 		
 		canvas.begin();
-		renderLevel( root );
+			renderLevel( root );
 		canvas.end();
 	}
 	

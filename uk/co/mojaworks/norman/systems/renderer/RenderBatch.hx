@@ -12,6 +12,7 @@ class RenderBatch
 	public var indices : Array<Int>;
 	public var shader : ShaderData;
 	public var texture : TextureData;
+	public var target : FrameBuffer;
 	public var started : Bool = false;
 	
 	public function new() 

@@ -86,7 +86,7 @@ class ShaderUtils
 		
 		str += "void main(void) {";
 		str += "	vec4 texColor = texture2D( uTexture0, vVertexUV );";
-		str += "	texColor.rgb = texColor.rgb * texColor.a;";
+		//str += "	texColor.rgb = texColor.rgb * texColor.a;";
 		str += "	gl_FragColor = vVertexColor * texColor;";
 		str += "}";
 		
