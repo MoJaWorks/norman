@@ -89,7 +89,7 @@ class Transform
 	public function set_anchorY( val : Float ) : Float { _anchorY = val; invalidateMatrices( true, true ); return val; } 
 	public function set_x( val : Float ) : Float { _x = val; invalidateMatrices( true, true ); return val; } 
 	public function set_y( val : Float ) : Float { _y = val; invalidateMatrices( true, true ); return val; } 
-	public function set_scaleX( val : Float ) : Float { _scaleX = val; invalidateMatrices( true, true ); trace("Calling setter scaleX", _scaleX); return val; } 
+	public function set_scaleX( val : Float ) : Float { _scaleX = val; invalidateMatrices( true, true ); return val; } 
 	public function set_scaleY( val : Float ) : Float { _scaleY = val; invalidateMatrices( true, true ); return val; } 
 	public function set_rotation( val : Float ) : Float { _rotation = val; invalidateMatrices( true, true ); return val; } 
 	public function set_rotationDegrees( val : Float ) : Float { _rotation = val * MathUtils.DEG2RAD; invalidateMatrices( true, true ); return val; } 
