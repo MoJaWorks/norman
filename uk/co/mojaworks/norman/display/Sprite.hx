@@ -12,6 +12,9 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class Sprite
 {
 	
+	public static var autoId( default, null ) : Int = 0;
+	public var id( default, null ) : Int;
+	
 	public var alpha( default, default ) : Float = 1;
 	public var finalAlpha( get, never ) : Float;
 	
@@ -32,6 +35,8 @@ class Sprite
 	{		
 		children = new LinkedList<Sprite>();
 		transform = new Transform( this );
+		
+		id = autoId++;
 	}
 	
 	public function get_width() : Float {
@@ -58,6 +63,7 @@ class Sprite
 	
 	public function render( canvas : Canvas ) : Void {
 		// Override
+		trace("Rendering sprite", id );
 	}
 	
 	public function postRender( canvas : Canvas ) : Void {

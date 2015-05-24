@@ -86,7 +86,7 @@ class Canvas
 		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
 		
 		_context.enable( GL.BLEND );
-		setBlendMode( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
+		setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 		
 	}
 	
@@ -151,7 +151,7 @@ class Canvas
 	}
 	
 	
-	public function drawTexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
 	{
 		drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader ); 
 	}
@@ -175,9 +175,9 @@ class Canvas
 		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
 		
 		var points : Array<Vector2> = [
-			new Vector2( texture.width, texture.height),
-			new Vector2(0, texture.height),
-			new Vector2(texture.width, 0),
+			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),
+			new Vector2(0, texture.height * sourceRect.height),
+			new Vector2(texture.width * sourceRect.width, 0),
 			new Vector2(0, 0)
 		];
 		

@@ -71,9 +71,9 @@ class TextureManager
 	
 	///
 	
-	public function createTexture( id : String, width : Float, height : Float, fill : Color ) : TextureData {
+	public function createTexture( id : String, width : Int, height : Int, fill : Color ) : TextureData {
 		
-		var image : Image = new Image( null, 0, 0, Std.int(width), Std.int(height), fill, null );
+		var image : Image = new Image( null, 0, 0, width, height, fill, null );
 		return createTextureFromImage( id, image, null );
 		
 	}
@@ -102,21 +102,38 @@ class TextureManager
 		_context.bindTexture( GL.TEXTURE_2D, texture );
 		_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_S, GL.CLAMP_TO_EDGE );
 		_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_WRAP_T, GL.CLAMP_TO_EDGE );
-		//#if html5
-			//_context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.src );
-		//#else
+		#if html5
+			_context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.src );
+		#else
 			_context.texImage2D(GL.TEXTURE_2D, 0, GL.RGBA, data.sourceImage.buffer.width, data.sourceImage.buffer.height, 0, GL.RGBA, GL.UNSIGNED_BYTE, data.sourceImage.data );
-		//#end
+		#end
 		//if ( !data.isRenderTexture ) {
 			_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.LINEAR );
 			_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.LINEAR );
 		//}else {
-			//_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST );
-			//_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST );
+		//	_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MAG_FILTER, GL.NEAREST );
+		//	_context.texParameteri( GL.TEXTURE_2D, GL.TEXTURE_MIN_FILTER, GL.NEAREST );
 		//}
 		_context.bindTexture( GL.TEXTURE_2D, null );
 		
 		data.texture = texture;
+	}
+	
+	
+	public function unloadTexture( id : String ) : Void {
+		
+		var data : TextureData = _textures.get( id );
+		if ( data != null ) {
+			
+			if ( data.texture != null && _context != null ) {
+				_context.deleteTexture( data.texture );
+			}
+			
+			data.isValid = false;
+			_textures.remove( id );
+			
+		}
+		
 	}
 	
 }

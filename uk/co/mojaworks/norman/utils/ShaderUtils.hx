@@ -86,11 +86,33 @@ class ShaderUtils
 		
 		str += "void main(void) {";
 		str += "	vec4 texColor = texture2D( uTexture0, vVertexUV );";
-		//str += "	texColor.rgb = texColor.rgb * texColor.a;";
+		str += "	texColor.rgb = texColor.rgb * texColor.a;";
 		str += "	gl_FragColor = vVertexColor * texColor;";
 		str += "}";
 		
 		return str;
+	}
+	
+	
+	public static function getDefaultRenderTextureFragSource():String 
+	{
+		
+		var str : String = "";
+		
+		#if !desktop
+			str += "precision mediump float;";
+		#end
+
+		str += "varying vec4 vVertexColor;";
+		str += "varying vec2 vVertexUV;";
+		str += "uniform sampler2D uTexture0;";
+		
+		str += "void main(void) {";
+		str += "	gl_FragColor = vVertexColor * texture2D( uTexture0, vVertexUV );";
+		str += "}";
+		
+		return str;
+		
 	}
 	
 }

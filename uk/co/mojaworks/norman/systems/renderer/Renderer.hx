@@ -103,8 +103,12 @@ class Renderer
 		return textureManager.createTextureFromImage( id, image, map );
 	}
 	
-	public function createTexture( id : String, width : Float, height : Float, fill : Color ) : TextureData {
+	public function createTexture( id : String, width : Int, height : Int, fill : Color ) : TextureData {
 		return textureManager.createTexture( id, width, height, fill );
+	}
+	
+	public function unloadTexture( id : String ) : Void {
+		return textureManager.unloadTexture( id );
 	}
 	
 	
