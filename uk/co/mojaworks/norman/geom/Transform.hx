@@ -35,18 +35,25 @@ class Transform
 	public var worldMatrix( get, never ) : Matrix3;
 	public var localMatrix( get, never ) : Matrix3;
 	
+	// A special matrix used when rendering and is concated up to nearest root parent
+	// Used for render textures
+	public var renderMatrix( get, never ) : Matrix3;
+	
 	var _localMatrix : Matrix3;
 	var _worldMatrix : Matrix3;
+	var _renderMatrix : Matrix3;
 	
 	
 	public var isLocalDirty( default, null ) : Bool = true;
 	public var isWorldDirty( default, null ) : Bool = true;
+	public var isRenderDirty( default, null ) : Bool = true;
 	
 	public function new( sprite : Sprite ) 
 	{
 		_sprite = sprite;
 		_worldMatrix = new Matrix3();
 		_localMatrix = new Matrix3();
+		_renderMatrix = new Matrix3();
 	}
 	
 	private function recalculateLocalMatrix() : Matrix3 {
@@ -75,8 +82,22 @@ class Transform
 		
 	}
 	
+	private function recalculateRenderMatrix() : Matrix3 {
+			
+		_renderMatrix.copyFrom( localMatrix );
+		
+		if ( _sprite.parent != null && !_sprite.parent.isRoot ) {
+			_renderMatrix.concat( _sprite.parent.transform.renderMatrix );
+		}
+		
+		isRenderDirty = false;
+		return _renderMatrix;		
+		
+	}
+	
 	public function invalidateMatrices( world : Bool, local : Bool ) : Void {
 		if ( world ) {
+			isRenderDirty = true;
 			isWorldDirty = true;
 			for ( child in _sprite.children ) {
 				child.transform.invalidateMatrices( true, false );
@@ -110,6 +131,10 @@ class Transform
 	public function get_localMatrix( ) : Matrix3 {
 		if ( isLocalDirty ) return recalculateLocalMatrix();
 		else return _localMatrix;
+	}
+	public function get_renderMatrix( ) : Matrix3 {
+		if ( isRenderDirty ) return recalculateRenderMatrix();
+		else return _renderMatrix;
 	}
 	
 	

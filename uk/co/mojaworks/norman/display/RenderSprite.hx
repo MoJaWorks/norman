@@ -16,7 +16,7 @@ class RenderSprite extends Sprite
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
 		if ( RenderSprite.defaultShader == null ) {
-			trace("Creating default image shader");
+			trace("Creating default render shader");
 			RenderSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource() );
 		}
 		return RenderSprite.defaultShader;
@@ -24,10 +24,12 @@ class RenderSprite extends Sprite
 	
 	public var target : TextureData;
 	
+	
 	public function new( width : Int, height : Int ) 
 	{
 		super();
 		shouldRenderSelf = true;
+		isRoot = true;
 		
 		setSize( width, height );
 	}
@@ -52,7 +54,7 @@ class RenderSprite extends Sprite
 		
 		super.postRender(canvas);
 		canvas.popRenderTarget();
-		//canvas.drawTexture( target, transform.worldMatrix, 255, 255, 255, 1, RenderSprite.defaultShader );
+		canvas.drawTexture( target, transform.renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
 	}
 	
 }

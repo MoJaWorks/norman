@@ -1,8 +1,6 @@
 package uk.co.mojaworks.norman.display;
 import uk.co.mojaworks.norman.geom.Transform;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
-import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -30,6 +28,7 @@ class Sprite
 	// Render flags
 	public var shouldRenderSelf : Bool = false;
 	public var shouldRenderChildren : Bool = true;
+	public var isRoot : Bool = false; // Defines this sprite as a root so render transforms end here
 
 	public function new( ) 
 	{		
@@ -50,7 +49,7 @@ class Sprite
 	}
 	
 	public function get_finalAlpha() : Float {
-		if ( parent != null ) {
+		if ( parent != null && !parent.isRoot ) {
 			return parent.finalAlpha * alpha;
 		}else {
 			return alpha;
@@ -63,7 +62,7 @@ class Sprite
 	
 	public function render( canvas : Canvas ) : Void {
 		// Override
-		trace("Rendering sprite", id );
+		//trace("Rendering sprite", id );
 	}
 	
 	public function postRender( canvas : Canvas ) : Void {

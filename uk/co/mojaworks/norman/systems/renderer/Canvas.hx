@@ -93,7 +93,6 @@ class Canvas
 	public function end() : Void {
 		if ( _batch.started ) {
 			renderBatch();
-			_batch.reset();
 		}
 	}
 	
@@ -104,7 +103,6 @@ class Canvas
 			
 			if ( _batch.started ) {
 				renderBatch();
-				_batch.reset();
 			}
 			
 			_batch.started = true;
@@ -164,7 +162,6 @@ class Canvas
 			
 			if ( _batch.started ) {
 				renderBatch();
-				_batch.reset();
 			}
 			
 			_batch.started = true;
@@ -214,7 +211,9 @@ class Canvas
 	
 	public function pushRenderTarget( target : TextureData ) : Void {
 		
-		if ( _batch.started ) renderBatch();
+		if ( _batch.started ) {
+			renderBatch();
+		}
 		
 		var frameBuffer : FrameBuffer = new FrameBuffer();
 		
@@ -237,7 +236,9 @@ class Canvas
 		// Don't think we need to do anything with this framebuffer?
 		
 		// Render the last batch to the frameBuffer
-		if ( _batch.started ) renderBatch();
+		if ( _batch.started ) {
+			renderBatch();
+		}
 		
 		// Go back to the previous buffer
 		if ( _frameBufferStack.length > 0 ) {
@@ -318,6 +319,14 @@ class Canvas
 			var error : Int = _context.getError();
 			if ( error > 0 ) trace( "GL Error:", error );
 			
+		}
+		
+		_batch.reset();
+	}
+	
+	public function forceRender() : Void {
+		if ( _batch.started ) {
+			renderBatch();
 		}
 	}
 	
