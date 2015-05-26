@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.display;
+import lime.graphics.opengl.GL;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
@@ -54,7 +55,9 @@ class RenderSprite extends Sprite
 		
 		super.postRender(canvas);
 		canvas.popRenderTarget();
+		canvas.setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 		canvas.drawTexture( target, transform.renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
+		canvas.setBlendMode( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
 	}
 	
 }

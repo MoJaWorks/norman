@@ -62,7 +62,6 @@ class Sprite
 	
 	public function render( canvas : Canvas ) : Void {
 		// Override
-		//trace("Rendering sprite", id );
 	}
 	
 	public function postRender( canvas : Canvas ) : Void {

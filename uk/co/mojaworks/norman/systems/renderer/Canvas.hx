@@ -86,7 +86,7 @@ class Canvas
 		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
 		
 		_context.enable( GL.BLEND );
-		setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
+		setBlendMode( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
 		
 	}
 	
