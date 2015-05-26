@@ -37,7 +37,9 @@ class Canvas
 	var _frameBufferStack : Array<FrameBuffer>;
 	
 	public var sourceBlendFactor( default, null ) : Int;
+	public var sourceAlphaBlendFactor( default, null ) : Int;
 	public var destinationBlendFactor( default, null ) : Int;
+	public var destinationAlphaBlendFactor( default, null ) : Int;
 	
 	public function new() 
 	{
@@ -67,14 +69,32 @@ class Canvas
 	}
 	
 	public function setBlendMode( sourceFactor : Int, destinationFactor : Int ) : Void {
-		if ( sourceFactor != sourceBlendFactor || destinationFactor != destinationBlendFactor ) {
+		if ( sourceFactor != sourceBlendFactor || sourceFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destinationFactor != destinationAlphaBlendFactor ) {
 			
 			// Setting blend mode modifies state
 			if ( _batch.started ) renderBatch();
 			
 			sourceBlendFactor = sourceFactor;
+			sourceAlphaBlendFactor = sourceFactor;
 			destinationBlendFactor = destinationFactor;
+			destinationAlphaBlendFactor = destinationFactor;
 			_context.blendFunc( sourceFactor, destinationFactor );
+			
+		}
+	}
+	
+	public function setBlendModeSeparate( sourceFactor : Int, destinationFactor : Int, sourceAlphaFactor : Int, destAlphaFactor : Int ) : Void {
+		if ( sourceFactor != sourceBlendFactor || sourceAlphaFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destAlphaFactor != destinationAlphaBlendFactor ) {
+			
+			// Setting blend mode modifies state
+			if ( _batch.started ) renderBatch();
+			
+			sourceBlendFactor = sourceFactor;
+			sourceAlphaBlendFactor = sourceAlphaFactor;
+			destinationBlendFactor = destinationFactor;
+			destinationAlphaBlendFactor = destAlphaFactor;
+			_context.blendFuncSeparate( sourceFactor, destinationFactor, sourceAlphaFactor, destAlphaFactor );
+			
 		}
 	}
 	
@@ -86,7 +106,7 @@ class Canvas
 		_projectionMatrix = Matrix4.createOrtho( 0, Systems.viewport.screenWidth, Systems.viewport.screenHeight, 0, -1000, 1000 );
 		
 		_context.enable( GL.BLEND );
-		setBlendMode( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
+		setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 		
 	}
 	
@@ -130,9 +150,9 @@ class Canvas
 			var transformed = transform.transformVector2( points[i] );
 			_batch.vertices.push( transformed.x );
 			_batch.vertices.push( transformed.y );
-			_batch.vertices.push( r / 255.0 );
-			_batch.vertices.push( g / 255.0 );
-			_batch.vertices.push( b / 255.0 );
+			_batch.vertices.push( (r / 255.0) * a );
+			_batch.vertices.push( (g / 255.0) * a );
+			_batch.vertices.push( (b / 255.0) * a );
 			_batch.vertices.push( a );
 			_batch.vertices.push( uv[i].x );
 			_batch.vertices.push( uv[i].y );
@@ -190,9 +210,9 @@ class Canvas
 			var transformed = transform.transformVector2( points[i] );
 			_batch.vertices.push( transformed.x );
 			_batch.vertices.push( transformed.y );
-			_batch.vertices.push( r / 255.0 );
-			_batch.vertices.push( g / 255.0 );
-			_batch.vertices.push( b / 255.0 );
+			_batch.vertices.push( (r / 255.0) * a );
+			_batch.vertices.push( (g / 255.0) * a );
+			_batch.vertices.push( (b / 255.0) * a );
 			_batch.vertices.push( a );
 			_batch.vertices.push( uv[i].x );
 			_batch.vertices.push( uv[i].y );

@@ -80,9 +80,9 @@ class Renderer
 		if ( sprite.shouldRenderSelf )	sprite.preRender( canvas );
 		
 		// Check again incase this changes in preRender function
-		if ( sprite.shouldRenderSelf ) sprite.render( canvas );
+		if ( sprite.shouldRenderSelf && sprite.visible && sprite.finalAlpha > 0 ) sprite.render( canvas );
 		
-		if ( sprite.shouldRenderChildren ) {
+		if ( sprite.shouldRenderChildren && sprite.visible && sprite.finalAlpha > 0 ) {
 			for ( child in sprite.children ) {
 				renderLevel( child );
 			}
