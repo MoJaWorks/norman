@@ -48,6 +48,7 @@ class RenderSprite extends Sprite
 		super.preRender(canvas);
 		canvas.pushRenderTarget( target );
 		canvas.clear( 0 );
+		canvas.setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 	}
 	
 	override public function postRender(canvas:Canvas):Void 
@@ -55,9 +56,8 @@ class RenderSprite extends Sprite
 		
 		super.postRender(canvas);
 		canvas.popRenderTarget();
-		canvas.setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
-		canvas.drawTexture( target, transform.renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
 		canvas.setBlendMode( GL.SRC_ALPHA, GL.ONE_MINUS_SRC_ALPHA );
+		canvas.drawTexture( target, transform.renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
 	}
 	
 }
