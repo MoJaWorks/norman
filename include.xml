@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension>
 
-	<include path="extensions/SampleExtension" />
-	<include path="extensions/accelerometer" />
+	<dependency name="accelerometer" path="dependencies/android" if="android" />
+	<android extension="uk.co.mojaworks.norman.Accelerometer" />
 	
 	<haxelib name="lime" />
 

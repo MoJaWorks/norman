@@ -1,5 +1,7 @@
-package org.haxe.extension;
+package uk.co.mojaworks.norman;
 
+import org.haxe.extension.Extension;
+import org.haxe.lime.HaxeObject;
 
 import android.app.Activity;
 import android.content.res.AssetManager;
@@ -9,6 +11,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorEvent;
 
 /* 
 	You can use the Android Extension class in order to hook
@@ -36,16 +42,13 @@ import android.view.View;
 	function for performing a single task, like returning a value
 	back to Haxe from Java.
 */
-public class SampleExtension extends Extension {
+public class Accelerometer extends Extension implements SensorEventListener {
 	
-	
-	public static int sampleMethod (int inputValue) {
-		
-		return inputValue * 100;
-		
-	}
-	
-	
+	private static SensorManager mSensorManager;
+	private static Sensor mAccelerometer;
+	private static HaxeObject haxeEvent = null;
+
+
 	/**
 	 * Called when an activity you launched exits, giving you the requestCode 
 	 * you started it with, the resultCode it returned, and any additional data 
@@ -63,8 +66,13 @@ public class SampleExtension extends Extension {
 	 */
 	public void onCreate (Bundle savedInstanceState) {
 		
+		mSensorManager = (SensorManager)Extension.mainContext.getSystemService(Context.SENSOR_SERVICE);
+		mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		
-		
+	}
+
+	public static void init( HaxeObject event ) {
+		Accelerometer.haxeEvent = event;
 	}
 	
 	
@@ -73,7 +81,10 @@ public class SampleExtension extends Extension {
 	 */
 	public void onDestroy () {
 		
-		
+		mSensorManager.unregisterListener( this );
+		mSensorManager = null;
+		mAccelerometer = null;
+		haxeEvent = null;
 		
 	}
 	
@@ -84,7 +95,7 @@ public class SampleExtension extends Extension {
 	 */
 	public void onPause () {
 		
-		
+		mSensorManager.unregisterListener( this );
 		
 	}
 	
@@ -106,7 +117,7 @@ public class SampleExtension extends Extension {
 	 */
 	public void onResume () {
 		
-		
+		mSensorManager.registerListener( this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL );
 		
 	}
 	
@@ -132,6 +143,14 @@ public class SampleExtension extends Extension {
 		
 		
 	}
+
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+
+    }
 	
 	
 }
