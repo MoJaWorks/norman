@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension>
 
+	<include path="extensions/SampleExtension" />
+	<include path="extensions/accelerometer" />
+	
 	<haxelib name="lime" />
 
 	<assets path="assets" exclude="*.svg" />
 	<icon path="assets/lime.svg" />
-
+	
 </extension>
