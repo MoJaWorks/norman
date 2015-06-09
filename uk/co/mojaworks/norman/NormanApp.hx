@@ -40,8 +40,14 @@ class NormanApp extends Application
 		initApp();
 		
 		onWindowResize( window.width, window.height );
+		
+	}
+	
+	override public function exec():Int 
+	{
 		onStartupComplete();
 		
+		return super.exec();
 	}
 	
 	private function initApp() : Void {
