@@ -81,8 +81,15 @@ class NormanApp extends Application
 		var seconds : Float = deltaTime * 0.001;
 		Systems.director.update( seconds );
 		Systems.scripting.update( seconds );
+		
+		updateApp( seconds );
+		
 		Systems.renderer.render( Systems.view.root );
 		
+	}
+	
+	public function updateApp( seconds : Float ) : Void {
+		// Override this one
 	}
 	
 	override public function onMouseDown( x : Float, y : Float, button : Int ) : Void 

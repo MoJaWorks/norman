@@ -253,12 +253,15 @@ class Canvas
 	public function popRenderTarget( ) : Void {
 		
 		var frameBuffer : FrameBuffer = _frameBufferStack.pop();
-		// Don't think we need to do anything with this framebuffer?
 		
 		// Render the last batch to the frameBuffer
 		if ( _batch.started ) {
 			renderBatch();
 		}
+		
+		// destroy this framebuffer - it was nice while it lasted
+		_context.deleteFramebuffer( frameBuffer.buffer );
+		frameBuffer.texture = null;
 		
 		// Go back to the previous buffer
 		if ( _frameBufferStack.length > 0 ) {
