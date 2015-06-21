@@ -38,17 +38,17 @@ class Sprite
 		id = autoId++;
 	}
 	
-	public function get_width() : Float {
+	private function get_width() : Float {
 		// Override this
 		return this.width;
 	}
 	
-	public function get_height() : Float {
+	private function get_height() : Float {
 		// Override this
 		return this.height;
 	}
 	
-	public function get_finalAlpha() : Float {
+	private function get_finalAlpha() : Float {
 		if ( parent != null && !parent.isRoot ) {
 			return parent.finalAlpha * alpha;
 		}else {
@@ -85,10 +85,6 @@ class Sprite
 	public function set_parent( parent : Sprite ) : Sprite {
 		this.parent = parent;
 		return parent;
-	}
-	
-	public function resize() : Void {
-		
 	}
 	
 	public function destroy() : Void {

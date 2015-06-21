@@ -58,4 +58,9 @@ class MathUtils
 		return Math.min( max, Math.max( min, num ) );
 	}
 	
+	static public function clamp01( num:Float ) : Float
+	{
+		return Math.min( 1, Math.max( 0, num ) );
+	}
+	
 }

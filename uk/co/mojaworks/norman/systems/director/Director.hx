@@ -11,6 +11,7 @@ class Director
 	var _currentTransition : Transition = null;
 	
 	var _screens : Map<String,Screen>;
+	var displayStack : Array<Screen>;
 	
 	public function new() 
 	{
@@ -19,6 +20,9 @@ class Director
 	
 	public function addScreen( screen : Screen, id : String ) : Void {
 		_screens.set( id, screen );
+		screen.active = false;
+		screen.visible = false;
+		screen.enabled = false;
 	}
 	
 	public function removeScreen( id : String ) : Void {

@@ -38,14 +38,14 @@ class NormanApp extends Application
 		Systems.view.init();
 				
 		initApp();
-		
-		onWindowResize( window.width, window.height );
-		
+				
 	}
 	
 	override public function exec():Int 
 	{
+		
 		onStartupComplete();
+		onWindowResize( window.width, window.height );
 		
 		return super.exec();
 	}

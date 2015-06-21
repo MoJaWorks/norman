@@ -22,7 +22,7 @@ class Screen extends Sprite
 		
 		build();
 		
-		//visible = false;
+		visible = false;
 		active = false;
 		enabled = false;
 	}
@@ -36,31 +36,19 @@ class Screen extends Sprite
 		// Override
 	}
 	
-	override public function resize( ) : Void {
+	public function resize( ) : Void {
 		// Override
 	}
 	
 	public function show( delay : Float = 0 ) : Void {
 		
-		//visible = true;
+		visible = true;
 		active = true;
 		animateIn( delay );
 		
 	}
 	
 	public function animateIn( delay : Float ) : Void {
-		
-		//core.app.scripts.stop( _showHideScript );
-		//Actuate.stop( this );
-		
-		//_showHideScript = core.app.scripts.run( new Sequence([
-			//new Delay( delay ),
-			//new Call( function() {
-				////Actuate.tween( view, 0.5, { alpha: 0 } );
-			//}),
-			//new Delay( 0.5 ),
-			//new Call( onShown )
-		//]));
 		
 		onShown();
 		
@@ -73,16 +61,6 @@ class Screen extends Sprite
 	public function hide() : Void {
 		
 		enabled = false;
-		//core.app.scripts.stop( _showHideScript );
-		//Actuate.stop( this );
-		
-		//_showHideScript = core.app.scripts.run( new Sequence([
-			//new Call( function() {
-				////Actuate.tween( view, 0.5, { alpha: 0 } );
-			//}),
-			//new Delay( 0.5 ),
-			//new Call( onHidden )
-		//]));
 		onHidden();
 		
 	}

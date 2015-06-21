@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.utils;
 
+
 /**
  * ...
  * @author Simon
@@ -68,6 +69,24 @@ abstract Color( Int ) to Int from Int
 	private inline function set_b( b : Int ) : Int {
 		this = (this & 0xFFFFFF00) + b;
 		return b;
+	}
+	
+	@:op(A * B)
+	public inline function multiply( x : Float ) : Int {
+		
+		trace("Multiplying color ", r, g, b, "by", x );
+		
+		return Color.rgba( Std.int(Math.min( r * x, 255 )),  Std.int(Math.min( g * x, 255 )),  Std.int(Math.min( b * x, 255 )), a );
+	}
+	
+	public static function lerp( a : Color, b : Color, t : Float ) {
+		return Color.rgba( 
+			Std.int(a.r + ( ( b.r - a.r ) * t )),
+			Std.int(a.b + ( ( b.b - a.b ) * t )),
+			Std.int(a.g + ( ( b.g - a.g ) * t )),
+			MathUtils.clamp01( a.a + ( ( b.a - a.a ) * t ))
+		);
+			
 	}
 	
 	

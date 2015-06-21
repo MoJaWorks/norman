@@ -27,9 +27,6 @@ class View
 		root.transform.x = Systems.viewport.marginLeft * Systems.viewport.scale;
 		root.transform.y = Systems.viewport.marginTop * Systems.viewport.scale;
 		
-		for ( sprite in sprites ) {
-			sprite.resize();
-		}
 	}
 	
 	public function registerSprite( id : String, sprite : Sprite ) : Void {
