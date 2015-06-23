@@ -66,7 +66,7 @@ class Screen extends Sprite
 	}
 	
 	public function onHidden() : Void {
-		//visible = false;
+		visible = false;
 		active = false;
 	}
 	

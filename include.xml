@@ -5,6 +5,7 @@
 	<android extension="uk.co.mojaworks.norman.Accelerometer" />
 	
 	<haxelib name="lime" />
+	<haxelib name="msignal" />
 	
 	<assets path="assets/default" rename="default" />
 	
