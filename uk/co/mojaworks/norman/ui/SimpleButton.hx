@@ -56,11 +56,18 @@ class SimpleButton extends ImageSprite
 					
 					if ( !wasMouseDown ) {
 						
-						if ( wasMouseOver ) {
+						
+						// Dont discriminate against mouseDownElsewhere if on Android
+						#if !mobile
+							if ( wasMouseOver ) {
+								onMouseDown();
+							}
+							else {
+								_mouseDownElsewhere = true;
+							}
+						#else
 							onMouseDown();
-						}else {
-							_mouseDownElsewhere = true;
-						}
+						#end
 						
 					}
 					
