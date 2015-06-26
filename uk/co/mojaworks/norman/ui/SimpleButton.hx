@@ -20,6 +20,8 @@ class SimpleButton extends ImageSprite
 	var _mouseOver : Bool = false;
 	var _mouseDownElsewhere : Bool = false;
 	
+	public static var updateNum : Int = 0;
+	
 	public var clicked : Signal0;
 	public var enabled : Bool;
 	
@@ -38,30 +40,40 @@ class SimpleButton extends ImageSprite
 		// Check mouse
 		if ( enabled ) {
 			
-			alpha = 1;
+			updateNum++;
 			
+			// If mouse over
 			if ( mouse.x > 0 && mouse.x < texture.width && mouse.y > 0 && mouse.y < texture.height ) {
-							
+				
 				_mouseOver = true;
-				if ( !wasMouseOver ) onMouseOver();
-								
-				if ( !wasMouseDown && Systems.input.mouseIsDown ) {
-					if ( wasMouseOver && !_mouseDownElsewhere ) {
-						_mouseDown = true;
-						onMouseDown();
-					}else {
-						_mouseDownElsewhere = true;
-					}
-				}else {
-					_mouseDown = false;
-					if ( !Systems.input.mouseIsDown ) {
-						if ( wasMouseDown ) {
-							onMouseUp();
-							onMouseClick();
+				if ( !wasMouseOver ) {
+					onMouseOver();
+				}
+							
+				if ( Systems.input.mouseIsDown ) {
+					
+					_mouseDown = true;
+					
+					if ( !wasMouseDown ) {
+						
+						if ( wasMouseOver ) {
+							onMouseDown();
 						}else {
-							_mouseDownElsewhere = false;
+							_mouseDownElsewhere = true;
 						}
+						
 					}
+					
+				}else {
+					
+					_mouseDown = false;
+					
+					if ( wasMouseDown && !_mouseDownElsewhere ) {
+						onMouseUp();
+						onMouseClick();
+					}
+					
+					_mouseDownElsewhere = false;
 				}
 				
 			}else {
@@ -76,8 +88,11 @@ class SimpleButton extends ImageSprite
 				
 			}
 		}else {
-			color = Color.WHITE;
-			alpha = 0.5;
+			
+			_mouseDown = false;
+			_mouseOver = false;
+			_mouseDownElsewhere = false;
+			
 		}
 		
 	}
