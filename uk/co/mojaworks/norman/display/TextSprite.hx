@@ -32,10 +32,12 @@ class TextSprite extends Sprite
 	
 	// config
 	public var color( default, default ) : Color;
-	public var font( default, default ) : BitmapFont;
-	public var align( default, default ) : TextAlign;
-	public var wrapType( default, default ) : WrapType;
-	public var wrapWidth( default, default ) : Float;
+	public var font( default, set ) : BitmapFont;
+	public var align( default, set ) : TextAlign;
+	public var wrapType( default, set ) : WrapType;
+	public var wrapWidth( default, set ) : Float;
+	public var letterSpacing( default, set ) : Float;
+	public var lineSpacing( default, set ) : Float;
 	
 	// results
 	private var _lineStops : Array<Int>;
@@ -52,6 +54,8 @@ class TextSprite extends Sprite
 		
 		color = Color.WHITE;
 		wrapWidth = 0;
+		letterSpacing = 0;
+		lineSpacing = 0;
 		align = TextAlign.Left;
 		wrapType = WrapType.Auto;
 		
@@ -85,9 +89,12 @@ class TextSprite extends Sprite
 			if ( char == null ) char = new CharacterData( text.charCodeAt(i) );
 			
 			kerning = null;
-			if ( previousCharacter != null && font.kernings.get( previousCharacter.id ) != null ) {
-				kerning = font.kernings.get( previousCharacter.id ).get( char.id );
-				if ( kerning != null ) currentX -= kerning.amount;
+			if ( previousCharacter != null) {
+				if (font.kernings.get( previousCharacter.id ) != null ) {
+					kerning = font.kernings.get( previousCharacter.id ).get( char.id );
+					if ( kerning != null ) currentX -= kerning.amount;
+				}
+				currentX += letterSpacing;
 			}
 			
 			if ( char.id == 32 ) {
@@ -142,7 +149,7 @@ class TextSprite extends Sprite
 		}
 		
 		_bounds.width = Math.max( _bounds.width, lineLength );
-		_bounds.height = (_lineStops.length) * font.lineHeight;
+		_bounds.height = (_lineStops.length * font.lineHeight) + ((_lineStops.length - 1) * lineSpacing);
 		_lineStops.push( text.length );
 		_layoutDirty = false;
 		
@@ -159,7 +166,7 @@ class TextSprite extends Sprite
 		var y = 0;
 		
 		for ( i in 0..._lineStops.length - 1 ) {
-			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * font.lineHeight );
+			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * (font.lineHeight + lineSpacing) );
 		}
 		
 	}
@@ -183,9 +190,12 @@ class TextSprite extends Sprite
 			if ( char != null ) {
 				
 				kerning = null;
-				if ( prev_char != null && font.kernings.get( prev_char.id ) != null ) {
-					kerning = font.kernings.get( prev_char.id ).get( char.id );
-					if ( kerning != null ) x -= kerning.amount;
+				if ( prev_char != null ) {
+					if ( font.kernings.get( prev_char.id ) != null ) {
+						kerning = font.kernings.get( prev_char.id ).get( char.id );
+						if ( kerning != null ) x -= kerning.amount;
+					}
+					x += letterSpacing;
 				}
 				x += char.xAdvance;
 			}
@@ -214,9 +224,12 @@ class TextSprite extends Sprite
 			if ( char != null ) {
 				
 				kerning = null;
-				if ( prev_char != null && font.kernings.get( prev_char.id ) != null ) {
-					kerning = font.kernings.get( prev_char.id ).get( char.id );
-					if ( kerning != null ) x -= kerning.amount;
+				if ( prev_char != null ) {
+					if ( font.kernings.get( prev_char.id ) != null ) {
+						kerning = font.kernings.get( prev_char.id ).get( char.id );
+						if ( kerning != null ) x -= kerning.amount;
+					}
+					x += letterSpacing;
 				}
 				
 				var texture : TextureData = font.pages[ char.pageId ];
@@ -246,26 +259,39 @@ class TextSprite extends Sprite
 		
 	}
 	
-	
-	/**
-	 * Sets the font color
-	 * @return
-	 */
-	
-	public function setColor( color : Int ) : TextSprite {
-		this.color = color;
-		return this;
-	}
-	
 	/**
 	 * Sets the font
 	 * @return
 	 */
 	
-	public function setFont( font : BitmapFont ) : TextSprite {
+	public function set_font( font : BitmapFont ) : BitmapFont {
 		this.font = font;
 		_layoutDirty = true;
-		return this;
+		return font;
+	}
+	
+	public function set_wrapType( wrapType : WrapType ) : WrapType {
+		this.wrapType = wrapType;
+		_layoutDirty = true;
+		return wrapType;
+	}
+	
+	public function set_wrapWidth( wrapWidth : Float ) : Float {
+		this.wrapWidth = wrapWidth;
+		_layoutDirty = true;
+		return wrapWidth;
+	}
+	
+	public function set_letterSpacing( letterSpacing : Float ) : Float {
+		this.letterSpacing = letterSpacing;
+		_layoutDirty = true;
+		return letterSpacing;
+	}
+	
+	public function set_lineSpacing( lineSpacing : Float ) : Float {
+		this.lineSpacing = lineSpacing;
+		_layoutDirty = true;
+		return lineSpacing;
 	}
 	
 	public function set_text( text : String ) : String {
@@ -279,30 +305,24 @@ class TextSprite extends Sprite
 		return this.text;
 	}
 	
-	public function setAlign( align : TextAlign ) : TextSprite {
+	private function set_align( align : TextAlign ) : TextAlign {
 		this.align = align;
 		_layoutDirty = true;
-		return this;
+		return align;
 	}
-	
-	public function setText( text : String ) : TextSprite {
-		this.text = text;
-		_layoutDirty = true;
-		return this;
-	}	
 	
 	/**
 	 * Sizes
 	 * @return
 	 */
 	
-	override public function get_width() : Float 
+	override private function get_width() : Float 
 	{
 		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.width;
 	}
 	
-	override public function get_height() : Float 
+	override private function get_height() : Float 
 	{
 		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.height;

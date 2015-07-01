@@ -17,8 +17,8 @@ class FPS extends TextSprite
 	{
 		super();
 		
-		setFont( FontUtils.createFontFromAsset( "default/arial.fnt" ) );
-		setText( "-- fps" );
+		font = FontUtils.createFontFromAsset( "default/arial.fnt" );
+		text = "-- fps";
 		
 	}
 	
@@ -27,7 +27,7 @@ class FPS extends TextSprite
 		framesPassed++;
 		timePassed += seconds;
 		
-		setText( (framesPassed / timePassed) + " fps" );
+		text = (framesPassed / timePassed) + " fps";
 		
 		if ( timePassed > 2 ) {
 			timePassed = 0;
