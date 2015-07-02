@@ -27,7 +27,7 @@ class FPS extends TextSprite
 		framesPassed++;
 		timePassed += seconds;
 		
-		text = (framesPassed / timePassed) + " fps";
+		text = Math.round( framesPassed / timePassed) + " fps";
 		
 		if ( timePassed > 2 ) {
 			timePassed = 0;
