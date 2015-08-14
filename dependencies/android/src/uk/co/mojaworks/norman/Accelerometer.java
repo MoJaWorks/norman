@@ -16,6 +16,8 @@ import android.hardware.SensorManager;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorEvent;
 
+import android.util.Log;
+
 /* 
 	You can use the Android Extension class in order to hook
 	into the Android activity lifecycle. This is not required
@@ -72,6 +74,9 @@ public class Accelerometer extends Extension implements SensorEventListener {
 	}
 
 	public static void init( HaxeObject event ) {
+		
+		Log.v("trace", "Initialising accelerometer");
+		
 		Accelerometer.haxeEvent = event;
 	}
 	
@@ -149,7 +154,17 @@ public class Accelerometer extends Extension implements SensorEventListener {
     }
 
     public void onSensorChanged(SensorEvent event) {
-
+		
+		final SensorEvent evt = event;
+		
+		if ( haxeEvent != null ) {
+			
+			mainActivity.runOnUiThread( new Runnable() {
+				public void run() {
+					haxeEvent.call1( "fire", evt.values );
+				}
+			});
+		}
     }
 	
 	

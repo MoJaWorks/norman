@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.systems.input;
 import lime.math.Vector2;
+import uk.co.mojaworks.norman.input.Accelerometer;
 
 /**
  * ...
@@ -8,7 +9,7 @@ import lime.math.Vector2;
 class InputSystem
 {
 
-	//var accelerometer : Accelerometer;
+	var accelerometer : Accelerometer;
 	
 	public var accelerationX : Float;
 	public var accelerationY : Float;
@@ -19,12 +20,16 @@ class InputSystem
 	
 	public function new() 
 	{
-		//if ( Accelerometer.isSupported ) {
-			//accelerometer = new Accelerometer();
-			//accelerometer.addEventListener( AccelerometerEvent.UPDATE, onAccelerometerUpdate );
-		//}else {
-			//trace("No accelerometer...");
-		//}
+		if ( Accelerometer.isSupported() ) {
+			
+			trace("Accelerometer supported. Connecting...");
+			
+			accelerometer = new Accelerometer();
+			accelerometer.init();
+			accelerometer.onAccelerometerChanged.add( onAccelerometerUpdate );
+		}else {
+			trace("No accelerometer...");
+		}
 		
 		mousePosition = new Vector2();
 		//Lib.current.stage.addEventListener( MouseEvent.MOUSE_DOWN, onMouseDown );
@@ -36,14 +41,14 @@ class InputSystem
 	 * Accelerometer
 	 */
 	
-	//private function onAccelerometerUpdate( e : AccelerometerEvent ) : Void 
-	//{
-		//accelerationX = e.accelerationX;
-		//accelerationY = e.accelerationY;
-		//accelerationZ = e.accelerationZ;
-		//
-		//trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
-	//}
+	private function onAccelerometerUpdate( e : Array<Float> ) : Void 
+	{
+		accelerationX = e[0];
+		accelerationY = e[1];
+		accelerationZ = e[2];
+		
+		trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
+	}
 	
 	/**
 	 * Mouse
