@@ -1,4 +1,6 @@
 package uk.co.mojaworks.norman.systems.input;
+import haxe.Timer;
+import lime.audio.fmod.Sound;
 import lime.math.Vector2;
 import uk.co.mojaworks.norman.input.Accelerometer;
 
@@ -24,9 +26,11 @@ class InputSystem
 			
 			trace("Accelerometer supported. Connecting...");
 			
+			
 			accelerometer = new Accelerometer();
 			accelerometer.init();
 			accelerometer.onAccelerometerChanged.add( onAccelerometerUpdate );
+
 		}else {
 			trace("No accelerometer...");
 		}
@@ -43,11 +47,11 @@ class InputSystem
 	
 	private function onAccelerometerUpdate( e : Array<Float> ) : Void 
 	{
-		accelerationX = e[0];
-		accelerationY = e[1];
-		accelerationZ = e[2];
+		accelerationX = e[0] / 9.81;
+		accelerationY = e[1] / 9.81;
+		accelerationZ = e[2] / 9.81;
 		
-		trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
+		//trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
 	}
 	
 	/**

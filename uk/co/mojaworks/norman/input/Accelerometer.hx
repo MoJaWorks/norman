@@ -15,8 +15,9 @@ class AccelerometerCallback {
 		_event = event;
 	}
 	
-	public function fire( axis : Array<Float> ) {
-		_event.dispatch( axis );
+	public function fire( x : Float, y : Float, z : Float ) {
+		//trace("Callback from java ", x, y, z );
+		_event.dispatch( [x,y,z] );
 	}
 }
  

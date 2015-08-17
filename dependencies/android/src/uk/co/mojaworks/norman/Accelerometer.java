@@ -157,11 +157,13 @@ public class Accelerometer extends Extension implements SensorEventListener {
 		
 		final SensorEvent evt = event;
 		
+		//Log.v("trace", "Accelerometer changed " + evt.values[0] + " " + evt.values[1] + " " + evt.values[2] );
+		
 		if ( haxeEvent != null ) {
 			
 			mainActivity.runOnUiThread( new Runnable() {
 				public void run() {
-					haxeEvent.call1( "fire", evt.values );
+					haxeEvent.call( "fire", new Object[] { evt.values[0], evt.values[1], evt.values[2] } );
 				}
 			});
 		}
