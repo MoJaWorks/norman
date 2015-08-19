@@ -46,6 +46,8 @@ class FontUtils
 			data.pages.push( Systems.renderer.createTextureFromAsset( page_root + "/" + page.att.file ) );
 		}
 		
+		trace("Setting up characters");
+		
 		for ( char in fast.node.chars.nodes.char ) {
 			
 			var char_data : CharacterData = new CharacterData();
@@ -62,15 +64,21 @@ class FontUtils
 			
 		}
 		
-		for ( kern in fast.node.kernings.nodes.kerning ) {
-			
-			var kern_data : KerningData = new KerningData();
-			kern_data.first = Std.parseInt( kern.att.first );
-			kern_data.second = Std.parseInt( kern.att.second );
-			kern_data.amount = Std.parseInt( kern.att.amount );
-			if ( data.kernings.get( kern_data.first ) == null ) data.kernings.set( kern_data.first, new Map<Int, KerningData>() );
-			data.kernings.get( kern_data.first ).set( kern_data.second, kern_data ) ;
+		trace("Setting up kerning");
+		
+		if ( fast.hasNode.kernings ) {
+			for ( kern in fast.node.kernings.nodes.kerning ) {
+				
+				var kern_data : KerningData = new KerningData();
+				kern_data.first = Std.parseInt( kern.att.first );
+				kern_data.second = Std.parseInt( kern.att.second );
+				kern_data.amount = Std.parseInt( kern.att.amount );
+				if ( data.kernings.get( kern_data.first ) == null ) data.kernings.set( kern_data.first, new Map<Int, KerningData>() );
+				data.kernings.get( kern_data.first ).set( kern_data.second, kern_data ) ;
+			}
 		}
+		
+		trace("Font setup complete");
 		
 		return data;
 		

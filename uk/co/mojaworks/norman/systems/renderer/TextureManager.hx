@@ -117,6 +117,8 @@ class TextureManager
 		_context.bindTexture( GL.TEXTURE_2D, null );
 		
 		data.texture = texture;
+		
+		trace("Texture uploaded ", data.id );
 	}
 	
 	
