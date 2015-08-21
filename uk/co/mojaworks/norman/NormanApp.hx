@@ -3,6 +3,8 @@ package uk.co.mojaworks.norman;
 import haxe.Timer;
 import lime.app.Application;
 import lime.graphics.RenderContext;
+import lime.graphics.Renderer;
+import lime.ui.Window;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.Systems;
@@ -29,12 +31,14 @@ class NormanApp extends Application
 		
 	}
 	
-	public override function init( context : RenderContext ) : Void 
+	override public function onWindowCreate(window:Window):Void
 	{
 
+		super.onWindowCreate( window );
+		
 		Systems.init( );
 		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
-		Systems.renderer.init( context );
+		Systems.renderer.init( window.renderer.context );
 		Systems.view.init();
 				
 		initApp();
@@ -45,7 +49,7 @@ class NormanApp extends Application
 	{
 		
 		onStartupComplete();
-		onWindowResize( window.width, window.height );
+		onWindowResize( window, window.width, window.height );
 		
 		return super.exec();
 	}
@@ -64,8 +68,10 @@ class NormanApp extends Application
 	 * Ongoing
 	 */
 	
-	override public function onWindowResize(width:Int, height:Int):Void 
+	override public function onWindowResize( window : Window, width:Int, height:Int):Void 
 	{
+		
+		super.onWindowResize( window, width, height );
 		
 		Systems.viewport.resize( width, height );
 		Systems.view.resize();
@@ -92,33 +98,33 @@ class NormanApp extends Application
 		// Override this one
 	}
 	
-	override public function onMouseDown( x : Float, y : Float, button : Int ) : Void 
+	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
-		super.onMouseDown(x, y, button);
+		super.onMouseDown( window, x, y, button);
 		Systems.input.onMouseDown( x, y );
 	}
 	
-	override public function onMouseUp( x : Float, y : Float, button : Int ) : Void 
+	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
-		super.onMouseUp( x, y, button);
+		super.onMouseUp( window, x, y, button);
 		Systems.input.onMouseUp( x, y );
 	}
 	
-	override public function onMouseMove( x : Float, y : Float ) : Void 
+	override public function onMouseMove( window : Window, x : Float, y : Float ) : Void 
 	{
-		super.onMouseMove( x, y );
+		super.onMouseMove( window, x, y );
 		Systems.input.onMouseMove( x, y );
 	}
 	
-	override public function onRenderContextRestored(context:RenderContext):Void 
+	override public function onRenderContextRestored( renderer : Renderer, context:RenderContext ):Void 
 	{
-		super.onRenderContextRestored(context);
+		super.onRenderContextRestored(renderer, context);
 		trace("OnContextRestored");
 	}
 	
-	override public function onRenderContextLost():Void 
+	override public function onRenderContextLost( ernderer : Renderer ):Void 
 	{
-		super.onRenderContextLost();
+		super.onRenderContextLost( renderer );
 		trace("OnContextLost");
 	}
 		
