@@ -46,6 +46,12 @@ abstract Color( Int ) to Int from Int
 		return color;
 	}
 	
+	public static function hexa( rgb : Int, a : Float ) : Color {
+		var color : Color = rgb;
+		color.a = a;
+		return color;
+	}
+	
 	private inline function get_a() : Float { return ((this & 0xFF000000) >>> 24 ) * RATIO_255; }
 	private inline function get_r() : Int { return (this & 0xFF0000) >> 16; }
 	private inline function get_g() : Int { return (this & 0xFF00) >> 8; }
