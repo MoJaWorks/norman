@@ -38,10 +38,13 @@ class TextSprite extends Sprite
 	public var wrapWidth( default, set ) : Float;
 	public var letterSpacing( default, set ) : Float;
 	public var lineSpacing( default, set ) : Float;
+	public var fontSize( default, set ) : Float = 32;
 	
 	// results
 	private var _lineStops : Array<Int>;
 	private var _bounds : Rectangle;
+	private var _fontMultiplier : Float = 1;
+	
 		
 	var _layoutDirty : Bool = true;
 	
@@ -92,7 +95,7 @@ class TextSprite extends Sprite
 			if ( previousCharacter != null) {
 				if (font.kernings.get( previousCharacter.id ) != null ) {
 					kerning = font.kernings.get( previousCharacter.id ).get( char.id );
-					if ( kerning != null ) currentX -= kerning.amount;
+					if ( kerning != null ) currentX -= kerning.amount * _fontMultiplier;
 				}
 				currentX += letterSpacing;
 			}
@@ -102,7 +105,7 @@ class TextSprite extends Sprite
 				wordStart = i + 1;
 				isFirstWord = false;
 				lineLengthToLastWord = lineLength;
-				currentX += char.xAdvance;
+				currentX += char.xAdvance * _fontMultiplier;
 				previousCharacter = char;
 			}
 			else if ( char.id == 10 ) {
@@ -119,7 +122,7 @@ class TextSprite extends Sprite
 			else if ( wrapType == WrapType.None || (wrapType == WrapType.Auto && wrapWidth == 0 ) || (isFirstWord && wrapType == WrapType.Word) || (currentX + char.xAdvance < wrapWidth) ) {
 				
 				// Character fits on current line - let it be
-				currentX += char.xAdvance;
+				currentX += char.xAdvance * _fontMultiplier;
 				lineLength = currentX;
 				previousCharacter = char;
 				
@@ -130,10 +133,10 @@ class TextSprite extends Sprite
 					// This is the first word on the line should we split it?
 					wordStart = i;
 					lineLengthToLastWord = lineLength;
-					lineLength = char.xAdvance;
+					lineLength = char.xAdvance * _fontMultiplier;
 				}else {
 					// Carry letters onto next line and don't count the space between them
-					lineLength -= lineLengthToLastWord - char.xAdvance;
+					lineLength -= lineLengthToLastWord - (char.xAdvance * _fontMultiplier);
 				}
 				
 				// move to next line
@@ -149,7 +152,7 @@ class TextSprite extends Sprite
 		}
 		
 		_bounds.width = Math.max( _bounds.width, lineLength );
-		_bounds.height = (_lineStops.length * font.lineHeight) + ((_lineStops.length - 1) * lineSpacing);
+		_bounds.height = (_lineStops.length * font.lineHeight * _fontMultiplier) + ((_lineStops.length - 1) * lineSpacing);
 		_lineStops.push( text.length );
 		_layoutDirty = false;
 		
@@ -166,7 +169,7 @@ class TextSprite extends Sprite
 		var y = 0;
 		
 		for ( i in 0..._lineStops.length - 1 ) {
-			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * (font.lineHeight + lineSpacing) );
+			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * ((font.lineHeight * _fontMultiplier) + lineSpacing) );
 		}
 		
 	}
@@ -193,11 +196,11 @@ class TextSprite extends Sprite
 				if ( prev_char != null ) {
 					if ( font.kernings.get( prev_char.id ) != null ) {
 						kerning = font.kernings.get( prev_char.id ).get( char.id );
-						if ( kerning != null ) x -= kerning.amount;
+						if ( kerning != null ) x -= kerning.amount * _fontMultiplier;
 					}
 					x += letterSpacing;
 				}
-				x += char.xAdvance;
+				x += char.xAdvance * _fontMultiplier;
 			}
 			prev_char = char;				 
 		}
@@ -227,14 +230,15 @@ class TextSprite extends Sprite
 				if ( prev_char != null ) {
 					if ( font.kernings.get( prev_char.id ) != null ) {
 						kerning = font.kernings.get( prev_char.id ).get( char.id );
-						if ( kerning != null ) x -= kerning.amount;
+						if ( kerning != null ) x -= kerning.amount * _fontMultiplier;
 					}
 					x += letterSpacing;
 				}
 				
 				var texture : TextureData = font.pages[ char.pageId ];
 				m.identity();
-				m.translate( x + char.xOffset, y + char.yOffset );
+				m.scale( _fontMultiplier, _fontMultiplier );
+				m.translate( x + (char.xOffset * _fontMultiplier), y + (char.yOffset * _fontMultiplier) );
 				m.concat( transform.renderMatrix );
 				a = finalAlpha * color.a;
 				
@@ -250,7 +254,7 @@ class TextSprite extends Sprite
 										 ), m, color.r, color.g, color.b, a, ImageSprite.defaultShader );
 				}
 									 
-				x += char.xAdvance + padding;
+				x += (char.xAdvance * _fontMultiplier) + padding;
 			}
 			
 			prev_char = char;
@@ -267,7 +271,15 @@ class TextSprite extends Sprite
 	public function set_font( font : BitmapFont ) : BitmapFont {
 		this.font = font;
 		_layoutDirty = true;
+		_fontMultiplier = fontSize / font.size;
 		return font;
+	}
+	
+	public function set_fontSize( fontSize : Float ) : Float {
+		this.fontSize = fontSize;
+		_layoutDirty = true;
+		_fontMultiplier = fontSize / font.size;
+		return fontSize;
 	}
 	
 	public function set_wrapType( wrapType : WrapType ) : WrapType {

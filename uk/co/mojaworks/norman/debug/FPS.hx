@@ -18,6 +18,7 @@ class FPS extends TextSprite
 		super();
 		
 		font = FontUtils.createFontFromAsset( "default/arial.fnt" );
+		fontSize = 32;
 		text = "-- fps";
 		
 	}
