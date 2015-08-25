@@ -46,9 +46,9 @@ class InputSystem
 	
 	private function onAccelerometerUpdate( e : Array<Float> ) : Void 
 	{
-		accelerationX = e[0] / 9.81;
-		accelerationY = e[1] / 9.81;
-		accelerationZ = e[2] / 9.81;
+		accelerationX = e[0];
+		accelerationY = e[1];
+		accelerationZ = e[2];
 		
 		//trace( "Acceleration updated", accelerationX, accelerationY, accelerationZ );
 	}

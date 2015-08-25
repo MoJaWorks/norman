@@ -27,18 +27,21 @@ class TextureManager
 	
 	///
 	
-	public function createTextureFromAsset( id : String, allowCache : Bool = true ) : TextureData {
+	public function createTextureFromAsset( id : String, useCache : Bool = true ) : TextureData {
 		
-		if ( _textures.exists( id ) && allowCache ) {
+		if ( _textures.exists( id ) && useCache ) {
 			
 			return _textures.get( id );
 			
 		}else{
-		
+				
+			//trace("Creating texture from asset ", id );
+			
 			var image : Image = Assets.getImage( id );
 			
 			var map : Dynamic = null;
 			if ( Assets.exists( id + ".map" ) ) {
+				//trace("Found map for ", id );
 				map = Json.parse( Assets.getText( id + ".map" ) );
 			}
 			
@@ -95,7 +98,7 @@ class TextureManager
 	
 	private function uploadTexture( data : TextureData ) : Void {
 		
-		trace("Uploading ", data.id );
+		//trace("Uploading ", data.id );
 		
 		var texture : GLTexture = _context.createTexture( );
 		
@@ -118,7 +121,7 @@ class TextureManager
 		
 		data.texture = texture;
 		
-		trace("Texture uploaded ", data.id );
+		//trace("Texture uploaded ", data.id );
 	}
 	
 	

@@ -163,7 +163,7 @@ public class Accelerometer extends Extension implements SensorEventListener {
 			
 			mainActivity.runOnUiThread( new Runnable() {
 				public void run() {
-					haxeEvent.call( "fire", new Object[] { evt.values[0], evt.values[1], evt.values[2] } );
+					haxeEvent.call( "fire", new Object[] { evt.values[0] / 9.81f, evt.values[1] / 9.81f, evt.values[2] / 9.81f } );
 				}
 			});
 		}

@@ -27,7 +27,7 @@ class ImageSprite extends Sprite
 	public var color( default, default ) : Color;
 	
 	public var texture( default, null ) : TextureData;
-	public var subTextureId( default, null ) : String;
+	public var subTextureId( default, set ) : String;
 	
 	public var imageRect( default, null ) : Rectangle;
 	public var imageUVRect( default, null ) : Rectangle;
@@ -51,12 +51,29 @@ class ImageSprite extends Sprite
 			if ( this.texture != null ) this.texture.useCount++;
 		}
 		
+		//imageRect = texture.getRectFor( subTextureId );
+		//imageUVRect = texture.getUVFor( subTextureId );
+		//
+		//this.width = imageRect.width;
+		//this.height = imageRect.height;
+		
+		this.subTextureId = subTextureId;
+		
+	}
+	
+	private function set_subTextureId( id : String ) : String {
+		
+		var result : String = this.subTextureId = id;
+		
 		imageRect = texture.getRectFor( subTextureId );
 		imageUVRect = texture.getUVFor( subTextureId );
+		
+		//trace("Setting subtexture to " + id, imageRect, imageUVRect );
 		
 		this.width = imageRect.width;
 		this.height = imageRect.height;
 		
+		return result;
 	}
 	
 	override public function render(canvas:Canvas):Void 
