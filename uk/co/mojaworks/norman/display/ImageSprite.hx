@@ -63,17 +63,15 @@ class ImageSprite extends Sprite
 	
 	private function set_subTextureId( id : String ) : String {
 		
-		var result : String = this.subTextureId = id;
+		this.subTextureId = id;
 		
 		imageRect = texture.getRectFor( subTextureId );
 		imageUVRect = texture.getUVFor( subTextureId );
 		
-		//trace("Setting subtexture to " + id, imageRect, imageUVRect );
-		
 		this.width = imageRect.width;
 		this.height = imageRect.height;
 		
-		return result;
+		return this.subTextureId;
 	}
 	
 	override public function render(canvas:Canvas):Void 
