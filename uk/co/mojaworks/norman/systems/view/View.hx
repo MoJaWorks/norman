@@ -22,10 +22,10 @@ class View
 	
 	public function resize() : Void {
 		
-		root.transform.scaleX = Systems.viewport.scale;
-		root.transform.scaleY = Systems.viewport.scale;
-		root.transform.x = Systems.viewport.marginLeft * Systems.viewport.scale;
-		root.transform.y = Systems.viewport.marginTop * Systems.viewport.scale;
+		root.scaleX = Systems.viewport.scale;
+		root.scaleY = Systems.viewport.scale;
+		root.x = Systems.viewport.marginLeft * Systems.viewport.scale;
+		root.y = Systems.viewport.marginTop * Systems.viewport.scale;
 		
 	}
 	

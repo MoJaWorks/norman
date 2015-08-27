@@ -77,7 +77,7 @@ class ImageSprite extends Sprite
 	override public function render(canvas:Canvas):Void 
 	{
 		super.render( canvas );
-		canvas.drawSubtexture( texture, imageUVRect, transform.renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, ImageSprite.defaultShader );
+		canvas.drawSubtexture( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, ImageSprite.defaultShader );
 	}
 	
 }

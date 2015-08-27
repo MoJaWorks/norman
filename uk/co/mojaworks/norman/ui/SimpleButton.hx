@@ -35,7 +35,7 @@ class SimpleButton extends ImageSprite
 		
 		var wasMouseDown : Bool = _mouseDown;
 		var wasMouseOver : Bool = _mouseOver;
-		var mouse : Vector2 = transform.globalToLocal( Systems.input.mousePosition );
+		var mouse : Vector2 = globalToLocal( Systems.input.mousePosition );
 
 		// Check mouse
 		if ( enabled ) {

@@ -239,7 +239,7 @@ class TextSprite extends Sprite
 				m.identity();
 				m.scale( _fontMultiplier, _fontMultiplier );
 				m.translate( x + (char.xOffset * _fontMultiplier), y + (char.yOffset * _fontMultiplier) );
-				m.concat( transform.renderMatrix );
+				m.concat( renderMatrix );
 				a = finalAlpha * color.a;
 				
 				// Dont bother drawing spaces and new lines

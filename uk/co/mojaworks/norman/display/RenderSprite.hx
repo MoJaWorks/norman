@@ -56,7 +56,7 @@ class RenderSprite extends Sprite
 		super.postRender(canvas);
 		canvas.popRenderTarget();
 		//canvas.setBlendModeSeparate( GL.ONE, GL.ONE_MINUS_SRC_ALPHA, GL.ONE, GL.ONE );
-		canvas.drawTexture( target, transform.renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
+		canvas.drawTexture( target, renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
 		//canvas.setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 	}
 	
