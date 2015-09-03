@@ -116,7 +116,7 @@ class Canvas
 		}
 	}
 	
-	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
 	{
 		
 		if ( !_batch.isCompatible( shader, null  ) ) {
@@ -129,7 +129,7 @@ class Canvas
 			_batch.shader = shader;
 		}
 		
-		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
+		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
 		
 		var points : Array<Vector2> = [
 			new Vector2(width, height),
@@ -156,6 +156,7 @@ class Canvas
 			_batch.vertices.push( a );
 			_batch.vertices.push( uv[i].x );
 			_batch.vertices.push( uv[i].y );
+			if ( shaderVertexData != null ) _batch.vertices = _batch.vertices.concat( shaderVertexData.slice( i * shader.dataSize, (i + 1) * shader.dataSize ) );
 		}
 		
 		// Add the vertices
@@ -169,13 +170,13 @@ class Canvas
 	}
 	
 	
-	public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
 	{
-		drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader ); 
+		drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader, shaderVertexData ); 
 	}
 	
 	
-	public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
 	{
 		
 		if ( !_batch.isCompatible( shader, texture )  ) {
@@ -189,7 +190,7 @@ class Canvas
 			_batch.texture = texture;
 		}
 			
-		var startIndex : Int = Std.int(_batch.vertices.length / VERTEX_SIZE);
+		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
 		
 		var points : Array<Vector2> = [
 			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),
@@ -216,6 +217,7 @@ class Canvas
 			_batch.vertices.push( a );
 			_batch.vertices.push( uv[i].x );
 			_batch.vertices.push( uv[i].y );
+			if ( shaderVertexData != null ) _batch.vertices = _batch.vertices.concat( shaderVertexData.slice( i * shader.dataSize, (i + 1) * shader.dataSize ) );
 		}
 		
 		// Add the vertices
