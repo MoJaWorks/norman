@@ -10,6 +10,7 @@ import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
 import lime.utils.UInt16Array;
+import uk.co.mojaworks.norman.display.RenderSprite;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.utils.Color;
 
@@ -20,12 +21,13 @@ import uk.co.mojaworks.norman.utils.Color;
 class Canvas
 {
 	
-	public static inline var VERTEX_SIZE : Int = 8;
-	public static inline var VERTEX_POSITION : Int = 0;
-	public static inline var VERTEX_COLOR : Int = 2;
-	public static inline var VERTEX_UV : Int = 6;
+	//public static inline var VERTEX_SIZE : Int = 8;
+	//public static inline var VERTEX_POSITION : Int = 0;
+	//public static inline var VERTEX_COLOR : Int = 2;
+	//public static inline var VERTEX_UV : Int = 6;
 
 	public static var WHOLE_IMAGE : Rectangle = new Rectangle( 0, 0, 1, 1 );
+	public static var QUAD_INDICES : Array<Int> = [ 0, 1, 2, 1, 3, 2 ];
 	
 	var _context : GLRenderContext;
 	var _batch : RenderBatch;
@@ -116,81 +118,62 @@ class Canvas
 		}
 	}
 	
-	public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
-	{
-		
-		if ( !_batch.isCompatible( shader, null  ) ) {
-			
-			if ( _batch.started ) {
-				renderBatch();
-			}
-			
-			_batch.started = true;
-			_batch.shader = shader;
-		}
-		
-		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
-		
-		var points : Array<Vector2> = [
-			new Vector2(width, height),
-			new Vector2(0, height),
-			new Vector2(width, 0),
-			new Vector2(0, 0)
-		];
-		
-		var uv : Array<Vector2> = [
-			new Vector2(1, 1),
-			new Vector2(0, 1),
-			new Vector2(1, 0),
-			new Vector2(0, 0)
-		];
-		
-		// Make points global with transform
-		for ( i in 0...points.length ) {
-			var transformed = transform.transformVector2( points[i] );
-			_batch.vertices.push( transformed.x );
-			_batch.vertices.push( transformed.y );
-			_batch.vertices.push( (r / 255.0) * a );
-			_batch.vertices.push( (g / 255.0) * a );
-			_batch.vertices.push( (b / 255.0) * a );
-			_batch.vertices.push( a );
-			_batch.vertices.push( uv[i].x );
-			_batch.vertices.push( uv[i].y );
-			if ( shaderVertexData != null ) _batch.vertices = _batch.vertices.concat( shaderVertexData.slice( i * shader.dataSize, (i + 1) * shader.dataSize ) );
-		}
-		
-		// Add the vertices
-		_batch.indices.push( startIndex + 0 );
-		_batch.indices.push( startIndex + 1 );
-		_batch.indices.push( startIndex + 2 );
-		_batch.indices.push( startIndex + 1 );
-		_batch.indices.push( startIndex + 3 );
-		_batch.indices.push( startIndex + 2 );		
-		
-	}
+	//public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
+	//{
+		//
+		//if ( !_batch.isCompatible( shader, null  ) ) {
+			//
+			//if ( _batch.started ) {
+				//renderBatch();
+			//}
+			//
+			//_batch.started = true;
+			//_batch.shader = shader;
+		//}
+		//
+		//var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
+		//
+		//var points : Array<Vector2> = [
+			//new Vector2(width, height),
+			//new Vector2(0, height),
+			//new Vector2(width, 0),
+			//new Vector2(0, 0)
+		//];
+		//
+		//var uv : Array<Vector2> = [
+			//new Vector2(1, 1),
+			//new Vector2(0, 1),
+			//new Vector2(1, 0),
+			//new Vector2(0, 0)
+		//];
+		//
+		//// Make points global with transform
+		//for ( i in 0...points.length ) {
+			//var transformed = transform.transformVector2( points[i] );
+			//_batch.vertices.push( transformed.x );
+			//_batch.vertices.push( transformed.y );
+			//_batch.vertices.push( (r / 255.0) * a );
+			//_batch.vertices.push( (g / 255.0) * a );
+			//_batch.vertices.push( (b / 255.0) * a );
+			//_batch.vertices.push( a );
+			//_batch.vertices.push( uv[i].x );
+			//_batch.vertices.push( uv[i].y );
+			//if ( shaderVertexData != null ) _batch.vertices = _batch.vertices.concat( shaderVertexData.slice( i * shader.dataSize, (i + 1) * shader.dataSize ) );
+		//}
+		//
+		//// Add the vertices
+		//_batch.indices.push( startIndex + 0 );
+		//_batch.indices.push( startIndex + 1 );
+		//_batch.indices.push( startIndex + 2 );
+		//_batch.indices.push( startIndex + 1 );
+		//_batch.indices.push( startIndex + 3 );
+		//_batch.indices.push( startIndex + 2 );		
+		//
+	//}
 	
 	
-	public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
-	{
-		drawSubtextures( [texture], [WHOLE_IMAGE], transform, r, g, b, a, shader, shaderVertexData );
-	}
 	
-	public function drawTextures( textures : Array<TextureData>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
-	{
-		var rects : Array<Rectangle> = [];
-		for ( i in 0...textures.length ) {
-			rects.push( WHOLE_IMAGE );
-		}
-		drawSubtextures( textures, rects, transform, r, g, b, a, shader, shaderVertexData );
-	}
-	
-	public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
-	{
-		drawSubtextures( [texture], [sourceRect], transform, r, g, b, a, shader, shaderVertexData );
-	}
-	
-	public function drawSubtextures( textures : Array<TextureData>, sourceRects : Array<Rectangle>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
-	{
+	public function draw( textures : Array<TextureData>, shader : ShaderData, shaderVertexData : Array<Float>, indices : Array<Int> ) {
 		
 		if ( !_batch.isCompatible( shader, textures )  ) {
 			
@@ -202,44 +185,89 @@ class Canvas
 			_batch.shader = shader;
 			_batch.textures = textures;
 		}
-			
-		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
 		
+		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
+		_batch.vertices = _batch.vertices.concat( shaderVertexData );
+		
+		for ( index in indices ) {
+			_batch.indices.push( startIndex + index );
+		}
+				
+	}
+	
+	//public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
+	//{
+		//drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader );
+	//}
+	
+	//public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, isRenderTexture : Bool = false ) : Void 
+	//{
+		//
+		//var vertexData : Array<Float> = [];
+		//var indexData : Array<Int> = [0, 1, 2, 1, 3, 2];
+		//
+		//drawCustomWithTexture( [texture], 
+		//
+	//}
+	
+	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
+		
+		var vertexData : Array<Float> = [];
+				
 		var points : Array<Vector2> = [
-			new Vector2( textures[0].width * sourceRects[0].width, textures[0].height * sourceRects[0].height),
-			new Vector2(0, textures[0].height * sourceRects[0].height),
-			new Vector2(textures[0].width * sourceRects[0].width, 0),
+			new Vector2( width, height),
+			new Vector2(0, height),
+			new Vector2(width, 0),
+			new Vector2(0, 0)
+		];
+				
+		// Make points global with transform
+		for ( i in 0...points.length ) {
+			var transformed = transform.transformVector2( points[i] );
+			vertexData.push( transformed.x );
+			vertexData.push( transformed.y );
+			vertexData.push( (r / 255.0) * a );
+			vertexData.push( (g / 255.0) * a );
+			vertexData.push( (b / 255.0) * a );
+			vertexData.push( a );
+		}	
+		
+		return vertexData;
+		
+	}
+	
+	public function buildTexturedQuadVertexData( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
+		
+		var vertexData : Array<Float> = [];
+				
+		var points : Array<Vector2> = [
+			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),
+			new Vector2(0, texture.height * sourceRect.height),
+			new Vector2(texture.width * sourceRect.width, 0),
 			new Vector2(0, 0)
 		];
 		
 		var uv : Array<Vector2> = [
-			new Vector2(sourceRects[0].right, sourceRects[0].bottom),
-			new Vector2(sourceRects[0].left, sourceRects[0].bottom),
-			new Vector2(sourceRects[0].right, sourceRects[0].top ),
-			new Vector2(sourceRects[0].left, sourceRects[0].top )
+			new Vector2(sourceRect.right, sourceRect.bottom),
+			new Vector2(sourceRect.left, sourceRect.bottom),
+			new Vector2(sourceRect.right, sourceRect.top ),
+			new Vector2(sourceRect.left, sourceRect.top )
 		];
 		
 		// Make points global with transform
 		for ( i in 0...points.length ) {
 			var transformed = transform.transformVector2( points[i] );
-			_batch.vertices.push( transformed.x );
-			_batch.vertices.push( transformed.y );
-			_batch.vertices.push( (r / 255.0) * a );
-			_batch.vertices.push( (g / 255.0) * a );
-			_batch.vertices.push( (b / 255.0) * a );
-			_batch.vertices.push( a );
-			_batch.vertices.push( uv[i].x );
-			_batch.vertices.push( uv[i].y );
-			if ( shaderVertexData != null ) _batch.vertices = _batch.vertices.concat( shaderVertexData.slice( i * shader.dataSize, (i + 1) * shader.dataSize ) );
-		}
+			vertexData.push( transformed.x );
+			vertexData.push( transformed.y );
+			vertexData.push( (r / 255.0) * a );
+			vertexData.push( (g / 255.0) * a );
+			vertexData.push( (b / 255.0) * a );
+			vertexData.push( a );
+			vertexData.push( uv[i].x );
+			vertexData.push( uv[i].y );
+		}	
 		
-		// Add the vertices
-		_batch.indices.push( startIndex + 0 );
-		_batch.indices.push( startIndex + 1 );
-		_batch.indices.push( startIndex + 2 );
-		_batch.indices.push( startIndex + 1 );
-		_batch.indices.push( startIndex + 3 );
-		_batch.indices.push( startIndex + 2 );		
+		return vertexData;
 		
 	}
 	
@@ -312,24 +340,16 @@ class Canvas
 			var program : GLProgram = _batch.shader.glProgram;
 			_context.useProgram( program );
 			
-			var vertexAttrib = _context.getAttribLocation( program, "aVertexPosition" );
-			var colorAttrib = _context.getAttribLocation( program, "aVertexColor" );
 			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
 			
-			var uvAttrib : Int = 0;
-			if ( _batch.textures != null ) {
+			//var uvAttrib : Int = 0;
+			for ( i in 0..._batch.textures.length ) {
 				
 				//trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
-				
-				uvAttrib = _context.getAttribLocation( program, "aVertexUV" );
-				var uTexture0 = _context.getUniformLocation( program, "uTexture0" );
-				
-				_context.enableVertexAttribArray( uvAttrib );
-				_context.vertexAttribPointer( uvAttrib, 2, GL.FLOAT, false, _batch.shader.vertexSize * 4, VERTEX_UV * 4 );
-				
-				_context.activeTexture( GL.TEXTURE0 );
-				_context.bindTexture( GL.TEXTURE_2D, _batch.textures[0].texture );
-				_context.uniform1i( uTexture0, 0 );
+				var uTexture = _context.getUniformLocation( program, "uTexture" + i );
+				_context.activeTexture( GL.TEXTURE0 + i );
+				_context.bindTexture( GL.TEXTURE_2D, _batch.textures[i].texture );
+				_context.uniform1i( uTexture, i );
 				
 			}
 			
@@ -337,32 +357,26 @@ class Canvas
 			for ( attribute in _batch.shader.attributes ) {
 				var att : Int = _context.getAttribLocation( program, attribute.name );
 				_context.enableVertexAttribArray( att );
-				_context.vertexAttribPointer( att, attribute.size, GL.FLOAT, false, _batch.shader.vertexSize * 4, (VERTEX_SIZE + attribute.start) * 4 );
+				_context.vertexAttribPointer( att, attribute.size, GL.FLOAT, false, _batch.shader.vertexSize * 4, (attribute.start) * 4 );
 				customAttributes.push( att );
 			}
 			
-			_context.enableVertexAttribArray( vertexAttrib );
-			_context.enableVertexAttribArray( colorAttrib );
-			
-			_context.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, _batch.shader.vertexSize * 4, VERTEX_POSITION * 4);
-			_context.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, _batch.shader.vertexSize * 4, VERTEX_COLOR * 4);
 			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 			
 			_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
 			
-			_context.useProgram( null );
-			_context.disableVertexAttribArray( vertexAttrib );
-			_context.disableVertexAttribArray( colorAttrib );
 			
 			for ( att in customAttributes ) {
 				_context.disableVertexAttribArray( att );
 			}
 			
+			_context.useProgram( null );
 			_context.bindBuffer( GL.ARRAY_BUFFER, null );
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 			
-			if ( _batch.textures != null ) {
-				_context.disableVertexAttribArray( uvAttrib );
+			for ( i in 0..._batch.textures.length ) {
+				//_context.disableVertexAttribArray( uvAttrib );
+				_context.activeTexture( GL.TEXTURE0 + i );
 				_context.bindTexture( GL.TEXTURE_2D, null );
 			}
 						

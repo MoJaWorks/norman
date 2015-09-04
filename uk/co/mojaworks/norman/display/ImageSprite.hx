@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.display;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.ShaderAttributeData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.Systems;
@@ -19,7 +20,14 @@ class ImageSprite extends Sprite
 	public static function get_defaultShader( ) : ShaderData {
 		if ( ImageSprite.defaultShader == null ) {
 			trace("Creating default image shader");
-			ImageSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource() );
+			
+			var atts : Array<ShaderAttributeData> = [
+				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
+				new ShaderAttributeData( "aVertexColor", 2, 4 ),
+				new ShaderAttributeData( "aVertexUV", 6, 2 )
+			];
+			ImageSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource(), atts );
+			
 		}
 		return ImageSprite.defaultShader;
 	}
@@ -77,7 +85,10 @@ class ImageSprite extends Sprite
 	override public function render(canvas:Canvas):Void 
 	{
 		super.render( canvas );
-		canvas.drawSubtexture( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, ImageSprite.defaultShader );
+		//canvas.drawSubtexture( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, ImageSprite.defaultShader );
+		
+		var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha );
+		canvas.draw( [texture], ImageSprite.defaultShader, vertexData, Canvas.QUAD_INDICES );
 	}
 	
 }

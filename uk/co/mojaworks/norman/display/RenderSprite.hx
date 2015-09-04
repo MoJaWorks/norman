@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.display;
 import lime.graphics.opengl.GL;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.ShaderAttributeData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.Systems;
@@ -18,7 +19,13 @@ class RenderSprite extends Sprite
 	public static function get_defaultShader( ) : ShaderData {
 		if ( RenderSprite.defaultShader == null ) {
 			trace("Creating default render shader");
-			RenderSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource() );
+			
+			var atts : Array<ShaderAttributeData> = [
+				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
+				new ShaderAttributeData( "aVertexColor", 2, 4 ),
+				new ShaderAttributeData( "aVertexUV", 6, 2 )
+			];
+			RenderSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource(), atts );
 		}
 		return RenderSprite.defaultShader;
 	}
@@ -56,7 +63,10 @@ class RenderSprite extends Sprite
 		super.postRender(canvas);
 		canvas.popRenderTarget();
 		//canvas.setBlendModeSeparate( GL.ONE, GL.ONE_MINUS_SRC_ALPHA, GL.ONE, GL.ONE );
-		canvas.drawTexture( target, renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
+		//canvas.drawTexture( target, renderMatrix, 255, 255, 255, finalAlpha, RenderSprite.defaultShader );
+		
+		canvas.draw( [target], RenderSprite.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, renderMatrix, 255, 255, 255, finalAlpha ), Canvas.QUAD_INDICES );
+		
 		//canvas.setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
 	}
 	

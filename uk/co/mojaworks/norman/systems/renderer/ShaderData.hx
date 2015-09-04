@@ -7,27 +7,22 @@ import lime.graphics.opengl.GLProgram;
  */
 class ShaderData
 {
-	public var numTextures : Int;
 	public var attributes : Array<ShaderAttributeData>;
 	public var fragmentSource : String;
 	public var vertexSource : String;
 	public var glProgram : GLProgram;
-	public var dataSize : Int = 0;
-	public var vertexSize( get, never ) : Int;
+	public var vertexSize : Int;
 	
-	public function new( vs : String, fs : String, att : Array<ShaderAttributeData> ) 
+	public function new( vs : String, fs : String, atts : Array<ShaderAttributeData> ) 
 	{
 		vertexSource = vs;
 		fragmentSource = fs;
-		if ( att != null ) {
-			attributes = att;
-		}else {
-			attributes = [];
+		attributes = atts;
+		
+		vertexSize = 0;
+		for ( att in atts ) {
+			vertexSize += att.size;
 		}
-	}
-	
-	private function get_vertexSize() : Int {
-		return dataSize + Canvas.VERTEX_SIZE;
 	}
 	
 }

@@ -123,8 +123,8 @@ class Renderer
 	 * @return
 	 */
 	
-	public function createShader( vertexSource : String, fragmentSource : String ) : ShaderData {
-		return shaderManager.createShader( vertexSource, fragmentSource );
+	public function createShader( vertexSource : String, fragmentSource : String, attributes : Array<ShaderAttributeData> ) : ShaderData {
+		return shaderManager.createShader( vertexSource, fragmentSource, attributes );
 	}
 	
 }

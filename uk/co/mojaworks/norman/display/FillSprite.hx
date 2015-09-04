@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.display;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.ShaderAttributeData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.utils.Color;
@@ -16,7 +17,13 @@ class FillSprite extends Sprite
 	public static function get_defaultShader( ) : ShaderData {
 		if ( FillSprite.defaultShader == null ) {
 			trace("Creating default fill shader");
-			FillSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource() );
+			
+			var atts : Array<ShaderAttributeData> = [
+				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
+				new ShaderAttributeData( "aVertexColor", 2, 4 ),
+			];
+			
+			FillSprite.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource(), atts );
 		}
 		return FillSprite.defaultShader;
 	}
@@ -38,7 +45,9 @@ class FillSprite extends Sprite
 	override public function render(canvas:Canvas):Void 
 	{
 		super.render( canvas );
-		canvas.fillRect( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, FillSprite.defaultShader );
+		//canvas.fillRect( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, FillSprite.defaultShader );
+		
+		canvas.draw( null, FillSprite.defaultShader, canvas.buildQuadVertexData( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha ), Canvas.QUAD_INDICES );
 	}
 	
 }
