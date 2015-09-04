@@ -172,14 +172,27 @@ class Canvas
 	
 	public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
 	{
-		drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader, shaderVertexData ); 
+		drawSubtextures( [texture], [WHOLE_IMAGE], transform, r, g, b, a, shader, shaderVertexData );
 	}
 	
+	public function drawTextures( textures : Array<TextureData>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
+	{
+		var rects : Array<Rectangle> = [];
+		for ( i in 0...textures.length ) {
+			rects.push( WHOLE_IMAGE );
+		}
+		drawSubtextures( textures, rects, transform, r, g, b, a, shader, shaderVertexData );
+	}
 	
 	public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
 	{
+		drawSubtextures( [texture], [sourceRect], transform, r, g, b, a, shader, shaderVertexData );
+	}
+	
+	public function drawSubtextures( textures : Array<TextureData>, sourceRects : Array<Rectangle>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
+	{
 		
-		if ( !_batch.isCompatible( shader, texture )  ) {
+		if ( !_batch.isCompatible( shader, textures )  ) {
 			
 			if ( _batch.started ) {
 				renderBatch();
@@ -187,23 +200,23 @@ class Canvas
 			
 			_batch.started = true;
 			_batch.shader = shader;
-			_batch.texture = texture;
+			_batch.textures = textures;
 		}
 			
 		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
 		
 		var points : Array<Vector2> = [
-			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),
-			new Vector2(0, texture.height * sourceRect.height),
-			new Vector2(texture.width * sourceRect.width, 0),
+			new Vector2( textures[0].width * sourceRects[0].width, textures[0].height * sourceRects[0].height),
+			new Vector2(0, textures[0].height * sourceRects[0].height),
+			new Vector2(textures[0].width * sourceRects[0].width, 0),
 			new Vector2(0, 0)
 		];
 		
 		var uv : Array<Vector2> = [
-			new Vector2(sourceRect.right, sourceRect.bottom),
-			new Vector2(sourceRect.left, sourceRect.bottom),
-			new Vector2(sourceRect.right, sourceRect.top ),
-			new Vector2(sourceRect.left, sourceRect.top )
+			new Vector2(sourceRects[0].right, sourceRects[0].bottom),
+			new Vector2(sourceRects[0].left, sourceRects[0].bottom),
+			new Vector2(sourceRects[0].right, sourceRects[0].top ),
+			new Vector2(sourceRects[0].left, sourceRects[0].top )
 		];
 		
 		// Make points global with transform
@@ -304,7 +317,7 @@ class Canvas
 			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
 			
 			var uvAttrib : Int = 0;
-			if ( _batch.texture != null ) {
+			if ( _batch.textures != null ) {
 				
 				//trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
 				
@@ -312,19 +325,27 @@ class Canvas
 				var uTexture0 = _context.getUniformLocation( program, "uTexture0" );
 				
 				_context.enableVertexAttribArray( uvAttrib );
-				_context.vertexAttribPointer( uvAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_UV * 4 );
+				_context.vertexAttribPointer( uvAttrib, 2, GL.FLOAT, false, _batch.shader.vertexSize * 4, VERTEX_UV * 4 );
 				
 				_context.activeTexture( GL.TEXTURE0 );
-				_context.bindTexture( GL.TEXTURE_2D, _batch.texture.texture );
+				_context.bindTexture( GL.TEXTURE_2D, _batch.textures[0].texture );
 				_context.uniform1i( uTexture0, 0 );
 				
+			}
+			
+			var customAttributes : Array<Int> = [];
+			for ( attribute in _batch.shader.attributes ) {
+				var att : Int = _context.getAttribLocation( program, attribute.name );
+				_context.enableVertexAttribArray( att );
+				_context.vertexAttribPointer( att, attribute.size, GL.FLOAT, false, _batch.shader.vertexSize * 4, (VERTEX_SIZE + attribute.start) * 4 );
+				customAttributes.push( att );
 			}
 			
 			_context.enableVertexAttribArray( vertexAttrib );
 			_context.enableVertexAttribArray( colorAttrib );
 			
-			_context.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_POSITION * 4);
-			_context.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, VERTEX_SIZE * 4, VERTEX_COLOR * 4);
+			_context.vertexAttribPointer( vertexAttrib, 2, GL.FLOAT, false, _batch.shader.vertexSize * 4, VERTEX_POSITION * 4);
+			_context.vertexAttribPointer( colorAttrib, 4, GL.FLOAT, false, _batch.shader.vertexSize * 4, VERTEX_COLOR * 4);
 			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
 			
 			_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
@@ -333,10 +354,14 @@ class Canvas
 			_context.disableVertexAttribArray( vertexAttrib );
 			_context.disableVertexAttribArray( colorAttrib );
 			
+			for ( att in customAttributes ) {
+				_context.disableVertexAttribArray( att );
+			}
+			
 			_context.bindBuffer( GL.ARRAY_BUFFER, null );
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 			
-			if ( _batch.texture != null ) {
+			if ( _batch.textures != null ) {
 				_context.disableVertexAttribArray( uvAttrib );
 				_context.bindTexture( GL.TEXTURE_2D, null );
 			}

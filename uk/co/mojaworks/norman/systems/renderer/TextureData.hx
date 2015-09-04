@@ -35,6 +35,7 @@ class TextureData
 				result = new Rectangle( img.spriteSourceSize.x, img.spriteSourceSize.y, img.sourceSize.w, img.sourceSize.h );
 			}else {
 				trace("No subimage " + subImageId + " in texture " + id );
+				result = new Rectangle( 0, 0, sourceImage.width, sourceImage.height );
 			}
 		}
 		
@@ -62,6 +63,7 @@ class TextureData
 				);
 			}else {
 				trace("No subimage " + subImageId + " in texture " + id );
+				result = new Rectangle( 0, 0, 1, 1 );
 			}
 		}
 		

@@ -11,7 +11,7 @@ class RenderBatch
 	public var vertices : Array<Float>;
 	public var indices : Array<Int>;
 	public var shader : ShaderData;
-	public var texture : TextureData;
+	public var textures : Array<TextureData>;
 	public var target : FrameBuffer;
 	public var started : Bool = false;
 	
@@ -23,12 +23,25 @@ class RenderBatch
 	public function reset() : Void {
 		vertices = [];
 		indices = [];
-		texture = null;
+		textures = null;
 		shader = null;
 	}
 	
-	public function isCompatible( shader : ShaderData, texture : TextureData ) : Bool {
-		return (this.shader == shader) && (this.texture == texture);
+	public function isCompatible( shader : ShaderData, textures : Array<TextureData> ) : Bool {
+		
+		var compatible : Bool = true;
+		
+		compatible = compatible && (this.shader == shader);
+		compatible = compatible && textures.length == this.textures.length;
+		
+		if ( compatible ) {
+			for ( i in 0...textures.length ) {
+				compatible = compatible && (this.textures[i] == textures[i]);
+				if ( !compatible ) break;
+			}
+		}
+		
+		return compatible;
 	}
 	
 }

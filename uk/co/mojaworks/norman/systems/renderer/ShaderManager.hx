@@ -36,10 +36,10 @@ class ShaderManager
 		
 	}
 	
-	public function createShader( vs : String, fs : String ) : ShaderData 
+	public function createShader( vs : String, fs : String, attributes : Array<ShaderAttributeData> = null ) : ShaderData 
 	{
 				
-		var shader : ShaderData = new ShaderData( vs, fs );
+		var shader : ShaderData = new ShaderData( vs, fs, attributes );
 		
 		_shaders.push( shader );
 		if ( _context != null ) {

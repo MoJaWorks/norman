@@ -15,10 +15,15 @@ class ShaderData
 	public var dataSize : Int = 0;
 	public var vertexSize( get, never ) : Int;
 	
-	public function new( vs : String, fs : String ) 
+	public function new( vs : String, fs : String, att : Array<ShaderAttributeData> ) 
 	{
 		vertexSource = vs;
 		fragmentSource = fs;
+		if ( att != null ) {
+			attributes = att;
+		}else {
+			attributes = [];
+		}
 	}
 	
 	private function get_vertexSize() : Int {

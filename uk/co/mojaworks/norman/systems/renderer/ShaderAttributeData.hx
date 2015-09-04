@@ -7,14 +7,15 @@ package uk.co.mojaworks.norman.systems.renderer;
 class ShaderAttributeData
 {
 
-	public var type : String;
-	public var length : Int;
+	public var size : Int;
 	public var start : Int;
 	public var name : String;
 	
-	public function new() 
+	public function new( name : String, start : Int, size : Int ) 
 	{
-		
+		this.name = name;
+		this.start = start;
+		this.size = size;
 	}
 	
 }
