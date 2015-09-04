@@ -244,14 +244,6 @@ class TextSprite extends Sprite
 				
 				// Dont bother drawing spaces and new lines
 				if ( char.id != 10 && char.id != 32 ) {
-					
-					/*canvas.drawSubtexture( texture, 
-										 new Rectangle( 
-											char.x / texture.width, 
-											char.y / texture.width, 
-											char.width / texture.width,
-											char.height / texture.height
-										 ), m, color.r, color.g, color.b, a, ImageSprite.defaultShader );*/
 										 
 					var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData(  texture, 
 														 new Rectangle( 

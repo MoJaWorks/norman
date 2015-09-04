@@ -58,13 +58,7 @@ class ImageSprite extends Sprite
 			this.texture = texture;
 			if ( this.texture != null ) this.texture.useCount++;
 		}
-		
-		//imageRect = texture.getRectFor( subTextureId );
-		//imageUVRect = texture.getUVFor( subTextureId );
-		//
-		//this.width = imageRect.width;
-		//this.height = imageRect.height;
-		
+				
 		this.subTextureId = subTextureId;
 		
 	}
@@ -85,7 +79,6 @@ class ImageSprite extends Sprite
 	override public function render(canvas:Canvas):Void 
 	{
 		super.render( canvas );
-		//canvas.drawSubtexture( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, ImageSprite.defaultShader );
 		
 		var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha );
 		canvas.draw( [texture], ImageSprite.defaultShader, vertexData, Canvas.QUAD_INDICES );

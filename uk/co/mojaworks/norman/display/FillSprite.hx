@@ -45,8 +45,6 @@ class FillSprite extends Sprite
 	override public function render(canvas:Canvas):Void 
 	{
 		super.render( canvas );
-		//canvas.fillRect( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, FillSprite.defaultShader );
-		
 		canvas.draw( [], FillSprite.defaultShader, canvas.buildQuadVertexData( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha ), Canvas.QUAD_INDICES );
 	}
 	
