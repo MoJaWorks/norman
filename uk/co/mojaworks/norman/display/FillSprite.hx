@@ -47,7 +47,7 @@ class FillSprite extends Sprite
 		super.render( canvas );
 		//canvas.fillRect( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha, FillSprite.defaultShader );
 		
-		canvas.draw( null, FillSprite.defaultShader, canvas.buildQuadVertexData( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha ), Canvas.QUAD_INDICES );
+		canvas.draw( [], FillSprite.defaultShader, canvas.buildQuadVertexData( width, height, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha ), Canvas.QUAD_INDICES );
 	}
 	
 }
