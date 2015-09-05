@@ -34,15 +34,18 @@ class ImageSprite extends Sprite
 	
 	public var color( default, default ) : Color;
 	
-	public var texture( default, null ) : TextureData;
+	public var texture( get, null ) : TextureData;
 	public var subTextureId( default, set ) : String;
 	
 	public var imageRect( default, null ) : Rectangle;
 	public var imageUVRect( default, null ) : Rectangle;
 	
+	var _textureArray : Array<TextureData>;
+	
 	public function new( texture : TextureData, subTextureId : String = null ) 
 	{
 		super( );
+		_textureArray = [null];
 		color = Color.WHITE;
 		setTexture( texture, subTextureId );
 		
@@ -50,12 +53,16 @@ class ImageSprite extends Sprite
 		
 	}
 	
+	inline private function get_texture() : TextureData {
+		return _textureArray[0];
+	}
+	
 	public function setTexture( texture : TextureData, subTextureId : String = null ) : Void {
 		
 		if ( this.texture != texture ) {
 			
 			if ( this.texture != null ) this.texture.useCount--;			
-			this.texture = texture;
+			_textureArray[0] = texture;
 			if ( this.texture != null ) this.texture.useCount++;
 		}
 				
@@ -81,7 +88,7 @@ class ImageSprite extends Sprite
 		super.render( canvas );
 		
 		var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData( texture, imageUVRect, renderMatrix, color.r, color.g, color.b, color.a * finalAlpha );
-		canvas.draw( [texture], ImageSprite.defaultShader, vertexData, Canvas.QUAD_INDICES );
+		canvas.draw( _textureArray, ImageSprite.defaultShader, vertexData, Canvas.QUAD_INDICES );
 	}
 	
 }

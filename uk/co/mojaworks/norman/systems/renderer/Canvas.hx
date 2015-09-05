@@ -343,14 +343,16 @@ class Canvas
 			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
 			
 			//var uvAttrib : Int = 0;
-			for ( i in 0..._batch.textures.length ) {
-				
-				//trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
-				var uTexture = _context.getUniformLocation( program, "uTexture" + i );
-				_context.activeTexture( GL.TEXTURE0 + i );
-				_context.bindTexture( GL.TEXTURE_2D, _batch.textures[i].texture );
-				_context.uniform1i( uTexture, i );
-				
+			if ( _batch.textures != null ) {
+				for ( i in 0..._batch.textures.length ) {
+					
+					//trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
+					var uTexture = _context.getUniformLocation( program, "uTexture" + i );
+					_context.activeTexture( GL.TEXTURE0 + i );
+					_context.bindTexture( GL.TEXTURE_2D, _batch.textures[i].texture );
+					_context.uniform1i( uTexture, i );
+					
+				}
 			}
 			
 			var customAttributes : Array<Int> = [];
@@ -374,14 +376,16 @@ class Canvas
 			_context.bindBuffer( GL.ARRAY_BUFFER, null );
 			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
 			
-			for ( i in 0..._batch.textures.length ) {
-				//_context.disableVertexAttribArray( uvAttrib );
-				_context.activeTexture( GL.TEXTURE0 + i );
-				_context.bindTexture( GL.TEXTURE_2D, null );
+			if ( _batch.textures != null ) {
+				for ( i in 0..._batch.textures.length ) {
+					//_context.disableVertexAttribArray( uvAttrib );
+					_context.activeTexture( GL.TEXTURE0 + i );
+					_context.bindTexture( GL.TEXTURE_2D, null );
+				}
 			}
 						
-			var error : Int = _context.getError();
-			if ( error > 0 ) trace( "GL Error:", error );
+			//var error : Int = _context.getError();
+			//if ( error > 0 ) trace( "GL Error:", error );
 			
 		}
 		

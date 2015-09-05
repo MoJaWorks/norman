@@ -30,12 +30,14 @@ class RenderSprite extends Sprite
 		return RenderSprite.defaultShader;
 	}
 	
-	public var target : TextureData;
+	public var target( get, null ) : TextureData;
+	var _textureArray : Array<TextureData>;
 	
 	
 	public function new( width : Int, height : Int ) 
 	{
 		super();
+		_textureArray = [null];
 		shouldRenderSelf = true;
 		isRoot = true;
 		
@@ -47,7 +49,7 @@ class RenderSprite extends Sprite
 			Systems.renderer.unloadTexture( "@norman/renderSprite/" + id );
 		}
 		
-		target = Systems.renderer.createTexture( "@norman/renderSprite/" + id, width, height, 0 );
+		_textureArray[0] = Systems.renderer.createTexture( "@norman/renderSprite/" + id, width, height, 0 );
 	}
 	
 	override public function preRender(canvas:Canvas):Void 
@@ -62,7 +64,10 @@ class RenderSprite extends Sprite
 		
 		super.postRender(canvas);
 		canvas.popRenderTarget();
-		canvas.draw( [target], RenderSprite.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, renderMatrix, 255, 255, 255, finalAlpha ), Canvas.QUAD_INDICES );
+		canvas.draw( _textureArray, RenderSprite.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, renderMatrix, 255, 255, 255, finalAlpha ), Canvas.QUAD_INDICES );
 	}
 	
+	inline private function get_target() : TextureData {
+		return _textureArray[0];
+	}
 }
