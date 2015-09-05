@@ -187,7 +187,10 @@ class Canvas
 		}
 		
 		var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
-		_batch.vertices = _batch.vertices.concat( shaderVertexData );
+		
+		for ( i in 0...shaderVertexData.length ) {
+			_batch.vertices.push( shaderVertexData[i] );
+		}
 		
 		for ( index in indices ) {
 			_batch.indices.push( startIndex + index );
