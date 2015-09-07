@@ -20,11 +20,6 @@ import uk.co.mojaworks.norman.utils.Color;
  */
 class Canvas
 {
-	
-	//public static inline var VERTEX_SIZE : Int = 8;
-	//public static inline var VERTEX_POSITION : Int = 0;
-	//public static inline var VERTEX_COLOR : Int = 2;
-	//public static inline var VERTEX_UV : Int = 6;
 
 	public static var WHOLE_IMAGE : Rectangle = new Rectangle( 0, 0, 1, 1 );
 	public static var QUAD_INDICES : Array<Int> = [ 0, 1, 2, 1, 3, 2 ];
@@ -43,6 +38,10 @@ class Canvas
 	public var destinationBlendFactor( default, null ) : Int;
 	public var destinationAlphaBlendFactor( default, null ) : Int;
 	
+	// These arrays are constantly reused to avoid recreating multiple times every frame
+	private var _cachedQuadVertexData : Array<Float>;
+	private var _cachedTexturedQuadVertexData : Array<Float>;
+	
 	public function new() 
 	{
 		
@@ -51,6 +50,9 @@ class Canvas
 	public function init() : Void {
 		_batch = new RenderBatch();
 		_frameBufferStack = [];
+		_cachedQuadVertexData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		_cachedTexturedQuadVertexData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ;
+		
 	}
 	
 	public function onContextCreated( gl : GLRenderContext ) : Void {
@@ -117,62 +119,7 @@ class Canvas
 			renderBatch();
 		}
 	}
-	
-	//public function fillRect( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData, shaderVertexData : Array<Float> = null ) : Void 
-	//{
-		//
-		//if ( !_batch.isCompatible( shader, null  ) ) {
-			//
-			//if ( _batch.started ) {
-				//renderBatch();
-			//}
-			//
-			//_batch.started = true;
-			//_batch.shader = shader;
-		//}
-		//
-		//var startIndex : Int = Std.int(_batch.vertices.length / shader.vertexSize );
-		//
-		//var points : Array<Vector2> = [
-			//new Vector2(width, height),
-			//new Vector2(0, height),
-			//new Vector2(width, 0),
-			//new Vector2(0, 0)
-		//];
-		//
-		//var uv : Array<Vector2> = [
-			//new Vector2(1, 1),
-			//new Vector2(0, 1),
-			//new Vector2(1, 0),
-			//new Vector2(0, 0)
-		//];
-		//
-		//// Make points global with transform
-		//for ( i in 0...points.length ) {
-			//var transformed = transform.transformVector2( points[i] );
-			//_batch.vertices.push( transformed.x );
-			//_batch.vertices.push( transformed.y );
-			//_batch.vertices.push( (r / 255.0) * a );
-			//_batch.vertices.push( (g / 255.0) * a );
-			//_batch.vertices.push( (b / 255.0) * a );
-			//_batch.vertices.push( a );
-			//_batch.vertices.push( uv[i].x );
-			//_batch.vertices.push( uv[i].y );
-			//if ( shaderVertexData != null ) _batch.vertices = _batch.vertices.concat( shaderVertexData.slice( i * shader.dataSize, (i + 1) * shader.dataSize ) );
-		//}
-		//
-		//// Add the vertices
-		//_batch.indices.push( startIndex + 0 );
-		//_batch.indices.push( startIndex + 1 );
-		//_batch.indices.push( startIndex + 2 );
-		//_batch.indices.push( startIndex + 1 );
-		//_batch.indices.push( startIndex + 3 );
-		//_batch.indices.push( startIndex + 2 );		
-		//
-	//}
-	
-	
-	
+		
 	public function draw( textures : Array<TextureData>, shader : ShaderData, shaderVertexData : Array<Float>, indices : Array<Int> ) {
 		
 		if ( !_batch.isCompatible( shader, textures )  ) {
@@ -198,24 +145,9 @@ class Canvas
 				
 	}
 	
-	//public function drawTexture( texture : TextureData, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, shader : ShaderData ) : Void 
-	//{
-		//drawSubtexture( texture, WHOLE_IMAGE, transform, r, g, b, a, shader );
-	//}
-	
-	//public function drawSubtexture( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, isRenderTexture : Bool = false ) : Void 
-	//{
-		//
-		//var vertexData : Array<Float> = [];
-		//var indexData : Array<Int> = [0, 1, 2, 1, 3, 2];
-		//
-		//drawCustomWithTexture( [texture], 
-		//
-	//}
-	
 	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
-		var vertexData : Array<Float> = [];
+		//var vertexData : Array<Float> = [];
 				
 		var points : Array<Vector2> = [
 			new Vector2( width, height),
@@ -225,17 +157,17 @@ class Canvas
 		];
 				
 		// Make points global with transform
-		for ( i in 0...points.length ) {
+		for ( i in 0...4 ) {
 			var transformed = transform.transformVector2( points[i] );
-			vertexData.push( transformed.x );
-			vertexData.push( transformed.y );
-			vertexData.push( (r / 255.0) * a );
-			vertexData.push( (g / 255.0) * a );
-			vertexData.push( (b / 255.0) * a );
-			vertexData.push( a );
+			_cachedQuadVertexData[(i * 6) + 0] = transformed.x;
+			_cachedQuadVertexData[(i * 6) + 1] = transformed.y;
+			_cachedQuadVertexData[(i * 6) + 2] = (r / 255.0) * a;
+			_cachedQuadVertexData[(i * 6) + 3] = (g / 255.0) * a;
+			_cachedQuadVertexData[(i * 6) + 4] = (b / 255.0) * a;
+			_cachedQuadVertexData[(i * 6) + 5] = a;
 		}	
 		
-		return vertexData;
+		return _cachedQuadVertexData;
 		
 	}
 	
@@ -258,19 +190,19 @@ class Canvas
 		];
 		
 		// Make points global with transform
-		for ( i in 0...points.length ) {
+		for ( i in 0...4 ) {
 			var transformed = transform.transformVector2( points[i] );
-			vertexData.push( transformed.x );
-			vertexData.push( transformed.y );
-			vertexData.push( (r / 255.0) * a );
-			vertexData.push( (g / 255.0) * a );
-			vertexData.push( (b / 255.0) * a );
-			vertexData.push( a );
-			vertexData.push( uv[i].x );
-			vertexData.push( uv[i].y );
+			_cachedTexturedQuadVertexData[(i * 8) + 0] = transformed.x;
+			_cachedTexturedQuadVertexData[(i * 8) + 1] = transformed.y;
+			_cachedTexturedQuadVertexData[(i * 8) + 2] = (r / 255.0) * a;
+			_cachedTexturedQuadVertexData[(i * 8) + 3] = (g / 255.0) * a;
+			_cachedTexturedQuadVertexData[(i * 8) + 4] = (b / 255.0) * a;
+			_cachedTexturedQuadVertexData[(i * 8) + 5] = a;
+			_cachedTexturedQuadVertexData[(i * 8) + 6] = uv[i].x;
+			_cachedTexturedQuadVertexData[(i * 8) + 7] = uv[i].y;
 		}	
 		
-		return vertexData;
+		return _cachedTexturedQuadVertexData;
 		
 	}
 	
@@ -344,8 +276,7 @@ class Canvas
 			_context.useProgram( program );
 			
 			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
-			
-			//var uvAttrib : Int = 0;
+
 			if ( _batch.textures != null ) {
 				for ( i in 0..._batch.textures.length ) {
 					
@@ -367,7 +298,6 @@ class Canvas
 			}
 			
 			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
-			
 			_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
 			
 			
@@ -381,14 +311,10 @@ class Canvas
 			
 			if ( _batch.textures != null ) {
 				for ( i in 0..._batch.textures.length ) {
-					//_context.disableVertexAttribArray( uvAttrib );
 					_context.activeTexture( GL.TEXTURE0 + i );
 					_context.bindTexture( GL.TEXTURE_2D, null );
 				}
 			}
-						
-			//var error : Int = _context.getError();
-			//if ( error > 0 ) trace( "GL Error:", error );
 			
 		}
 		
