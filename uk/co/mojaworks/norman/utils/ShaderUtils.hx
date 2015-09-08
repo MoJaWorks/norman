@@ -120,19 +120,19 @@ class ShaderUtils
 		var str : String = "";
 		
 		str += "attribute vec2 aVertexPosition;";
-		str += "attribute vec4 aVertexColor;";
-		str += "attribute vec2 aVertexUV;";
 		str += "attribute vec2 aMaskUV;";
+		str += "attribute vec2 aVertexUV;";
+		str += "attribute float aVertexAlpha;";
 		str += "uniform mat4 uProjectionMatrix;";
 		
-		str += "varying vec4 vVertexColor;";
-		str += "varying vec2 vVertexUV;";
 		str += "varying vec2 vMaskUV;";
+		str += "varying vec2 vVertexUV;";
+		str += "varying float vVertexAlpha;";
 
 		str += "void main(void) {";
-		str += "	vVertexColor = aVertexColor;";
-		str += "	vVertexUV = aVertexUV;";
 		str += "	vMaskUV = aMaskUV;";
+		str += "	vVertexUV = aVertexUV;";
+		str += "	vVertexAlpha = aVertexAlpha;";
 		str += "	gl_Position = uProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0);";
 		str += "}";
 		
@@ -148,15 +148,16 @@ class ShaderUtils
 			str += "precision mediump float;";
 		#end
 
-		str += "varying vec4 vVertexColor;";
-		str += "varying vec2 vVertexUV;";
 		str += "varying vec2 vMaskUV;";
+		str += "varying vec2 vVertexUV;";
+		str += "varying float vVertexAlpha;";
+		
 		str += "uniform sampler2D uTexture0;";
 		str += "uniform sampler2D uTexture1;";
 		
 		str += "void main(void) {";
-		str += "	gl_FragColor = vVertexColor * texture2D( uTexture0, vVertexUV );";
-		str += "	gl_FragColor.a = gl_FragColor.a * texture2D( uTexture1, vMasksUV ).a;";
+		str += "	gl_FragColor = texture2D( uTexture0, vVertexUV );";
+		str += "	gl_FragColor = gl_FragColor * texture2D( uTexture1, vMaskUV ).a;";
 		str += "}";
 		
 		return str;

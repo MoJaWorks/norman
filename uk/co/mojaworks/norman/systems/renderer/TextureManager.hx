@@ -22,12 +22,15 @@ class TextureManager
 	}
 	
 	public function init() : Void {
+		trace("Booting texture manager...");
 		_textures = new Map<String,TextureData>();
 	}
 	
 	///
 	
 	public function createTextureFromAsset( id : String, useCache : Bool = true ) : TextureData {
+		
+		//trace("Creating texture from asset with id " + id );
 		
 		if ( _textures.exists( id ) && useCache ) {
 			
@@ -40,9 +43,14 @@ class TextureManager
 			var image : Image = Assets.getImage( id );
 			
 			var map : Dynamic = null;
+			
+			//trace("Checking for map");
+			
 			if ( Assets.exists( id + ".map" ) ) {
 				//trace("Found map for ", id );
 				map = Json.parse( Assets.getText( id + ".map" ) );
+			}else {
+				//trace("No map for ", id );
 			}
 			
 			return createTextureFromImage( id, image, map );

@@ -147,8 +147,6 @@ class Canvas
 	
 	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
-		//var vertexData : Array<Float> = [];
-				
 		var points : Array<Vector2> = [
 			new Vector2( width, height),
 			new Vector2(0, height),
@@ -173,8 +171,6 @@ class Canvas
 	
 	public function buildTexturedQuadVertexData( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
-		var vertexData : Array<Float> = [];
-				
 		var points : Array<Vector2> = [
 			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),
 			new Vector2(0, texture.height * sourceRect.height),
