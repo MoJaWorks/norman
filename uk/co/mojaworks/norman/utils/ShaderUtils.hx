@@ -158,6 +158,7 @@ class ShaderUtils
 		str += "void main(void) {";
 		str += "	gl_FragColor = texture2D( uTexture0, vVertexUV );";
 		str += "	gl_FragColor = gl_FragColor * texture2D( uTexture1, vMaskUV ).a;";
+		str += "	gl_FragColor = gl_FragColor * vVertexAlpha;";
 		str += "}";
 		
 		return str;
