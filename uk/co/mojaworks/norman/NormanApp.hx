@@ -39,7 +39,6 @@ class NormanApp extends Application
 		Systems.init( );
 		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		Systems.renderer.init( window.renderer.context );
-		Systems.view.init();
 				
 		initApp();
 				
@@ -74,8 +73,6 @@ class NormanApp extends Application
 		super.onWindowResize( window, width, height );
 		
 		Systems.viewport.resize( width, height );
-		Systems.view.resize();
-		
 		Systems.director.resize();
 		
 	}
@@ -90,7 +87,7 @@ class NormanApp extends Application
 		
 		updateApp( seconds );
 		
-		Systems.renderer.render( Systems.view.root );
+		Systems.renderer.render( Systems.director.root );
 		
 	}
 	

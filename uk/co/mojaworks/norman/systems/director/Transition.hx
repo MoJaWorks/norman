@@ -14,13 +14,13 @@ class Transition
 	{
 	}
 	
-	public function transition( to : Screen, from : Screen = null, delay : Float = 0, callback : Void->Void = null ) : Void {
+	public function transition( to : Screen, from : Array<Screen> = null, delay : Float = 0, callback : Void->Void = null ) : Void {
 		
 		// Override this
 		Systems.scripting.run( new Sequence([
 			new Delay( delay ),
 			new Call( function() {
-				if ( from != null ) from.hide();
+				for ( screen in from ) screen.hide();
 				to.show();
 				if ( callback != null ) callback();
 			})

@@ -50,6 +50,7 @@ class RenderSprite extends Sprite
 		}
 		
 		_textureArray[0] = Systems.renderer.createTexture( "@norman/renderSprite/" + id, width, height, 0 );
+		_textureArray[0].isRenderTexture = true;
 	}
 	
 	override public function preRender(canvas:Canvas):Void 

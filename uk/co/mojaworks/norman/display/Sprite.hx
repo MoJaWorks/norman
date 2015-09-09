@@ -25,6 +25,8 @@ class Sprite
 	public var height( get, null ) : Float = 0;	
 	
 	public var visible( default, default ) : Bool = true;
+	public var activeSelf( default, default ) : Bool = true;
+	public var activeInHeirarchy( get, never ) : Bool;
 	
 	public var anchorX( get, set ) : Float;
 	public var anchorY( get, set ) : Float;
@@ -113,7 +115,7 @@ class Sprite
 	public function postRender( canvas : Canvas ) : Void {
 		// Override
 	}
-	
+		
 	public function destroy() : Void {
 		
 		if ( parent != null ) parent.removeChild( this );
@@ -154,6 +156,14 @@ class Sprite
 	public function set_parent( parent : Sprite ) : Sprite {
 		this.parent = parent;
 		return parent;
+	}
+	
+	private function get_activeInHeirarchy( ) : Bool {
+		if ( parent != null ) {
+			return activeSelf && parent.activeInHeirarchy;
+		}else {
+			return activeSelf;
+		}
 	}
 	
 	/**

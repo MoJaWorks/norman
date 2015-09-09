@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.director;
+import uk.co.mojaworks.norman.display.Sprite;
 
 /**
  * ...
@@ -7,53 +8,65 @@ package uk.co.mojaworks.norman.systems.director;
 class Director
 {
 
-	var _currentScreen : Screen = null;
-	var _currentTransition : Transition = null;
+	public var root : Sprite;
+	public var sprites : Map<String,Sprite>;
 	
-	var _screens : Map<String,Screen>;
 	var displayStack : Array<Screen>;
 	
 	public function new() 
 	{
-		_screens = new Map<String,Screen>();
+		sprites = new Map<String,Sprite>();
+		displayStack = [];
+		root = new Sprite();
 	}
 	
-	public function addScreen( screen : Screen, id : String ) : Void {
-		_screens.set( id, screen );
-		screen.active = false;
-		screen.visible = false;
-		screen.enabled = false;
-	}
-	
-	public function removeScreen( id : String ) : Void {
-		_screens.remove( id );
-	}
-	
-	public function getScreen( id : String ) : Screen {
-		return _screens.get(id);
-	}
-	
-	
-	public function moveToScreen( id : String, transition : Transition = null, delay : Float = 0 ) : Void {
-		
-		var screen : Screen = _screens.get( id );
+	public function moveToScreen( screen : Screen, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( screen, _currentScreen, delay );
+		transition.transition( screen, displayStack, delay );
 		
-		_currentScreen = screen;
-		_currentTransition = transition; 
+		displayStack = [];
+		displayStack.push( screen );
+		
+	}
+	
+	public function addScreen( screen : Screen, transition : Transition = null, delay : Float = 0 ) : Void {
+		
+		if ( transition == null ) transition = new Transition();
+		transition.transition( screen, null, delay );
+		
+		displayStack.push( screen );
 	}
 	
 	public function update( seconds : Float ) : Void 
 	{
-		if ( _currentScreen != null ) _currentScreen.update( seconds );
+		for ( screen in displayStack ) {
+			screen.update( seconds );
+		}
 	}
 	
 	public function resize() : Void {
-		for ( screen in _screens ) {
+		
+		root.scaleX = Systems.viewport.scale;
+		root.scaleY = Systems.viewport.scale;
+		root.x = Systems.viewport.marginLeft * Systems.viewport.scale;
+		root.y = Systems.viewport.marginTop * Systems.viewport.scale;
+		
+		for ( screen in displayStack ) {
 			screen.resize();
 		}
+	}
+	
+	public function registerSprite( sprite : Sprite, id : String ) : Void {
+		sprites.set( id, sprite );
+	}
+	
+	public function getSpriteWithID( id : String ) : Sprite {
+		return sprites.get( id );
+	}
+		
+	public function removeSprite( id : String ) : Void {
+		sprites.remove( id );
 	}
 		
 }

@@ -71,6 +71,7 @@ class MaskedSprite extends Sprite
 		
 		var rect : Rectangle = data.getRectFor( subTextureId );
 		_textures[0] = Systems.renderer.createTexture( "@norman/maskedSprite/" + id, Std.int(rect.width), Std.int(rect.height), 0 );
+		_textures[0].isRenderTexture = true;
 		
 		_textures[1] = data;
 		_maskSubTextureId = subTextureId;
