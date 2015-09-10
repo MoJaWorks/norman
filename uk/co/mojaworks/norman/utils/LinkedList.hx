@@ -159,6 +159,24 @@ class LinkedList<T>
 		
 	}
 	
+	public function move( posFrom : Int, posTo : Int ) : Bool {
+		
+		if ( posFrom == posTo ) return true;
+		
+		var from : T = get( posFrom );
+		var to : LinkedListItem<T> = getItem( posTo );
+		
+		removeAt( posFrom );
+		if ( posFrom < posTo ) {
+			insertAfterItem( from, to );
+		}else {
+			insertAfterItem( from, to );
+		}
+		
+		return true;
+		
+	}
+	
 	/**
 	 * Returns true if the item was found and removed
 	 * @param	item
@@ -179,6 +197,10 @@ class LinkedList<T>
 		
 		return false;
 		
+	}
+	
+	inline public function removeAt( index : Int ) : Bool {
+		return remove( get( index ) );
 	}
 	
 	public function clear() 
@@ -257,6 +279,17 @@ class LinkedList<T>
 	}
 	
 	public function get( key:Int ) : T {
+		var item = getItem(key);
+		
+		if ( item != null ) {
+			return item.item;
+		}else {
+			return null;
+		}
+		
+	}
+	
+	public function getItem( key:Int ) : LinkedListItem<T> {
 		
 		var i : Int = 0;
 		var val : LinkedListItem<T> = first;
@@ -266,7 +299,7 @@ class LinkedList<T>
 			val = val.next;
 		}
 		
-		return val.item;
+		return val;
 	}
 	
 }

@@ -20,7 +20,7 @@ class Transition
 		Systems.scripting.run( new Sequence([
 			new Delay( delay ),
 			new Call( function() {
-				for ( screen in from ) screen.hide();
+				for ( screen in from ) screen.hideAndDestroy();
 				to.show();
 				if ( callback != null ) callback();
 			})

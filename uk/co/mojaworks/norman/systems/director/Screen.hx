@@ -78,4 +78,11 @@ class Screen extends Sprite
 		return this.enabled = bool;
 	}
 	
+	public function hideAndDestroy() : Void {
+		
+		enabled = false;
+		destroy();
+		
+	}
+	
 }

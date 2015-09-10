@@ -14,6 +14,7 @@ class Sprite
 	
 	public static var autoId( default, null ) : Int = 0;
 	public var id( default, null ) : Int;
+	public var name( default, default ) : String;
 	
 	public var alpha( default, default ) : Float = 1;
 	public var finalAlpha( get, never ) : Float;
@@ -84,6 +85,7 @@ class Sprite
 		_inverseWorldMatrix = new Matrix3();
 		
 		id = autoId++;
+		name = "" + id;
 	}
 	
 	private function get_width() : Float {
@@ -163,6 +165,18 @@ class Sprite
 			return activeSelf && parent.activeInHeirarchy;
 		}else {
 			return activeSelf;
+		}
+	}
+	
+	public function setChildIndex( index : Int ) : Void {
+		if ( parent != null ) {
+			
+			// Make sure these are sane values
+			// Negative values will loop
+			if ( index >= parent.children.length ) index = parent.children.length - 1;
+			while ( index < 0 ) index = parent.children.length + index;
+			
+			parent.children.move( parent.children.indexOf( this ), index );
 		}
 	}
 	
