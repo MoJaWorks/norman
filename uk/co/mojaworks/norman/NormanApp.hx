@@ -22,6 +22,7 @@ class NormanApp extends Application
 	// Running vars
 	var view : Sprite;
 	var startupComplete : Bool = false;
+	var _windowHasBeenDeactivated : Bool = false;
 	
 	public function new( config : NormanConfigData ) 
 	{
@@ -80,6 +81,12 @@ class NormanApp extends Application
 	override public function update( deltaTime : Int ) : Void 
 	{
 		super.update( deltaTime );
+		
+		// Ignore the first update after activation as its time delta is huge
+		if ( _windowHasBeenDeactivated ) {
+			_windowHasBeenDeactivated = false;
+			return;
+		}
 			
 		var seconds : Float = deltaTime * 0.001;
 		Systems.director.update( seconds );
@@ -123,6 +130,12 @@ class NormanApp extends Application
 	{
 		super.onRenderContextLost( renderer );
 		trace("OnContextLost");
+	}
+	
+	override public function onWindowDeactivate(window:Window):Void 
+	{
+		super.onWindowDeactivate(window);
+		_windowHasBeenDeactivated = true;
 	}
 		
 }
