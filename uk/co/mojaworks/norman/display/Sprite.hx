@@ -37,6 +37,7 @@ class Sprite
 	
 	public var scaleX( get, set ) : Float;
 	public var scaleY( get, set ) : Float;
+	public var scale( never, set ) : Float;
 	
 	public var rotation( get, set ) : Float;
 	public var rotationDegrees( get, set ) : Float;
@@ -243,6 +244,7 @@ class Sprite
 	private function set_y( val : Float ) : Float { _y = val; invalidateMatrices( true, true ); return val; } 
 	private function set_scaleX( val : Float ) : Float { _scaleX = val; invalidateMatrices( true, true ); return val; } 
 	private function set_scaleY( val : Float ) : Float { _scaleY = val; invalidateMatrices( true, true ); return val; } 
+	private function set_scale( val : Float ) : Float { _scaleY = val; _scaleX = val; invalidateMatrices( true, true ); return val; } 
 	private function set_rotation( val : Float ) : Float { _rotation = val; invalidateMatrices( true, true ); return val; } 
 	private function set_rotationDegrees( val : Float ) : Float { _rotation = val * MathUtils.DEG2RAD; invalidateMatrices( true, true ); return val; } 
 	
