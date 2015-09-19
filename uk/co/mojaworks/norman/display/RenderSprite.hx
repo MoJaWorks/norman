@@ -71,4 +71,14 @@ class RenderSprite extends Sprite
 	inline private function get_target() : TextureData {
 		return _textureArray[0];
 	}
+	
+	override function get_width():Float 
+	{
+		return _textureArray[0].width;
+	}
+	
+	override function get_height():Float 
+	{
+		return _textureArray[0].height;
+	}
 }
