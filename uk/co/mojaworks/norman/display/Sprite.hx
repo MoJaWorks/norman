@@ -22,8 +22,8 @@ class Sprite
 	public var parent( default, set ) : Sprite;
 	public var children( default, null ) : LinkedList<Sprite>;
 	
-	public var width( get, null ) : Float = 0;
-	public var height( get, null ) : Float = 0;	
+	public var width( get, never ) : Float;
+	public var height( get, never ) : Float;	
 	
 	public var visible( default, default ) : Bool = true;
 	public var activeSelf( default, default ) : Bool = true;
@@ -66,6 +66,8 @@ class Sprite
 	var _worldMatrix : Matrix3;
 	var _inverseWorldMatrix : Matrix3;
 	var _renderMatrix : Matrix3;
+	var _width : Float = 0;
+	var _height : Float = 0;
 	
 	// Render flags
 	public var shouldRenderSelf : Bool = false;
@@ -91,12 +93,12 @@ class Sprite
 	
 	private function get_width() : Float {
 		// Override this
-		return this.width;
+		return _width;
 	}
 	
 	private function get_height() : Float {
 		// Override this
-		return this.height;
+		return _height;
 	}
 	
 	private function get_finalAlpha() : Float {
@@ -247,7 +249,7 @@ class Sprite
 	private function set_scale( val : Float ) : Float { _scaleY = val; _scaleX = val; invalidateMatrices( true, true ); return val; } 
 	private function set_rotation( val : Float ) : Float { _rotation = val; invalidateMatrices( true, true ); return val; } 
 	private function set_rotationDegrees( val : Float ) : Float { _rotation = val * MathUtils.DEG2RAD; invalidateMatrices( true, true ); return val; } 
-	
+
 	private function get_rotationDegrees( ) : Float { return _rotation * MathUtils.RAD2DEG; } 
 	private function get_anchorX() : Float { return _anchorX; };
 	private function get_anchorY() : Float { return _anchorY; };

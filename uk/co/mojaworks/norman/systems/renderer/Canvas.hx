@@ -169,6 +169,31 @@ class Canvas
 		
 	}
 	
+	public function buildShapeVertexData( points : Array<Vector2>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, useArray : Array<Float> = null ) : Array<Float> {
+				
+		var vertexData : Array<Float>;
+		if ( useArray != null ) vertexData = useArray;
+		else {
+			vertexData = [for ( i in 0...(points.length * 6) ) 0];
+		}
+		
+		// Make points global with transform
+		for ( i in 0...points.length ) {
+			var transformed = transform.transformVector2( points[i] );
+			vertexData[(i * 6) + 0] = transformed.x;
+			vertexData[(i * 6) + 1] = transformed.y;
+			vertexData[(i * 6) + 2] = (r / 255.0) * a;
+			vertexData[(i * 6) + 3] = (g / 255.0) * a;
+			vertexData[(i * 6) + 4] = (b / 255.0) * a;
+			vertexData[(i * 6) + 5] = a;
+		}	
+		
+		return vertexData;
+		
+	}
+	
+	
+	
 	public function buildTexturedQuadVertexData( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
 		var points : Array<Vector2> = [

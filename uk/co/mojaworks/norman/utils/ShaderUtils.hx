@@ -45,6 +45,7 @@ class ShaderUtils
 		return fragmentSource;
 	}
 	
+	
 	/**
 	 * Image shader
 	 * @return

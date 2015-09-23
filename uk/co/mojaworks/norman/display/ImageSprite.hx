@@ -77,8 +77,8 @@ class ImageSprite extends Sprite
 		imageRect = texture.getRectFor( subTextureId );
 		imageUVRect = texture.getUVFor( subTextureId );
 		
-		this.width = imageRect.width;
-		this.height = imageRect.height;
+		_width = imageRect.width;
+		_height = imageRect.height;
 		
 		return this.subTextureId;
 	}

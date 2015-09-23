@@ -13,12 +13,12 @@ class SimpleCommand implements ICommand
 	{
 	}
 	
-	public function execute( data : MessageData ) : Void 
+	public function execute( messageData : MessageData ) : Void 
 	{
-		action( data );
+		action( messageData );
 	}
 	
-	private function action( data : MessageData ) : Void {
+	private function action( messageData : MessageData ) : Void {
 		// Override this
 	}
 	
