@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.Image;
 import lime.graphics.RenderContext;
+import uk.co.mojaworks.norman.display.RenderSprite;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
@@ -73,7 +74,7 @@ class Renderer
 		canvas.end();
 	}
 	
-	private function renderLevel( sprite : Sprite ) : Void {
+	public function renderLevel( sprite : Sprite ) : Void {
 		
 		//trace("Rendering level starting at", sprite.transform.x, sprite.transform.y );
 		
@@ -90,6 +91,7 @@ class Renderer
 		
 		if ( sprite.shouldRenderSelf ) sprite.postRender( canvas );
 	}
+	
 	
 	//////////////
 	///  TEXTURES

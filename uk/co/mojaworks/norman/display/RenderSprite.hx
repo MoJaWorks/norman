@@ -32,6 +32,7 @@ class RenderSprite extends Sprite
 	
 	public var target( get, null ) : TextureData;
 	var _textureArray : Array<TextureData>;
+	var _renderToCanvas : Bool = true;
 	
 	
 	public function new( width : Int, height : Int ) 
@@ -65,7 +66,9 @@ class RenderSprite extends Sprite
 		
 		super.postRender(canvas);
 		canvas.popRenderTarget();
-		canvas.draw( _textureArray, RenderSprite.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, renderMatrix, 255, 255, 255, finalAlpha ), Canvas.QUAD_INDICES );
+		if ( _renderToCanvas ) {
+			canvas.draw( _textureArray, RenderSprite.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, renderMatrix, 255, 255, 255, finalAlpha ), Canvas.QUAD_INDICES );
+		}
 	}
 	
 	inline private function get_target() : TextureData {
@@ -80,5 +83,15 @@ class RenderSprite extends Sprite
 	override function get_height():Float 
 	{
 		return _textureArray[0].height;
+	}
+	
+	/**
+	 * Forces the sprite to render its children to a texture. Can be used to render textures for post-processing before displaying.
+	 */
+	public function renderTexture() : Void {
+		
+		_renderToCanvas = false;
+		Systems.renderer.renderLevel( this );
+		_renderToCanvas = true;
 	}
 }
