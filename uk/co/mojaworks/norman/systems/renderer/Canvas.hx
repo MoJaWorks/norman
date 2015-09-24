@@ -50,8 +50,8 @@ class Canvas
 	public function init() : Void {
 		_batch = new RenderBatch();
 		_frameBufferStack = [];
-		_cachedQuadVertexData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-		_cachedTexturedQuadVertexData = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] ;
+		_cachedQuadVertexData = [for (i in 0...24) 0 ];
+		_cachedTexturedQuadVertexData = [for (i in 0...32) 0];
 		
 	}
 	
