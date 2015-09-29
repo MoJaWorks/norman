@@ -37,7 +37,6 @@ class FillSprite extends Sprite
 	}
 	
 	public var color( default, default ) : Color;
-	public var shader( default, default ) : ShaderData; 
 	public var shape( get, set ) : FillSpriteShape;
 	
 	private var _shape : FillSpriteShape;	
