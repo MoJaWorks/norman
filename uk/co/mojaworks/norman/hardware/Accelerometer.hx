@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.input;
+package uk.co.mojaworks.norman.hardware;
 
 /**
  * ...

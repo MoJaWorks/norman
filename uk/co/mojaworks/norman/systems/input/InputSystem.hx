@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.systems.input;
 import haxe.Timer;
 import lime.math.Vector2;
-import uk.co.mojaworks.norman.input.Accelerometer;
+import uk.co.mojaworks.norman.hardware.Accelerometer;
 
 /**
  * ...
