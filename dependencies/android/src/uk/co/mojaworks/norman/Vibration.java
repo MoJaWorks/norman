@@ -127,17 +127,17 @@ public class Vibration extends Extension {
 	
 	public static void vibrate( double[] seconds,  int repeat ) {
 		
-		Log.v("trace", "Vibrate with pattern length " + seconds.length );
-		
 		long[] pattern = new long[ seconds.length ];
 		for ( int i = 0; i < seconds.length; i++ ) {
 			pattern[i] = Math.round(seconds[i] * 1000);
 		}
 		
-		Log.v("trace", "Vibrate with time " + pattern[0] );
-		
 		mVibrator.vibrate( pattern, repeat );
 		
+	}
+	
+	public static void stop() {
+		mVibrator.cancel();
 	}
 	
 }

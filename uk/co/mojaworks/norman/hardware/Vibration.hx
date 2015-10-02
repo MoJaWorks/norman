@@ -9,6 +9,7 @@ class Vibration
 
 	// External methods
 	var vibrateMethod : Dynamic;
+	var stopMethod : Dynamic;
 	
 	public static var isSupported : Bool = false;
 		
@@ -21,6 +22,7 @@ class Vibration
 		
 			if ( isSupported ) {
 				vibrateMethod = lime.system.JNI.createStaticMethod( "uk/co/mojaworks/norman/Vibration", "vibrate", "([DI)V" );
+				stopMethod = lime.system.JNI.createStaticMethod( "uk/co/mojaworks/norman/Vibration", "stop", "()V" );
 			}
 		#end
 				
@@ -32,6 +34,16 @@ class Vibration
 		if ( isSupported ) {
 			#if android
 				lime.system.JNI.callStatic( vibrateMethod, [seconds, repeat] );
+			#end
+		}
+		
+	}
+	
+	public  function stop( ) : Void {
+		
+		if ( isSupported ) {
+			#if android
+				lime.system.JNI.callStatic( stopMethod, [] );
 			#end
 		}
 		
