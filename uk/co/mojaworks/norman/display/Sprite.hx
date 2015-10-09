@@ -1,7 +1,10 @@
 package uk.co.mojaworks.norman.display;
 import lime.math.Matrix3;
 import lime.math.Vector2;
+import lime.system.System;
+import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.utils.LinkedList;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
@@ -21,6 +24,7 @@ class Sprite
 	
 	public var parent( default, set ) : Sprite;
 	public var children( default, null ) : LinkedList<Sprite>;
+	public var displayOrder( default, null ) : Int;
 	
 	public var width( get, never ) : Float;
 	public var height( get, never ) : Float;	
@@ -151,11 +155,26 @@ class Sprite
 		
 		sprite.parent = this;
 		children.push( sprite );
+		
+		Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
+	}
+	
+	public function updateDisplayOrder( i : Int ) : Int {
+			
+		this.displayOrder = i++;
+		
+		for ( child in children ) {
+			i = child.updateDisplayOrder(i);
+		}
+		
+		return i;
 	}
 	
 	public function removeChild( sprite : Sprite ) : Void {
 		sprite.parent = null;
 		children.remove( sprite );
+		
+		Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
 	}
 	
 	public function set_parent( parent : Sprite ) : Sprite {
@@ -180,6 +199,8 @@ class Sprite
 			while ( index < 0 ) index = parent.children.length + index;
 			
 			parent.children.move( parent.children.indexOf( this ), index );
+			
+			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
 		}
 	}
 	

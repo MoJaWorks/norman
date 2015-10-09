@@ -5,7 +5,9 @@ import lime.app.Application;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
 import lime.ui.Window;
+import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
+import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.Systems;
 
@@ -41,6 +43,9 @@ class NormanApp extends Application
 		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		Systems.renderer.init( window.renderer.context );
 				
+		//Custom commands
+		Systems.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
+		
 		initApp();
 				
 	}

@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.ui;
+package uk.co.mojaworks.norman.display.ui;
 
 import lime.math.Vector2;
 import msignal.Signal.Signal0;
@@ -6,6 +6,7 @@ import uk.co.mojaworks.norman.display.ImageSprite;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.Systems;
+import uk.co.mojaworks.norman.systems.ui.IUISprite;
 import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
@@ -13,25 +14,39 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  * ...
  * @author Simon
  */
-class SimpleButton extends ImageSprite
+class SimpleButton extends UISprite implements IUISprite
 {
+	//var _mouseDown : Bool = false;
+	//var _mouseOver : Bool = false;
+	//var _mouseDownElsewhere : Bool = false;
 	
-	var _mouseDown : Bool = false;
-	var _mouseOver : Bool = false;
-	var _mouseDownElsewhere : Bool = false;
+	//public static var updateNum : Int = 0;
 	
-	public static var updateNum : Int = 0;
+	//public var clicked : Signal0;
+	//public var enabled : Bool;
 	
-	public var clicked : Signal0;
-	public var enabled : Bool;
+	var image : ImageSprite;
 	
 	public function new( texture : TextureData ) 
 	{
-		super( texture );
-		clicked = new Signal0();
+		super();
+		
+		image = new ImageSprite( texture );
+		addChild( image );
+		
+		uiComponent.mouseDown.add( onMouseDown );
+		uiComponent.mouseUp.add( onMouseUp );
+		uiComponent.mouseOver.add( onMouseOver );
+		uiComponent.mouseOut.add( onMouseOut );
+		//clicked = new Signal0();
 	}
 	
-	public function update( seconds : Float ) : Void {
+	override public function getUITargetSprite():Sprite 
+	{
+		return image;
+	}
+	
+	/*public function update( seconds : Float ) : Void {
 		
 		var wasMouseDown : Bool = _mouseDown;
 		var wasMouseOver : Bool = _mouseOver;
@@ -102,7 +117,7 @@ class SimpleButton extends ImageSprite
 			
 		}
 		
-	}
+	}*/
 	
 	private function onMouseDown() : Void {
 		
@@ -120,7 +135,17 @@ class SimpleButton extends ImageSprite
 		
 	}
 	
-	private function onMouseClick() : Void {
-		if ( enabled ) clicked.dispatch();
+	override function get_width():Float 
+	{
+		return image.width;
 	}
+	
+	override function get_height():Float 
+	{
+		return image.height;
+	}
+	
+	/*private function onMouseClick() : Void {
+		if ( enabled ) clicked.dispatch();
+	}*/
 }

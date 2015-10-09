@@ -1,4 +1,6 @@
 package uk.co.mojaworks.norman.systems.director;
+import uk.co.mojaworks.hopper.data.Messages;
+import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.display.Sprite;
 
 /**
@@ -135,6 +137,11 @@ class Director
 		for ( screen in _displayStack ) {
 			screen.resize();
 		}
+	}
+	
+	public function displayListChanged() 
+	{
+		root.updateDisplayOrder(0);
 	}
 	
 }
