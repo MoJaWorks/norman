@@ -136,26 +136,30 @@ class LinkedList<T>
 		}
 		
 		if ( target1 != null && target2 != null ) {
-			
-			if ( first == target1 ) first == target2;
-			else if ( first == target2 ) first == target1;
-			
-			if ( last == target1 ) last == target2;
-			else if ( last == target2 ) last = target1;
-			
-			var t1Prev : LinkedListItem<T> = target1.prev;
-			var t1Next : LinkedListItem<T> = target1.next;
-			
-			target1.next = target2.next;
-			target1.prev = target2.prev;
-			
-			target2.next = t1Next;
-			target2.prev = t1Prev;
-			
+			swapItems( target1, target2 );
 			return true;
 		}
 		
 		return false;
+		
+	}
+	
+	public function swapItems( item1 : LinkedListItem<T>, item2 : LinkedListItem<T> ) {
+		
+		if ( first == item1 ) first == item2;
+		else if ( first == item2 ) first == item1;
+		
+		if ( last == item1 ) last == item2;
+		else if ( last == item2 ) last = item1;
+		
+		var t1Prev : LinkedListItem<T> = item1.prev;
+		var t1Next : LinkedListItem<T> = item1.next;
+		
+		item1.next = item2.next;
+		item1.prev = item2.prev;
+		
+		item2.next = t1Next;
+		item2.prev = t1Prev;
 		
 	}
 	
@@ -300,6 +304,33 @@ class LinkedList<T>
 		}
 		
 		return val;
+	}
+	
+	/**
+	 * Sorts the list in place
+	 * @param	func
+	 */
+	public function sort( func : T->T->Int ) : Void {
+		
+		var next : LinkedListItem<T>;
+		
+		for ( i in 0...length - 1 ) {
+			
+			next = first;
+			
+			while ( next != null && next.next != null ) {
+
+				if ( func( next.item, next.next.item ) == 1 ) {
+					swapItems( next, next.next );
+				}else {
+					next = next.next;
+				}
+				
+			}
+			
+			
+		}
+		
 	}
 	
 }

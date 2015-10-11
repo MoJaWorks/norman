@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.ui;
+import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -25,11 +26,34 @@ class UISystem
 	
 	public function update( sprite : IUISprite ) : Void {
 		
+		//Bool hasHit = false;
+		
+		//for ( sprite in _sprites ) {
+			
+			//sprite.getUIComponent().wasMouseDownLastFrame = sprite.getUIComponent().mouseDown();
+			//if ( sprite.getUITargetSprite().hitTest( 
+			
+		//}
+		
+		
 	}
 	
 	public function displayListChanged() : Void {
 		
-		// Sort the objects		
+		// Sort the objects	descending	
+		
+		var aSpr : Sprite;
+		var bSpr : Sprite;
+		
+		_sprites.sort( function( a, b ) {
+			
+			aSpr = cast a;
+			bSpr = cast b;
+			
+			if ( aSpr.displayOrder < bSpr.displayOrder ) return 1;
+			else return -1;
+			
+		});
 	}
 		
 }
