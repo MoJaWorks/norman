@@ -12,8 +12,6 @@ import uk.co.mojaworks.norman.systems.ui.IUISprite;
 class UIComponent
 {
 	
-	public static var ID : String = "UIComponent";
-
 	public var isMouseDown : Bool = false;
 	public var wasMouseDownLastFrame : Bool = false;
 	public var wasMouseDownElsewhere : Bool = false;
@@ -29,7 +27,9 @@ class UIComponent
 	public var mouseDown : Signal0;
 	public var mouseUp : Signal0;
 	
-	public function new() 
+	public var sprite( default, null ) : Sprite;
+	
+	public function new( sprite : Sprite ) 
 	{
 		clicked = new Signal0();
 		mouseOver = new Signal0();

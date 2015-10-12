@@ -17,7 +17,7 @@ class UISprite extends Sprite implements IUISprite
 	public function new() 
 	{
 		super();
-		uiComponent = new UIComponent();
+		uiComponent = new UIComponent( this );
 		Systems.ui.addUISprite( this );
 	}
 	

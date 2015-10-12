@@ -21,7 +21,10 @@ class DisplayListChangedCommand extends SimpleCommand
 	{
 		super.action(messageData);
 		
+		trace("director display list changed");
 		Systems.director.displayListChanged();
+		
+		trace("ui display list changed");
 		Systems.ui.displayListChanged();
 	}
 	

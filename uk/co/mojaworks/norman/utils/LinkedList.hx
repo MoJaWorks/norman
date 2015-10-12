@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.utils;
+import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 
 /**
  * ...
@@ -145,15 +146,21 @@ class LinkedList<T>
 	}
 	
 	public function swapItems( item1 : LinkedListItem<T>, item2 : LinkedListItem<T> ) {
+			
+		if ( first == item1 ) first = item2;
+		else if ( first == item2 ) first = item1;
 		
-		if ( first == item1 ) first == item2;
-		else if ( first == item2 ) first == item1;
-		
-		if ( last == item1 ) last == item2;
+		if ( last == item1 ) last = item2;
 		else if ( last == item2 ) last = item1;
 		
 		var t1Prev : LinkedListItem<T> = item1.prev;
 		var t1Next : LinkedListItem<T> = item1.next;
+		
+		if ( item2.next != null ) item2.next.prev = item1;
+		if ( item2.prev != null ) item2.prev.next = item1;
+		
+		if ( item1.next != null ) item1.next.prev = item2;
+		if ( item1.prev != null ) item1.prev.next = item2;
 		
 		item1.next = item2.next;
 		item1.prev = item2.prev;
@@ -257,8 +264,8 @@ class LinkedList<T>
 		link.prev = after;
 		link.next = after.next;
 		
-		link.next.prev = link;
-		link.prev.next = link;
+		if ( link.next != null ) link.next.prev = link;
+		if ( link.prev != null ) link.prev.next = link;
 		
 		if ( after == last ) last = link;
 		
@@ -273,8 +280,8 @@ class LinkedList<T>
 		link.next = before;
 		link.prev = before.prev;
 		
-		link.next.prev = link;
-		link.prev.next = link;
+		if ( link.next != null ) link.next.prev = link;
+		if ( link.prev != null ) link.prev.next = link;
 		
 		if ( before == first ) first = link;
 		
@@ -313,19 +320,28 @@ class LinkedList<T>
 	public function sort( func : T->T->Int ) : Void {
 		
 		var next : LinkedListItem<T>;
+		var changed : Bool = false;
 		
-		for ( i in 0...length - 1 ) {
+		for ( i in 0...(length - 1) ) {
 			
 			next = first;
+			changed = false;
 			
 			while ( next != null && next.next != null ) {
 
 				if ( func( next.item, next.next.item ) == 1 ) {
 					swapItems( next, next.next );
+					changed = true;
 				}else {
 					next = next.next;
 				}
 				
+				trace("Next", i, changed );
+				
+			}
+			
+			if ( !changed ) {
+				break;
 			}
 			
 			

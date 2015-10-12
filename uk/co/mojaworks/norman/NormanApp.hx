@@ -96,6 +96,7 @@ class NormanApp extends Application
 		var seconds : Float = deltaTime * 0.001;
 		Systems.director.update( seconds );
 		Systems.scripting.update( seconds );
+		Systems.ui.update( seconds );
 		
 		updateApp( seconds );
 		

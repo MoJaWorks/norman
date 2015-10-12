@@ -120,19 +120,19 @@ class SimpleButton extends UISprite implements IUISprite
 	}*/
 	
 	private function onMouseDown() : Void {
-		
+		trace("On button down");
 	}
 	
 	private function onMouseOver() : Void {
-		
+		trace("On button over");
 	}
 	
 	private function onMouseOut() : Void {
-		
+		trace("On button out");
 	}
 	
 	private function onMouseUp() : Void {
-		
+		trace("On button up");
 	}
 	
 	override function get_width():Float 
@@ -144,7 +144,7 @@ class SimpleButton extends UISprite implements IUISprite
 	{
 		return image.height;
 	}
-	
+		
 	/*private function onMouseClick() : Void {
 		if ( enabled ) clicked.dispatch();
 	}*/

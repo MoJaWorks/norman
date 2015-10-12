@@ -22,9 +22,9 @@ class Sprite
 	public var alpha( default, default ) : Float = 1;
 	public var finalAlpha( get, never ) : Float;
 	
-	public var parent( default, set ) : Sprite;
+	public var parent( default, null ) : Sprite;
 	public var children( default, null ) : LinkedList<Sprite>;
-	public var displayOrder( default, null ) : Int;
+	public var displayOrder( default, null ) : Int = 0;
 	
 	public var width( get, never ) : Float;
 	public var height( get, never ) : Float;	
@@ -177,11 +177,6 @@ class Sprite
 		Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
 	}
 	
-	public function set_parent( parent : Sprite ) : Sprite {
-		this.parent = parent;
-		return parent;
-	}
-	
 	private function get_activeInHeirarchy( ) : Bool {
 		if ( parent != null ) {
 			return activeSelf && parent.activeInHeirarchy;
@@ -305,6 +300,20 @@ class Sprite
 	public function localToGlobal(p:Vector2) : Vector2
 	{
 		return worldMatrix.transformVector2(p);
+	}
+	
+	
+	/**
+	 * Collision
+	 */
+	
+	public function hitTest( point : Vector2 ) : Bool {
+		
+		var trans : Vector2 = globalToLocal( point );
+		
+		if ( trans.x > 0 && trans.x < width && trans.y > 0 && trans.y < height ) return true;
+		else return false;
+		
 	}
 	
 }
