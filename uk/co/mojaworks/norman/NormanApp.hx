@@ -54,7 +54,7 @@ class NormanApp extends Application
 	{
 		
 		onStartupComplete();
-		onWindowResize( window, window.width, window.height );
+		onWindowResize( window, Std.int(window.width * window.scale), Std.int(window.height * window.scale) );
 		
 		return super.exec();
 	}
@@ -77,8 +77,10 @@ class NormanApp extends Application
 	{
 		
 		super.onWindowResize( window, width, height );
+
+		trace("Window size: ", width, height, window.scale );
 		
-		Systems.viewport.resize( width, height );
+		Systems.viewport.resize( width * window.scale , height * window.scale );
 		Systems.director.resize();
 		
 	}
@@ -111,19 +113,19 @@ class NormanApp extends Application
 	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseDown( window, x, y, button);
-		Systems.input.onMouseDown( x, y );
+		Systems.input.onMouseDown( x * window.scale, y * window.scale );
 	}
 	
 	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseUp( window, x, y, button);
-		Systems.input.onMouseUp( x, y );
+		Systems.input.onMouseUp( x * window.scale, y * window.scale );
 	}
 	
 	override public function onMouseMove( window : Window, x : Float, y : Float ) : Void 
 	{
 		super.onMouseMove( window, x, y );
-		Systems.input.onMouseMove( x, y );
+		Systems.input.onMouseMove( x * window.scale, y * window.scale );
 	}
 	
 	override public function onRenderContextRestored( renderer : Renderer, context:RenderContext ):Void 

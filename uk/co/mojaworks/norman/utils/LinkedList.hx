@@ -29,6 +29,10 @@ class LinkedListIterator<T> {
 }
 
 class LinkedListItem<T> {
+
+	public static var autoId : Int = 0;
+
+	public var id : Int = autoId++;
 	public var next : LinkedListItem<T> = null;
 	public var prev : LinkedListItem<T> = null;
 	public var item : T;
@@ -41,6 +45,10 @@ class LinkedListItem<T> {
 		next = null;
 		prev = null;
 		item = null;
+	}
+
+	public function toString() : String {
+		return "[LinkedListItem " + id + "]";
 	}
 }
  
@@ -147,6 +155,9 @@ class LinkedList<T>
 	
 	public function swapItems( item1 : LinkedListItem<T>, item2 : LinkedListItem<T> ) {
 			
+		trace("Item1", item1, "was next ", item1.next, "previous", item1.prev );
+		trace("Item2", item2, "was next ", item2.next, "previous", item2.prev );
+
 		if ( first == item1 ) first = item2;
 		else if ( first == item2 ) first = item1;
 		
@@ -156,17 +167,37 @@ class LinkedList<T>
 		var t1Prev : LinkedListItem<T> = item1.prev;
 		var t1Next : LinkedListItem<T> = item1.next;
 		
-		if ( item2.next != null ) item2.next.prev = item1;
-		if ( item2.prev != null ) item2.prev.next = item1;
+		if ( item2.next != null && item2.next != item1) item2.next.prev = item1;
+		if ( item2.prev != null && item2.prev != item1) item2.prev.next = item1;
 		
-		if ( item1.next != null ) item1.next.prev = item2;
-		if ( item1.prev != null ) item1.prev.next = item2;
+		if ( item1.next != null && item1.next != item2) item1.next.prev = item2;
+		if ( item1.prev != null && item1.prev != item2) item1.prev.next = item2;
 		
-		item1.next = item2.next;
-		item1.prev = item2.prev;
-		
-		item2.next = t1Next;
-		item2.prev = t1Prev;
+		if ( item1.next == item2 ) {
+
+			item1.next = item2.next;
+			item1.prev = item2;
+			item2.next = item1;
+			item2.prev = t1Prev;
+
+		}else if ( item2.next == item1 ) {
+
+			item1.next = item2;
+			item1.prev = item2.prev;
+			item2.next = t1Next;
+			item2.prev = item1;
+
+		}else{
+
+			item1.prev = item2.prev;
+			item1.next = item2.next;
+			item2.next = t1Next;
+			item2.prev = t1Prev;
+
+		}
+
+		trace("Item1", item1, "now next ", item1.next, "previous", item1.prev );
+		trace("Item2", item2, "now next ", item2.next, "previous", item2.prev );
 		
 	}
 	
@@ -317,23 +348,25 @@ class LinkedList<T>
 	 * Sorts the list in place
 	 * @param	func
 	 */
-	public function sort( func : T->T->Int ) : Void {
+	public function sort( compare : T->T->Int ) : Void {
 		
-		var next : LinkedListItem<T>;
+		var current : LinkedListItem<T>;
 		var changed : Bool = false;
 		
 		for ( i in 0...(length - 1) ) {
 			
-			next = first;
+			current = first;
 			changed = false;
 			
-			while ( next != null && next.next != null ) {
+			while ( current != null && current.next != null ) {
 
-				if ( func( next.item, next.next.item ) == 1 ) {
-					swapItems( next, next.next );
+				trace( "Looking at", current.id, "and", current.next.id );
+
+				if ( compare( current.item, current.next.item ) == 1 ) {
+					swapItems( current, current.next );
 					changed = true;
 				}else {
-					next = next.next;
+					current = current.next;
 				}
 				
 				trace("Next", i, changed );
