@@ -3,6 +3,7 @@ import lime.math.Matrix3;
 import lime.math.Vector2;
 import lime.system.System;
 import uk.co.mojaworks.norman.data.NormanMessages;
+import uk.co.mojaworks.norman.systems.director.Director.DisplayListAction;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.utils.LinkedList;
@@ -32,6 +33,7 @@ class Sprite
 	public var visible( default, default ) : Bool = true;
 	public var activeSelf( default, default ) : Bool = true;
 	public var activeInHeirarchy( get, never ) : Bool;
+	public var isOnDisplayList( get, never ) : Bool;
 	
 	public var anchorX( get, set ) : Float;
 	public var anchorY( get, set ) : Float;
@@ -125,16 +127,22 @@ class Sprite
 		// Override
 	}
 		
+	public function dispose() : Void {
+		
+	}
+	
 	public function destroy() : Void {
 		
 		if ( parent != null ) parent.removeChild( this );
 		
-		for ( child in children ) {
-			child.destroy();
+		if ( children != null ) {
+			for ( child in children ) {
+				child.destroy();
+			}
+			children.clear();
+			children = null;
 		}
 		
-		children.clear();
-		children = null;
 		parent = null;
 		
 		_worldMatrix = null;
@@ -156,7 +164,9 @@ class Sprite
 		sprite.parent = this;
 		children.push( sprite );
 		
-		Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
+		if ( isOnDisplayList ) {
+			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Added );
+		}
 	}
 	
 	public function updateDisplayOrder( i : Int ) : Int {
@@ -174,7 +184,9 @@ class Sprite
 		sprite.parent = null;
 		children.remove( sprite );
 		
-		Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
+		if ( isOnDisplayList ) {
+			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Removed );
+		}
 	}
 	
 	private function get_activeInHeirarchy( ) : Bool {
@@ -195,8 +207,12 @@ class Sprite
 			
 			parent.children.move( parent.children.indexOf( this ), index );
 			
-			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED );
+			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Swapped );
 		}
+	}
+	
+	public function get_isOnDisplayList() : Bool {
+		return (this == Systems.director.root) || ( parent != null && parent.isOnDisplayList );
 	}
 	
 	/**

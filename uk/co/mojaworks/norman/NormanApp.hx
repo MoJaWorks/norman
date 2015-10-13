@@ -113,13 +113,15 @@ class NormanApp extends Application
 	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseDown( window, x, y, button);
-		Systems.input.onMouseDown( x * window.scale, y * window.scale );
+		trace("MouseDown", button );
+		Systems.input.onMouseDown( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseUp( window, x, y, button);
-		Systems.input.onMouseUp( x * window.scale, y * window.scale );
+		trace("MouseUp", button );
+		Systems.input.onMouseUp( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseMove( window : Window, x : Float, y : Float ) : Void 

@@ -308,6 +308,9 @@ class TextSprite extends Sprite
 	}
 	
 	public function set_text( text : String ) : String {
+		
+		if ( text == null ) text = "";
+		
 		// Make all new lines the same
 		var old_text : String = this.text;
 		this.text = StringTools.replace( text, "\r\n", "\n" );

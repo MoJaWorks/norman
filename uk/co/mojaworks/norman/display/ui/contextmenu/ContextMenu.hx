@@ -1,6 +1,5 @@
 package uk.co.mojaworks.norman.display.ui.contextmenu;
 
-import uk.co.mojaworks.norman.display.ui.contextmenu.ContextMenuData;
 import uk.co.mojaworks.norman.display.Sprite;
 
 /**
@@ -10,14 +9,27 @@ import uk.co.mojaworks.norman.display.Sprite;
 class ContextMenu extends Sprite
 {
 
-	public function new() 
+	var items : Array<ContextMenuItem>;
+	
+	public function new( data : Array<ContextMenuItemData> ) 
 	{
 		super();
 		
+		items = [];
+		
+		for ( itemData in data ) {
+			var item : ContextMenuItem = new ContextMenuItem( itemData );
+			item.y = items.length * 40;
+			item.uiComponent.enabled = true;
+			addChild( item );
+			items.push( item );
+		}
 	}
 	
-	public function build( data : ContextMenuData ) : Void {
-		
+	override public function destroy():Void 
+	{
+		super.destroy();
+		items = null;
 	}
 	
 }

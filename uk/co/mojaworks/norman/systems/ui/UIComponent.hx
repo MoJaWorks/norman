@@ -1,9 +1,9 @@
 package uk.co.mojaworks.norman.systems.ui;
 
 import msignal.Signal.Signal0;
+import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.components.Component;
-import uk.co.mojaworks.norman.systems.ui.IUISprite;
 
 /**
  * ...
@@ -21,24 +21,32 @@ class UIComponent
 	public var enabled : Bool = false;
 	public var isCurrentTarget : Bool = false;
 	
-	public var clicked : Signal0;
-	public var mouseOver : Signal0;
-	public var mouseOut : Signal0;
-	public var mouseDown : Signal0;
-	public var mouseUp : Signal0;
+	public var clicked : Signal1<MouseEvent>;
+	public var mouseOver : Signal1<MouseEvent>;
+	public var mouseOut : Signal1<MouseEvent>;
+	public var mouseDown : Signal1<MouseEvent>;
+	public var mouseUp : Signal1<MouseEvent>;
 	
-	public var sprite( default, null ) : Sprite;
+	public var ownerSprite( default, null ) : Sprite;
+	public var targetSprite( default, null ) : Sprite;
 	
-	public function new( sprite : Sprite ) 
+	public function new( owner : Sprite, target : Sprite ) 
 	{
-		clicked = new Signal0();
-		mouseOver = new Signal0();
-		mouseOut = new Signal0();
-		mouseDown = new Signal0();
-		mouseUp = new Signal0();
+		ownerSprite = owner;
+		targetSprite = target;
+		
+		clicked = new Signal1<MouseEvent>();
+		mouseOver = new Signal1<MouseEvent>();
+		mouseOut = new Signal1<MouseEvent>();
+		mouseDown = new Signal1<MouseEvent>();
+		mouseUp = new Signal1<MouseEvent>();
+		
+		Systems.ui.add( this );
 	}
 	
 	public function destroy() : Void {
+		
+		Systems.ui.remove( this );
 		
 		clicked.removeAll();
 		mouseOver.removeAll();
@@ -50,7 +58,10 @@ class UIComponent
 		mouseOver = null;
 		mouseOut = null;
 		mouseUp = null;
-		mouseDown = null;		
+		mouseDown = null;	
+		
+		targetSprite = null;
+		ownerSprite = null;
 		
 	}
 	

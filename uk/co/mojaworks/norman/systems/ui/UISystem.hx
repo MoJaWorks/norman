@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.systems.ui;
 import lime.math.Vector2;
 import uk.co.mojaworks.norman.display.Sprite;
+import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -10,20 +11,20 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class UISystem
 {
 
-	var _sprites : LinkedList<IUISprite>;
+	var _uiComponents : LinkedList<UIComponent>;
 	
 	public function new() 
 	{
-		_sprites = new LinkedList<IUISprite>();
+		_uiComponents = new LinkedList<UIComponent>();
 	}
 	
-	public function addUISprite( sprite : IUISprite ) : Void {
-		_sprites.push( sprite );
+	public function add( component : UIComponent ) : Void {
+		_uiComponents.push( component );
 		displayListChanged();
 	}
 	
-	public function removeSprite( sprite : IUISprite ) : Void {
-		_sprites.remove( sprite );
+	public function remove( component : UIComponent ) : Void {
+		_uiComponents.remove( component );
 	}
 	
 	public function update( seconds : Float ) : Void {
@@ -32,13 +33,11 @@ class UISystem
 		
 		var hasHit : Bool = false;
 		var mousePosition : Vector2 = Systems.input.mousePosition;
-		var mouseDown : Bool = Systems.input.mouseIsDown;
-		var ui : UIComponent;
+		var mouseDown : Bool = Systems.input.mouseIsDown[ MouseButton.Left ];
 		
 		// First reset all
-		for ( sprite in _sprites ) {
+		for ( ui in _uiComponents ) {
 			
-			ui = sprite.getUIComponent();
 			ui.wasMouseDownLastFrame = ui.isMouseDown;
 			ui.wasMouseOverLastFrame = ui.isMouseOver;
 			
@@ -49,35 +48,33 @@ class UISystem
 		}
 		
 		// then find the active sprite
-		for ( sprite in _sprites ) {
-			
-			ui = sprite.getUIComponent();
+		for ( ui in _uiComponents ) {
 			
 			//trace("Checking sprite", _sprites.length );
 			
 			if ( ui.enabled && !hasHit ) {			
 				
-				if ( sprite.getUITargetSprite().hitTest( mousePosition ) ) {
+				if ( ui.targetSprite.hitTest( mousePosition ) ) {
 					
 					ui.isMouseOver = true;
 					if ( !ui.wasMouseOverLastFrame ) {
 						if ( mouseDown ) ui.wasMouseDownElsewhere = true;
-						ui.mouseOver.dispatch();
+						ui.mouseOver.dispatch( new MouseEvent( MouseButton.None ) );
 					}
 					
 					if ( mouseDown ) {
 						
 						ui.isMouseDown = true;
 						if ( !hasHit && !ui.wasMouseDownLastFrame && !ui.wasMouseDownElsewhere ) {
-							ui.mouseDown.dispatch();
+							ui.mouseDown.dispatch(new MouseEvent( MouseButton.Left ) );
 						}
 						
 					}else {
 
 						ui.wasMouseDownElsewhere = false;
 						if ( !hasHit && ui.wasMouseDownLastFrame ) {
-							ui.mouseUp.dispatch();
-							if ( !ui.wasMouseDownElsewhere ) ui.clicked.dispatch();
+							ui.mouseUp.dispatch( new MouseEvent( MouseButton.Left ) );
+							if ( !ui.wasMouseDownElsewhere ) ui.clicked.dispatch( new MouseEvent( MouseButton.Left ) );
 						}
 						
 					}
@@ -87,13 +84,13 @@ class UISystem
 					
 				}else {
 					
-					if ( ui.wasMouseOverLastFrame ) ui.mouseOut.dispatch();
+					if ( ui.wasMouseOverLastFrame ) ui.mouseOut.dispatch( new MouseEvent( MouseButton.None ) );
 					ui.wasMouseDownElsewhere = false;
 					
 				}
 			}else {
 				
-				if ( ui.wasMouseOverLastFrame ) ui.mouseOut.dispatch();
+				if ( ui.wasMouseOverLastFrame ) ui.mouseOut.dispatch( new MouseEvent( MouseButton.None ) );
 				ui.wasMouseDownElsewhere = false;
 				
 			}
@@ -107,19 +104,14 @@ class UISystem
 		
 		// Sort the objects	descending	
 		
-		if ( _sprites.length == 0 ) return;
+		if ( _uiComponents.length == 0 ) return;
 		
 		var aSpr : Sprite;
 		var bSpr : Sprite;
 		
-		_sprites.sort( function( a, b ) {
+		_uiComponents.sort( function( a, b ) {
 			
-			aSpr = cast a;
-			bSpr = cast b;
-			
-			trace("Comparing ", aSpr.displayOrder, "to", bSpr.displayOrder, aSpr.displayOrder < bSpr.displayOrder );
-			
-			if ( aSpr.displayOrder < bSpr.displayOrder ) return 1;
+			if ( a.ownerSprite.displayOrder < b.ownerSprite.displayOrder ) return 1;
 			else return -1;
 			
 		});

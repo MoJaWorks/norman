@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.controller;
 
+import uk.co.mojaworks.norman.systems.director.Director.DisplayListAction;
 import uk.co.mojaworks.norman.systems.switchboard.MessageData;
 import uk.co.mojaworks.norman.systems.switchboard.SimpleCommand;
 import uk.co.mojaworks.norman.systems.Systems;
@@ -21,11 +22,13 @@ class DisplayListChangedCommand extends SimpleCommand
 	{
 		super.action(messageData);
 		
-		trace("director display list changed");
-		Systems.director.displayListChanged();
+		var action : DisplayListAction = cast messageData.data;
 		
-		trace("ui display list changed");
-		Systems.ui.displayListChanged();
+		if ( action != DisplayListAction.Removed ) {
+			// For these it currently doesnt matter if items are removed - only added or moved
+			Systems.director.displayListChanged();
+			Systems.ui.displayListChanged();
+		}
 	}
 	
 }

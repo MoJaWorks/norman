@@ -7,11 +7,20 @@ import uk.co.mojaworks.norman.display.Sprite;
  * ...
  * @author Simon
  */
+
+enum DisplayListAction {
+	Added;
+	Removed;
+	Swapped;
+	All;
+}
+ 
 class Director
 {
 	
 	public static inline var SCREEN_LAYER : String = "DirectorScreensLayer";
-
+	public static inline var MENU_LAYER : String = "DirectorMenuLayer";
+	
 	public var root : Sprite;
 	public var sprites : Map<String,Sprite>;
 	

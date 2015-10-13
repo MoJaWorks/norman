@@ -7,9 +7,13 @@ package uk.co.mojaworks.norman.display.ui.contextmenu;
 class ContextMenuItemData
 {
 
-	public function new() 
+	public var label : String;
+	public var callback : Void->Void;
+	
+	public function new( label : String, callback : Void->Void ) 
 	{
-		
+		this.label = label;
+		this.callback = callback;
 	}
 	
 }
