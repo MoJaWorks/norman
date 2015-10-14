@@ -28,7 +28,7 @@ class ContextMenuItem extends Sprite
 		
 		this.data = data;
 		
-		background = new FillSprite( Color.YELLOW, 200, 40 );
+		background = new FillSprite( Color.WHITE, 200, 40 );
 		addChild( background );
 		
 		text = new TextSprite();
@@ -36,6 +36,7 @@ class ContextMenuItem extends Sprite
 		text.fontSize = 20;
 		text.x = 20;
 		text.y = 10;
+		text.color = Color.BLACK;
 		text.text = data.label;
 		addChild( text );
 		
@@ -47,12 +48,14 @@ class ContextMenuItem extends Sprite
 	
 	function onMouseOver( e : MouseEvent ) : Void
 	{
-		background.color = Color.GREEN;
+		background.color = Color.BLACK;
+		text.color = Color.WHITE;
 	}
 	
 	function onMouseOut( e : MouseEvent ) : Void
 	{
-		background.color = Color.YELLOW;
+		background.color = Color.WHITE;
+		text.color = Color.BLACK;
 	}
 	
 	function onClicked( e : MouseEvent ) : Void

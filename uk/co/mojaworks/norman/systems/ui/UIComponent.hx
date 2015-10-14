@@ -12,9 +12,9 @@ import uk.co.mojaworks.norman.systems.components.Component;
 class UIComponent
 {
 	
-	public var isMouseDown : Bool = false;
-	public var wasMouseDownLastFrame : Bool = false;
-	public var wasMouseDownElsewhere : Bool = false;
+	public var isMouseButtonDown : Array<Bool>;
+	public var wasMouseButtonDownLastFrame : Array<Bool>;
+	public var wasMouseButtonDownElsewhere : Array<Bool>;
 	public var isMouseOver : Bool = false;
 	public var wasMouseOverLastFrame : Bool = false;
 	
@@ -34,6 +34,10 @@ class UIComponent
 	{
 		ownerSprite = owner;
 		targetSprite = target;
+		
+		isMouseButtonDown = [false, false, false];
+		wasMouseButtonDownElsewhere = [false, false, false];
+		wasMouseButtonDownLastFrame = [false, false, false];
 		
 		clicked = new Signal1<MouseEvent>();
 		mouseOver = new Signal1<MouseEvent>();
