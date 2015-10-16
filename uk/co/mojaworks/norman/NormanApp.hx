@@ -22,7 +22,6 @@ class NormanApp extends Application
 	public var normanConfig( default, null ) : NormanConfigData;
 	
 	// Running vars
-	var view : Sprite;
 	var startupComplete : Bool = false;
 	var _windowHasBeenDeactivated : Bool = false;
 	
@@ -47,11 +46,12 @@ class NormanApp extends Application
 		Systems.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
 		
 		initApp();
-				
+	
 	}
 	
 	override public function exec():Int 
 	{
+		// Called after html5 preloader finishes
 		
 		onStartupComplete();
 		onWindowResize( window, Std.int(window.width * window.scale), Std.int(window.height * window.scale) );
@@ -102,7 +102,11 @@ class NormanApp extends Application
 		
 		updateApp( seconds );
 		
-		Systems.renderer.render( Systems.director.root );
+		#if norman_ecs
+			Systems.renderer.render( Systems.director.rootObject.transform );
+		#else
+			Systems.renderer.render( Systems.director.root );
+		#end
 		
 	}
 	

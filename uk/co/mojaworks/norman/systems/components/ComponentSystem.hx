@@ -8,50 +8,63 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class ComponentSystem
 {
 
-	var components : LinkedList<Component>;
+	var components : Map<String, LinkedList<Component>>;
 	
 	public function new() 
 	{
-		components = new LinkedList<Component>();
+		components = new Map<String ,LinkedList<Component>>();
 	}
 	
-	public function clearEntity( entityId : String ) : Void {
-		for ( component in components ) {
-			if ( entityId == component.entityId ) components.remove( component );
+	/*public function clearEntity( entityId : String ) : Void {
+		for ( componentTypeList in components ) {
+			for ( component in componentTypeList ) {
+				if ( entityId == component.entityId ) componentTypeList.remove( component );
+			}
 		}
 	}
 	
 	public function getComponent( entityId : String, type : String ) : Component {
-		for ( component in components ) {
-			if ( entityId == component.entityId && type == component.type ) return component;
+		if ( components.exists( type ) ) {
+			for ( component in components.get(type) ) {
+				if ( entityId == component.entityId ) return component;
+			}
 		}
 		return null;
 	}
 	
 	public function addComponent( entityId : String, component : Component ) : Void {
 		component.entityId = entityId;
-		components.push( component );
+		
+		if ( !components.exists( component.type ) ) components.set( component.type, new LinkedList<Component>() );
+		components.get(component.type ).push( component );
 	}
 	
 	public function removeComponent( entityId : String, type : String ) : Void {
-		for ( component in components ) {
-			if ( entityId == component.entityId && type == component.type ) components.remove( component );
+		
+		var list : LinkedList<Component> = components.get(type);
+		if ( list != null ) {
+			for ( component in list ) {
+				if ( entityId == component.entityId ) list.remove( component );
+			}
 		}
 	}
 	
 	public function clear( ) : Void {
-		components.clear();
+		for ( componentList in components ) {
+			componentList.clear();
+		}
+		components = null;
 	}
 	
 	public function getAllComponentsOfType( type : String ) : Array<Component> 
 	{
 		var result : Array<Component> = [];
-		for ( component in components ) {
-			if ( component.type == type ) {
+		if ( components.exists( type ) ) {
+			for ( component in components.get( type ) ) {
 				result.push( component );
 			}
 		}
 		return result;
-	}
+	}*/
 	
 }

@@ -10,7 +10,6 @@ import lime.math.Rectangle;
 import lime.math.Vector2;
 import lime.utils.Float32Array;
 import lime.utils.UInt16Array;
-import uk.co.mojaworks.norman.display.RenderSprite;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.utils.Color;
 

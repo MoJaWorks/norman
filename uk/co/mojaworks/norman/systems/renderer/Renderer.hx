@@ -1,7 +1,8 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.Image;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.display.RenderSprite;
+import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
+import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
@@ -32,6 +33,8 @@ class Renderer
 	
 	public function init( context : RenderContext ) 
 	{
+		
+		trace("Initializing renderer", context.getName() );
 		
 		switch (context) 
 		{
@@ -64,6 +67,61 @@ class Renderer
 	///  RENDER
 	/////////////
 	
+	#if norman_ecs
+	
+	public function render( root : Transform ) : Void {
+		
+		//trace("Render begin");
+		canvas.clear( clearColor );
+		
+		canvas.begin();
+			renderLevel( root );
+		canvas.end();
+	}
+	
+	public function renderLevel( transform : Transform ) : Void {
+		
+		//trace("Rendering level starting at", sprite.transform.x, sprite.transform.y );
+		
+		var sprite : AbstractRenderer = transform.gameObject.renderer;
+				
+		if ( sprite != null ) 
+		{
+			sprite.preRender( canvas );
+			if ( sprite.visible && sprite.getCompositeAlpha() > 0 ) {
+				
+				sprite.render( canvas );
+				
+				if ( sprite.shouldRenderChildren ) {
+					for ( child in transform.children ) {
+						renderLevel( child );
+					}
+				}
+				
+			}
+			sprite.postRender( canvas );
+		}
+		else 
+		{
+			for ( child in transform.children ) {
+				renderLevel( child );
+			}
+		}
+		
+		// Check again incase this changes in preRender function
+		/*if ( sprite != null && 
+		
+		if ( sprite.shouldRenderChildren && sprite.visible && sprite.finalAlpha > 0 ) {
+			for ( child in sprite.children ) {
+				renderLevel( child );
+			}
+		}
+		
+		if ( sprite.shouldRenderSelf ) sprite.postRender( canvas );*/
+	}
+	
+	#else
+	
 	public function render( root : Sprite ) : Void {
 		
 		//trace("Render begin");
@@ -92,6 +150,7 @@ class Renderer
 		if ( sprite.shouldRenderSelf ) sprite.postRender( canvas );
 	}
 	
+	#end
 	
 	//////////////
 	///  TEXTURES

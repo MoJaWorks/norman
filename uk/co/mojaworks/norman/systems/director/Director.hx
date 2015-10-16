@@ -1,7 +1,9 @@
 package uk.co.mojaworks.norman.systems.director;
-import uk.co.mojaworks.hopper.data.Messages;
+import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.display.Sprite;
+import uk.co.mojaworks.norman.factory.GameObject;
+import uk.co.mojaworks.norman.factory.ObjectFactory;
 
 /**
  * ...
@@ -22,6 +24,7 @@ class Director
 	public static inline var MENU_LAYER : String = "DirectorMenuLayer";
 	
 	public var root : Sprite;
+	public var rootObject : GameObject;
 	public var sprites : Map<String,Sprite>;
 	
 	var _layers : Array<Sprite>;
@@ -32,7 +35,9 @@ class Director
 		sprites = new Map<String,Sprite>();
 		_displayStack = [];
 		_layers = [];
+		
 		root = new Sprite();
+		rootObject = ObjectFactory.createGameObject( "Root" );
 	}
 	
 	/**
@@ -138,14 +143,21 @@ class Director
 	
 	public function resize() : Void {
 		
+		// TODO: Remove this
 		root.scaleX = Systems.viewport.scale;
 		root.scaleY = Systems.viewport.scale;
 		root.x = Systems.viewport.marginLeft * Systems.viewport.scale;
 		root.y = Systems.viewport.marginTop * Systems.viewport.scale;
 		
+		rootObject.transform.scaleX = Systems.viewport.scale;
+		rootObject.transform.scaleY = Systems.viewport.scale;
+		rootObject.transform.x = Systems.viewport.marginLeft * Systems.viewport.scale;
+		rootObject.transform.y = Systems.viewport.marginTop * Systems.viewport.scale;
+		
 		for ( screen in _displayStack ) {
 			screen.resize();
 		}
+
 	}
 	
 	public function displayListChanged() 

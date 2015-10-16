@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.components ;
+import uk.co.mojaworks.norman.factory.GameObject;
 
 /**
  * ...
@@ -7,10 +8,13 @@ package uk.co.mojaworks.norman.systems.components ;
 class Component {
 	
 	// Is a basic data element
-	public var entityId : String;
+	public var gameObject : GameObject;
 	public var type : String;
 	
 	public function new( type : String ) {
 		this.type = type;
+	}
+	
+	public function destroy() : Void {
 	}
 }

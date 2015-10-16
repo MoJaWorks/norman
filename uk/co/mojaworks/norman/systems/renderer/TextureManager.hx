@@ -30,7 +30,7 @@ class TextureManager
 	
 	public function createTextureFromAsset( id : String, useCache : Bool = true ) : TextureData {
 		
-		//trace("Creating texture from asset with id " + id );
+		trace("Creating texture from asset with id " + id );
 		
 		if ( _textures.exists( id ) && useCache ) {
 			
@@ -38,19 +38,21 @@ class TextureManager
 			
 		}else{
 				
-			//trace("Creating texture from asset ", id );
+			trace("Creating texture from asset ", id );
 			
 			var image : Image = Assets.getImage( id );
 			
+			trace("Loaded texture from asset ", id, image );
+			
 			var map : Dynamic = null;
 			
-			//trace("Checking for map");
+			trace("Checking for map");
 			
 			if ( Assets.exists( id + ".map" ) ) {
-				//trace("Found map for ", id );
+				trace("Found map for ", id );
 				map = Json.parse( Assets.getText( id + ".map" ) );
 			}else {
-				//trace("No map for ", id );
+				trace("No map for ", id );
 			}
 			
 			return createTextureFromImage( id, image, map );
@@ -106,7 +108,7 @@ class TextureManager
 	
 	private function uploadTexture( data : TextureData ) : Void {
 		
-		//trace("Uploading ", data.id );
+		trace("Uploading ", data.id, data.sourceImage );
 		
 		var texture : GLTexture = _context.createTexture( );
 		
