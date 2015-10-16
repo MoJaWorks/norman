@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.components.renderer;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.systems.components.Component;
+import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderAttributeData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
@@ -16,7 +16,7 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  */
 class ImageRenderer extends AbstractRenderer
 {
-	public static inline var TYPE : String = "Renderer";
+	public static inline var TYPE : String = "ImageRenderer";
 	
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
@@ -46,7 +46,7 @@ class ImageRenderer extends AbstractRenderer
 	
 	public function new( texture : TextureData, subTextureId : String = null ) 
 	{
-		super();
+		super( TYPE );
 		_textureArray = [null];
 		color = Color.WHITE;
 		setTexture( texture, subTextureId );
@@ -97,17 +97,7 @@ class ImageRenderer extends AbstractRenderer
 	{
 		return imageRect.height;
 	}
-		
-	override public function preRender(canvas:Canvas):Void 
-	{
-		// Nothing to see here
-	}
-	
-	override public function postRender(canvas:Canvas):Void 
-	{
-		// Nothing to see here
-	}
-	
+			
 	override public function dispose():Void 
 	{
 		texture = null;

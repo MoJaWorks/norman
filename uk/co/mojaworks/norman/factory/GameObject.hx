@@ -1,8 +1,8 @@
 package uk.co.mojaworks.norman.factory;
+import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.EventDispatcher;
 import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
 import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.systems.components.Component;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -19,42 +19,46 @@ class GameObject
 	public var eventDispatcher( get, never ) : EventDispatcher;
 	public var renderer( get, never ) : AbstractRenderer;
 		
-	var components : Map<String, LinkedList<Component>>;
+	var components : LinkedList<Component>;
 	
 	@:allow( uk.co.mojaworks.norman.factory.ObjectFactory )
 	private function new( id : String )
 	{
 		this.id = id;
-		components = new Map<String, LinkedList<Component>>();
+		components = new LinkedList<Component>();
 	}
 		
 	public function getComponent( type : String ) : Component {
-		if ( components.exists( type ) ) {
-			return components.get(type).get( 0 );
+		for ( component in components ) {
+			if ( component.type == type || component.baseType == type ) return component;
 		}
 		return null;
 	}
 	
 	public function addComponent( component : Component ) : Void {
-		
 		component.gameObject = this;
-		
-		if ( !components.exists( component.type ) ) components.set( component.type, new LinkedList<Component>() );
-		components.get( component.type ).push( component );
-		
+		component.onAdded();
+		components.push( component );
 	}
 	
-	public function removeComponent( entityId : String, type : String ) : Void {
+	public function removeComponent( component : Component ) : Void {
+		component.onRemove();
+		components.remove( component );
+	}
 		
-		components.remove( type );
-		
+	public function removeAllComponentsOfType( type : String ) : Void {
+		for ( component in components ) {
+			if ( component.type == type || component.baseType == type ) {
+				component.onRemove();
+				components.remove( component );
+			}
+		}
 	}
 	
 	public function destroy( ) : Void {
-		for ( componentList in components ) {
-			for ( component in componentList ) {
-				component.destroy();
-			}
+		for ( component in components ) {
+			component.onRemove();
+			component.destroy();
 		}
 		components = null;
 	}
@@ -62,10 +66,8 @@ class GameObject
 	public function getAllComponentsOfType( type : String ) : Array<Component> 
 	{
 		var result : Array<Component> = [];
-		if ( components.exists( type ) ) {
-			for ( component in components.get( type ) ) {
-				result.push( component );
-			}
+		for ( component in components ) {
+			if ( component.type == type || component.baseType == type ) result.push( component );
 		}
 		return result;
 	}

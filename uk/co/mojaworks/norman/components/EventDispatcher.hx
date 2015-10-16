@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.components;
-import uk.co.mojaworks.norman.systems.components.Component;
+import uk.co.mojaworks.norman.components.Component;
 
 /**
  * ...

@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.components ;
+import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**

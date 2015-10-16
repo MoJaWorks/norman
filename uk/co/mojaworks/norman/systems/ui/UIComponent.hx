@@ -3,7 +3,7 @@ package uk.co.mojaworks.norman.systems.ui;
 import msignal.Signal.Signal0;
 import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.display.Sprite;
-import uk.co.mojaworks.norman.systems.components.Component;
+import uk.co.mojaworks.norman.components.Component;
 
 /**
  * ...

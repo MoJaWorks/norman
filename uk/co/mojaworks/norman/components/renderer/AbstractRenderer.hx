@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.components.renderer;
-import uk.co.mojaworks.norman.systems.components.Component;
+import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.Systems;
 
@@ -24,8 +24,8 @@ class AbstractRenderer extends Component
 	public function getWidth() : Float { return 0; };
 	public function getHeight() : Float { return 0; };
 	
-	public function new() { 
-		super(TYPE);
+	public function new( subtype : String ) { 
+		super( subtype, TYPE );
 	}
 	
 	/**
