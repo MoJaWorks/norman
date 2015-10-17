@@ -108,16 +108,6 @@ class Renderer
 			}
 		}
 		
-		// Check again incase this changes in preRender function
-		/*if ( sprite != null && 
-		
-		if ( sprite.shouldRenderChildren && sprite.visible && sprite.finalAlpha > 0 ) {
-			for ( child in sprite.children ) {
-				renderLevel( child );
-			}
-		}
-		
-		if ( sprite.shouldRenderSelf ) sprite.postRender( canvas );*/
 	}
 	
 	#else

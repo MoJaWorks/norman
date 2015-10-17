@@ -1,6 +1,5 @@
 package uk.co.mojaworks.norman.systems;
 import haxe.io.Error;
-import uk.co.mojaworks.norman.systems.components.ComponentSystem;
 import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.systems.hardware.HardwareSystem;
 import uk.co.mojaworks.norman.systems.input.InputSystem;
@@ -23,7 +22,6 @@ class Systems
 	static public var director( default, null ) : Director;
 	static public var scripting( default, null ) : ScriptRunner;
 	static public var input( default, null ) : InputSystem;
-	static public var components( default, null ) : ComponentSystem;
 	static public var renderer( default, null ) : Renderer;
 	static public var hardware( default, null ) : HardwareSystem;
 	static public var ui( default, null ) : UISystem;
@@ -44,7 +42,6 @@ class Systems
 		switchboard = new Switchboard();
 		scripting = new ScriptRunner();
 		input = new InputSystem();
-		components = new ComponentSystem();
 		renderer = new Renderer();
 		director = new Director();
 		hardware = new HardwareSystem();
