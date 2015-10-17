@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.systems.ui;
-import lime.math.Vector2;
+import uk.co.mojaworks.norman.components.delegates.AbstractUIDelegate;
 import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
 
 /**
@@ -20,11 +20,13 @@ class MouseEvent
 
 	public var type : MouseEventType;
 	public var button : MouseButton;
-	public var target : UIComponent;
-	public var stopped : Bool = false;
+	public var target : AbstractUIDelegate;
 	
-	public function new( ) 
+	public function new( type : MouseEventType, target : AbstractUIDelegate, button : MouseButton )  
 	{
+		this.type = type;
+		this.target = target;
+		this.button = button;
 	}
 	
 }

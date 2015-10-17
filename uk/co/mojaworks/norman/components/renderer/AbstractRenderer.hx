@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.renderer;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.Systems;
@@ -53,6 +54,11 @@ class AbstractRenderer extends Component
 		
 		return alpha;
 
+	}
+	
+	public function hitTest( global : Vector2 ) : Bool {
+		var local : Vector2 = gameObject.transform.globalToLocal( global );
+		return ( local.x >= 0 && local.x < getWidth() && local.y >= 0 && local.y < getHeight() );
 	}
 	
 }

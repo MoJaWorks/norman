@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.systems.ui;
-import lime.math.Vector2;
+import uk.co.mojaworks.norman.components.delegates.AbstractUIDelegate;
+import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
 import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
 import uk.co.mojaworks.norman.systems.ui.MouseEvent.MouseEventType;
@@ -9,22 +10,23 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * ...
  * @author Simon
  */
+
 class UISystem
 {
 
-	var _uiComponents : LinkedList<UIComponent>;
+	var _uiComponents : LinkedList<AbstractUIDelegate>;
 	
 	public function new() 
 	{
-		_uiComponents = new LinkedList<UIComponent>();
+		_uiComponents = new LinkedList<AbstractUIDelegate>();
 	}
 	
-	public function add( component : UIComponent ) : Void {
+	public function add( component : AbstractUIDelegate ) : Void {
 		_uiComponents.push( component );
 		displayListChanged();
 	}
 	
-	public function remove( component : UIComponent ) : Void {
+	public function remove( component : AbstractUIDelegate ) : Void {
 		_uiComponents.remove( component );
 	}
 	
@@ -35,6 +37,7 @@ class UISystem
 		var hasHit : Bool = false;
 		var events : Array<MouseEvent> = [];
 		var event : MouseEvent;
+		var hitTarget : AbstractRenderer;
 		
 		// First reset all
 		for ( ui in _uiComponents ) {
@@ -57,54 +60,39 @@ class UISystem
 			
 			if ( ui.enabled && !hasHit ) {			
 				
-				if ( ui.targetSprite.hitTest( Systems.input.mousePosition ) ) {
+				hitTarget = ui.hitTarget.renderer;
+				
+				if ( hitTarget != null && hitTarget.hitTest( Systems.input.mousePosition ) ) {
 					
 					ui.isMouseOver = true;
 					if ( !ui.wasMouseOverLastFrame ) {
 						for ( i in 0...3 ) {
 							if ( Systems.input.mouseIsDown[i] ) ui.wasMouseButtonDownElsewhere[i] = true;
 						}
-						//if ( mouseDown ) ui.wasMouseDownElsewhere = true;
-						//ui.mouseOver.dispatch( new MouseEvent( MouseButton.None ) );
-						event = new MouseEvent();
-						event.button = MouseButton.None;
-						event.type = MouseEventType.Over;
-						event.target = ui;
-						events.push( event );
+						
+						events.push( new MouseEvent( MouseEventType.Over, ui, MouseButton.None ) );
+						
 					}
 					
 					for ( i in 0...3 ) {
 						if ( Systems.input.mouseIsDown[i] ) {
 							
 							ui.isMouseButtonDown[i] = true;
-							if ( !ui.wasMouseButtonDownLastFrame[i] && !ui.wasMouseButtonDownElsewhere[i] ) {
-								//ui.mouseDown.dispatch(new MouseEvent() );
-								event = new MouseEvent();
-								event.button = i;
-								event.type = MouseEventType.Down;
-								event.target = ui;
-								events.push( event );
+							if ( !ui.wasMouseButtonDownLastFrame[i] && !ui.wasMouseButtonDownElsewhere[i] ) 
+							{
+								events.push( new MouseEvent( MouseEventType.Down, ui, i ) );
 							}
 							
 						}else {
 
 							ui.wasMouseButtonDownElsewhere[i] = false;
-							if ( ui.wasMouseButtonDownLastFrame[i] ) {
-								//ui.mouseUp.dispatch( new MouseEvent( MouseButton.Left ) );
-								//if ( !ui.wasMouseDownElsewhere ) ui.clicked.dispatch( new MouseEvent( MouseButton.Left ) );
+							if ( ui.wasMouseButtonDownLastFrame[i] ) 
+							{
+								events.push( new MouseEvent( MouseEventType.Up, ui, i ) );
 								
-								event = new MouseEvent();
-								event.button = i;
-								event.type = MouseEventType.Up;
-								event.target = ui;
-								events.push( event );
-								
-								if ( !ui.wasMouseButtonDownElsewhere[i] ) {
-									event = new MouseEvent();
-									event.button = i;
-									event.type = MouseEventType.Click;
-									event.target = ui;
-									events.push( event );
+								if ( !ui.wasMouseButtonDownElsewhere[i] ) 
+								{
+									events.push( new MouseEvent( MouseEventType.Click, ui, i ) );
 								}
 							}
 							
@@ -116,12 +104,7 @@ class UISystem
 				}else {
 					
 					if ( ui.wasMouseOverLastFrame ) {
-						//ui.mouseOut.dispatch( new MouseEvent( MouseButton.None ) );
-						event = new MouseEvent();
-						event.target = ui;
-						event.type = MouseEventType.Out;
-						event.button = MouseButton.None;
-						events.push( event );
+						events.push( new MouseEvent( MouseEventType.Out, ui, MouseButton.None ) );
 					}
 					
 					for ( i in 0...3 ) {
@@ -132,12 +115,7 @@ class UISystem
 			}else {
 				
 				if ( ui.wasMouseOverLastFrame ) {
-					//ui.mouseOut.dispatch( new MouseEvent( MouseButton.None ) );
-					event = new MouseEvent();
-					event.target = ui;
-					event.type = MouseEventType.Out;
-					event.button = MouseButton.None;
-					events.push( event );
+					events.push( new MouseEvent( MouseEventType.Out, ui, MouseButton.None ) );
 				}
 				for ( i in 0...3 ) {
 					ui.wasMouseButtonDownElsewhere[i] = false;
@@ -149,7 +127,9 @@ class UISystem
 		
 		for ( event in events ) {
 			
-			if ( event.target.enabled ) {
+			event.target.processEvent( event );
+			
+			/*if ( event.target.enabled ) {
 				switch( event.type  ) {
 					case MouseEventType.Up:
 						event.target.mouseUp.dispatch( event );
@@ -162,7 +142,7 @@ class UISystem
 					case MouseEventType.Click:
 						event.target.clicked.dispatch( event );
 				}
-			}
+			}*/
 			
 		}
 		
@@ -180,7 +160,7 @@ class UISystem
 		
 		_uiComponents.sort( function( a, b ) {
 			
-			if ( a.ownerSprite.displayOrder < b.ownerSprite.displayOrder ) return 1;
+			if ( a.gameObject.transform.displayOrder < b.gameObject.transform.displayOrder ) return 1;
 			else return -1;
 			
 		});

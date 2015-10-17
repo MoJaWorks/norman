@@ -163,6 +163,7 @@ class Director
 	public function displayListChanged() 
 	{
 		root.updateDisplayOrder(0);
+		rootObject.transform.updateDisplayOrder(0);
 	}
 	
 }

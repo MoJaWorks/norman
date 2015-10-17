@@ -1,8 +1,5 @@
 package uk.co.mojaworks.norman.systems.ui;
 
-import msignal.Signal.Signal0;
-import msignal.Signal.Signal1;
-import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.components.Component;
 
 /**
@@ -11,7 +8,7 @@ import uk.co.mojaworks.norman.components.Component;
  */
 class UIComponent
 {
-	
+	/*
 	public var isMouseButtonDown : Array<Bool>;
 	public var wasMouseButtonDownLastFrame : Array<Bool>;
 	public var wasMouseButtonDownElsewhere : Array<Bool>;
@@ -68,5 +65,6 @@ class UIComponent
 		ownerSprite = null;
 		
 	}
+	*/
 	
 }
