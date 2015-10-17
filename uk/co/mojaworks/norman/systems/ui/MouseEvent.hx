@@ -7,12 +7,12 @@ import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
  * @author Simon
  */
 
-enum MouseEventType {
-	Up;
-	Down;
-	Over;
-	Out;
-	Click;
+@:enum abstract MouseEventType(String) to String from String {
+	var Up = "MouseUp";
+	var Down = "MouseDown";
+	var Over = "MouseOver";
+	var Out = "MouseOut";
+	var Click = "MouseClick";
 }
  
 class MouseEvent

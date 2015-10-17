@@ -5,8 +5,9 @@ import uk.co.mojaworks.norman.factory.GameObject;
  * ...
  * @author Simon
  */
-class Component {
 	
+ class Component {
+	 
 	// Is a basic data element
 	public var gameObject : GameObject;
 	public var type : String;
