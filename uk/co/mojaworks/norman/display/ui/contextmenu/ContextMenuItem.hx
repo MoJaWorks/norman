@@ -40,10 +40,10 @@ class ContextMenuItem extends Sprite
 		text.text = data.label;
 		addChild( text );
 		
-		uiComponent = new UIComponent( this, background );
+		/*uiComponent = new UIComponent( this, background );
 		uiComponent.mouseOver.add( onMouseOver );
 		uiComponent.mouseOut.add( onMouseOut );
-		uiComponent.clicked.add( onClicked );
+		uiComponent.clicked.add( onClicked );*/
 	}
 	
 	function onMouseOver( e : MouseEvent ) : Void
@@ -67,11 +67,11 @@ class ContextMenuItem extends Sprite
 	{
 		super.destroy();
 			
-		uiComponent.destroy();
+		//uiComponent.destroy();
 		text.destroy();
 		background.destroy();
 		
-		uiComponent = null;
+		//uiComponent = null;
 		text = null;
 		background = null;
 		data = null;

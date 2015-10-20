@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.delegates;
 
+import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
 import uk.co.mojaworks.norman.factory.GameObject;
@@ -10,11 +11,9 @@ import uk.co.mojaworks.norman.systems.ui.MouseEvent;
  * ...
  * @author Simon
  */
-class AbstractUIDelegate extends Component
+class BaseUIDelegate extends Component
 {
 	
-	public static inline var TYPE : String = "AbstractUIDelegate";
-
 	public var isMouseButtonDown : Array<Bool>;
 	public var wasMouseButtonDownLastFrame : Array<Bool>;
 	public var wasMouseButtonDownElsewhere : Array<Bool>;
@@ -22,12 +21,15 @@ class AbstractUIDelegate extends Component
 	public var wasMouseOverLastFrame : Bool = false;
 	public var enabled : Bool = false;
 	public var isCurrentTarget : Bool = false;
-	public var hitTarget( default, null ) : GameObject;
+	public var hitTarget( default, default ) : GameObject;
 	
-	public function new( type : String ) 
+	public var clicked : Signal1<MouseEvent>;
+	
+	public function new( ) 
 	{
-		super( type, TYPE );
+		super( );
 		
+		clicked = new Signal1<MouseEvent>();
 		isMouseButtonDown = [false, false, false];
 		wasMouseButtonDownLastFrame = [false, false, false];
 		wasMouseButtonDownElsewhere = [false, false, false];
@@ -63,7 +65,10 @@ class AbstractUIDelegate extends Component
 	public function onMouseDown( e : MouseEvent ) : Void {}
 	public function onMouseUp( e : MouseEvent ) : Void {}
 	public function onMouseOver( e : MouseEvent ) : Void {}
-	public function onMouseOut( e : MouseEvent ) : Void {}
-	public function onClick( e : MouseEvent ) : Void {}
+	public function onMouseOut( e : MouseEvent ) : Void { }
 	
+	public function onClick( e : MouseEvent ) : Void { 
+		if ( enabled ) clicked.dispatch( e );
+	}
+
 }

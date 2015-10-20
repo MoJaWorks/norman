@@ -88,9 +88,10 @@ class RenderSprite extends Sprite
 	/**
 	 * Forces the sprite to render its children to a texture. Can be used to render textures for post-processing before displaying.
 	 */
+	/*
 	public function renderTexture() : Void {
 		_renderToCanvas = false;
 		Systems.renderer.renderLevel( this );
 		_renderToCanvas = true;
-	}
+	}*/
 }

@@ -15,8 +15,6 @@ import uk.co.mojaworks.norman.utils.MathUtils;
 class Transform extends Component
 {
 	
-	public static inline var TYPE : String = "Transform";
-
 	public var parent( default, null ) : Transform;
 	public var children( default, null ) : LinkedList<Transform>;
 	public var displayOrder( default, null ) : Int = 0;
@@ -66,7 +64,7 @@ class Transform extends Component
 	
 	public function new() 
 	{
-		super(TYPE);
+		super( );
 		
 		children = new LinkedList<Transform>();
 		

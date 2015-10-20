@@ -6,21 +6,13 @@ import uk.co.mojaworks.norman.factory.GameObject;
  * @author Simon
  */
 	
+ #if !macro @:autoBuild( uk.co.mojaworks.norman.components.ComponentBuilder.build() ) #end
  class Component {
 	 
-	// Is a basic data element
 	public var gameObject : GameObject;
-	public var type : String;
-	public var baseType : String;
 	
-	public function new( type : String, ?baseType : String = null ) {
-		this.type = type;
+	public function new( ) {
 		
-		if ( baseType == null ) {
-			this.baseType = type;
-		}else {
-			this.baseType = baseType;
-		}
 	}
 	
 	public function destroy() : Void {
@@ -31,6 +23,13 @@ import uk.co.mojaworks.norman.factory.GameObject;
 	}
 	
 	public function onRemove() : Void {
-		
+	}
+	
+	public function getComponentType() : String {
+		return "Component";
+	}
+	
+	public function getBaseComponentType() : String {
+		return "Component";
 	}
 }

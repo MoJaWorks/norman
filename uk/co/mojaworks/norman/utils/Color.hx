@@ -79,9 +79,6 @@ abstract Color( Int ) to Int from Int
 	
 	@:op(A * B)
 	public inline function multiply( x : Float ) : Int {
-		
-		trace("Multiplying color ", r, g, b, "by", x );
-		
 		return Color.rgba( Std.int(Math.min( r * x, 255 )),  Std.int(Math.min( g * x, 255 )),  Std.int(Math.min( b * x, 255 )), a );
 	}
 	
@@ -93,6 +90,11 @@ abstract Color( Int ) to Int from Int
 			MathUtils.clamp01( a.a + ( ( b.a - a.a ) * t ))
 		);
 			
+	}
+	
+	static public function grey( shade:Int, alpha:Float) : Color
+	{
+		return Color.rgba( shade, shade, shade, alpha );
 	}
 	
 	

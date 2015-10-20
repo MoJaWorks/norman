@@ -33,11 +33,11 @@ class SimpleButton extends Sprite
 		image = new ImageSprite( texture );
 		addChild( image );
 		
-		uiComponent = new UIComponent( this, image );
+		/*uiComponent = new UIComponent( this, image );
 		uiComponent.mouseDown.add( onMouseDown );
 		uiComponent.mouseUp.add( onMouseUp );
 		uiComponent.mouseOver.add( onMouseOver );
-		uiComponent.mouseOut.add( onMouseOut );
+		uiComponent.mouseOut.add( onMouseOut );*/
 	}
 
 	

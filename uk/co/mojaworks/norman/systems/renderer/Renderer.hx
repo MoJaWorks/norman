@@ -3,7 +3,6 @@ import lime.graphics.Image;
 import lime.graphics.RenderContext;
 import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
 import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderManager;
@@ -67,8 +66,7 @@ class Renderer
 	///  RENDER
 	/////////////
 	
-	#if norman_ecs
-	
+
 	public function render( root : Transform ) : Void {
 		
 		//trace("Render begin");
@@ -109,38 +107,6 @@ class Renderer
 		}
 		
 	}
-	
-	#else
-	
-	public function render( root : Sprite ) : Void {
-		
-		//trace("Render begin");
-		canvas.clear( clearColor );
-		
-		canvas.begin();
-			renderLevel( root );
-		canvas.end();
-	}
-	
-	public function renderLevel( sprite : Sprite ) : Void {
-		
-		//trace("Rendering level starting at", sprite.transform.x, sprite.transform.y );
-		
-		if ( sprite.shouldRenderSelf )	sprite.preRender( canvas );
-		
-		// Check again incase this changes in preRender function
-		if ( sprite.shouldRenderSelf && sprite.visible && sprite.finalAlpha > 0 ) sprite.render( canvas );
-		
-		if ( sprite.shouldRenderChildren && sprite.visible && sprite.finalAlpha > 0 ) {
-			for ( child in sprite.children ) {
-				renderLevel( child );
-			}
-		}
-		
-		if ( sprite.shouldRenderSelf ) sprite.postRender( canvas );
-	}
-	
-	#end
 	
 	//////////////
 	///  TEXTURES

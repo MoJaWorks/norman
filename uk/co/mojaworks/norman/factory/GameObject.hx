@@ -1,5 +1,7 @@
 package uk.co.mojaworks.norman.factory;
 import uk.co.mojaworks.norman.components.Component;
+import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
 import uk.co.mojaworks.norman.components.EventDispatcher;
 import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
 import uk.co.mojaworks.norman.components.Transform;
@@ -30,7 +32,7 @@ class GameObject
 		
 	public function getComponent( type : String ) : Component {
 		for ( component in components ) {
-			if ( component.type == type || component.baseType == type ) return component;
+			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) return component;
 		}
 		return null;
 	}
@@ -48,7 +50,7 @@ class GameObject
 		
 	public function removeAllComponentsOfType( type : String ) : Void {
 		for ( component in components ) {
-			if ( component.type == type || component.baseType == type ) {
+			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) {
 				component.onRemove();
 				components.remove( component );
 			}
@@ -67,7 +69,7 @@ class GameObject
 	{
 		var result : Array<Component> = [];
 		for ( component in components ) {
-			if ( component.type == type || component.baseType == type ) result.push( component );
+			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) result.push( component );
 		}
 		return result;
 	}

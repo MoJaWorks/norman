@@ -8,7 +8,6 @@ import lime.ui.Window;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
-import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.Systems;
 
 /**
@@ -117,14 +116,12 @@ class NormanApp extends Application
 	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseDown( window, x, y, button);
-		trace("MouseDown", button );
 		Systems.input.onMouseDown( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseUp( window, x, y, button);
-		trace("MouseUp", button );
 		Systems.input.onMouseUp( x * window.scale, y * window.scale, button );
 	}
 	

@@ -28,9 +28,7 @@ enum WrapType {
  
 class TextRenderer extends AbstractRenderer
 {
-	
-	public static inline var TYPE : String = "TextRenderer";
-	
+		
 	// Get access to formatting through layout
 	public var text( default, set ) : String = "";
 	
@@ -54,7 +52,7 @@ class TextRenderer extends AbstractRenderer
 	
 	public function new( text : String, font : BitmapFont ) 
 	{
-		super( TYPE );
+		super( );
 		
 		_lineStops = [];
 		_bounds = new Rectangle();

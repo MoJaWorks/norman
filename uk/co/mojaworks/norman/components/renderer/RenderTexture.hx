@@ -12,8 +12,6 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  */
 class RenderTexture extends AbstractRenderer
 {
-	public static inline var TYPE : String = "RenderTexture";
-
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
 		if ( RenderTexture.defaultShader == null ) {
@@ -36,7 +34,7 @@ class RenderTexture extends AbstractRenderer
 	
 	public function new( ) 
 	{
-		super( TYPE );
+		super( );
 		_textureArray = [null];
 	}
 	

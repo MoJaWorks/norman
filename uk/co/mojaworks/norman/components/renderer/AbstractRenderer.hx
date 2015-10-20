@@ -11,7 +11,6 @@ import uk.co.mojaworks.norman.systems.Systems;
 
 class AbstractRenderer extends Component
 {
-	public static inline var TYPE : String = "Renderer";
 	
 	public var shouldRenderChildren( default, default ) : Bool = true;
 	public var visible( default, default ) : Bool = true;
@@ -25,8 +24,8 @@ class AbstractRenderer extends Component
 	public function getWidth() : Float { return 0; };
 	public function getHeight() : Float { return 0; };
 	
-	public function new( subtype : String ) { 
-		super( subtype, TYPE );
+	public function new( ) { 
+		super( );
 	}
 	
 	/**

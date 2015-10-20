@@ -16,8 +16,6 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  */
 class ImageRenderer extends AbstractRenderer
 {
-	public static inline var TYPE : String = "ImageRenderer";
-	
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
 		if ( ImageRenderer.defaultShader == null ) {
@@ -46,7 +44,7 @@ class ImageRenderer extends AbstractRenderer
 	
 	public function new( texture : TextureData, subTextureId : String = null ) 
 	{
-		super( TYPE );
+		super();
 		_textureArray = [null];
 		color = Color.WHITE;
 		setTexture( texture, subTextureId );

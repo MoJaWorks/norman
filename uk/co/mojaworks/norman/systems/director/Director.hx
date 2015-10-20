@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.systems.director;
+import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
 import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.data.NormanMessages;
-import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 
@@ -23,20 +22,18 @@ class Director
 	public static inline var SCREEN_LAYER : String = "DirectorScreensLayer";
 	public static inline var MENU_LAYER : String = "DirectorMenuLayer";
 	
-	public var root : Sprite;
 	public var rootObject : GameObject;
-	public var sprites : Map<String,Sprite>;
+	public var objects : Map<String,GameObject>;
 	
-	var _layers : Array<Sprite>;
-	var _displayStack : Array<Screen>;
+	var _layers : Array<Transform>;
+	var _displayStack : Array<BaseViewDelegate>;
 	
 	public function new() 
 	{
-		sprites = new Map<String,Sprite>();
+		objects = new Map<String,GameObject>();
 		_displayStack = [];
 		_layers = [];
 		
-		root = new Sprite();
 		rootObject = ObjectFactory.createGameObject( "Root" );
 	}
 	
@@ -44,25 +41,25 @@ class Director
 	 * Screens
 	 */
 	
-	public function moveToScreen( screen : Screen, transition : Transition = null, delay : Float = 0 ) : Void {
+	public function moveToScreen( screen : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
 		transition.transition( screen, _displayStack, delay );
 		
 		_displayStack = [];
-		_displayStack.push( screen );
+		_displayStack.push( cast screen.getComponent(BaseViewDelegate.TYPE) );
 		
-		getLayer(SCREEN_LAYER).addChild( screen );
+		getLayer(SCREEN_LAYER).addChild( screen.transform );
 		
 	}
 	
-	public function addScreen( screen : Screen, transition : Transition = null, delay : Float = 0 ) : Void {
+	public function addScreen( screen : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
 		transition.transition( screen, null, delay );
 		
-		_displayStack.push( screen );
-		getLayer(SCREEN_LAYER).addChild( screen );
+		_displayStack.push( BaseViewDelegate.getFromObject(screen) );
+		getLayer(SCREEN_LAYER).addChild( screen.transform );
 	}
 		
 	
@@ -70,16 +67,16 @@ class Director
 	 * Sprites
 	 */
 		
-	public function registerSprite( sprite : Sprite, id : String ) : Void {
-		sprites.set( id, sprite );
+	public function registerObject( obj : GameObject ) : Void {
+		objects.set( obj.id, obj );
 	}
 	
-	public function getSpriteWithID( id : String ) : Sprite {
-		return sprites.get( id );
+	public function getObjectWithID( id : String ) : GameObject {
+		return objects.get( id );
 	}
 		
-	public function removeSprite( id : String ) : Void {
-		sprites.remove( id );
+	public function removeObject( id : String ) : Void {
+		objects.remove( id );
 	}
 	
 	
@@ -87,27 +84,27 @@ class Director
 	 * Layers
 	 */
 	
-	public function createLayer( name : String, index = -1 ) : Sprite {
+	public function createLayer( name : String, index = -1 ) : Transform {
 		
-		var spr : Sprite = new Sprite();
-		spr.name = name;
+		//var spr : Sprite = new Sprite();
+		//spr.name = name;
+		var layer : GameObject = ObjectFactory.createGameObject( "/@normanLayers/" + name );
+		var trans : Transform = layer.transform;
 		
 		if ( index > -1 ) {
-			_layers.insert( index, spr );
+			_layers.insert( index, trans );
 		}else {
-			_layers.push( spr );
+			_layers.push( trans );
 		}
 		
-		root.addChild( spr );
-		spr.setChildIndex( index );
-		
-		return spr;
+		rootObject.transform.addChild( trans );
+		return trans;
 		
 	}
 	
 	public function removeLayer( name : String ) : Void {
 		
-		var layer : Sprite = getLayer( name );
+		var layer : Transform = getLayer( name );
 		
 		if ( layer != null ) {
 			_layers.remove( layer );
@@ -116,10 +113,14 @@ class Director
 		
 	}
 	
-	public function getLayer( name : String ) : Sprite {
+	/**
+	 * Gets a layer - creates a new one if it doesn't already exist
+	 * @return
+	 */
+	public function getLayer( name : String ) : Transform {
 		
 		for ( l in _layers ) {
-			if ( l.name == name ) {
+			if ( l.gameObject.id == "/@normanLayers/" + name ) {
 				return l;
 			}
 		}
@@ -142,13 +143,7 @@ class Director
 	}
 	
 	public function resize() : Void {
-		
-		// TODO: Remove this
-		root.scaleX = Systems.viewport.scale;
-		root.scaleY = Systems.viewport.scale;
-		root.x = Systems.viewport.marginLeft * Systems.viewport.scale;
-		root.y = Systems.viewport.marginTop * Systems.viewport.scale;
-		
+				
 		rootObject.transform.scaleX = Systems.viewport.scale;
 		rootObject.transform.scaleY = Systems.viewport.scale;
 		rootObject.transform.x = Systems.viewport.marginLeft * Systems.viewport.scale;
@@ -162,7 +157,6 @@ class Director
 	
 	public function displayListChanged() 
 	{
-		root.updateDisplayOrder(0);
 		rootObject.transform.updateDisplayOrder(0);
 	}
 	

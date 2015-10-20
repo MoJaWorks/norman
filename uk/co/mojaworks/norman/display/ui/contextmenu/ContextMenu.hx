@@ -20,7 +20,7 @@ class ContextMenu extends Sprite
 		for ( itemData in data ) {
 			var item : ContextMenuItem = new ContextMenuItem( itemData );
 			item.y = items.length * 40;
-			item.uiComponent.enabled = true;
+			//item.uiComponent.enabled = true;
 			addChild( item );
 			items.push( item );
 		}

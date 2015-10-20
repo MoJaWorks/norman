@@ -15,8 +15,6 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
 class Mask extends AbstractRenderer
 {
 
-	public static inline var TYPE : String = "Mask";
-	
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
 		if ( Mask.defaultShader == null ) {
@@ -47,7 +45,7 @@ class Mask extends AbstractRenderer
 	
 	public function new( texture : TextureData, subTextureId : String = null ) : Void {
 		
-		super( TYPE );
+		super( );
 		
 		_textures = [null, null];
 		

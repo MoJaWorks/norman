@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.systems.ui;
-import uk.co.mojaworks.norman.components.delegates.AbstractUIDelegate;
+import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
-import uk.co.mojaworks.norman.display.Sprite;
 import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
 import uk.co.mojaworks.norman.systems.ui.MouseEvent.MouseEventType;
 import uk.co.mojaworks.norman.utils.LinkedList;
@@ -14,25 +13,25 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class UISystem
 {
 
-	var _uiComponents : LinkedList<AbstractUIDelegate>;
+	var _uiComponents : LinkedList<BaseUIDelegate>;
 	
 	public function new() 
 	{
-		_uiComponents = new LinkedList<AbstractUIDelegate>();
+		_uiComponents = new LinkedList<BaseUIDelegate>();
 	}
 	
-	public function add( component : AbstractUIDelegate ) : Void {
+	public function add( component : BaseUIDelegate ) : Void {
 		_uiComponents.push( component );
 		displayListChanged();
 	}
 	
-	public function remove( component : AbstractUIDelegate ) : Void {
+	public function remove( component : BaseUIDelegate ) : Void {
 		_uiComponents.remove( component );
 	}
 	
 	public function update( seconds : Float ) : Void {
 		
-		//trace("Update UI:", _sprites.length, _sprites.first.next == null );
+		//trace("Update UI:", _uiComponents.length );
 		
 		var hasHit : Bool = false;
 		var events : Array<MouseEvent> = [];
@@ -154,9 +153,6 @@ class UISystem
 		// Sort the objects	descending	
 		
 		if ( _uiComponents.length == 0 ) return;
-		
-		var aSpr : Sprite;
-		var bSpr : Sprite;
 		
 		_uiComponents.sort( function( a, b ) {
 			

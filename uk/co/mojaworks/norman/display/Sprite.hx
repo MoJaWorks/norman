@@ -212,7 +212,7 @@ class Sprite
 	}
 	
 	public function get_isOnDisplayList() : Bool {
-		return (this == Systems.director.root) || ( parent != null && parent.isOnDisplayList );
+		return false;// (this == Systems.director.root) || ( parent != null && parent.isOnDisplayList );
 	}
 	
 	/**

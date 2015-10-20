@@ -21,8 +21,6 @@ enum FillShape {
 class ShapeRenderer extends AbstractRenderer
 {
 
-	public static inline var TYPE : String = "ShapeRenderer";
-	
 	// Set up default shader
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
@@ -50,7 +48,7 @@ class ShapeRenderer extends AbstractRenderer
 
 	public function new( color : Color, width : Float, height : Float, ?shape : FillShape = null ) 
 	{
-		super( TYPE );
+		super( );
 				
 		this.color = color;
 		
