@@ -11,8 +11,6 @@ import uk.co.mojaworks.norman.utils.Color;
 class SimpleButtonUIDelegate extends BaseUIDelegate
 {
 
-	public var clicked : Signal1<MouseEvent>;
-	
 	public function new() 
 	{
 		super( );
@@ -52,9 +50,5 @@ class SimpleButtonUIDelegate extends BaseUIDelegate
 		trace("OnMouseOut");
 	}
 	
-	override public function onClick( e : MouseEvent ) : Void {
-		clicked.dispatch( e );
-		trace("Clicked");
-	}
 	
 }
