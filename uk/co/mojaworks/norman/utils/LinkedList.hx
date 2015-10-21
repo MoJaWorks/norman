@@ -155,8 +155,8 @@ class LinkedList<T>
 	
 	public function swapItems( item1 : LinkedListItem<T>, item2 : LinkedListItem<T> ) {
 			
-		trace("Item1", item1, "was next ", item1.next, "previous", item1.prev );
-		trace("Item2", item2, "was next ", item2.next, "previous", item2.prev );
+		//trace("Item1", item1, "was next ", item1.next, "previous", item1.prev );
+		//trace("Item2", item2, "was next ", item2.next, "previous", item2.prev );
 
 		if ( first == item1 ) first = item2;
 		else if ( first == item2 ) first = item1;
@@ -196,8 +196,8 @@ class LinkedList<T>
 
 		}
 
-		trace("Item1", item1, "now next ", item1.next, "previous", item1.prev );
-		trace("Item2", item2, "now next ", item2.next, "previous", item2.prev );
+		//trace("Item1", item1, "now next ", item1.next, "previous", item1.prev );
+		//trace("Item2", item2, "now next ", item2.next, "previous", item2.prev );
 		
 	}
 	
@@ -360,7 +360,7 @@ class LinkedList<T>
 			
 			while ( current != null && current.next != null ) {
 
-				trace( "Looking at", current.id, "and", current.next.id );
+				//trace( "Looking at", current.id, "and", current.next.id );
 
 				if ( compare( current.item, current.next.item ) == 1 ) {
 					swapItems( current, current.next );
@@ -369,7 +369,7 @@ class LinkedList<T>
 					current = current.next;
 				}
 				
-				trace("Next", i, changed );
+				//trace("Next", i, changed );
 				
 			}
 			

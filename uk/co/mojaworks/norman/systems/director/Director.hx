@@ -19,6 +19,7 @@ enum DisplayListAction {
 class Director
 {
 	
+	public static inline var BACKGROUND_LAYER : String = "DirectorBackgroundLayer";
 	public static inline var SCREEN_LAYER : String = "DirectorScreensLayer";
 	public static inline var MENU_LAYER : String = "DirectorMenuLayer";
 	
@@ -27,6 +28,7 @@ class Director
 	
 	var _layers : Array<Transform>;
 	var _displayStack : Array<BaseViewDelegate>;
+	var _background : BaseViewDelegate;
 	
 	public function new() 
 	{
@@ -35,6 +37,17 @@ class Director
 		_layers = [];
 		
 		rootObject = ObjectFactory.createGameObject( "Root" );
+		
+	}
+	
+	public function setBackground( background : GameObject ) : Void {
+				
+		var backgroundLayer : Transform = getLayer( BACKGROUND_LAYER );
+		
+		if ( _background != null ) _background.gameObject.destroy();
+		_background = BaseViewDelegate.getFromObject( background );
+		backgroundLayer.addChild( background.transform );
+		
 	}
 	
 	/**
@@ -137,6 +150,8 @@ class Director
 	
 	public function update( seconds : Float ) : Void 
 	{
+		if ( _background != null ) _background.update( seconds );
+		
 		for ( screen in _displayStack ) {
 			screen.update( seconds );
 		}
@@ -149,13 +164,15 @@ class Director
 		rootObject.transform.x = Systems.viewport.marginLeft * Systems.viewport.scale;
 		rootObject.transform.y = Systems.viewport.marginTop * Systems.viewport.scale;
 		
+		if ( _background != null ) _background.resize();
+		
 		for ( screen in _displayStack ) {
 			screen.resize();
 		}
 
 	}
 	
-	public function displayListChanged() 
+	public function displayListChanged() : Void
 	{
 		rootObject.transform.updateDisplayOrder(0);
 	}

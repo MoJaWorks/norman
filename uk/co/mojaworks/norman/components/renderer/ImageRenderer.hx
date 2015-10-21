@@ -80,6 +80,8 @@ class ImageRenderer extends AbstractRenderer
 	
 	override public function render(canvas:Canvas):Void 
 	{
+		//trace("Rendering ", gameObject.id );
+		
 		super.render( canvas );
 		
 		var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData( texture, imageUVRect, gameObject.transform.renderMatrix, color.r, color.g, color.b, color.a * getCompositeAlpha() );
