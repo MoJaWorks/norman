@@ -12,7 +12,7 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  * ...
  * @author ...
  */
-class Mask extends AbstractRenderer
+class Mask extends BaseRenderer
 {
 
 	public static var defaultShader( get, null ) : ShaderData = null;

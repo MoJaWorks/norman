@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.systems.ui;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
-import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
+import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
 import uk.co.mojaworks.norman.systems.ui.MouseEvent.MouseEventType;
 import uk.co.mojaworks.norman.utils.LinkedList;
@@ -36,7 +36,7 @@ class UISystem
 		var hasHit : Bool = false;
 		var events : Array<MouseEvent> = [];
 		var event : MouseEvent;
-		var hitTarget : AbstractRenderer;
+		var hitTarget : BaseRenderer;
 		
 		// First reset all
 		for ( ui in _uiComponents ) {

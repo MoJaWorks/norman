@@ -14,9 +14,6 @@ class SimpleButtonUIDelegate extends BaseUIDelegate
 	public function new() 
 	{
 		super( );
-		
-		clicked = new Signal1<MouseEvent>();
-		
 	}
 	
 	override public function onMouseDown( e : MouseEvent ) : Void {

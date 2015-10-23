@@ -14,7 +14,7 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  * ...
  * @author Simon
  */
-class ImageRenderer extends AbstractRenderer
+class ImageRenderer extends BaseRenderer
 {
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
@@ -31,8 +31,6 @@ class ImageRenderer extends AbstractRenderer
 		}
 		return ImageRenderer.defaultShader;
 	}
-	
-	public var color( default, default ) : Color;
 	
 	public var texture( get, null ) : TextureData;
 	public var subTextureId( default, set ) : String;

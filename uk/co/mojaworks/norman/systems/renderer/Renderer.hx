@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.systems.renderer;
 import lime.graphics.Image;
 import lime.graphics.RenderContext;
-import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
+import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
@@ -81,7 +81,7 @@ class Renderer
 		
 		//trace("Rendering level starting at", sprite.transform.x, sprite.transform.y );
 		
-		var sprite : AbstractRenderer = transform.gameObject.renderer;
+		var sprite : BaseRenderer = transform.gameObject.renderer;
 				
 		if ( sprite != null ) 
 		{

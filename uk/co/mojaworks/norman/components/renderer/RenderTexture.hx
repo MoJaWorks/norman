@@ -10,7 +10,7 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  * ...
  * @author Simon
  */
-class RenderTexture extends AbstractRenderer
+class RenderTexture extends BaseRenderer
 {
 	public static var defaultShader( get, null ) : ShaderData = null;
 	public static function get_defaultShader( ) : ShaderData {
@@ -60,7 +60,7 @@ class RenderTexture extends AbstractRenderer
 		super.postRender(canvas);
 		canvas.popRenderTarget();
 		if ( _renderToCanvas ) {
-			canvas.draw( _textureArray, RenderTexture.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, gameObject.transform.renderMatrix, 255, 255, 255, getCompositeAlpha() ), Canvas.QUAD_INDICES );
+			canvas.draw( _textureArray, RenderTexture.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, gameObject.transform.renderMatrix, color.r, color.g, color.b, getCompositeAlpha() * color.a ), Canvas.QUAD_INDICES );
 		}
 	}
 	

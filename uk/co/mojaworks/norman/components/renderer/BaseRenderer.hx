@@ -3,18 +3,20 @@ import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.Systems;
+import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * Incomplete/Abstract class should not be instantiated
  * @author Simon
  */
 
-class AbstractRenderer extends Component
+class BaseRenderer extends Component
 {
 	
 	public var shouldRenderChildren( default, default ) : Bool = true;
 	public var visible( default, default ) : Bool = true;
 	public var alpha( default, default ) : Float = 1;
+	public var color( default, default ) : Color = Color.WHITE;
 		
 	public function preRender( canvas : Canvas ) : Void {};
 	public function render( canvas : Canvas ) : Void {};
@@ -39,7 +41,7 @@ class AbstractRenderer extends Component
 		while ( transform != null ) {
 			
 			if ( transform.parent != null ) {
-				var parentRenderer : AbstractRenderer = cast transform.parent.gameObject.renderer;
+				var parentRenderer : BaseRenderer = cast transform.parent.gameObject.renderer;
 				if ( parentRenderer != null ) {
 					return parentRenderer.getCompositeAlpha() * alpha;
 				}else {

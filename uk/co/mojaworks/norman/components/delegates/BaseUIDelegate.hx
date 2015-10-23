@@ -2,7 +2,7 @@ package uk.co.mojaworks.norman.components.delegates;
 
 import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
+import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.systems.ui.MouseEvent;
@@ -69,6 +69,20 @@ class BaseUIDelegate extends Component
 	
 	public function onClick( e : MouseEvent ) : Void { 
 		if ( enabled ) clicked.dispatch( e );
+	}
+	
+	override public function destroy():Void 
+	{
+		if ( !destroyed ) {
+			super.destroy();
+			
+			isMouseButtonDown = null;
+			wasMouseButtonDownLastFrame = null;
+			wasMouseButtonDownElsewhere = null;
+			
+			clicked.removeAll();
+			clicked = null;
+		}
 	}
 
 }

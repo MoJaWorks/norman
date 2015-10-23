@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.components.renderer;
 import lime.math.Matrix3;
 import lime.math.Rectangle;
-import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
+import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.text.BitmapFont;
@@ -26,14 +26,13 @@ enum WrapType {
 	Auto;
 }
  
-class TextRenderer extends AbstractRenderer
+class TextRenderer extends BaseRenderer
 {
 		
 	// Get access to formatting through layout
 	public var text( default, set ) : String = "";
 	
 	// config
-	public var color( default, default ) : Color;
 	public var font( default, set ) : BitmapFont;
 	public var align( default, set ) : TextAlign;
 	public var wrapType( default, set ) : WrapType;

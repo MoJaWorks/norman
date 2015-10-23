@@ -18,7 +18,7 @@ enum FillShape {
 	Ellipse;
 }
  
-class ShapeRenderer extends AbstractRenderer
+class ShapeRenderer extends BaseRenderer
 {
 
 	// Set up default shader
@@ -37,7 +37,6 @@ class ShapeRenderer extends AbstractRenderer
 		return ShapeRenderer.defaultShader;
 	}
 	
-	public var color( default, default ) : Color;
 	public var shape( get, set ) : FillShape;
 	
 	private var _shape : FillShape;	

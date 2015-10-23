@@ -252,5 +252,6 @@ class Transform extends Component
 		_renderMatrix = null;
 		_inverseWorldMatrix = null;
 	}
+
 	
 }

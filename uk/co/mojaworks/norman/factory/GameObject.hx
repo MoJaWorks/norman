@@ -3,7 +3,7 @@ import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
 import uk.co.mojaworks.norman.components.EventDispatcher;
-import uk.co.mojaworks.norman.components.renderer.AbstractRenderer;
+import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
@@ -12,14 +12,15 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * ...
  * @author Simon
  */
-class GameObject
+class GameObject implements IDisposable
 {
 	public var id( default, null ) : String;
+	public var destroyed : Bool = false;
 	
 	// Quick access
 	public var transform( get, never ) : Transform;
 	public var eventDispatcher( get, never ) : EventDispatcher;
-	public var renderer( get, never ) : AbstractRenderer;
+	public var renderer( get, never ) : BaseRenderer;
 		
 	var components : LinkedList<Component>;
 	
@@ -58,11 +59,17 @@ class GameObject
 	}
 	
 	public function destroy( ) : Void {
-		for ( component in components ) {
-			component.onRemove();
-			component.destroy();
+		
+		if ( !destroyed ) {
+			destroyed = true;
+			
+			for ( component in components ) {
+				component.onRemove();
+				component.destroy();
+			}
+			
+			components = null;
 		}
-		components = null;
 	}
 	
 	public function getAllComponentsOfType( type : String ) : Array<Component> 
@@ -87,8 +94,8 @@ class GameObject
 		return cast getComponent( EventDispatcher.TYPE );
 	}
 	
-	private function get_renderer() : AbstractRenderer {
-		return cast getComponent( AbstractRenderer.TYPE );
+	private function get_renderer() : BaseRenderer {
+		return cast getComponent( BaseRenderer.TYPE );
 	}
 	
 }
