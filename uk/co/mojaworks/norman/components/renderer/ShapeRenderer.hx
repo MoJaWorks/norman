@@ -115,7 +115,7 @@ class ShapeRenderer extends BaseRenderer
 					}
 				}
 				
-				trace( "Ellipse", _vertices, _indices, quality, radsPerVert );
+				//trace( "Ellipse", _vertices, _indices, quality, radsPerVert );
 		}
 		
 	}

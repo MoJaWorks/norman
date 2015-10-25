@@ -252,6 +252,37 @@ class Transform extends Component
 		_renderMatrix = null;
 		_inverseWorldMatrix = null;
 	}
+	
+	public function findChild( id : String ) : Transform {
+		
+		var split : Array<String> = id.split("/");
+		var current : Transform = this;
+		var found : Bool = false;
+		
+		// An empty string - do nothing
+		if ( split.length == 0 ) return null;
+		
+		for ( i in 0...split.length ) {
+			
+			found = false;
+			
+			for ( child in current.children ) {
+				if ( child.gameObject.id == split[i] ) {
+					current = child;
+					found = true;
+					break;
+				}
+			}
+			
+			if ( !found ) {
+				current = null;
+				break;
+			}
+		}
+		
+		return current;
+		
+	}
 
 	
 }
