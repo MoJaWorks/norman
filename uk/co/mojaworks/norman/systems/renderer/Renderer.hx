@@ -81,28 +81,31 @@ class Renderer
 		
 		//trace("Rendering level starting at", sprite.transform.x, sprite.transform.y );
 		
-		var sprite : BaseRenderer = transform.gameObject.renderer;
-				
-		if ( sprite != null ) 
-		{
-			sprite.preRender( canvas );
-			if ( sprite.visible && sprite.getCompositeAlpha() > 0 ) {
-				
-				sprite.render( canvas );
-				
-				if ( sprite.shouldRenderChildren ) {
-					for ( child in transform.children ) {
-						renderLevel( child );
+		if ( transform.gameObject.enabled ) {
+		
+			var sprite : BaseRenderer = transform.gameObject.renderer;
+					
+			if ( sprite != null ) 
+			{
+				sprite.preRender( canvas );
+				if ( sprite.visible && sprite.getCompositeAlpha() > 0 ) {
+					
+					sprite.render( canvas );
+					
+					if ( sprite.shouldRenderChildren ) {
+						for ( child in transform.children ) {
+							renderLevel( child );
+						}
 					}
+					
 				}
-				
+				sprite.postRender( canvas );
 			}
-			sprite.postRender( canvas );
-		}
-		else 
-		{
-			for ( child in transform.children ) {
-				renderLevel( child );
+			else 
+			{
+				for ( child in transform.children ) {
+					renderLevel( child );
+				}
 			}
 		}
 		

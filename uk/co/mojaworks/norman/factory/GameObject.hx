@@ -16,6 +16,7 @@ class GameObject implements IDisposable
 {
 	public var id( default, null ) : String;
 	public var destroyed : Bool = false;
+	public var enabled : Bool = true;
 	
 	// Quick access
 	public var transform( get, never ) : Transform;
