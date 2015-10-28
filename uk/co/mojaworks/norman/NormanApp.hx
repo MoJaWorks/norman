@@ -28,6 +28,10 @@ class NormanApp extends Application
 	{
 		super();
 		
+		#if (cpp && HXCPP_DEBUGGER)
+			new debugger.Local(true);
+		#end
+		
 		this.normanConfig = config;
 		
 	}

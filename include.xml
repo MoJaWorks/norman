@@ -9,6 +9,7 @@
 	
 	<haxelib name="lime" />
 	<haxelib name="msignal" />
+	<haxelib name="hxcpp-debugger" if="cpp"/>
 	
 	<assets path="assets/default" rename="default" />
 	

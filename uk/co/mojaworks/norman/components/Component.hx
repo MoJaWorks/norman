@@ -19,6 +19,7 @@ import uk.co.mojaworks.norman.factory.IDisposable;
 	
 	public function destroy() : Void {
 		destroyed = true;
+		if ( gameObject != null ) gameObject.removeComponent( this );
 	}
 	
 	public function onAdded() : Void {
