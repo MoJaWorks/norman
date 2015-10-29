@@ -10,6 +10,7 @@ import uk.co.mojaworks.norman.factory.IDisposable;
  #if !macro @:autoBuild( uk.co.mojaworks.norman.components.ComponentBuilder.build() ) #end
  class Component implements IDisposable {
 	 
+	public var enabled( default, set ) : Bool = true;
 	public var gameObject : GameObject;
 	public var destroyed : Bool = false;
 	
@@ -35,5 +36,17 @@ import uk.co.mojaworks.norman.factory.IDisposable;
 	
 	public function getBaseComponentType() : String {
 		return "Component";
+	}
+	
+	public function isEnabled() : Bool {
+		if ( gameObject != null ) {
+			return gameObject.isEnabled();
+		}else {
+			return enabled;
+		}
+	}
+	
+	public function set_enabled( bool : Bool ) : Bool {
+		return this.enabled = bool;
 	}
 }

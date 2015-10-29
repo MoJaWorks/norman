@@ -19,7 +19,6 @@ class BaseUIDelegate extends Component
 	public var wasMouseButtonDownElsewhere : Array<Bool>;
 	public var isMouseOver : Bool = false;
 	public var wasMouseOverLastFrame : Bool = false;
-	public var enabled : Bool = false;
 	public var isCurrentTarget : Bool = false;
 	public var hitTarget( default, default ) : GameObject;
 	

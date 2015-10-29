@@ -16,7 +16,7 @@ class GameObject implements IDisposable
 {
 	public var id( default, null ) : String;
 	public var destroyed : Bool = false;
-	public var enabled : Bool = true;
+	public var enabled( default, set ) : Bool = true;
 	
 	// Quick access
 	public var transform( get, never ) : Transform;
@@ -80,6 +80,19 @@ class GameObject implements IDisposable
 			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) result.push( component );
 		}
 		return result;
+	}
+	
+	public function isEnabled() : Bool {
+		
+		if ( enabled && transform.parent != null ) {
+			return transform.parent.gameObject.isEnabled();
+		}else {
+			return enabled;
+		}
+	}
+	
+	public function set_enabled( bool : Bool ) : Bool {
+		return this.enabled = bool;
 	}
 	
 	
