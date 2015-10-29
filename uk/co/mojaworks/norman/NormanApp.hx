@@ -105,11 +105,9 @@ class NormanApp extends Application
 		
 		updateApp( seconds );
 		
-		#if norman_ecs
-			Systems.renderer.render( Systems.director.rootObject.transform );
-		#else
-			Systems.renderer.render( Systems.director.root );
-		#end
+		Systems.renderer.render( Systems.director.rootObject.transform );
+		
+		Systems.input.update( seconds );
 		
 	}
 	

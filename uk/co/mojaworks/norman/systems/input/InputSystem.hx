@@ -26,6 +26,7 @@ class InputSystem
 	public var accelerationZ : Float;
 	
 	public var mouseIsDown : Array<Bool>;
+	public var mouseWasDownLastFrame : Array<Bool>;
 	public var mousePosition : Vector2;
 	
 	public var mouseDown : Signal1<MouseButton>;
@@ -49,8 +50,17 @@ class InputSystem
 		
 		// Only listen for 3 buttons
 		mouseIsDown = [false, false, false];
+		mouseWasDownLastFrame = [false, false, false];
 		mouseDown = new Signal1<MouseButton>();
 		mouseUp = new Signal1<MouseButton>();
+	}
+	
+	public function update( seconds : Float ) : Void {
+		
+		for ( i in 0...3 ) {
+			mouseWasDownLastFrame[i] = mouseIsDown[i];
+		}
+		
 	}
 	
 	/**

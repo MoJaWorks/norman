@@ -13,6 +13,12 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class UISystem
 {
 
+	#if mobile
+		var isMobile : Bool = true;
+	#else
+		var isMobile : Bool = false;
+	#end
+	
 	var _uiComponents : LinkedList<BaseUIDelegate>;
 	
 	public function new() 
@@ -55,7 +61,7 @@ class UISystem
 		// then find the active sprite
 		for ( ui in _uiComponents ) {
 			
-			//trace("Checking sprite", _sprites.length );
+			//if ( ui.gameObject.id == "creditbutton" ) trace("Checking sprite" );
 			
 			if ( ui.enabled && !hasHit ) {			
 				
@@ -66,7 +72,7 @@ class UISystem
 					ui.isMouseOver = true;
 					if ( !ui.wasMouseOverLastFrame ) {
 						for ( i in 0...3 ) {
-							if ( Systems.input.mouseIsDown[i] ) ui.wasMouseButtonDownElsewhere[i] = true;
+							if ( Systems.input.mouseIsDown[i] && Systems.input.mouseWasDownLastFrame[i] ) ui.wasMouseButtonDownElsewhere[i] = true;
 						}
 						
 						events.push( new MouseEvent( MouseEventType.Over, ui, MouseButton.None ) );
@@ -127,21 +133,6 @@ class UISystem
 		for ( event in events ) {
 			
 			event.target.processEvent( event );
-			
-			/*if ( event.target.enabled ) {
-				switch( event.type  ) {
-					case MouseEventType.Up:
-						event.target.mouseUp.dispatch( event );
-					case MouseEventType.Down:
-						event.target.mouseDown.dispatch( event );
-					case MouseEventType.Out:
-						event.target.mouseOut.dispatch( event );
-					case MouseEventType.Over:
-						event.target.mouseOver.dispatch( event );
-					case MouseEventType.Click:
-						event.target.clicked.dispatch( event );
-				}
-			}*/
 			
 		}
 		
