@@ -14,9 +14,9 @@ class UISystem
 {
 
 	#if mobile
-		var isMobile : Bool = true;
+	public var isMobile : Bool = true;
 	#else
-		var isMobile : Bool = false;
+	public var isMobile : Bool = false;
 	#end
 	
 	var _uiComponents : LinkedList<BaseUIDelegate>;

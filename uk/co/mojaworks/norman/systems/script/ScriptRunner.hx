@@ -54,6 +54,24 @@ class ScriptRunner
 		
 	}
 	
+	public function pause( id : Int ) : Void {
+		
+		for ( script in _scripts ) {
+			if ( script.id == id ) {
+				script.paused = true;
+			}
+		}
+	}
+	
+	public function resume( id : Int ) : Void {
+		
+		for ( script in _scripts ) {
+			if ( script.id == id ) {
+				script.paused = false;
+			}
+		}
+	}
+	
 	public function dispose():Void 
 	{
 		for ( item in _scripts ) {
