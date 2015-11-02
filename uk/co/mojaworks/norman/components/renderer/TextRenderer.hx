@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.renderer;
+import lime.graphics.console.TextureFormat;
 import lime.math.Matrix3;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
@@ -25,6 +26,24 @@ enum WrapType {
 	Letter;
 	Auto;
 }
+
+class TextFormat {
+	public var font : BitmapFont = null;
+	public var fontSize : Null<Float> = null;
+	public var align : Null<TextAlign> = null;
+	public var letterSpacing : Null<Float> = null;
+	public var lineSpacing : Null<Float> = null;
+	
+	public function new ( ?font : BitmapFont = null, ?fontSize : Float = null, ?align : TextAlign = null, ?letterSpacing : Float = null, ?lineSpacing : Float = null )
+	{
+		this.font = font;
+		this.fontSize = fontSize;
+		this.align = align;
+		this.letterSpacing = letterSpacing;
+		this.lineSpacing = lineSpacing;
+	}
+}
+
  
 class TextRenderer extends BaseRenderer
 {
@@ -49,7 +68,7 @@ class TextRenderer extends BaseRenderer
 		
 	var _layoutDirty : Bool = true;
 	
-	public function new( text : String, font : BitmapFont ) 
+	public function new( text : String, textFormat : TextFormat ) //font : BitmapFont ) 
 	{
 		super( );
 		
@@ -64,9 +83,18 @@ class TextRenderer extends BaseRenderer
 		wrapType = WrapType.Auto;
 		
 		this.text = text;
-		this.font = font;
+		applyTextFormat( textFormat );
 		
 		_layoutDirty = true;
+	}
+	
+	public function applyTextFormat( textFormat : TextFormat ) : Void 
+	{
+		if ( textFormat.font != null ) font = textFormat.font;
+		if ( textFormat.fontSize != null ) fontSize = textFormat.fontSize;
+		if ( textFormat.align != null ) align = textFormat.align;
+		if ( textFormat.letterSpacing != null ) letterSpacing = textFormat.letterSpacing;
+		if ( textFormat.lineSpacing != null ) lineSpacing = textFormat.lineSpacing;
 	}
 			
 	

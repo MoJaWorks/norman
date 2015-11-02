@@ -20,7 +20,7 @@ class Director
 {
 	
 	public static inline var BACKGROUND_LAYER : String = "DirectorBackgroundLayer";
-	public static inline var SCREEN_LAYER : String = "DirectorScreensLayer";
+	public static inline var VIEW_LAYER : String = "DirectorViewLayer";
 	public static inline var MENU_LAYER : String = "DirectorMenuLayer";
 	
 	public var rootObject : GameObject;
@@ -54,25 +54,25 @@ class Director
 	 * Screens
 	 */
 	
-	public function moveToScreen( screen : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
+	public function moveToView( view : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( screen, _displayStack, delay );
+		transition.transition( view, _displayStack, delay );
 		
 		_displayStack = [];
-		_displayStack.push( cast screen.getComponent(BaseViewDelegate.TYPE) );
+		_displayStack.push( cast view.getComponent(BaseViewDelegate.TYPE) );
 		
-		getLayer(SCREEN_LAYER).addChild( screen.transform );
+		getLayer(VIEW_LAYER).addChild( view.transform );
 		
 	}
 	
-	public function addScreen( screen : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
+	public function addView( view : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( screen, null, delay );
+		transition.transition( view, null, delay );
 		
-		_displayStack.push( BaseViewDelegate.getFromObject(screen) );
-		getLayer(SCREEN_LAYER).addChild( screen.transform );
+		_displayStack.push( BaseViewDelegate.getFromObject(view) );
+		getLayer(VIEW_LAYER).addChild( view.transform );
 	}
 		
 	

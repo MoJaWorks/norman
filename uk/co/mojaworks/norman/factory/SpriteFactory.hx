@@ -39,10 +39,10 @@ class SpriteFactory
 		return gameObject;
 	}
 	
-	public static function createTextSprite( text : String, font : BitmapFont, ?id : String = null ) : GameObject {
+	public static function createTextSprite( text : String, format : TextFormat, ?id : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( id );
-		gameObject.addComponent( new TextRenderer( text, font ) );
+		gameObject.addComponent( new TextRenderer( text, format ) );
 		
 		return gameObject;
 	}

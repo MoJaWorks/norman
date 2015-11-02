@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.factory;
 import uk.co.mojaworks.norman.components.debug.FPSController;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.renderer.TextRenderer.TextFormat;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.text.BitmapFont;
 import uk.co.mojaworks.norman.utils.FontUtils;
@@ -30,7 +31,7 @@ class UIFactory
 	public static function createFPS( ) : GameObject {
 		
 		var font : BitmapFont = FontUtils.createFontFromAsset( "default/arial.fnt" );
-		var gameObject = SpriteFactory.createTextSprite( "-- fps", font, "fps" );
+		var gameObject = SpriteFactory.createTextSprite( "-- fps", new TextFormat(font), "fps" );
 		gameObject.addComponent( new FPSController() );
 		
 		return gameObject;
