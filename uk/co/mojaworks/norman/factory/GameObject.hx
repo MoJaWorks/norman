@@ -19,9 +19,9 @@ class GameObject implements IDisposable
 	public var enabled( default, set ) : Bool = true;
 	
 	// Quick access
-	public var transform( get, never ) : Transform;
-	public var eventDispatcher( get, never ) : EventDispatcher;
-	public var renderer( get, never ) : BaseRenderer;
+	public var transform( default, null ) : Transform = null;
+	//public var eventDispatcher( get, never ) : EventDispatcher;
+	public var renderer( default, null ) : BaseRenderer = null;
 		
 	var components : LinkedList<Component>;
 	
@@ -41,26 +41,40 @@ class GameObject implements IDisposable
 	
 	public function addComponent( component : Component ) : Void {
 		component.gameObject = this;
-		component.onAdded();
 		components.push( component );
+		
+		switch ( component.getBaseComponentType() ) {
+			case BaseRenderer.TYPE:
+				this.renderer = cast component;
+			case Transform.TYPE:
+				this.transform = cast component;
+		}
+		
+		component.onAdded();
 	}
 	
 	public function removeComponent( component : Component ) : Void {
 		component.onRemove();
 		components.remove( component );
+		
+		switch ( component.getBaseComponentType() ) {
+			case BaseRenderer.TYPE:
+				this.renderer = cast getComponent( BaseRenderer.TYPE );
+			case Transform.TYPE:
+				this.transform = cast getComponent( Transform.TYPE );
+		}
 	}
 		
 	public function removeAllComponentsOfType( type : String ) : Void {
 		for ( component in components ) {
 			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) {
-				component.onRemove();
-				components.remove( component );
+				removeComponent( component );
 			}
 		}
 	}
 	
 	public function destroy( ) : Void {
-		
+				
 		if ( !destroyed ) {
 			destroyed = true;
 			
@@ -71,6 +85,9 @@ class GameObject implements IDisposable
 			
 			components = null;
 		}
+		
+		transform = null;
+		renderer = null;
 	}
 	
 	public function getAllComponentsOfType( type : String ) : Array<Component> 
@@ -100,16 +117,16 @@ class GameObject implements IDisposable
 	 * Quick access
 	 */
 	
-	private function get_transform() : Transform {
+	/*private function get_transform() : Transform {
 		return cast getComponent( Transform.TYPE );
-	}
-	
-	private function get_eventDispatcher() : EventDispatcher {
-		return cast getComponent( EventDispatcher.TYPE );
 	}
 	
 	private function get_renderer() : BaseRenderer {
 		return cast getComponent( BaseRenderer.TYPE );
 	}
+	
+	private function get_eventDispatcher() : EventDispatcher {
+		return cast getComponent( EventDispatcher.TYPE );
+	}*/
 	
 }
