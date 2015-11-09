@@ -126,12 +126,12 @@ class ShapeRenderer extends BaseRenderer
 		canvas.draw( null, ShapeRenderer.defaultShader, canvas.buildShapeVertexData( _vertices, gameObject.transform.renderMatrix, color.r, color.g, color.b, color.a * getCompositeAlpha()), _indices );
 	}
 	
-	override public function getWidth():Float 
+	override private function get_width():Float 
 	{
 		return _width;
 	}
 	
-	override public function getHeight():Float 
+	override private function get_height():Float 
 	{
 		return _height;
 	}

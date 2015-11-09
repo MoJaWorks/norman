@@ -20,7 +20,7 @@ class BaseUIDelegate extends Component
 	public var isMouseOver : Bool = false;
 	public var wasMouseOverLastFrame : Bool = false;
 	public var isCurrentTarget : Bool = false;
-	public var hitTarget( default, default ) : GameObject;
+	public var hitTarget( default, default ) : GameObject = null;
 	
 	public var clicked : Signal1<MouseEvent>;
 	
@@ -35,10 +35,12 @@ class BaseUIDelegate extends Component
 	}
 	
 	override public function onAdded( ) : Void {
+		if ( hitTarget == null ) hitTarget = gameObject;
 		Systems.ui.add( this );
 	}
 	
 	override public function onRemove( ) : Void {
+		if ( hitTarget == gameObject ) hitTarget = null;
 		Systems.ui.remove( this );
 	}
 	

@@ -363,13 +363,13 @@ class TextRenderer extends BaseRenderer
 	 * @return
 	 */
 	
-	override public function getWidth() : Float 
+	override private function get_width() : Float 
 	{
 		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.width;
 	}
 	
-	override public function getHeight() : Float 
+	override private function get_height() : Float 
 	{
 		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.height;

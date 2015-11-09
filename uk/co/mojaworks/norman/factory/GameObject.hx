@@ -99,6 +99,29 @@ class GameObject implements IDisposable
 		return result;
 	}
 	
+	public function getAllComponentsOfTypeFromChildren( type : String, includeThisObject : Bool = true, useArray : Array<Component> = null ) : Array<Component> 
+	{
+		var result : Array<Component>;
+		
+		if ( useArray != null ) {
+			result = useArray;
+		}else {
+			result = [];
+		}
+		
+		if ( includeThisObject ) {
+			for ( component in components ) {
+				if ( component.getComponentType() == type || component.getBaseComponentType() == type ) result.push( component );
+			}
+		}
+		
+		for ( child in transform.children ) {
+			child.gameObject.getAllComponentsOfTypeFromChildren( type, true, result );
+		}
+		
+		return result;
+	}
+	
 	public function isEnabled() : Bool {
 		
 		if ( enabled && transform.parent != null ) {

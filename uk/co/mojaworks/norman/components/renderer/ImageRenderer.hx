@@ -86,12 +86,12 @@ class ImageRenderer extends BaseRenderer
 		canvas.draw( _textureArray, ImageRenderer.defaultShader, vertexData, Canvas.QUAD_INDICES );
 	}
 	
-	override public function getWidth():Float 
+	override private function get_width():Float 
 	{
 		return imageRect.width;
 	}
 	
-	override public function getHeight():Float 
+	override private function get_height():Float 
 	{
 		return imageRect.height;
 	}

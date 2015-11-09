@@ -68,12 +68,12 @@ class RenderTexture extends BaseRenderer
 		return _textureArray[0];
 	}
 	
-	override public function getWidth():Float 
+	override private function get_width():Float 
 	{
 		return _textureArray[0].width;
 	}
 	
-	override public function getHeight():Float 
+	override private function get_height():Float 
 	{
 		return _textureArray[0].height;
 	}

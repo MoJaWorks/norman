@@ -102,6 +102,7 @@ class NormanApp extends Application
 		Systems.director.update( seconds );
 		Systems.scripting.update( seconds );
 		Systems.ui.update( seconds );
+		Systems.animation.update( seconds );
 		
 		updateApp( seconds );
 		

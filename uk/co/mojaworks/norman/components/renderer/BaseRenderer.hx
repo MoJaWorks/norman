@@ -17,14 +17,16 @@ class BaseRenderer extends Component
 	public var visible( default, default ) : Bool = true;
 	public var alpha( default, default ) : Float = 1;
 	public var color( default, default ) : Color = Color.WHITE;
+	public var width( get, never ) : Float;
+	public var height( get, never ) : Float;
 		
 	public function preRender( canvas : Canvas ) : Void {};
 	public function render( canvas : Canvas ) : Void {};
 	public function postRender( canvas : Canvas ) : Void {};
 	public function dispose() : Void {};
 	
-	public function getWidth() : Float { return 0; };
-	public function getHeight() : Float { return 0; };
+	//public function getWidth() : Float { return 0; };
+	//public function getHeight() : Float { return 0; };
 	
 	public function new( ) { 
 		super( );
@@ -59,7 +61,10 @@ class BaseRenderer extends Component
 	
 	public function hitTest( global : Vector2 ) : Bool {
 		var local : Vector2 = gameObject.transform.globalToLocal( global );
-		return ( local.x >= 0 && local.x < getWidth() && local.y >= 0 && local.y < getHeight() );
+		return ( local.x >= 0 && local.x < width && local.y >= 0 && local.y < height );
 	}
+	
+	private function get_width( ) : Float { return 0; }
+	private function get_height( ) : Float { return 0; }
 	
 }

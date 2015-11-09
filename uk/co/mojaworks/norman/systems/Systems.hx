@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.systems;
 import haxe.io.Error;
+import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
 import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.systems.hardware.HardwareSystem;
 import uk.co.mojaworks.norman.systems.input.InputSystem;
@@ -25,6 +26,8 @@ class Systems
 	static public var renderer( default, null ) : Renderer;
 	static public var hardware( default, null ) : HardwareSystem;
 	static public var ui( default, null ) : UISystem;
+	static public var animation( default, null ) : AnimationSystem;
+	
 	
 	
 	public function new()
@@ -46,6 +49,7 @@ class Systems
 		director = new Director();
 		hardware = new HardwareSystem();
 		ui = new UISystem();
+		animation = new AnimationSystem();
 	}
 	
 }
