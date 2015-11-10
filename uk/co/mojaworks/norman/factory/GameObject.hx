@@ -39,7 +39,7 @@ class GameObject implements IDisposable
 		return null;
 	}
 	
-	public function addComponent( component : Component ) : Void {
+	public function addComponent( component : Component ) : Component {
 		component.gameObject = this;
 		components.push( component );
 		
@@ -51,6 +51,7 @@ class GameObject implements IDisposable
 		}
 		
 		component.onAdded();
+		return component;
 	}
 	
 	public function removeComponent( component : Component ) : Void {

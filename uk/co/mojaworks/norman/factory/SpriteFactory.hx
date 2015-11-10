@@ -39,6 +39,14 @@ class SpriteFactory
 		return gameObject;
 	}
 	
+	public static function createImageSpriteFromAsset( assetId : String, ?subImageId : String = null, ?id : String = null ) : GameObject {
+		
+		var gameObject : GameObject = ObjectFactory.createGameObject( id );
+		gameObject.addComponent( new ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		
+		return gameObject;
+	}
+	
 	public static function createTextSprite( text : String, format : TextFormat, ?id : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( id );
