@@ -23,7 +23,7 @@ class ShapeRenderer extends BaseRenderer
 
 	// Set up default shader
 	public static var defaultShader( get, null ) : ShaderData = null;
-	public static function get_defaultShader( ) : ShaderData {
+	private static function get_defaultShader( ) : ShaderData {
 		if ( ShapeRenderer.defaultShader == null ) {
 			trace("Creating default fill shader");
 			

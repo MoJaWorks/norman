@@ -16,7 +16,7 @@ class Mask extends BaseRenderer
 {
 
 	public static var defaultShader( get, null ) : ShaderData = null;
-	public static function get_defaultShader( ) : ShaderData {
+	private static function get_defaultShader( ) : ShaderData {
 		if ( Mask.defaultShader == null ) {
 			trace("Creating default mask shader");
 			
