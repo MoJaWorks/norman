@@ -57,7 +57,7 @@ class NormanApp extends Application
 		// Called after html5 preloader finishes
 		
 		onStartupComplete();
-		onWindowResize( window, Std.int(window.width * window.scale), Std.int(window.height * window.scale) );
+		onWindowResize( window, Std.int(window.width), Std.int(window.height) );
 		
 		return super.exec();
 	}
