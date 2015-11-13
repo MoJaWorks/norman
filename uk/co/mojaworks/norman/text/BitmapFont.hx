@@ -53,4 +53,16 @@ class BitmapFont
 		kernings = new Map<Int, Map<Int,KerningData> >();
 		pages = [];
 	}
+	
+	public function getKerning( from : Int, to : Int ) : Int {
+		
+		var fromKern : Map<Int,KerningData> = kernings.get( from );
+		if ( fromKern != null ) {
+			if ( fromKern.exists( to ) ) {
+				return fromKern.get( to ).amount;
+			}
+		}
+		
+		return 0;
+	}
 }

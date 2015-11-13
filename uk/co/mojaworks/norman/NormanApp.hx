@@ -150,7 +150,6 @@ class NormanApp extends Application
 	
 	override public function onTextInput( window:Window, text:String ) : Void 
 	{
-		trace("Text input: ", text );
 		super.onTextInput(window, text);
 		Systems.input.onTextEntry( text );
 	}

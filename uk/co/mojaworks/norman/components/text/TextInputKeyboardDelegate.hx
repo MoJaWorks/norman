@@ -24,8 +24,6 @@ class TextInputKeyboardDelegate extends BaseKeyboardDelegate
 		
 		var input : TextInput = TextInput.getFromObject( gameObject );
 		
-		trace("Add text to input", input.hasTextFocus );
-		
 		if ( input.hasTextFocus ) {
 			input.addTextAtCursor( text );
 		}
@@ -46,6 +44,10 @@ class TextInputKeyboardDelegate extends BaseKeyboardDelegate
 					input.moveCursor( -1);
 				case KeyCode.RIGHT:
 					input.moveCursor(1);
+				case KeyCode.RETURN:
+					input.addTextAtCursor("\n");
+				case KeyCode.ESCAPE:
+					input.hasTextFocus = false;
 				default:
 					// Do nothing
 			}

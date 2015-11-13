@@ -10,7 +10,7 @@ class TextInputCaretAnimation extends BaseAnimationComponent
 {
 
 	var _on : Bool = true;
-	var _timer : Float = 1;
+	var _timer : Float = 0.5;
 	
 	public function new() 
 	{
@@ -27,6 +27,7 @@ class TextInputCaretAnimation extends BaseAnimationComponent
 			if ( _timer <= 0 ) {
 				_on = !_on;
 				gameObject.renderer.visible = _on;
+				_timer = 0.5;
 			}
 			
 		}

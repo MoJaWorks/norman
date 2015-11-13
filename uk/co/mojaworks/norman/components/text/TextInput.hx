@@ -29,12 +29,18 @@ class TextInput extends Component
 		super();
 	}
 	
+	/**/
+	
 	override public function onAdded():Void 
 	{
 		super.onAdded();
 		text = TextRenderer.getFromObject( gameObject ).text;
 		cursorPosition = text.length;
 	}
+	
+	/**
+	 * 
+	 */
 	
 	private function set_hasTextFocus( bool : Bool ) : Bool 
 	{
@@ -45,17 +51,31 @@ class TextInput extends Component
 			
 			// Create a caret
 			caret = SpriteFactory.createFilledSprite( textRenderer.color, Math.max(textRenderer.fontSize * 0.05, 2), textRenderer.fontSize );
-			//caret.addComponent( new TextInputCaretAnimation() );
+			caret.addComponent( new TextInputCaretAnimation() );
+			caret.transform.anchorX = caret.renderer.width;
+			gameObject.transform.addChild( caret.transform );
+			
+			var pos : Vector2 = textRenderer.getPositionOfCharacterAtIndex( cursorPosition );
+			caret.transform.x = pos.x;
+			caret.transform.y = pos.y;
+			
+		}else if ( hasTextFocus && !bool ) {
+			
+			if ( caret != null ) caret.destroy();
 			
 		}
 		
 		return this.hasTextFocus = bool;
 	}
 	
+	/**/
+	
 	private function set_placeholder( str : String ) : String 
 	{
 		return this.placeholder = str;
 	}
+	
+	/**/
 	
 	private function set_text( str : String ) : String 
 	{
@@ -64,20 +84,29 @@ class TextInput extends Component
 		return this.text = str;
 	}
 	
+	/**/
+	
 	private function set_isPassword( bool : Bool ) : Bool 
 	{
 		return this.isPassword = bool;
 	}
 	
+	/**/
+	
 	private function set_cursorPosition( pos : Int ) : Int 
 	{
 		this.cursorPosition = Math.floor(MathUtils.clamp( 0, text.length, pos ));
 		
-		var pos : Vector2 = TextRenderer.getFromObject( gameObject ).getPositionOfCharacterAtIndex( cursorPosition );
-		
+		if ( caret != null ) {
+			var pos : Vector2 = TextRenderer.getFromObject( gameObject ).getPositionOfCharacterAtIndex( cursorPosition );
+			caret.transform.x = pos.x;
+			caret.transform.y = pos.y;
+		}
 		
 		return this.cursorPosition;
 	}
+	
+	/**/
 	
 	public function addTextAtCursor( str : String ) : Void
 	{
@@ -85,12 +114,17 @@ class TextInput extends Component
 		cursorPosition += str.length;
 	}
 	
+	/**/
+	
 	public function removeCharacterAfterCursor() : Void 
 	{
 		if ( cursorPosition < text.length ) {
 			text = text.substr( 0, cursorPosition ) + text.substring( cursorPosition + 1 );
+			moveCursor(0);
 		}
 	}
+	
+	/**/
 	
 	public function removeCharacterBeforeCursor() : Void 
 	{
@@ -100,9 +134,18 @@ class TextInput extends Component
 		}
 	}
 	
+	/**/
+	
 	public function moveCursor( amount : Int ) : Void 
 	{
 		cursorPosition += amount;
 	}
+	
+	public function setCursorAtPosition( global : Vector2 ) : Void 
+	{
+		cursorPosition = TextRenderer.getFromObject( gameObject ).getIndexOfCharacterAtPosition( global );
+	}
+	
+	/**/
 	
 }

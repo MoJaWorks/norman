@@ -8,6 +8,7 @@ import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.text.BitmapFont;
 import uk.co.mojaworks.norman.utils.Color;
+import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -116,20 +117,19 @@ class TextRenderer extends BaseRenderer
 		var lineLength : Float = 0;	// Doesn't count spaces unless there are more letters after
 		var lineLengthToLastWord : Float = 0; // Counts to end of last word
 		var isFirstWord : Bool = true;
-		var kerning : KerningData = null;
+		var kerning : Int = 0;
 				
 		for ( i in 0...text.length ) {
 			
 			var char : CharacterData =  font.characters.get( text.charCodeAt(i) );
 			if ( char == null ) char = new CharacterData( text.charCodeAt(i) );
 			
-			kerning = null;
 			if ( previousCharacter != null) {
-				if (font.kernings.get( previousCharacter.id ) != null ) {
-					kerning = font.kernings.get( previousCharacter.id ).get( char.id );
-					if ( kerning != null ) currentX -= kerning.amount * _fontMultiplier;
-				}
+				
+				kerning = font.getKerning( previousCharacter.id, char.id );
+				currentX -= kerning * _fontMultiplier;
 				currentX += letterSpacing;
+				
 			}
 			
 			if ( char.id == 32 ) {
@@ -216,28 +216,11 @@ class TextRenderer extends BaseRenderer
 		var padding : Float = 0;
 		var prev_char : CharacterData = null;
 		var m : Matrix3 = new Matrix3();
-		var kerning : KerningData;
+		var kerning : Int = 0;
 		
 		// First go through and get line length
-		for ( i in 0...string.length ) {
-			
-			var char : CharacterData =  font.characters.get( string.charCodeAt(i) );
-			if ( char != null ) {
+		x = getLineRenderLength( string );
 				
-				kerning = null;
-				if ( prev_char != null ) {
-					if ( font.kernings.get( prev_char.id ) != null ) {
-						kerning = font.kernings.get( prev_char.id ).get( char.id );
-						if ( kerning != null ) x -= kerning.amount * _fontMultiplier;
-					}
-					x += letterSpacing;
-				}
-				x += char.xAdvance * _fontMultiplier;
-			}
-			prev_char = char;				 
-		}
-		
-		
 		// Put any padding at start of line for align
 		switch( align ) {
 			case TextAlign.Left:
@@ -260,10 +243,8 @@ class TextRenderer extends BaseRenderer
 				
 				kerning = null;
 				if ( prev_char != null ) {
-					if ( font.kernings.get( prev_char.id ) != null ) {
-						kerning = font.kernings.get( prev_char.id ).get( char.id );
-						if ( kerning != null ) x -= kerning.amount * _fontMultiplier;
-					}
+					kerning = font.getKerning( prev_char.id, char.id );
+					x -= kerning * _fontMultiplier;
 					x += letterSpacing;
 				}
 				
@@ -293,6 +274,31 @@ class TextRenderer extends BaseRenderer
 			prev_char = char;
 								 
 		}
+		
+	}
+	
+	function getLineRenderLength(string:String) : Float
+	{
+		var x : Float = 0;
+		var prev_char : CharacterData = null;
+		var char : CharacterData = null;
+		var kerning : Int;
+		
+		for ( i in 0...string.length ) {
+			
+			char =  font.characters.get( string.charCodeAt(i) );
+			if ( char != null ) {
+				if ( prev_char != null ) {
+					kerning = font.getKerning( prev_char.id, char.id );
+					x -= kerning * _fontMultiplier;
+					x += letterSpacing;
+				}
+				x += char.xAdvance * _fontMultiplier;
+			}
+			prev_char = char;				 
+		}
+		
+		return x;
 		
 	}
 	
@@ -376,18 +382,153 @@ class TextRenderer extends BaseRenderer
 		return _bounds.height;
 	}
 	
-	public function getPositionOfCharacterAtIndex( i : Int ) : Vector2 {
+	override public function hitTest(global:Vector2):Bool 
+	{
+		var local : Vector2 = gameObject.transform.globalToLocal( global );
+		if ( wrapWidth > 0 ) {
+			return ( local.x >= 0 && local.x < wrapWidth && local.y >= 0 && local.y < height );
+		}else {
+			return ( local.x >= 0 && local.x < width && local.y >= 0 && local.y < height );
+		}
+	}
+	
+	public function getPositionOfCharacterAtIndex( index : Int ) : Vector2 {
+		
+		if ( _layoutDirty ) regenerateLayout();
 		
 		var pos : Vector2 = new Vector2();
+		var line : Int = 0;
+		var target : Int = Math.floor( MathUtils.clamp( 0, text.length, index ) );
 		
 		// First get the line
 		for ( stop in _lineStops ) {
-			if ( stop <= i ) {
-				pos.y += lineSpacing + fontSize;
+			if ( stop < index ) {
+				trace( "index > " + stop );				
+				line++;
 			}
 		}
 		
+		if ( line > 0 ) line--; // make the line number match the actual line number
+		
+		var x : Float = 0;
+		var padding : Float = 0;
+		var char : CharacterData = null;
+		var prev_char : CharacterData = null;
+		var i : Int = _lineStops[line];
+		var string : String = "";
+		if ( line < _lineStops.length - 1 ) string = text.substring( _lineStops[line], _lineStops[line+1] );
+				
+		// First go through and get line length
+		x = getLineRenderLength( string );
+				
+		// Put any padding at start of line for align
+		switch( align ) {
+			case TextAlign.Left:
+				x = 0;
+			case TextAlign.Center:
+				x = (wrapWidth - x) * 0.5;
+			case TextAlign.Right:
+				x = wrapWidth - x;
+			case TextAlign.Justify:
+				padding = (wrapWidth - x) / (string.length - 1);
+				x = 0;
+		}
+		
+		while ( i < index ) {
+			
+			trace(i);
+			
+			char = font.characters.get( text.charCodeAt( i ) );
+			
+			if ( char != null ) {
+				x += char.xAdvance * _fontMultiplier;
+				x += letterSpacing;
+				x += padding;
+				if ( prev_char != null ) x += font.getKerning( prev_char.id, char.id ) * _fontMultiplier;		
+				prev_char = char;
+			}
+			
+			i++;
+		}
+		
+		pos.setTo( x, (lineSpacing + (font.lineHeight * _fontMultiplier)) * (line) );
+				
 		return pos;
+		
+	}
+	
+	/**/
+	
+	public function getIndexOfCharacterAtPosition( global : Vector2 ) : Int {
+		
+		trace("Getting cursor pos from vector");
+		
+		if ( _layoutDirty ) regenerateLayout();
+		var local : Vector2 = gameObject.transform.globalToLocal( global );
+		
+		var line : Int = Math.floor( local.y / ((font.lineHeight * _fontMultiplier) + lineSpacing ) );
+		line = Std.int( MathUtils.clamp( 0, _lineStops.length - 1, line ));
+		
+		var lineLength : Float = 0;
+		var x : Float = 0;
+		var padding : Float = 0;
+		var char : CharacterData = null;
+		var prev_char : CharacterData = null;
+		var i : Int = _lineStops[line];
+		var string : String = "";
+		if ( line < _lineStops.length - 1 ) string = text.substring( _lineStops[line], _lineStops[line+1] );
+				
+		// First go through and get line length
+		lineLength = getLineRenderLength( string );
+		
+		// Put any padding at start of line for align
+		switch( align ) {
+			case TextAlign.Left:
+				x = 0;
+			case TextAlign.Center:
+				x = (wrapWidth - lineLength) * 0.5;
+			case TextAlign.Right:
+				x = wrapWidth - lineLength;
+			case TextAlign.Justify:
+				padding = (wrapWidth - lineLength) / (string.length - 1);
+				x = 0;
+		}
+		
+		if ( local.x < x ) {
+			trace( "Before start of line" );
+			return _lineStops[ line ];
+		}else if ( local.x > x + lineLength ) {
+			trace("Past end of line" );
+			return _lineStops[ line + 1 ];
+		}
+		
+		while ( i < _lineStops[ line + 1 ] ) {
+			
+			trace(i, x, local.x);
+			
+			char = font.characters.get( text.charCodeAt( i ) );
+			
+			if ( char != null ) {
+				var diff : Float = 0;
+				diff += char.xAdvance * _fontMultiplier;
+				diff += letterSpacing;
+				diff += padding;
+				if ( prev_char != null ) diff += font.getKerning( prev_char.id, char.id ) * _fontMultiplier;
+				
+				if ( local.x < x + (diff * 0.5) ) return i;
+				x += diff;
+				
+				prev_char = char;
+			}
+			
+			
+			
+			i++;
+		}
+		
+		
+		trace("cursor index now at ", i);	
+		return i;
 		
 	}
 	
