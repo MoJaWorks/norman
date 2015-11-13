@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.components.renderer;
 import lime.graphics.console.TextureFormat;
 import lime.math.Matrix3;
 import lime.math.Rectangle;
+import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.systems.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
@@ -373,6 +374,21 @@ class TextRenderer extends BaseRenderer
 	{
 		if ( _layoutDirty ) regenerateLayout();
 		return _bounds.height;
+	}
+	
+	public function getPositionOfCharacterAtIndex( i : Int ) : Vector2 {
+		
+		var pos : Vector2 = new Vector2();
+		
+		// First get the line
+		for ( stop in _lineStops ) {
+			if ( stop <= i ) {
+				pos.y += lineSpacing + fontSize;
+			}
+		}
+		
+		return pos;
+		
 	}
 	
 }

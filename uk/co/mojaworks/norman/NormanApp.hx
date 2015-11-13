@@ -1,9 +1,11 @@
 package uk.co.mojaworks.norman;
+import lime.ui.KeyModifier;
 
 import haxe.Timer;
 import lime.app.Application;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
+import lime.ui.KeyCode;
 import lime.ui.Window;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
@@ -132,6 +134,25 @@ class NormanApp extends Application
 	{
 		super.onMouseMove( window, x, y );
 		Systems.input.onMouseMove( x * window.scale, y * window.scale );
+	}
+	
+	override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
+	{
+		super.onKeyDown(window, keyCode, modifier);
+		Systems.input.onKeyDown( keyCode, modifier );
+	}
+	
+	override public function onKeyUp(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
+	{
+		super.onKeyUp(window, keyCode, modifier);
+		Systems.input.onKeyUp( keyCode, modifier );
+	}
+	
+	override public function onTextInput( window:Window, text:String ) : Void 
+	{
+		trace("Text input: ", text );
+		super.onTextInput(window, text);
+		Systems.input.onTextEntry( text );
 	}
 	
 	override public function onRenderContextRestored( renderer : Renderer, context:RenderContext ):Void 

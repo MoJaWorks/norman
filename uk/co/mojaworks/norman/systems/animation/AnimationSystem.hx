@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.systems.animation;
 import motion.Actuate;
 import uk.co.mojaworks.norman.components.animation.BaseAnimationComponent;
-import uk.co.mojaworks.hopper.components.game.object.ball.Ball;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.systems.script.Call;

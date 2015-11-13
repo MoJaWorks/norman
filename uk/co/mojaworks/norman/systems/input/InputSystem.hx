@@ -1,8 +1,13 @@
 package uk.co.mojaworks.norman.systems.input;
 import haxe.Timer;
 import lime.math.Vector2;
+import lime.ui.KeyCode;
+import lime.ui.KeyModifier;
+import msignal.Signal;
 import msignal.Signal.Signal1;
+import uk.co.mojaworks.norman.components.delegates.BaseKeyboardDelegate;
 import uk.co.mojaworks.norman.hardware.Accelerometer;
+import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -19,7 +24,8 @@ import uk.co.mojaworks.norman.hardware.Accelerometer;
 class InputSystem
 {
 
-	var accelerometer : Accelerometer;
+	var _keybaordDelegates : LinkedList<BaseKeyboardDelegate>;
+	var _accelerometer : Accelerometer;
 	
 	public var accelerationX : Float;
 	public var accelerationY : Float;
@@ -32,15 +38,20 @@ class InputSystem
 	public var mouseDown : Signal1<MouseButton>;
 	public var mouseUp : Signal1<MouseButton>;
 	
+	public var keyState : Map<KeyCode,Bool>;
+	public var keyUp : Signal2<KeyCode, KeyModifier>;
+	public var keyDown : Signal2<Int, KeyModifier>;
+	public var textEntered : Signal1<String>;
+	
 	public function new() 
 	{
 		if ( Accelerometer.isSupported() ) {
 			
 			trace("Accelerometer supported. Connecting...");
 						
-			accelerometer = new Accelerometer();
-			accelerometer.init();
-			accelerometer.onAccelerometerChanged.add( onAccelerometerUpdate );
+			_accelerometer = new Accelerometer();
+			_accelerometer.init();
+			_accelerometer.onAccelerometerChanged.add( onAccelerometerUpdate );
 
 		}else {
 			trace("No accelerometer...");
@@ -53,6 +64,12 @@ class InputSystem
 		mouseWasDownLastFrame = [false, false, false];
 		mouseDown = new Signal1<MouseButton>();
 		mouseUp = new Signal1<MouseButton>();
+		
+		_keybaordDelegates = new LinkedList<BaseKeyboardDelegate>( );
+		this.keyState = new Map<Int,Bool>();
+		keyUp = new Signal2<KeyCode, KeyModifier>();
+		keyDown = new Signal2<KeyCode, KeyModifier>();
+		textEntered = new Signal1<String>();
 	}
 	
 	public function update( seconds : Float ) : Void {
@@ -97,6 +114,42 @@ class InputSystem
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onMouseMove( x : Float, y : Float ) : Void {
 		mousePosition.setTo( x, y );
+	}
+	
+	
+	/**
+	 * Keybaord
+	 */
+	
+	public function addKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
+	{
+		_keybaordDelegates.push( kb );
+	}
+	
+	public function removeKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
+	{
+		_keybaordDelegates.remove( kb );
+	}
+	
+	
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onKeyUp( key : KeyCode, modifier : KeyModifier ) : Void {
+		keyState.set( key, true );
+		keyUp.dispatch( key, modifier );
+		for ( kb in _keybaordDelegates ) kb.onKeyUp( key, modifier );
+	}
+	
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onKeyDown( key : KeyCode, modifier : KeyModifier ) : Void {
+		keyState.set( key, false );
+		keyDown.dispatch( key, modifier );
+		for ( kb in _keybaordDelegates ) kb.onKeyDown( key, modifier );
+	}
+	
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onTextEntry( str : String ) : Void {
+		textEntered.dispatch( str );
+		for ( kb in _keybaordDelegates ) kb.onTextEntry( str );
 	}
 	
 }
