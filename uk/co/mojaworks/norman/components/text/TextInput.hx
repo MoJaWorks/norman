@@ -21,6 +21,8 @@ class TextInput extends Component
 	public var text( default, set ) : String;
 	public var textDisplay( default, null ) : String;
 	public var isPassword( default, set ) : Bool;
+	public var multiline : Bool = true;
+	public var restrictTo : String = null;
 	
 	public var caret : GameObject;
 	
@@ -110,6 +112,9 @@ class TextInput extends Component
 	
 	public function addTextAtCursor( str : String ) : Void
 	{
+		if ( !multiline && str == "\n" ) return;
+		if ( restrictTo != null && restrictTo.indexOf( str ) < 0 ) return;
+		
 		text = text.substr( 0, cursorPosition ) + str + text.substring( cursorPosition );
 		cursorPosition += str.length;
 	}

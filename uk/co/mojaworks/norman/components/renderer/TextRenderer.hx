@@ -241,7 +241,7 @@ class TextRenderer extends BaseRenderer
 			var char : CharacterData =  font.characters.get( string.charCodeAt(i) );
 			if ( char != null ) {
 				
-				kerning = null;
+				kerning = 0;
 				if ( prev_char != null ) {
 					kerning = font.getKerning( prev_char.id, char.id );
 					x -= kerning * _fontMultiplier;
@@ -403,7 +403,7 @@ class TextRenderer extends BaseRenderer
 		// First get the line
 		for ( stop in _lineStops ) {
 			if ( stop < index ) {
-				trace( "index > " + stop );				
+				//trace( "index > " + stop );				
 				line++;
 			}
 		}
@@ -436,7 +436,7 @@ class TextRenderer extends BaseRenderer
 		
 		while ( i < index ) {
 			
-			trace(i);
+			//trace(i);
 			
 			char = font.characters.get( text.charCodeAt( i ) );
 			
@@ -461,7 +461,7 @@ class TextRenderer extends BaseRenderer
 	
 	public function getIndexOfCharacterAtPosition( global : Vector2 ) : Int {
 		
-		trace("Getting cursor pos from vector");
+		//trace("Getting cursor pos from vector");
 		
 		if ( _layoutDirty ) regenerateLayout();
 		var local : Vector2 = gameObject.transform.globalToLocal( global );
@@ -495,16 +495,16 @@ class TextRenderer extends BaseRenderer
 		}
 		
 		if ( local.x < x ) {
-			trace( "Before start of line" );
+			//trace( "Before start of line" );
 			return _lineStops[ line ];
 		}else if ( local.x > x + lineLength ) {
-			trace("Past end of line" );
+			//trace("Past end of line" );
 			return _lineStops[ line + 1 ];
 		}
 		
 		while ( i < _lineStops[ line + 1 ] ) {
 			
-			trace(i, x, local.x);
+			//trace(i, x, local.x);
 			
 			char = font.characters.get( text.charCodeAt( i ) );
 			
@@ -527,7 +527,7 @@ class TextRenderer extends BaseRenderer
 		}
 		
 		
-		trace("cursor index now at ", i);	
+		//trace("cursor index now at ", i);	
 		return i;
 		
 	}
