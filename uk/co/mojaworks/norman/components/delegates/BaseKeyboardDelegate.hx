@@ -31,6 +31,7 @@ class BaseKeyboardDelegate extends Component
 	}
 	
 	public function onTextEntry( text : String ) : Void {}
+	public function onTextEdit( text : String ) : Void {}
 	public function onKeyDown( keyCode : KeyCode, modifier : KeyModifier ) : Void {}
 	public function onKeyUp( keyCode : KeyCode, modifier : KeyModifier ) : Void {}
 }

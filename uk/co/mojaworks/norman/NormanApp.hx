@@ -118,6 +118,12 @@ class NormanApp extends Application
 		// Override this one
 	}
 	
+	override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
+	{
+		super.onMouseWheel(window, deltaX, deltaY);
+		Systems.input.onMouseScroll( deltaX, deltaY );
+	}
+	
 	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseDown( window, x, y, button);
@@ -160,6 +166,7 @@ class NormanApp extends Application
 	{
 		trace( "Text edit", text, start, length );
 		super.onTextEdit(window, text, start, length);
+		Systems.input.onTextEdit( text );
 	}
 	
 	override public function onRenderContextRestored( renderer : Renderer, context:RenderContext ):Void 

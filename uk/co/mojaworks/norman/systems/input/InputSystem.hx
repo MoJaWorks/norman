@@ -26,6 +26,7 @@ class InputSystem
 
 	var _keybaordDelegates : LinkedList<BaseKeyboardDelegate>;
 	var _accelerometer : Accelerometer;
+	var _scrollDelta : Vector2;
 	
 	public var accelerationX : Float;
 	public var accelerationY : Float;
@@ -35,6 +36,7 @@ class InputSystem
 	public var mouseWasDownLastFrame : Array<Bool>;
 	public var mousePosition : Vector2;
 	
+	public var mouseScroll : Signal1<Float>;
 	public var mouseDown : Signal1<MouseButton>;
 	public var mouseUp : Signal1<MouseButton>;
 	
@@ -42,6 +44,7 @@ class InputSystem
 	public var keyUp : Signal2<KeyCode, KeyModifier>;
 	public var keyDown : Signal2<Int, KeyModifier>;
 	public var textEntered : Signal1<String>;
+	public var textEditing : Signal1<String>;
 	
 	public function new() 
 	{
@@ -64,12 +67,15 @@ class InputSystem
 		mouseWasDownLastFrame = [false, false, false];
 		mouseDown = new Signal1<MouseButton>();
 		mouseUp = new Signal1<MouseButton>();
+		mouseScroll = new Signal1<Float>();
+		_scrollDelta = new Vector2();
 		
 		_keybaordDelegates = new LinkedList<BaseKeyboardDelegate>( );
 		this.keyState = new Map<Int,Bool>();
 		keyUp = new Signal2<KeyCode, KeyModifier>();
 		keyDown = new Signal2<KeyCode, KeyModifier>();
 		textEntered = new Signal1<String>();
+		textEditing = new Signal1<String>();
 	}
 	
 	public function update( seconds : Float ) : Void {
@@ -116,6 +122,12 @@ class InputSystem
 		mousePosition.setTo( x, y );
 	}
 	
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onMouseScroll( deltaX : Float, deltaY : Float ) : Void {
+		_scrollDelta.setTo( deltaX, deltaY );
+		mouseScroll.dispatch( _scrollDelta );
+	}
+	
 	
 	/**
 	 * Keybaord
@@ -150,6 +162,12 @@ class InputSystem
 	private function onTextEntry( str : String ) : Void {
 		textEntered.dispatch( str );
 		for ( kb in _keybaordDelegates ) kb.onTextEntry( str );
+	}
+	
+	@:allow( uk.co.mojaworks.norman.NormanApp )
+	private function onTextEdit( str : String ) : Void {
+		textEditing.dispatch( str );
+		for ( kb in _keybaordDelegates ) kb.onTextEdit( str );
 	}
 	
 }
