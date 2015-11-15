@@ -90,17 +90,17 @@ class UISystem
 							
 						}else {
 
-							ui.wasMouseButtonDownElsewhere[i] = false;
-							if ( ui.wasMouseButtonDownLastFrame[i] ) 
+							if ( ui.wasMouseButtonDownLastFrame[i] )
 							{
 								events.push( new MouseEvent( MouseEventType.Up, ui, i ) );
-								
-								if ( !ui.wasMouseButtonDownElsewhere[i] ) 
+
+								if ( !ui.wasMouseButtonDownElsewhere[i] )
 								{
 									events.push( new MouseEvent( MouseEventType.Click, ui, i ) );
 								}
 							}
-							
+							ui.wasMouseButtonDownElsewhere[i] = false;
+
 						}
 					}
 					ui.isCurrentTarget = !hasHit;
