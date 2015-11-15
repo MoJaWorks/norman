@@ -36,7 +36,7 @@ class InputSystem
 	public var mouseWasDownLastFrame : Array<Bool>;
 	public var mousePosition : Vector2;
 	
-	public var mouseScroll : Signal1<Float>;
+	public var mouseScroll : Signal1<Vector2>;
 	public var mouseDown : Signal1<MouseButton>;
 	public var mouseUp : Signal1<MouseButton>;
 	
@@ -67,7 +67,7 @@ class InputSystem
 		mouseWasDownLastFrame = [false, false, false];
 		mouseDown = new Signal1<MouseButton>();
 		mouseUp = new Signal1<MouseButton>();
-		mouseScroll = new Signal1<Float>();
+		mouseScroll = new Signal1<Vector2>();
 		_scrollDelta = new Vector2();
 		
 		_keybaordDelegates = new LinkedList<BaseKeyboardDelegate>( );
