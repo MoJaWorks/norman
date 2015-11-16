@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.delegates;
+package uk.co.mojaworks.norman.components.ui.button;
 import msignal.Signal;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.systems.ui.MouseEvent;

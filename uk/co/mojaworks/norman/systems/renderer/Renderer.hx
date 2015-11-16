@@ -90,7 +90,7 @@ class Renderer
 				sprite.preRender( canvas );
 				if ( sprite.visible && sprite.getCompositeAlpha() > 0 ) {
 					
-					sprite.render( canvas );
+					if ( sprite.color.a > 0 ) sprite.render( canvas );
 					
 					if ( sprite.shouldRenderChildren ) {
 						for ( child in transform.children ) {
