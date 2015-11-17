@@ -35,11 +35,13 @@ class BaseUIDelegate extends Component
 	}
 	
 	override public function onAdded( ) : Void {
+		trace("Adding UI Delegate for ", gameObject.id );
 		if ( hitTarget == null ) hitTarget = gameObject;
 		Systems.ui.add( this );
 	}
 	
 	override public function onRemove( ) : Void {
+		trace("Removing UI Delegate for ", gameObject.id );
 		if ( hitTarget == gameObject ) hitTarget = null;
 		Systems.ui.remove( this );
 	}

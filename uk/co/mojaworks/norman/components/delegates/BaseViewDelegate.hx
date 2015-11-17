@@ -29,8 +29,7 @@ class BaseViewDelegate extends Component
 	}
 	
 	public function hideAndDestroy() : Void {
-		enabled = false;
-		active = false;
+		gameObject.destroy();
 	}
 	
 	public function resize() : Void {}

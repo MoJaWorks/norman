@@ -7,20 +7,18 @@ import uk.co.mojaworks.norman.components.Component;
  * ...
  * @author Simon
  */
-class VerticalLayout extends LayoutItem
+class VerticalLayout extends LayoutItemContainer
 {
-	public var padding : Float = 0;
+	public var spacing : Float = 0;
 
 	public function new() 
 	{
 		super();
 	}
 	
-	override public function layout(bounds:Rectangle):Void 
+	override public function layoutChildren( ) : Void 
 	{
-		super.layout(bounds);
-		
-		var layouts : Array<LayoutItem>;
+		var layouts : Array<LayoutItem> = [];
 		
 		// Get all of the layouts
 		for ( child in gameObject.transform.children ) {
@@ -29,12 +27,35 @@ class VerticalLayout extends LayoutItem
 		}
 		
 		// Get the fixed widths and weights
-		var fixedWidths : Float = 0;
+		var fixedHeights : Float = 0;
 		var totalWeights : Float = 0;
 		
+		for ( layout in layouts ) {
+			if ( layout.requestHeight != null ) fixedHeights += layout.requestHeight;
+			else totalWeights += layout.weightHeight;
+		}
+		
+		var availableExpandingSpace : Float = Math.max( 0, availableHeight - fixedHeights - ( spacing * (layouts.length - 1) ));
+		var currentY : Float = internalVerticalPadding;
 		
 		
-		
-		
+		for ( layout in layouts ) {
+			
+			if ( layout.requestHeight != null ) 
+			{
+				layout.layout( new Rectangle( internalHorizontalPadding, currentY, availableWidth, layout.requestHeight ) );
+				currentY += layout.requestHeight;
+			}
+			else 
+			{
+				var height : Float = ( layout.weightHeight / totalWeights ) * availableExpandingSpace;
+				layout.layout( new Rectangle( internalHorizontalPadding, currentY, availableWidth, height ) );
+				currentY += height;
+			}
+			
+			currentY += spacing;
+			
+		}
+				
 	}
 }

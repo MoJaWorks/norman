@@ -25,10 +25,16 @@ enum LayoutItemVerticalAlign {
  
 class LayoutItem extends Component
 {
+	public var availableWidth : Float = 0;
+	public var availableHeight : Float = 0;
+	
 	public var parent( get, never ) : LayoutItem;
 	
-	public var align : LayoutItemAlign;
-	public var verticalAlign : LayoutItemVerticalAlign;
+	public var verticalPadding : Float = 0;
+	public var horizontalPadding : Float = 0;
+	
+	public var align : LayoutItemAlign = LayoutItemAlign.Left;
+	public var verticalAlign : LayoutItemVerticalAlign = LayoutItemVerticalAlign.Top;
 	
 	public var requestWidth : Null<Float> = null;
 	public var requestHeight : Null<Float> = null;
@@ -36,6 +42,7 @@ class LayoutItem extends Component
 	public var currentWidth : Float;
 	public var currentHeight : Float;
 	public var stretchRendererToFill : Bool = false;
+	public var maintainRendererAspect : Bool = false;
 	
 	// Greater weights will take up more room when stretching to fill and there's not enough room
 	public var weightWidth : Float = 1;
@@ -48,37 +55,52 @@ class LayoutItem extends Component
 	
 	public function layout( bounds : Rectangle ) : Void {
 		
-		if ( stretchRendererToFill ) {
-			gameObject.transform.scaleX = currentWidth / gameObject.renderer.width;
-			gameObject.transform.scaleY = currentHeight / gameObject.renderer.height;
-			currentWidth = bounds.width;
-			currentHeight = bounds.height;
+		availableWidth = bounds.width - (horizontalPadding * 2);
+		availableHeight = bounds.height - (verticalPadding * 2);
+				
+		if ( gameObject.renderer != null ) {
+			if ( stretchRendererToFill ) {
+				if ( !maintainRendererAspect ) {
+					gameObject.transform.scaleX = availableWidth / gameObject.renderer.width;
+					gameObject.transform.scaleY = availableHeight / gameObject.renderer.height;
+					currentWidth = availableWidth;
+					currentHeight = availableHeight;
+				}else  {
+					gameObject.transform.scale = Math.min( availableWidth / gameObject.renderer.width, availableHeight / gameObject.renderer.height );
+					currentWidth = gameObject.renderer.width * gameObject.transform.scaleX;
+					currentHeight = gameObject.renderer.height * gameObject.transform.scaleY;
+				}
+			}else {
+				currentWidth = gameObject.renderer.width * gameObject.transform.scaleX;
+				currentHeight = gameObject.renderer.height * gameObject.transform.scaleY;
+			}
 		}else {
-			gameObject.transform.scale = Math.min( currentWidth / gameObject.renderer.width, currentHeight / gameObject.renderer.height );
-			currentWidth = gameObject.renderer.width * gameObject.transform.scaleX;
-			currentHeight = gameObject.renderer.height * gameObject.transform.scaleY;
+			currentWidth = availableWidth;
+			currentHeight = availableHeight;
 		}
 		
-		var diffX : Float = bounds.width - currentWidth;
-		var diffY : Float = bounds.height - currentHeight;
+		var diffX : Float = availableWidth - currentWidth;
+		var diffY : Float = availableHeight - currentHeight;
 		
 		switch( align ) {
 			case Left:
-				gameObject.transform.x = 0;
+				gameObject.transform.x = bounds.x + horizontalPadding;
 			case Right:
-				gameObject.transform.x = bounds.x + diffX;
+				gameObject.transform.x = bounds.x + horizontalPadding + diffX;
 			case Center:
-				gameObject.transform.x = bounds.x + (diffX * 0.5);
+				gameObject.transform.x = bounds.x + horizontalPadding + (diffX * 0.5);
 		}
 		
 		switch( verticalAlign ) {
 			case Top:
-				gameObject.transform.y = 0;
+				gameObject.transform.y = bounds.y + verticalPadding;
 			case Bottom:
-				gameObject.transform.y = bounds.y + diffY;
+				gameObject.transform.y = bounds.y + verticalPadding + diffY;
 			case Center:
-				gameObject.transform.y = bounds.y + (diffY * 0.5);
+				gameObject.transform.y = bounds.y + verticalPadding + (diffY * 0.5);
 		}
+		
+		trace("Laying out ", gameObject.id, bounds, availableWidth, availableHeight, gameObject.transform.x, gameObject.transform.y );
 						
 	}
 	

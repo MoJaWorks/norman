@@ -23,7 +23,7 @@ class Transition
 		Systems.scripting.run( new Sequence([
 			new Delay( delay ),
 			new Call( function() {
-				for ( screen in from ) screen.hideAndDestroy();
+				if ( from != null ) for ( screen in from ) screen.hideAndDestroy();
 				BaseViewDelegate.getFromObject(to).show();
 				if ( callback != null ) callback();
 			})

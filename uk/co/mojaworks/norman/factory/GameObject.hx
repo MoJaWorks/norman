@@ -75,8 +75,13 @@ class GameObject implements IDisposable
 	}
 	
 	public function destroy( ) : Void {
-				
+						
 		if ( !destroyed ) {
+			
+			for ( child in transform.children ) {
+				child.gameObject.destroy();
+			}
+			
 			destroyed = true;
 			
 			for ( component in components ) {
@@ -85,10 +90,10 @@ class GameObject implements IDisposable
 			}
 			
 			components = null;
+			transform = null;
+			renderer = null;
 		}
 		
-		transform = null;
-		renderer = null;
 	}
 	
 	public function getAllComponentsOfType( type : String ) : Array<Component> 

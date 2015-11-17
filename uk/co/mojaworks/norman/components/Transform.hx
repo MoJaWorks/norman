@@ -80,6 +80,12 @@ class Transform extends Component
 	
 	public function addChild( child : Transform ) : Void {
 		
+		// Do not add as a child of oneself
+		if ( child == this ) {
+			trace("Warning: attempted to add a transform as a child of itself with id " + gameObject.id);
+			return;
+		}
+		
 		// Remove from existing parent
 		if ( child.parent != null ) child.parent.removeChild( child );
 		

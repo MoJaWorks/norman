@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.components.text;
 
 import lime.math.Vector2;
+import msignal.Signal;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
 import uk.co.mojaworks.norman.components.text.TextInputCaretAnimation;
@@ -26,9 +27,12 @@ class TextInput extends Component
 	
 	public var caret : GameObject;
 	
+	public var changed : Signal1<TextInput>;
+	
 	public function new() 
 	{
 		super();
+		changed = new Signal1<TextInput>();
 	}
 	
 	/**/
@@ -83,7 +87,11 @@ class TextInput extends Component
 	{
 		textDisplay = str;
 		TextRenderer.getFromObject( gameObject ).text = str;
-		return this.text = str;
+		this.text = str;
+		
+		changed.dispatch( this );
+		
+		return str;
 	}
 	
 	/**/
@@ -149,6 +157,14 @@ class TextInput extends Component
 	public function setCursorAtPosition( global : Vector2 ) : Void 
 	{
 		cursorPosition = TextRenderer.getFromObject( gameObject ).getIndexOfCharacterAtPosition( global );
+	}
+	
+	override public function destroy():Void 
+	{
+		super.destroy();
+		
+		changed.removeAll();
+		changed = null;
 	}
 	
 	/**/

@@ -3,6 +3,7 @@ import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
+import uk.co.mojaworks.norman.factory.UIFactory;
 
 /**
  * ...
@@ -68,11 +69,38 @@ class Director
 	
 	public function addView( view : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
+		if ( _displayStack.length > 0 ) _displayStack[_displayStack.length - 1].enabled = false;
+		
 		if ( transition == null ) transition = new Transition();
 		transition.transition( view, null, delay );
 		
 		_displayStack.push( BaseViewDelegate.getFromObject(view) );
 		getLayer(VIEW_LAYER).addChild( view.transform );
+		
+	}
+	
+	public function addBlocker( transition : Transition = null, delay : Float = 0 ) : Void {
+		
+		var blocker : GameObject = UIFactory.createBlocker();		
+		addView( blocker );
+		
+	}
+	
+	public function closeTopView( ) : Void {
+		
+		// Close the current view
+		if ( _displayStack.length > 0 ) _displayStack.pop().hideAndDestroy();
+		
+		// Check for a blocker and remove
+		if ( _displayStack.length > 0  && _displayStack[ _displayStack.length - 1 ].gameObject.id == "blocker" ) {
+			_displayStack.pop().hideAndDestroy();
+		}
+		
+		// Re-enable last window
+		if ( _displayStack.length > 0  ) {
+			_displayStack[_displayStack.length - 1].enabled = true;
+		}
+		
 	}
 		
 	
