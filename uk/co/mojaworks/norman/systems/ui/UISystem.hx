@@ -1,4 +1,6 @@
 package uk.co.mojaworks.norman.systems.ui;
+import lime.ui.Mouse;
+import lime.ui.MouseCursor;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
@@ -70,6 +72,11 @@ class UISystem
 				if ( hitTarget != null && hitTarget.hitTest( Systems.input.mousePosition ) ) {
 					
 					ui.isMouseOver = true;
+					
+					#if !mobile 
+						Mouse.cursor = ui.cursor;
+					#end
+					
 					if ( !ui.wasMouseOverLastFrame ) {
 						for ( i in 0...3 ) {
 							if ( Systems.input.mouseIsDown[i] && Systems.input.mouseWasDownLastFrame[i] ) ui.wasMouseButtonDownElsewhere[i] = true;
@@ -134,6 +141,10 @@ class UISystem
 			
 			event.target.processEvent( event );
 			
+		}
+		
+		if ( !hasHit ) {
+			Mouse.cursor = MouseCursor.DEFAULT;
 		}
 		
 		

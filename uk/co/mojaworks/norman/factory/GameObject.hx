@@ -57,6 +57,7 @@ class GameObject implements IDisposable
 	public function removeComponent( component : Component ) : Void {
 		component.onRemove();
 		components.remove( component );
+		component.gameObject = null;
 		
 		switch ( component.getBaseComponentType() ) {
 			case BaseRenderer.TYPE:
@@ -85,7 +86,7 @@ class GameObject implements IDisposable
 			destroyed = true;
 			
 			for ( component in components ) {
-				component.onRemove();
+				removeComponent( component );
 				component.destroy();
 			}
 			

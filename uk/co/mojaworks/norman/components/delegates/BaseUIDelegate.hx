@@ -1,5 +1,7 @@
 package uk.co.mojaworks.norman.components.delegates;
 
+import haxe.CallStack;
+import lime.ui.MouseCursor;
 import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
@@ -23,6 +25,7 @@ class BaseUIDelegate extends Component
 	public var hitTarget( default, default ) : GameObject = null;
 	
 	public var clicked : Signal1<MouseEvent>;
+	public var cursor : MouseCursor = MouseCursor.DEFAULT;
 	
 	public function new( ) 
 	{
@@ -35,13 +38,13 @@ class BaseUIDelegate extends Component
 	}
 	
 	override public function onAdded( ) : Void {
-		trace("Adding UI Delegate for ", gameObject.id );
+		//trace("Adding UI Delegate for ", gameObject.id );
 		if ( hitTarget == null ) hitTarget = gameObject;
 		Systems.ui.add( this );
 	}
 	
 	override public function onRemove( ) : Void {
-		trace("Removing UI Delegate for ", gameObject.id );
+		//trace("Removing UI Delegate for ", gameObject.id );
 		if ( hitTarget == gameObject ) hitTarget = null;
 		Systems.ui.remove( this );
 	}
