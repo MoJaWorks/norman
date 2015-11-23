@@ -56,9 +56,9 @@ class UIFactory
 		
 	}
 	
-	public static function createBlocker() : GameObject {
+	public static function createBlocker( color : Color ) : GameObject {
 		
-		var gameObject : GameObject = SpriteFactory.createFilledSprite( Color.rgba( 0, 0, 0, 0.7 ), 100, 100, FillShape.Rectangle, "blocker" );
+		var gameObject : GameObject = SpriteFactory.createFilledSprite( color, 100, 100, FillShape.Rectangle, "blocker" );
 		var view : BlockerView = cast gameObject.addComponent( new BlockerView() );
 		gameObject.addComponent( new BaseUIDelegate() ); // Absorb clicks
 		

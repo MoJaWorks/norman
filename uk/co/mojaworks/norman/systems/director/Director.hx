@@ -4,6 +4,7 @@ import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 import uk.co.mojaworks.norman.factory.UIFactory;
+import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...
@@ -79,9 +80,9 @@ class Director
 		
 	}
 	
-	public function addBlocker( transition : Transition = null, delay : Float = 0 ) : Void {
+	public function addBlocker( color : Color, transition : Transition = null, delay : Float = 0 ) : Void {
 		
-		var blocker : GameObject = UIFactory.createBlocker();		
+		var blocker : GameObject = UIFactory.createBlocker( color );		
 		addView( blocker );
 		
 	}

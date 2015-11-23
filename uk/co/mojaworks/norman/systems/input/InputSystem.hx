@@ -24,7 +24,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class InputSystem
 {
 
-	var _keybaordDelegates : LinkedList<BaseKeyboardDelegate>;
+	var _keyboardDelegates : LinkedList<BaseKeyboardDelegate>;
 	var _accelerometer : Accelerometer;
 	var _scrollDelta : Vector2;
 	
@@ -70,7 +70,7 @@ class InputSystem
 		mouseScroll = new Signal1<Vector2>();
 		_scrollDelta = new Vector2();
 		
-		_keybaordDelegates = new LinkedList<BaseKeyboardDelegate>( );
+		_keyboardDelegates = new LinkedList<BaseKeyboardDelegate>( );
 		this.keyState = new Map<Int,Bool>();
 		keyUp = new Signal2<KeyCode, KeyModifier>();
 		keyDown = new Signal2<KeyCode, KeyModifier>();
@@ -135,12 +135,12 @@ class InputSystem
 	
 	public function addKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
 	{
-		_keybaordDelegates.push( kb );
+		_keyboardDelegates.push( kb );
 	}
 	
 	public function removeKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
 	{
-		_keybaordDelegates.remove( kb );
+		_keyboardDelegates.remove( kb );
 	}
 	
 	
@@ -148,26 +148,26 @@ class InputSystem
 	private function onKeyUp( key : KeyCode, modifier : KeyModifier ) : Void {
 		keyState.set( key, true );
 		keyUp.dispatch( key, modifier );
-		for ( kb in _keybaordDelegates ) kb.onKeyUp( key, modifier );
+		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyUp( key, modifier );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onKeyDown( key : KeyCode, modifier : KeyModifier ) : Void {
 		keyState.set( key, false );
 		keyDown.dispatch( key, modifier );
-		for ( kb in _keybaordDelegates ) kb.onKeyDown( key, modifier );
+		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyDown( key, modifier );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onTextEntry( str : String ) : Void {
 		textEntered.dispatch( str );
-		for ( kb in _keybaordDelegates ) kb.onTextEntry( str );
+		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onTextEntry( str );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onTextEdit( str : String ) : Void {
 		textEditing.dispatch( str );
-		for ( kb in _keybaordDelegates ) kb.onTextEdit( str );
+		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onTextEdit( str );
 	}
 	
 }
