@@ -62,6 +62,8 @@ class TextRenderer extends BaseRenderer
 	public var lineSpacing( default, set ) : Float;
 	public var fontSize( default, set ) : Float = 32;
 	
+	public var drawDebug : Bool = false;
+	
 	// results
 	private var _lineStops : Array<Int>;
 	private var _bounds : Rectangle;
@@ -195,11 +197,16 @@ class TextRenderer extends BaseRenderer
 		
 		if ( _layoutDirty ) regenerateLayout();
 		
+		if ( drawDebug ) {
+			canvas.draw( null, ShapeRenderer.defaultShader, canvas.buildQuadVertexData( wrapWidth, height, gameObject.transform.renderMatrix, 0, 255, 0, 1 ), Canvas.QUAD_INDICES );
+			canvas.draw( null, ShapeRenderer.defaultShader, canvas.buildQuadVertexData( _bounds.width, _bounds.height, gameObject.transform.renderMatrix, 255, 0, 0, 1 ), Canvas.QUAD_INDICES );
+		}
+		
 		var lineStart : Int = 0;
 		var wordStart : Int = 0;
 		var lineLength : Float = 0;	
 		var y = 0;
-		
+				
 		for ( i in 0..._lineStops.length - 1 ) {
 			drawLine( canvas, text.substring( _lineStops[i], _lineStops[i+1] ), i * ((font.lineHeight * _fontMultiplier) + lineSpacing) );
 		}
