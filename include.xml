@@ -9,6 +9,7 @@
 	
 	<haxelib name="lime" />
 	<haxelib name="msignal" />
+	<haxelib name="actuate" />
 	
 	<assets path="assets/default" rename="default" />
 	
