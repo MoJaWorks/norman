@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.factory;
-import uk.co.mojaworks.hopper.components.game.common.BaseMovementComponent;
 import uk.co.mojaworks.norman.components.debug.FPSController;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;

@@ -9,6 +9,7 @@
 	
 	<haxelib name="lime" />
 	<haxelib name="msignal" />
+	<haxelib name="actuate" />
 	<haxelib name="hxcpp" if="android" />
 	
 	<assets path="assets/default" rename="default" />
