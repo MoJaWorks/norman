@@ -12,6 +12,9 @@ import sys.db.Sqlite;
  * ...
  * @author Simon
  */
+
+typedef SQLDBResult = Map<String,String>;
+ 
 class SQLiteDB
 {
 	
@@ -32,31 +35,20 @@ class SQLiteDB
 	 * 
 	 */
 	
-	public function query( sql : String ) : ResultSet 
+	public function queryResult( sql : String ) : Array<SQLDBResult>
 	{
 		trace("Running SQL Query: \"" + sql + "\"");
-		return _dbConnection.request( sql );
-	}
-	
-	/**
-	 * 
-	 * 
-	 */
-	
-	public function select( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "", limit : String = "" ) : Array<Map<String,String>>
-	{
-		var action : String = "SELECT " + fields.join(",") + " FROM " + from;
-		var sql : String = buildQuery( action, where, whereVars, orderBy, limit );
 		
-		var results : ResultSet = query( sql );
-		var returnData : Array<Map<String,String>> = [];
+		var resultSet : ResultSet = _dbConnection.request( sql );
+		var returnData : Array<SQLDBResult> = [];
 		
-		for ( result in results ) {
+		for ( result in resultSet ) {
 			
-			var returnRow : Map<String,String> = new Map<String,String>();
+			var returnRow : SQLDBResult = new SQLDBResult();
+			var resultFields : Array<String> = Reflect.fields( result );
 			
-			for ( field in fields ) {
-				returnRow.set( field, Reflect.getProperty( result, field ) );
+			for ( field in resultFields ) {
+				returnRow.set( field, Std.string( Reflect.getProperty( result, field ) ) );
 			}
 			
 			returnData.push( returnRow );
@@ -64,11 +56,33 @@ class SQLiteDB
 		}
 		
 		return returnData;
+	}
+	
+	
+	public function query( sql : String ) : Void
+	{
+		
+		trace("Running SQL Query: \"" + sql + "\"");
+		_dbConnection.request( sql );
+		
+	}
+	
+	/**
+	 * 
+	 * 
+	 */
+	
+	public function select( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "", limit : String = "" ) : Array<SQLDBResult>
+	{
+		var action : String = "SELECT " + fields.join(",") + " FROM " + from;
+		var sql : String = buildQuery( action, where, whereVars, orderBy, limit );
+		
+		return queryResult( sql );
 		
 	}
 	
 		
-	public function selectSingle( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "" ) : Map<String,String>
+	public function selectSingle( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "" ) : SQLDBResult
 	{
 		var result : Array<Map<String,String>> = select( fields, from, where, whereVars, orderBy, "1" );
 		if ( result.length > 0 ) {
@@ -136,8 +150,20 @@ class SQLiteDB
 		
 		query( sql );
 		
-		return _dbConnection.lastInsertId();
+		return getLastInsertId();
 		
+	}
+	
+	/**
+	 * 
+	 */
+	
+	public function delete( table : String, where : String = "", whereVars : Array<Dynamic> = null ) : Void
+	{
+		var action : String = "DELETE FROM " + table;
+		var sql : String = buildQuery( action, where, whereVars );
+		
+		query( sql );
 	}
 	
 	/**
