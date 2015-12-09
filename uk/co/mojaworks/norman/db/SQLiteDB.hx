@@ -108,7 +108,7 @@ class SQLiteDB
 			if ( first ) first = false;
 			else action += ", ";
 			
-			action += key + "=" + convertToDatabaseValue( values.get( key ) );
+			action += key + "=" + prepare( values.get( key ) );
 		}
 		
 		var sql : String = buildQuery( action, where, whereVars );
@@ -143,7 +143,7 @@ class SQLiteDB
 			if ( first ) first = false;
 			else sql += ", ";
 			
-			sql += convertToDatabaseValue( values.get( key ) );
+			sql += prepare( values.get( key ) );
 		}
 		
 		sql += ";";
@@ -171,7 +171,7 @@ class SQLiteDB
 	 * 
 	 */
 	
-	public function convertToDatabaseValue( item : Dynamic ) : String 
+	public function prepare( item : Dynamic ) : String 
 	{
 		if ( Std.is( item, Bool ) ) 
 		{
@@ -201,7 +201,7 @@ class SQLiteDB
 	{
 		var regex : EReg = ~/:([0-9]+)/g;
 		var result : String = regex.map( format, function ( reg : EReg ) : String {
-			return convertToDatabaseValue( vars[ Std.parseInt( reg.matched( 1 ) ) ] );
+			return prepare( vars[ Std.parseInt( reg.matched( 1 ) ) ] );
 		});
 		
 		return result;
