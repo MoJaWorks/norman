@@ -87,7 +87,41 @@ class LinkedList<T>
 			var item : T = last.item;
 			
 			if ( last.prev != null ) {
+				last.prev.next = null;
 				last = last.prev;
+			}else {
+				last = null;
+				first = null;
+			}
+			
+			length--;
+			return item;
+		}
+		
+		return null;
+	}
+	
+	
+	public function unshift( item : T ) : Void {
+		var link : LinkedListItem<T> = new LinkedListItem<T>( item );
+		
+		if ( first != null ) {
+			link.next = first;
+			first.prev = link;
+		}
+		
+		first = link;
+		length++;
+	}
+	
+	public function shift() : T {
+		
+		if ( length > 0 ) {
+			var item : T = first.item;
+			
+			if ( first.next != null ) {
+				first.next.prev = null;
+				first = first.next;
 			}else {
 				last = null;
 				first = null;
