@@ -14,35 +14,36 @@ class ShaderUtils
 	
 	public static function getDefaultFillVertexSource() : String {
 		
-		var vertexSource : String = "";
-		vertexSource += "attribute vec2 aVertexPosition;";
-		vertexSource += "attribute vec4 aVertexColor;";
-		vertexSource += "uniform mat4 uProjectionMatrix;";
+		var str : String = "";
+		str += "precision mediump float;";
 		
-		vertexSource += "varying vec4 vVertexColor;";
+		str += "attribute vec2 aVertexPosition;";
+		str += "attribute vec4 aVertexColor;";
+		str += "uniform mat4 uProjectionMatrix;";
 		
-		vertexSource += "void main(void) {";
-		vertexSource += "  vVertexColor = aVertexColor;";
-		vertexSource += "  gl_Position = uProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0);";
-		vertexSource += "}";
+		str += "varying vec4 vVertexColor;";
 		
-		return vertexSource;
+		str += "void main(void) {";
+		str += "  vVertexColor = aVertexColor;";
+		str += "  gl_Position = uProjectionMatrix * vec4(aVertexPosition, 0.0, 1.0);";
+		str += "}";
+		
+		return str;
 		
 	}
 	
 	public static function getDefaultFillFragSource() : String 
 	{
-		var fragmentSource : String = "";
-		#if !desktop
-			fragmentSource += "precision mediump float;";
-		#end
+		var str : String = "";
 		
-		fragmentSource += "varying vec4 vVertexColor;";
-		fragmentSource += "void main(void) {";
-		fragmentSource += "  gl_FragColor = vVertexColor;";
-		fragmentSource += "}";
+		str += "precision mediump float;";
 		
-		return fragmentSource;
+		str += "varying vec4 vVertexColor;";
+		str += "void main(void) {";
+		str += "  gl_FragColor = vVertexColor;";
+		str += "}";
+		
+		return str;
 	}
 	
 	
@@ -54,6 +55,8 @@ class ShaderUtils
 	public static function getDefaultImageVertexSource():String 
 	{
 		var str : String = "";
+		
+		str += "precision mediump float;";
 		
 		str += "attribute vec2 aVertexPosition;";
 		str += "attribute vec4 aVertexColor;";
@@ -77,9 +80,7 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		#if !desktop
-			str += "precision mediump float;";
-		#end
+		str += "precision mediump float;";
 
 		str += "varying vec4 vVertexColor;";
 		str += "varying vec2 vVertexUV;";
@@ -100,9 +101,7 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		#if !desktop
-			str += "precision mediump float;";
-		#end
+		str += "precision mediump float;";
 
 		str += "varying vec4 vVertexColor;";
 		str += "varying vec2 vVertexUV;";
@@ -119,6 +118,8 @@ class ShaderUtils
 	public static function getDefaultMaskVertexSource():String 
 	{
 		var str : String = "";
+		
+		str += "precision mediump float;";
 		
 		str += "attribute vec2 aVertexPosition;";
 		str += "attribute vec2 aMaskUV;";
@@ -145,9 +146,7 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		#if !desktop
-			str += "precision mediump float;";
-		#end
+		str += "precision mediump float;";
 
 		str += "varying vec2 vMaskUV;";
 		str += "varying vec2 vVertexUV;";

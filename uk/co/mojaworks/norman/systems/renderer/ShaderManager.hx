@@ -59,7 +59,7 @@ class ShaderManager
 		
 		var error : Int = _context.getError();
 		if ( error > 0 ) {
-			trace("Error compiling vertex shader" );
+			trace("Error compiling vertex shader", error );
 		}
 		
 		var fs = _context.createShader( GL.FRAGMENT_SHADER );
@@ -68,7 +68,7 @@ class ShaderManager
 		
 		error = _context.getError();
 		if ( error > 0 ) {
-			trace("Error compiling fragment shader" );
+			trace("Error compiling fragment shader", error );
 		}
 		
 		var program : GLProgram = _context.createProgram();
@@ -78,7 +78,7 @@ class ShaderManager
 		
 		error = _context.getError();
 		if ( error > 0 ) {
-			trace("Error linking shaders" );
+			trace("Error linking shaders", error );
 		}
 		
 		shader.glProgram = program;

@@ -39,6 +39,8 @@ class Renderer
 		{
 			case OPENGL(gl):
 				
+				trace("Checking for initial errors", gl.getError() );
+				
 				canvas = new Canvas();
 				canvas.init( );
 				canvas.onContextCreated( gl );
