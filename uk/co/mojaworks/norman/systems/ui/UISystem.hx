@@ -65,7 +65,7 @@ class UISystem
 			
 			//if ( ui.gameObject.id == "creditbutton" ) trace("Checking sprite" );
 			
-			if ( ui.enabled && !hasHit ) {			
+			if ( ui.isEnabled() && !hasHit ) {			
 				
 				hitTarget = ui.hitTarget.renderer;
 				
