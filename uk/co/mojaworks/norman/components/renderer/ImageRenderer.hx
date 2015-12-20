@@ -70,8 +70,13 @@ class ImageRenderer extends BaseRenderer
 		
 		this.subTextureId = id;
 		
-		imageRect = texture.getRectFor( subTextureId );
-		imageUVRect = texture.getUVFor( subTextureId );
+		if ( texture != null ) {
+			imageRect = texture.getRectFor( subTextureId );
+			imageUVRect = texture.getUVFor( subTextureId );
+		}else {
+			imageRect = null;
+			imageUVRect = null;
+		}
 		
 		return this.subTextureId;
 	}
@@ -82,18 +87,28 @@ class ImageRenderer extends BaseRenderer
 		
 		super.render( canvas );
 		
-		var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData( texture, imageUVRect, gameObject.transform.renderMatrix, color.r, color.g, color.b, color.a * getCompositeAlpha() );
-		canvas.draw( _textureArray, ImageRenderer.defaultShader, vertexData, Canvas.QUAD_INDICES );
+		if ( texture != null ) {
+			var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData( texture, imageUVRect, gameObject.transform.renderMatrix, color.r, color.g, color.b, color.a * getCompositeAlpha() );
+			canvas.draw( _textureArray, ImageRenderer.defaultShader, vertexData, Canvas.QUAD_INDICES );
+		}
 	}
 	
 	override private function get_width():Float 
 	{
-		return imageRect.width;
+		if ( texture != null ) {
+			return imageRect.width;
+		}else {
+			return 0;
+		}
 	}
 	
 	override private function get_height():Float 
 	{
-		return imageRect.height;
+		if ( texture != null ) {
+			return imageRect.height;
+		}else {
+			return 0;
+		}
 	}
 			
 	override public function dispose():Void 
