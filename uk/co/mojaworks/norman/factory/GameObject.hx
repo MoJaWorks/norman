@@ -14,7 +14,10 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  */
 class GameObject implements IDisposable
 {
-	public var id( default, null ) : String;
+	private static var autoId : Int = 0;
+	
+	public var id( default, null ) : Int;
+	public var name( default, default ) : String;
 	public var destroyed : Bool = false;
 	public var enabled( default, set ) : Bool = true;
 	
@@ -26,9 +29,10 @@ class GameObject implements IDisposable
 	var components : LinkedList<Component>;
 	
 	@:allow( uk.co.mojaworks.norman.factory.ObjectFactory )
-	private function new( id : String )
+	private function new( name : String )
 	{
-		this.id = id;
+		this.id = autoId++;
+		this.name = name;
 		components = new LinkedList<Component>();
 	}
 		

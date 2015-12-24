@@ -93,7 +93,7 @@ class Director
 		if ( _displayStack.length > 0 ) _displayStack.pop().hideAndDestroy();
 		
 		// Check for a blocker and remove
-		if ( _displayStack.length > 0  && _displayStack[ _displayStack.length - 1 ].gameObject.id == "blocker" ) {
+		if ( _displayStack.length > 0  && _displayStack[ _displayStack.length - 1 ].gameObject.name == "blocker" ) {
 			_displayStack.pop().hideAndDestroy();
 		}
 		
@@ -110,17 +110,16 @@ class Director
 	 */
 		
 	public function registerObject( obj : GameObject ) : Void {
-		objects.set( obj.id, obj );
+		objects.set( obj.name, obj );
 	}
 	
-	public function getObjectWithID( id : String ) : GameObject {
-		return objects.get( id );
+	public function getObjectByName( name : String ) : GameObject {
+		return objects.get( name );
 	}
 		
-	public function removeObject( id : String ) : Void {
-		objects.remove( id );
+	public function removeObjectByName( name : String ) : Void {
+		objects.remove( name );
 	}
-	
 	
 	/**
 	 * Layers
@@ -162,7 +161,7 @@ class Director
 	public function getLayer( name : String ) : Transform {
 		
 		for ( l in _layers ) {
-			if ( l.gameObject.id == "/@normanLayers/" + name ) {
+			if ( l.gameObject.name == "/@normanLayers/" + name ) {
 				return l;
 			}
 		}

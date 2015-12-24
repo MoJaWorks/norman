@@ -273,7 +273,7 @@ class Transform extends Component
 			found = false;
 			
 			for ( child in current.children ) {
-				if ( child.gameObject.id == split[i] ) {
+				if ( child.gameObject.name == split[i] ) {
 					current = child;
 					found = true;
 					break;

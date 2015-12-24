@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.systems;
 import haxe.io.Error;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
+import uk.co.mojaworks.norman.systems.audio.AudioSystem;
 import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.systems.hardware.HardwareSystem;
 import uk.co.mojaworks.norman.systems.input.InputSystem;
@@ -17,6 +18,7 @@ import uk.co.mojaworks.norman.systems.ui.UISystem;
 class Systems
 {
 
+	public static var audio( default, null ) : AudioSystem;
 	public static var viewport( default, null ) : Viewport;
 	static public var model( default, null ) : Model;
 	static public var switchboard( default, null ) : Switchboard;
@@ -40,6 +42,7 @@ class Systems
 	 */
 	
 	public static function init() : Void {
+		audio = new AudioSystem();
 		viewport = new Viewport();
 		model = new Model();
 		switchboard = new Switchboard();

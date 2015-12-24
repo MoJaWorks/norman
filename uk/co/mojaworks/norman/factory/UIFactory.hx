@@ -24,9 +24,9 @@ class UIFactory
 		
 	}
 	
-	public static function createImageButton( delegate : BaseUIDelegate, texture : TextureData, ?subTextureId : String = null, ?id : String = null ) : GameObject {
+	public static function createImageButton( delegate : BaseUIDelegate, texture : TextureData, ?subTextureId : String = null, ?name : String = null ) : GameObject {
 		
-		var gameObject : GameObject = SpriteFactory.createImageSprite( texture, subTextureId, id );
+		var gameObject : GameObject = SpriteFactory.createImageSprite( texture, subTextureId, name );
 		delegate.hitTarget = gameObject;
 		gameObject.addComponent( delegate );
 		
@@ -44,9 +44,9 @@ class UIFactory
 		
 	}
 	
-	public static function createTextInput( text : String, format : TextFormat, ?id : String = null ) : GameObject {
+	public static function createTextInput( text : String, format : TextFormat, ?name : String = null ) : GameObject {
 		
-		var gameObject : GameObject = SpriteFactory.createTextSprite( text, format, id );
+		var gameObject : GameObject = SpriteFactory.createTextSprite( text, format, name );
 		gameObject.addComponent( new TextInput() );
 		gameObject.addComponent( new TextInputUIDelegate() );
 		gameObject.addComponent( new TextInputKeyboardDelegate() );
