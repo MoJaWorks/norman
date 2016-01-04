@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.systems.audio;
-import cpp.Void;
 import haxe.Timer;
 import lime.app.Event;
 import lime.Assets;
@@ -111,16 +110,7 @@ class AudioSystem
 		return val;
 		
 	}
-	
-	private function getSoundWithId( id : Int ) : AudioInstance 
-	{
-		for ( sound in _playingAudio ) 
-		{
-			if ( sound.instanceId == id ) return sound;
-		}
-		return null;
-	}
-	
+		
 	private function updateSoundVolumes() : Void 
 	{
 		for ( sound in _playingAudio ) 
@@ -183,4 +173,35 @@ class AudioSystem
 		
 	}
 	
+	
+	/**
+	 * Single instance stuff
+	 */
+	
+	
+	public function pause( id : Int ) : Void {
+		
+		for ( sound in _playingAudio ) {
+			if ( sound.instanceId == id ) sound.source.pause();
+		}
+		
+	}
+	
+	public function resume( id : Int ) : Void {
+		
+		for ( sound in _playingAudio ) {
+			if ( sound.instanceId == id ) sound.source.play();
+		}
+		
+	}
+	
+	public function stop( id : Int ) : Void {
+		
+		for ( sound in _playingAudio ) {
+			if ( sound.instanceId == id ) {
+				sound.destroy();
+				_playingAudio.remove( sound );
+			}
+		}
+	}
 }
