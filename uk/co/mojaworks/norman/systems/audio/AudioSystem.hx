@@ -1,9 +1,11 @@
 package uk.co.mojaworks.norman.systems.audio;
+import cpp.Void;
 import haxe.Timer;
 import lime.app.Event;
 import lime.Assets;
 import lime.audio.AudioBuffer;
 import lime.audio.AudioSource;
+import motion.Actuate;
 import uk.co.mojaworks.norman.systems.audio.AudioInstance.AudioType;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
@@ -38,6 +40,18 @@ class AudioSystem
 		
 	}
 	
+	public function playLoopingWithResourceId( id : String, volume : Float ) : Int {
+		
+		var instance : AudioInstance = new AudioInstance( id, volume, AudioType.LoopingSFX );
+		instance.source.onComplete.add( function() {
+			onSoundComplete( instance );
+		});
+		instance.source.play();
+		_playingAudio.push( instance );
+		return instance.instanceId;
+		
+	}
+	
 	public function playMusicWithResourceId( id : String, volume : Float, crossFadeLength : Float = 0 ) : Int {
 		
 		var startVolume : Float = ( crossFadeLength > 0 ) ? 0 : volume;
@@ -48,13 +62,27 @@ class AudioSystem
 		});
 		instance.source.play();
 		_playingAudio.push( instance );
-		
+				
 		if ( crossFadeLength > 0 ) {
 			// Tween the volumes
+			var _currentMusic : AudioInstance = _music;
+			
+			Actuate.tween( instance, crossFadeLength, { volume: volume } );
+			if ( _currentMusic != null ) {
+				Actuate.tween( _music, crossFadeLength, { volume: 0 } ).onComplete( function() {
+					_currentMusic.destroy();
+					_playingAudio.remove( _currentMusic );
+				});
+			}
+			
 		}else {
-			// Kill the last music
+			if ( _music != null ) {
+				_music.destroy();
+				_playingAudio.remove( _music );
+			}
 		}
 		
+		_music = instance;
 		
 		return instance.instanceId;
 		
@@ -102,7 +130,57 @@ class AudioSystem
 	}
 	
 	private function onSoundComplete( instance : AudioInstance ) : Void {
-		// TODO: loop music or looping sounds or kill sfx
+		
+		trace("Sound complete", instance.resourceId );
+		
+		switch( instance.type ) {
+			
+			case SFX:
+				instance.destroy();
+				_playingAudio.remove( instance );
+				
+			case LoopingSFX, Music:
+				instance.source.play();
+				
+		}
+		
+	}
+	
+	public function pauseAll() : Void {
+		
+		for ( sound in _playingAudio ) {
+			sound.source.pause();
+		}
+		
+	}
+	
+	public function resumeAll() : Void {
+		
+		for ( sound in _playingAudio ) {
+			sound.source.play();
+		}
+		
+	}
+	
+	public function stopAll() : Void {
+		
+		for ( sound in _playingAudio ) {
+			sound.destroy();
+		}
+		
+		_playingAudio.clear();
+		
+	}
+	
+	public function stopAllWithResourceId( resourceId : String ) : Void {
+		
+		for ( sound in _playingAudio ) {
+			if ( sound.resourceId == resourceId ) {
+				sound.destroy();
+				_playingAudio.remove( sound );
+			}
+		}
+		
 	}
 	
 }
