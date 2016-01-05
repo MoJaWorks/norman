@@ -48,7 +48,12 @@ class SQLiteDB
 			var resultFields : Array<String> = Reflect.fields( result );
 			
 			for ( field in resultFields ) {
-				returnRow.set( field, Std.string( Reflect.getProperty( result, field ) ) );
+				var resultField : Dynamic = Reflect.getProperty( result, field );
+				if ( resultField != null ) {
+					returnRow.set( field, Std.string( resultField ) );
+				}else {
+					returnRow.set( field, null );
+				}
 			}
 			
 			returnData.push( returnRow );

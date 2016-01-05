@@ -28,7 +28,7 @@ class TextureData
 		
 		var result : Rectangle = null;
 		
-		if ( subImageId == null ) {
+		if ( subImageId == null || subImageId == "" || map == null ) {
 			result = new Rectangle( 0, 0, sourceImage.width, sourceImage.height );
 		}else if ( map != null ) {
 			var img : Dynamic = Reflect.field( map.frames, subImageId );
@@ -46,10 +46,9 @@ class TextureData
 	
 	public function getUVFor( subImageId : String ) : Rectangle {
 		
-		//trace("Looking for uv rect", subImageId, map );
-		
 		var result : Rectangle = null;
-		if ( subImageId == null ) {
+		if ( subImageId == null || subImageId == "" || map == null ) {
+			
 			result = new Rectangle( 0, 0, 1, 1 );
 			
 		}else if ( map != null ) {

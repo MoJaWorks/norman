@@ -68,7 +68,7 @@ class TextureManager
 		var texture : TextureData = new TextureData();
 		texture.sourceImage = image;
 		texture.map = map;
-		texture.isValid = false;
+		texture.isValid = true;
 		texture.useCount = 0;
 		texture.id = id;
 		
