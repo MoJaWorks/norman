@@ -15,7 +15,10 @@ class ShaderUtils
 	public static function getDefaultFillVertexSource() : String {
 		
 		var str : String = "";
-		str += "precision mediump float;";
+		
+		#if !mac
+			str += "precision mediump float;";
+		#end
 		
 		str += "attribute vec2 aVertexPosition;";
 		str += "attribute vec4 aVertexColor;";
@@ -36,7 +39,9 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		str += "precision mediump float;";
+		#if !mac
+			str += "precision mediump float;";
+		#end
 		
 		str += "varying vec4 vVertexColor;";
 		str += "void main(void) {";
@@ -56,7 +61,9 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		str += "precision mediump float;";
+		#if !mac
+			str += "precision mediump float;";
+		#end
 		
 		str += "attribute vec2 aVertexPosition;";
 		str += "attribute vec4 aVertexColor;";
@@ -80,7 +87,9 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		str += "precision mediump float;";
+		#if !mac
+			str += "precision mediump float;";
+		#end
 
 		str += "varying vec4 vVertexColor;";
 		str += "varying vec2 vVertexUV;";
@@ -101,7 +110,9 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		str += "precision mediump float;";
+		#if !mac
+			str += "precision mediump float;";
+		#end
 
 		str += "varying vec4 vVertexColor;";
 		str += "varying vec2 vVertexUV;";
@@ -119,7 +130,9 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		str += "precision mediump float;";
+		#if !mac
+			str += "precision mediump float;";
+		#end
 		
 		str += "attribute vec2 aVertexPosition;";
 		str += "attribute vec2 aMaskUV;";
@@ -146,7 +159,9 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		str += "precision mediump float;";
+		#if !mac
+			str += "precision mediump float;";
+		#end
 
 		str += "varying vec2 vMaskUV;";
 		str += "varying vec2 vVertexUV;";

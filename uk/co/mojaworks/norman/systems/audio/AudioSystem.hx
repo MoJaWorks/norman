@@ -15,9 +15,13 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class AudioSystem
 {
 
-	public var masterVolume( default, set ) : Float = 1;
-	public var musicVolume( default, set ) : Float = 1;
-	public var sfxVolume( default, set ) : Float = 1;
+	public var masterVolume( get, set ) : Float;
+	public var musicVolume( get, set ) : Float;
+	public var sfxVolume( get, set ) : Float;
+	
+	var _masterVolume : Float = 1;
+	var _musicVolume : Float = 1;
+	var _sfxVolume : Float = 1;
 	
 	var _music : AudioInstance;
 	var _playingAudio : LinkedList<AudioInstance>;
@@ -54,18 +58,19 @@ class AudioSystem
 	public function playMusicWithResourceId( id : String, volume : Float, crossFadeLength : Float = 0 ) : Int {
 		
 		var startVolume : Float = ( crossFadeLength > 0 ) ? 0 : volume;
-		
 		var instance : AudioInstance = new AudioInstance( id, startVolume, AudioType.Music );
+		
 		instance.source.onComplete.add( function() {
 			onSoundComplete( instance );
 		});
-		instance.source.play();
 		_playingAudio.push( instance );
+		instance.source.play();
 				
 		if ( crossFadeLength > 0 ) {
 			// Tween the volumes
 			var _currentMusic : AudioInstance = _music;
-			
+					
+			instance.volume = 0;
 			Actuate.tween( instance, crossFadeLength, { volume: volume } );
 			if ( _currentMusic != null ) {
 				Actuate.tween( _music, crossFadeLength, { volume: 0 } ).onComplete( function() {
@@ -89,7 +94,7 @@ class AudioSystem
 	
 	private function set_masterVolume( val : Float ) : Float {
 		
-		this.masterVolume = val;
+		_masterVolume = val;
 		updateSoundVolumes();
 		return val;
 		
@@ -97,7 +102,7 @@ class AudioSystem
 	
 	private function set_musicVolume( val : Float ) : Float {
 		
-		this.musicVolume = val;
+		_musicVolume = val;
 		updateSoundVolumes();
 		return val;
 		
@@ -105,11 +110,15 @@ class AudioSystem
 	
 	private function set_sfxVolume( val : Float ) : Float {
 		
-		this.sfxVolume = val;
+		_sfxVolume = val;
 		updateSoundVolumes();
 		return val;
 		
 	}
+	
+	private function get_masterVolume() : Float { return _masterVolume; };
+	private function get_musicVolume() : Float { return _musicVolume; };
+	private function get_sfxVolume() : Float { return _sfxVolume; };
 		
 	private function updateSoundVolumes() : Void 
 	{

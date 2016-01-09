@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.systems.audio;
 import lime.Assets;
 import lime.audio.AudioBuffer;
 import lime.audio.AudioSource;
+import motion.Actuate;
 import uk.co.mojaworks.norman.factory.IDisposable;
 
 /**
@@ -24,10 +25,12 @@ class AudioInstance implements IDisposable
 	public var buffer : AudioBuffer;
 	public var resourceId : String;
 	public var instanceId : Int;
-	public var volume( default, set ) : Float;
+	public var volume( get, set ) : Float;
 	public var type : AudioType;
 	public var looping : Bool;
 	public var destroyed : Bool = false;
+	
+	var _volume : Float = 1;
 	
 	public function new( resourceId : String, volume : Float, type : AudioType ) 
 	{
@@ -42,9 +45,14 @@ class AudioInstance implements IDisposable
 	
 	private function set_volume( val : Float ) : Float 
 	{
-		this.volume = val;
+		_volume = val;
 		updateVolume();
 		return val;
+	}
+	
+	private function get_volume( ) : Float 
+	{
+		return _volume;
 	}
 	
 	
@@ -68,5 +76,6 @@ class AudioInstance implements IDisposable
 		}
 		
 	}
+
 	
 }
