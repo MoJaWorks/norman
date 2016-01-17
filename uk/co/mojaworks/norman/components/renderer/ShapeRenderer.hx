@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.components.renderer;
 import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
-import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.n2d.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.ShaderAttributeData;
 import uk.co.mojaworks.norman.systems.renderer.ShaderData;
 import uk.co.mojaworks.norman.systems.Systems;

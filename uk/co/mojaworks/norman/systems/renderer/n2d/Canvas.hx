@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.systems.renderer;
+package uk.co.mojaworks.norman.systems.renderer.n2d;
 
 import lime.graphics.GLRenderContext;
 import lime.graphics.opengl.GL;

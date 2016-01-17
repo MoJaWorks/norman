@@ -43,20 +43,6 @@ class RenderBatch
 		
 		return true;
 		
-		/*var compatible : Bool = true;
-		
-		compatible = compatible && (this.shader == shader);
-		compatible = compatible && ((this.textures != null && textures != null) || (this.textures == null && textures == null));
-		compatible = compatible && textures.length == this.textures.length;
-		
-		if ( compatible ) {
-			for ( i in 0...textures.length ) {
-				compatible = compatible && (this.textures[i] == textures[i]);
-				if ( !compatible ) break;
-			}
-		}
-		
-		return compatible;*/
 	}
 	
 }

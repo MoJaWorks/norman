@@ -4,7 +4,7 @@ import lime.math.Matrix3;
 import lime.math.Rectangle;
 import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
-import uk.co.mojaworks.norman.systems.renderer.Canvas;
+import uk.co.mojaworks.norman.systems.renderer.n2d.Canvas;
 import uk.co.mojaworks.norman.systems.renderer.TextureData;
 import uk.co.mojaworks.norman.text.BitmapFont;
 import uk.co.mojaworks.norman.utils.Color;
