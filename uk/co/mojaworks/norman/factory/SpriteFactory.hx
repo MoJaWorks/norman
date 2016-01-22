@@ -3,6 +3,7 @@ import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.Mask;
 import uk.co.mojaworks.norman.components.renderer.RenderTexture;
+import uk.co.mojaworks.norman.components.renderer.Scale9ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
@@ -51,7 +52,7 @@ class SpriteFactory
 	public static function createScale9ImageSprite( texture : TextureData, rect : Rectangle, ?subImageId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		var renderer : ImageRenderer = cast gameObject.addComponent( new ImageRenderer( texture, subImageId ) );
+		var renderer : Scale9ImageRenderer = cast gameObject.addComponent( new Scale9ImageRenderer( texture, subImageId ) );
 		renderer.setScale9Rect( rect );
 		
 		return gameObject;
@@ -60,7 +61,7 @@ class SpriteFactory
 	public static function createScale9ImageSpriteFromAsset( assetId : String, rect : Rectangle, ?subImageId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		var renderer : ImageRenderer = cast gameObject.addComponent( new ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		var renderer : Scale9ImageRenderer = cast gameObject.addComponent( new Scale9ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
 		renderer.setScale9Rect( rect );
 		
 		return gameObject;
