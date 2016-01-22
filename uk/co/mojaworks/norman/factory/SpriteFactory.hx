@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.factory;
+import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.Mask;
 import uk.co.mojaworks.norman.components.renderer.RenderTexture;
@@ -43,6 +44,24 @@ class SpriteFactory
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
 		gameObject.addComponent( new ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		
+		return gameObject;
+	}
+	
+	public static function createScale9ImageSprite( texture : TextureData, rect : Rectangle, ?subImageId : String = null, ?name : String = null ) : GameObject {
+		
+		var gameObject : GameObject = ObjectFactory.createGameObject( name );
+		var renderer : ImageRenderer = cast gameObject.addComponent( new ImageRenderer( texture, subImageId ) );
+		renderer.setScale9Rect( rect );
+		
+		return gameObject;
+	}
+	
+	public static function createScale9ImageSpriteFromAsset( assetId : String, rect : Rectangle, ?subImageId : String = null, ?name : String = null ) : GameObject {
+		
+		var gameObject : GameObject = ObjectFactory.createGameObject( name );
+		var renderer : ImageRenderer = cast gameObject.addComponent( new ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		renderer.setScale9Rect( rect );
 		
 		return gameObject;
 	}
