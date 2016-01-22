@@ -3,6 +3,8 @@ import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.Mask;
 import uk.co.mojaworks.norman.components.renderer.RenderTexture;
+import uk.co.mojaworks.norman.components.renderer.Scale3ImageRenderer;
+import uk.co.mojaworks.norman.components.renderer.Scale3ImageRenderer.Scale3Type;
 import uk.co.mojaworks.norman.components.renderer.Scale9ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
@@ -63,6 +65,26 @@ class SpriteFactory
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
 		var renderer : Scale9ImageRenderer = cast gameObject.addComponent( new Scale9ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
 		renderer.setScale9Rect( rect );
+		
+		return gameObject;
+	}
+	
+	public static function createScale3ImageSprite( texture : TextureData, rect : Rectangle, type : Scale3Type, ?subImageId : String = null, ?name : String = null ) : GameObject {
+		
+		var gameObject : GameObject = ObjectFactory.createGameObject( name );
+		var renderer : Scale3ImageRenderer = cast gameObject.addComponent( new Scale3ImageRenderer( texture, subImageId ) );
+		renderer.setScale3Rect( rect );
+		renderer.setScale3Type( type );
+		
+		return gameObject;
+	}
+	
+	public static function createScale3ImageSpriteFromAsset( assetId : String, rect : Rectangle, type : Scale3Type, ?subImageId : String = null, ?name : String = null ) : GameObject {
+		
+		var gameObject : GameObject = ObjectFactory.createGameObject( name );
+		var renderer : Scale3ImageRenderer = cast gameObject.addComponent( new Scale3ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		renderer.setScale3Rect( rect );
+		renderer.setScale3Type( type );
 		
 		return gameObject;
 	}
