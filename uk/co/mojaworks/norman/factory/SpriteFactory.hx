@@ -1,8 +1,8 @@
 package uk.co.mojaworks.norman.factory;
 import lime.math.Rectangle;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
-import uk.co.mojaworks.norman.components.renderer.Mask;
-import uk.co.mojaworks.norman.components.renderer.RenderTexture;
+import uk.co.mojaworks.norman.components.renderer.MaskedRenderTextureRenderer;
+import uk.co.mojaworks.norman.components.renderer.RenderTextureRenderer;
 import uk.co.mojaworks.norman.components.renderer.Scale3ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.Scale3ImageRenderer.Scale3Type;
 import uk.co.mojaworks.norman.components.renderer.Scale9ImageRenderer;
@@ -101,7 +101,7 @@ class SpriteFactory
 	{
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
 		
-		var render : RenderTexture = new RenderTexture();
+		var render : RenderTextureRenderer = new RenderTextureRenderer();
 		gameObject.addComponent( render );
 		
 		render.setSize( Std.int(width), Std.int(height) );
@@ -110,10 +110,12 @@ class SpriteFactory
 		return gameObject;
 	}
 	
-	public static function createMask( texture : TextureData, ?subImageId : String = null, ?name : String = null ) : GameObject
+	public static function createMask( width : Int, height : Int, ?name : String = null ) : GameObject
 	{
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		gameObject.addComponent( new Mask( texture, subImageId ) );
+		var mask : MaskedRenderTextureRenderer = cast gameObject.addComponent( new MaskedRenderTextureRenderer() );
+		
+		mask.setSize( width, height );
 		gameObject.transform.isRoot = true;
 		
 		return gameObject;

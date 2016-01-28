@@ -10,11 +10,11 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  * ...
  * @author Simon
  */
-class RenderTexture extends BaseRenderer
+class RenderTextureRenderer extends BaseRenderer
 {
 	public static var defaultShader( get, null ) : ShaderData = null;
 	private static function get_defaultShader( ) : ShaderData {
-		if ( RenderTexture.defaultShader == null ) {
+		if ( RenderTextureRenderer.defaultShader == null ) {
 			trace("Creating default render shader");
 			
 			var atts : Array<ShaderAttributeData> = [
@@ -22,9 +22,9 @@ class RenderTexture extends BaseRenderer
 				new ShaderAttributeData( "aVertexColor", 2, 4 ),
 				new ShaderAttributeData( "aVertexUV", 6, 2 )
 			];
-			RenderTexture.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource(), atts );
+			RenderTextureRenderer.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource(), atts );
 		}
-		return RenderTexture.defaultShader;
+		return RenderTextureRenderer.defaultShader;
 	}
 	
 	public var target( get, null ) : TextureData;
@@ -60,7 +60,7 @@ class RenderTexture extends BaseRenderer
 		super.postRender(canvas);
 		canvas.popRenderTarget();
 		if ( _renderToCanvas ) {
-			canvas.draw( _textureArray, RenderTexture.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, gameObject.transform.renderMatrix, color.r, color.g, color.b, getCompositeAlpha() * color.a ), Canvas.QUAD_INDICES );
+			canvas.draw( _textureArray, RenderTextureRenderer.defaultShader, canvas.buildTexturedQuadVertexData( target, Canvas.WHOLE_IMAGE, gameObject.transform.renderMatrix, color.r, color.g, color.b, getCompositeAlpha() * color.a ), Canvas.QUAD_INDICES );
 		}
 	}
 	
