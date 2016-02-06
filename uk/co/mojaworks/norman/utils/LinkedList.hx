@@ -355,6 +355,7 @@ class LinkedList<T>
 	}
 	
 	public function get( key:Int ) : T {
+		
 		var item = getItem(key);
 		
 		if ( item != null ) {
@@ -373,6 +374,7 @@ class LinkedList<T>
 		while ( i < key ) {
 			if ( val == null ) return null;
 			val = val.next;
+			++i;
 		}
 		
 		return val;

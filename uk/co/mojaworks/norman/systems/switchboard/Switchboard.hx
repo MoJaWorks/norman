@@ -66,4 +66,8 @@ class Switchboard
 		commands.remove( command );
 	}
 	
+	public function executeCommand( command : ICommand, ?data : Dynamic ) : Void {
+		command.execute( new MessageData("", data ));
+	}
+	
 }

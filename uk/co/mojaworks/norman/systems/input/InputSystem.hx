@@ -40,9 +40,9 @@ class InputSystem
 	public var mouseDown : Signal1<MouseButton>;
 	public var mouseUp : Signal1<MouseButton>;
 	
-	public var keyState : Map<KeyCode,Bool>;
+	public var keyState : Map<String,Bool>;
 	public var keyUp : Signal2<KeyCode, KeyModifier>;
-	public var keyDown : Signal2<Int, KeyModifier>;
+	public var keyDown : Signal2<KeyCode, KeyModifier>;
 	public var textEntered : Signal1<String>;
 	public var textEditing : Signal1<String>;
 	
@@ -71,7 +71,7 @@ class InputSystem
 		_scrollDelta = new Vector2();
 		
 		_keyboardDelegates = new LinkedList<BaseKeyboardDelegate>( );
-		this.keyState = new Map<Int,Bool>();
+		keyState = new Map<String,Bool>();
 		keyUp = new Signal2<KeyCode, KeyModifier>();
 		keyDown = new Signal2<KeyCode, KeyModifier>();
 		textEntered = new Signal1<String>();
@@ -130,7 +130,7 @@ class InputSystem
 	
 	
 	/**
-	 * Keybaord
+	 * Keyboard
 	 */
 	
 	public function addKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
@@ -145,15 +145,15 @@ class InputSystem
 	
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onKeyUp( key : KeyCode, modifier : KeyModifier ) : Void {
-		keyState.set( key, true );
+	public function onKeyUp( key : KeyCode, modifier : KeyModifier ) : Void {
+		keyState.set( Std.string(key), false );
 		keyUp.dispatch( key, modifier );
 		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyUp( key, modifier );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onKeyDown( key : KeyCode, modifier : KeyModifier ) : Void {
-		keyState.set( key, false );
+	public function onKeyDown( key : KeyCode, modifier : KeyModifier ) : Void {
+		keyState.set( Std.string(key), true );
 		keyDown.dispatch( key, modifier );
 		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyDown( key, modifier );
 	}
@@ -168,6 +168,20 @@ class InputSystem
 	private function onTextEdit( str : String ) : Void {
 		textEditing.dispatch( str );
 		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onTextEdit( str );
+	}
+	
+	public function isKeyDown( key : KeyCode ) : Bool
+	{
+		var key_str : String = Std.string( key );
+		
+		if ( keyState.exists( key_str ) )
+		{
+			return keyState.get( key_str );
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 }
