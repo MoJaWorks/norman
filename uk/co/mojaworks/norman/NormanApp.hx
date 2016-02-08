@@ -144,7 +144,7 @@ class NormanApp extends Application
 	
 	override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
 	{
-		trace( "Key down", keyCode );
+		//trace( "Key down", keyCode );
 		super.onKeyDown(window, keyCode, modifier);
 		Systems.input.onKeyDown( keyCode, modifier );
 	}
@@ -157,14 +157,14 @@ class NormanApp extends Application
 	
 	override public function onTextInput( window:Window, text:String ) : Void 
 	{
-		trace("Text input", text );
+		//trace("Text input", text );
 		super.onTextInput(window, text);
 		Systems.input.onTextEntry( text );
 	}
 	
 	override public function onTextEdit(window:Window, text:String, start:Int, length:Int):Void 
 	{
-		trace( "Text edit", text, start, length );
+		//trace( "Text edit", text, start, length );
 		super.onTextEdit(window, text, start, length);
 		Systems.input.onTextEdit( text );
 	}

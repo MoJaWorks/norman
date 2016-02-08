@@ -37,9 +37,4 @@ class PhysicsUtils
 	}
 	
 	
-	public static function calculateOverlap( item1Projected : Array<Float>, item2Projected : Array<Float> ) : Float
-	{
-		return Math.min( Math.abs( item1Projected[1] - item2Projected[0] ), Math.abs( item2Projected[1] - item1Projected[0] ) );
-	}
-	
 }
