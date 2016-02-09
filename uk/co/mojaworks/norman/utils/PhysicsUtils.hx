@@ -24,16 +24,21 @@ class PhysicsUtils
 		
 		result[0] = Math.POSITIVE_INFINITY;
 		result[1] = Math.NEGATIVE_INFINITY;
-		var dot : Float = 0;
+		var dot_val : Float = 0;
 		
 		for ( point in points ) 
 		{
-			dot = (point.x * axis.x) + ( point.y * axis.y );
-			result[0] = Math.min( dot, result[0] );
-			result[1] = Math.max( dot, result[1] );
+			dot_val = dot( point, axis );
+			result[0] = Math.min( dot_val, result[0] );
+			result[1] = Math.max( dot_val, result[1] );
 		}
 		
 		return result;
+	}
+	
+	public static function dot( point : Vector2, axis : Vector2 ) : Float 
+	{
+		return (point.x * axis.x) + ( point.y * axis.y );
 	}
 	
 	
