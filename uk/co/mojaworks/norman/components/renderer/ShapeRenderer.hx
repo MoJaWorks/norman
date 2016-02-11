@@ -136,4 +136,20 @@ class ShapeRenderer extends BaseRenderer
 		return _height;
 	}
 	
+	override private function set_width( val : Float ):Float 
+	{
+		_width = val;
+		regeneratePoints();
+		return _width;
+	}
+	
+	override private function set_height( val : Float ):Float 
+	{
+		_height = val;
+		regeneratePoints();
+		return _height;
+	}
+	
+	
+	
 }

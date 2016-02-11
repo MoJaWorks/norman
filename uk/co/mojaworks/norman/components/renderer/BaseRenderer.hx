@@ -17,8 +17,8 @@ class BaseRenderer extends Component
 	public var visible( default, default ) : Bool = true;
 	public var alpha( default, default ) : Float = 1;
 	public var color( default, default ) : Color = Color.WHITE;
-	public var width( get, never ) : Float;
-	public var height( get, never ) : Float;
+	public var width( get, set ) : Float;
+	public var height( get, set ) : Float;
 	public var scaledWidth( get, never ) : Float;
 	public var scaledHeight( get, never ) : Float;
 		
@@ -68,6 +68,9 @@ class BaseRenderer extends Component
 	
 	private function get_width( ) : Float { return 0; }
 	private function get_height( ) : Float { return 0; }
+	
+	private function set_width( val : Float ) : Float { trace("You cannot set height of this type of renderer"); return this.width; }
+	private function set_height( val : Float ) : Float { trace("You cannot set height of this type of renderer"); return this.height; }
 	
 	inline private function get_scaledWidth() : Float 
 	{
