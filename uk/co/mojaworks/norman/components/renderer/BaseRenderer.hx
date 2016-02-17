@@ -19,8 +19,8 @@ class BaseRenderer extends Component
 	public var color( default, default ) : Color = Color.WHITE;
 	public var width( get, set ) : Float;
 	public var height( get, set ) : Float;
-	public var scaledWidth( get, never ) : Float;
-	public var scaledHeight( get, never ) : Float;
+	public var scaledWidth( get, set ) : Float;
+	public var scaledHeight( get, set ) : Float;
 		
 	public function preRender( canvas : Canvas ) : Void {};
 	public function render( canvas : Canvas ) : Void {};
@@ -80,5 +80,23 @@ class BaseRenderer extends Component
 	inline private function get_scaledHeight() : Float 
 	{
 		return height * gameObject.transform.scaleY;
+	}
+	
+	inline private function set_scaledWidth( val : Float ) : Float 
+	{
+		if ( width > 0 ) {
+			return gameObject.transform.scaleX = val / width;
+		}else {
+			return 0;
+		}
+	}
+	
+	inline private function set_scaledHeight( val : Float ) : Float 
+	{
+		if ( height > 0 ) {
+			return gameObject.transform.scaleY = val / height;
+		}else {
+			return 0;
+		}
 	}
 }
