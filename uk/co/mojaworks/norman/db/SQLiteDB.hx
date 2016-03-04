@@ -151,7 +151,7 @@ class SQLiteDB
 			sql += prepare( values.get( key ) );
 		}
 		
-		sql += ";";
+		sql += ");";
 		
 		query( sql );
 		

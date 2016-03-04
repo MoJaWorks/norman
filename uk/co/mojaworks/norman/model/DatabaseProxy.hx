@@ -4,6 +4,7 @@ import haxe.ds.StringMap;
 import lime.Assets;
 import lime.system.System;
 import lime.utils.Bytes;
+import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 import uk.co.mojaworks.norman.db.SQLiteDB;
@@ -31,10 +32,13 @@ class DatabaseProxy extends Proxy
 	private function copyDBToLocal( asset : String, dbName : String, overwriteIfExists : Bool ) : String 
 	{
 		var filename : String = System.applicationStorageDirectory + dbName + ".db";
-		var dbGame : Bytes = Assets.getBytes( asset );
-		var file : FileOutput = File.write( filename, true );
-		file.writeBytes( dbGame, 0, dbGame.length );
-		file.close();
+		
+		if ( overwriteIfExists || !FileSystem.exists( filename ) ) {
+			var dbGame : Bytes = Assets.getBytes( asset );
+			var file : FileOutput = File.write( filename, true );
+			file.writeBytes( dbGame, 0, dbGame.length );
+			file.close();
+		}
 		
 		return filename;
 	}

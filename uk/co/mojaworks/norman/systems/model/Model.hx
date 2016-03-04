@@ -23,7 +23,12 @@ class Model
 	}
 	
 	public function getProxy( id : String ) : Proxy {
-		return proxies.get( id );
+		if ( proxies.exists(id) ) {
+			return proxies.get( id );
+		}else{
+			trace("No proxy found with id: " + id);
+			return null;
+		}
 	}
 	
 	
