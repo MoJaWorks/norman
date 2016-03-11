@@ -97,6 +97,12 @@ class SQLiteDB
 		}
 	}
 	
+	public function count( from : String, where : String, whereVars : String ) : Int 
+	{
+		var result : SQLDBResult = selectSingle( ["count(*) as count"], from, where, whereVars );
+		return Std.parseInt(result.get("count"));
+	}
+	
 	/**
 	 * 
 	 * 
