@@ -13,15 +13,12 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * @author Simon
  */
 
-@:enum abstract AnimationType(String) to String from String {
-	var Game = "Game";
-	var UI = "UI";
-}
  
 class AnimationSystem
 {
 
 	private var _animations : LinkedList<BaseAnimationComponent>;
+	private var _paused : Bool = false;
 	
 	public function new() 
 	{
@@ -39,26 +36,20 @@ class AnimationSystem
 	
 	public function update( seconds : Float ) : Void {
 		
-		for ( anim in _animations ) {
-			if ( anim.enabled && !anim.paused ) anim.update( seconds );
+		if ( !_paused ) {
+			for ( anim in _animations ) {
+				if ( anim.enabled && !anim.paused ) anim.update( seconds );
+			}
 		}
 		
 	}
 	
-	public function pause( ?type : AnimationType = null ) : Void {
-		
-		for ( anim in _animations ) {
-			if ( type == null || type == anim.type ) anim.pause( );
-		}
-		
+	public function pause( ) : Void {
+		_paused = true;
 	}
 	
-	public function resume( ?type : AnimationType = null ) : Void {
-		
-		for ( anim in _animations ) {
-			if ( type == null || type == anim.type ) anim.resume( );
-		}
-		
+	public function resume( ) : Void {
+		_paused = false;
 	}
 		
 }

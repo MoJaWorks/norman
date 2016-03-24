@@ -4,7 +4,7 @@
   "license": "Apachev2",
   "tags": [],
   "description": "Internal framework used by MoJaWorks Games",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "releasenote": "",
   "contributors": ["Simon Morris"],
   "dependencies": {

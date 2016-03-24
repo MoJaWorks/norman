@@ -1,6 +1,5 @@
 package uk.co.mojaworks.norman.components.animation;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.systems.animation.AnimationSystem.AnimationType;
 import uk.co.mojaworks.norman.systems.Systems;
 
 
@@ -12,7 +11,6 @@ class BaseAnimationComponent extends Component
 {
 
 	public var paused( default, null ) : Bool = false;
-	public var type( default, null ) : AnimationType;
 	
 	public function new() 
 	{
