@@ -8,7 +8,7 @@ import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
 import uk.co.mojaworks.norman.db.SQLiteDB;
-import uk.co.mojaworks.norman.systems.model.Proxy;
+import uk.co.mojaworks.norman.core.model.Proxy;
 
 /**
  * ...

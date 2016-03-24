@@ -10,7 +10,7 @@ import uk.co.mojaworks.norman.components.renderer.ShapeRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.core.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.text.BitmapFont;
 import uk.co.mojaworks.norman.utils.Color;

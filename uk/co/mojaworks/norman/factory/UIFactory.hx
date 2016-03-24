@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.components.text.TextInput;
 import uk.co.mojaworks.norman.components.text.TextInputKeyboardDelegate;
 import uk.co.mojaworks.norman.components.text.TextInputUIDelegate;
 import uk.co.mojaworks.norman.components.ui.BlockerView;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.core.renderer.TextureData;
 import uk.co.mojaworks.norman.text.BitmapFont;
 import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.FontUtils;

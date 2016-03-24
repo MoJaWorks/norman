@@ -43,12 +43,13 @@ class NormanApp extends Application
 
 		super.onWindowCreate( window );
 		
-		Systems.init( );
-		Systems.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
-		Systems.renderer.init( window.renderer.context );
+		Core.instance.init();
+		Core.instance.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
+		Core.instance.renderer.init( window.renderer.context );
+
 				
 		//Custom commands
-		Systems.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
+		Core.instance.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
 		
 		initApp();
 	
@@ -85,8 +86,8 @@ class NormanApp extends Application
 
 		trace("Window size: ", width, height, window.scale );
 		
-		Systems.viewport.resize( width * window.scale , height * window.scale );
-		Systems.director.resize();
+		Core.instance.viewport.resize( width * window.scale , height * window.scale );
+		//Core.instance.director.resize();
 		
 	}
 	
@@ -101,16 +102,16 @@ class NormanApp extends Application
 		}
 			
 		var seconds : Float = deltaTime * 0.001;
-		Systems.director.update( seconds );
-		Systems.scripting.update( seconds );
-		Systems.ui.update( seconds );
-		Systems.animation.update( seconds );
+		//Systems.director.update( seconds );
+		//Systems.scripting.update( seconds );
+		//Systems.ui.update( seconds );
+		//Systems.animation.update( seconds );
 		
 		updateApp( seconds );
 		
 		Systems.renderer.render( Systems.director.rootObject.transform );
 		
-		Systems.input.update( seconds );
+		//Systems.input.update( seconds );
 		
 	}
 	

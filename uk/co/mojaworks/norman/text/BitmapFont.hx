@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.text;
-import uk.co.mojaworks.norman.systems.renderer.TextureData;
+import uk.co.mojaworks.norman.core.renderer.TextureData;
 
 /**
  * ...

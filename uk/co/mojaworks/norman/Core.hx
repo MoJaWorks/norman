@@ -1,13 +1,13 @@
 package uk.co.mojaworks.norman;
-import uk.co.mojaworks.norman.systems.Viewport;
+import uk.co.mojaworks.norman.core.Viewport;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
-import uk.co.mojaworks.norman.systems.audio.AudioSystem;
-import uk.co.mojaworks.norman.systems.io.IOSystems;
-import uk.co.mojaworks.norman.systems.juggler.Juggler;
-import uk.co.mojaworks.norman.systems.model.Model;
-import uk.co.mojaworks.norman.systems.renderer.Renderer;
+import uk.co.mojaworks.norman.core.audio.AudioSystem;
+import uk.co.mojaworks.norman.core.io.IOSystems;
+import uk.co.mojaworks.norman.core.governor.Governor;
+import uk.co.mojaworks.norman.core.model.Model;
+import uk.co.mojaworks.norman.core.renderer.Renderer;
 import uk.co.mojaworks.norman.systems.script.ScriptRunner;
-import uk.co.mojaworks.norman.systems.switchboard.Switchboard;
+import uk.co.mojaworks.norman.core.switchboard.Switchboard;
 
 /**
  * ...
@@ -16,12 +16,11 @@ import uk.co.mojaworks.norman.systems.switchboard.Switchboard;
 class Core
 {
 
-	public static var instance( get, never ) : Core;
+	@:isVar public static var instance( get, null ) : Core;
 	
-	public var animation : AnimationSystem;
 	public var audio : AudioSystem;
 	public var io : IOSystems;
-	public var juggler : Juggler;
+	public var governor : Governor;
 	public var model : Model;
 	public var renderer : Renderer;
 	public var switchboard : Switchboard;
@@ -45,10 +44,9 @@ class Core
 	
 	public function init()
 	{
-		animation = new AnimationSystem();
 		audio = new AudioSystem();
 		io = new IOSystems();
-		juggler = new Juggler();
+		governor = new Governor();
 		model = new Model();
 		renderer = new Renderer();
 		switchboard = new Switchboard();
