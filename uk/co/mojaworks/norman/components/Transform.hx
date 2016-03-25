@@ -93,7 +93,7 @@ class Transform extends Component
 		children.push( child );
 		
 		if ( isOnDisplayList ) {
-			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Added );
+			Core.instance.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Added );
 		}
 	}
 	
@@ -113,7 +113,7 @@ class Transform extends Component
 		children.remove( child );
 		
 		if ( isOnDisplayList ) {
-			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Removed );
+			Core.instance.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Removed );
 		}
 	}
 		
@@ -127,12 +127,12 @@ class Transform extends Component
 			
 			parent.children.move( parent.children.indexOf( this ), index );
 			
-			Systems.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Swapped );
+			Core.instance.switchboard.sendMessage( NormanMessages.DISPLAY_LIST_CHANGED, DisplayListAction.Swapped );
 		}
 	}
 	
 	public function get_isOnDisplayList() : Bool {
-		return (this == Systems.director.rootObject.transform ) || ( parent != null && parent.isOnDisplayList );
+		return (this == Core.instance.root.transform ) || ( parent != null && parent.isOnDisplayList );
 	}
 	
 	

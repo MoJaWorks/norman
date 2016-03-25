@@ -1,5 +1,7 @@
 package uk.co.mojaworks.norman;
 import uk.co.mojaworks.norman.core.Viewport;
+import uk.co.mojaworks.norman.factory.GameObject;
+import uk.co.mojaworks.norman.factory.ObjectFactory;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
 import uk.co.mojaworks.norman.core.audio.AudioSystem;
 import uk.co.mojaworks.norman.core.io.IOSystems;
@@ -18,6 +20,7 @@ class Core
 
 	@:isVar public static var instance( get, null ) : Core;
 	
+	public var root : GameObject;
 	public var audio : AudioSystem;
 	public var io : IOSystems;
 	public var governor : Governor;
@@ -44,6 +47,7 @@ class Core
 	
 	public function init()
 	{
+		root = ObjectFactory.createGameObject("root");
 		audio = new AudioSystem();
 		io = new IOSystems();
 		governor = new Governor();

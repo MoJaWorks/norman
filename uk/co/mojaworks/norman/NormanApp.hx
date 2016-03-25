@@ -1,16 +1,15 @@
 package uk.co.mojaworks.norman;
-import lime.ui.KeyModifier;
-
-import haxe.Timer;
 import lime.app.Application;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
-import lime.ui.KeyCode;
 import lime.ui.Window;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.systems.Systems;
+import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
+import uk.co.mojaworks.norman.systems.script.ScriptRunner;
+
 
 /**
  * ...
@@ -46,7 +45,9 @@ class NormanApp extends Application
 		Core.instance.init();
 		Core.instance.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		Core.instance.renderer.init( window.renderer.context );
-
+		
+		Core.instance.governor.addSubject( new AnimationSystem(), Systems.ANIMATION, 50 );
+		Core.instance.governor.addSubject( new ScriptRunner(), Systems.SCRIPTING, 20 );
 				
 		//Custom commands
 		Core.instance.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
@@ -107,19 +108,14 @@ class NormanApp extends Application
 		//Systems.ui.update( seconds );
 		//Systems.animation.update( seconds );
 		
-		updateApp( seconds );
-		
-		Systems.renderer.render( Systems.director.rootObject.transform );
+		Core.instance.governor.update( seconds );
+		//Systems.renderer.render( Systems.director.rootObject.transform );
 		
 		//Systems.input.update( seconds );
 		
 	}
 	
-	public function updateApp( seconds : Float ) : Void {
-		// Override this one
-	}
-	
-	override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
+	/*override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
 	{
 		super.onMouseWheel(window, deltaX, deltaY);
 		Systems.input.onMouseScroll( deltaX, deltaY );
@@ -168,7 +164,7 @@ class NormanApp extends Application
 		//trace( "Text edit", text, start, length );
 		super.onTextEdit(window, text, start, length);
 		Systems.input.onTextEdit( text );
-	}
+	}*/
 	
 	override public function onRenderContextRestored( renderer : Renderer, context:RenderContext ):Void 
 	{
@@ -176,13 +172,13 @@ class NormanApp extends Application
 		trace("OnContextRestored");
 	}
 	
-	override public function onRenderContextLost( ernderer : Renderer ):Void 
+	override public function onRenderContextLost( renderer : Renderer ):Void 
 	{
 		super.onRenderContextLost( renderer );
 		trace("OnContextLost");
 	}
 	
-	override public function onWindowDeactivate(window:Window):Void 
+	override public function onWindowDeactivate( window : Window ):Void 
 	{
 		super.onWindowDeactivate(window);
 		_windowHasBeenDeactivated = true;
