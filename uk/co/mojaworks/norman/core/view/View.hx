@@ -1,12 +1,15 @@
-package uk.co.mojaworks.norman.core ;
+package uk.co.mojaworks.norman.core.view;
+import uk.co.mojaworks.norman.factory.GameObject;
+import uk.co.mojaworks.norman.factory.ObjectFactory;
 
 /**
  * ...
  * @author Simon
  */
-class Viewport
+class View
 {
-
+	public var root( default, null ) : GameObject;
+	
 	// This is the rectangle of the "safe" area of the screen. This will always be scaled to fit
 	public var stageWidth( default, null ) : Float = 1024;	
 	public var stageHeight( default, null ) : Float = 672;	
@@ -27,10 +30,10 @@ class Viewport
 	public var screenWidth( default, null ) : Float = 1024;
 	public var screenHeight( default, null ) : Float = 672;
 	
-	
 	public function new() 
 	{
-	}
+		root = ObjectFactory.createGameObject("root");
+	}	
 	
 	public function setTargetSize( width : Float, height : Float ) : Void {
 		stageWidth = width;
@@ -42,6 +45,11 @@ class Viewport
 		screenWidth = width;
 		screenHeight = height;
 		updateDimensions();
+		
+		root.transform.scaleX = scale;
+		root.transform.scaleY = scale;
+		root.transform.x = marginLeft * scale;
+		root.transform.y = marginTop * scale;
 	}
 	
 	private function updateDimensions() : Void {
@@ -56,5 +64,11 @@ class Viewport
 	private function get_bottom( ) : Float { return stageHeight + marginTop; }
 	private function get_totalWidth( ) : Float { return stageWidth + marginLeft + marginLeft; }
 	private function get_totalHeight( ) : Float { return stageHeight + marginTop + marginTop; }
+	
+	
+	public function displayListChanged() : Void
+	{
+		root.transform.updateDisplayOrder(0);
+	}
 	
 }

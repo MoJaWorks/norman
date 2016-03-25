@@ -27,7 +27,7 @@ class ImageRenderer extends BaseRenderer
 				new ShaderAttributeData( "aVertexColor", 2, 4 ),
 				new ShaderAttributeData( "aVertexUV", 6, 2 )
 			];
-			ImageRenderer.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource(), atts );
+			ImageRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource(), atts );
 			
 		}
 		return ImageRenderer.defaultShader;

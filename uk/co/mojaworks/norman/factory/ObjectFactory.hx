@@ -1,7 +1,5 @@
 package uk.co.mojaworks.norman.factory;
-import uk.co.mojaworks.norman.components.EventDispatcher;
 import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.systems.Systems;
 
 /**
  * ...
@@ -23,7 +21,6 @@ class ObjectFactory
 		// The rest is up to individual objects
 		var gameObject : GameObject = new GameObject( name );
 		gameObject.addComponent( new Transform() );
-		gameObject.addComponent( new EventDispatcher() );
 				
 		return gameObject;
 	}

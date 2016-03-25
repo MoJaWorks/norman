@@ -46,7 +46,7 @@ class SpriteFactory
 	public static function createImageSpriteFromAsset( assetId : String, ?subImageId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		gameObject.addComponent( new ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		gameObject.addComponent( new ImageRenderer( Core.instance.renderer.createTextureFromAsset( assetId ), subImageId ) );
 		
 		return gameObject;
 	}
@@ -63,7 +63,7 @@ class SpriteFactory
 	public static function createScale9ImageSpriteFromAsset( assetId : String, rect : Rectangle, ?subImageId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		var renderer : Scale9ImageRenderer = cast gameObject.addComponent( new Scale9ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		var renderer : Scale9ImageRenderer = cast gameObject.addComponent( new Scale9ImageRenderer( Core.instance.renderer.createTextureFromAsset( assetId ), subImageId ) );
 		renderer.setScale9Rect( rect );
 		
 		return gameObject;
@@ -82,7 +82,7 @@ class SpriteFactory
 	public static function createScale3ImageSpriteFromAsset( assetId : String, rect : Rectangle, type : Scale3Type, ?subImageId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		var renderer : Scale3ImageRenderer = cast gameObject.addComponent( new Scale3ImageRenderer( Systems.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		var renderer : Scale3ImageRenderer = cast gameObject.addComponent( new Scale3ImageRenderer( Core.instance.renderer.createTextureFromAsset( assetId ), subImageId ) );
 		renderer.setScale3Rect( rect );
 		renderer.setScale3Type( type );
 		

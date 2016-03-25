@@ -21,13 +21,13 @@ class BaseKeyboardDelegate extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		Systems.input.addKeyboardDelegate( this );
+		core.io.keyboard.addKeyboardDelegate( this );
 	}
 	
 	override public function onRemove():Void 
 	{
 		super.onRemove();
-		Systems.input.removeKeyboardDelegate( this );
+		core.io.keyboard.removeKeyboardDelegate( this );
 	}
 	
 	public function onTextEntry( text : String ) : Void {}

@@ -1,6 +1,7 @@
 package uk.co.mojaworks.norman.components.animation;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.systems.Systems;
+import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
 
 
 /**

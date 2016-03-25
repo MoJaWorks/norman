@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components ;
+import uk.co.mojaworks.norman.factory.CoreObject;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.IDisposable;
 
@@ -8,14 +9,14 @@ import uk.co.mojaworks.norman.factory.IDisposable;
  */
 	
  #if !macro @:autoBuild( uk.co.mojaworks.norman.components.ComponentBuilder.build() ) #end
- class Component implements IDisposable {
+ class Component extends CoreObject implements IDisposable {
 	 
 	public var enabled( default, set ) : Bool = true;
 	public var gameObject : GameObject;
 	public var destroyed : Bool = false;
 	
 	public function new( ) {
-		
+		super();
 	}
 	
 	public function destroy() : Void {

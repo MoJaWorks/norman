@@ -1,15 +1,13 @@
 package uk.co.mojaworks.norman;
-import uk.co.mojaworks.norman.core.Viewport;
-import uk.co.mojaworks.norman.factory.GameObject;
-import uk.co.mojaworks.norman.factory.ObjectFactory;
-import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
 import uk.co.mojaworks.norman.core.audio.AudioSystem;
-import uk.co.mojaworks.norman.core.io.IOSystems;
 import uk.co.mojaworks.norman.core.governor.Governor;
+import uk.co.mojaworks.norman.core.io.IOSystems;
 import uk.co.mojaworks.norman.core.model.Model;
 import uk.co.mojaworks.norman.core.renderer.Renderer;
-import uk.co.mojaworks.norman.systems.script.ScriptRunner;
 import uk.co.mojaworks.norman.core.switchboard.Switchboard;
+import uk.co.mojaworks.norman.core.view.View;
+import uk.co.mojaworks.norman.factory.GameObject;
+import uk.co.mojaworks.norman.factory.ObjectFactory;
 
 /**
  * ...
@@ -27,7 +25,7 @@ class Core
 	public var model : Model;
 	public var renderer : Renderer;
 	public var switchboard : Switchboard;
-	public var viewport : Viewport;
+	public var view : View;
 	
 	/**
 	 * New
@@ -54,7 +52,7 @@ class Core
 		model = new Model();
 		renderer = new Renderer();
 		switchboard = new Switchboard();
-		viewport = new Viewport();
+		view = new View();
 	}
 	
 }

@@ -1,10 +1,11 @@
 package uk.co.mojaworks.norman.components.text;
+import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 
 import lime.ui.MouseCursor;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
-import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
+import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.systems.ui.MouseEvent;
+import uk.co.mojaworks.norman.systems.ui.PointerEvent;
 
 /**
  * ...
@@ -22,28 +23,28 @@ class TextInputUIDelegate extends BaseUIDelegate
 	override public function onAdded():Void
 	{
 		super.onAdded();
-		Systems.input.mouseDown.add( onStageMouseDown );
+		core.io.pointer.pointerDown.add( onStageMouseDown );
 	}
 	
 	override public function onRemove():Void 
 	{
 		super.onRemove();
-		Systems.input.mouseDown.remove( onStageMouseDown );
+		core.io.pointer.pointerDown.remove( onStageMouseDown );
 	}
 	
-	override public function onClick(e:MouseEvent):Void 
+	override public function onClick( e : PointerEvent ):Void 
 	{
 		super.onClick(e);
 		
 		var input : TextInput = TextInput.getFromObject(gameObject);
 		input.hasTextFocus = true;
-		input.setCursorAtPosition( Systems.input.mousePosition );
+		input.setCursorAtPosition( core.io.pointer.get( e.pointerId ).position );
 		
 	}
 	
-	private function onStageMouseDown( button : MouseButton ) : Void {
+	private function onStageMouseDown( pointerId : Int, button : MouseButton ) : Void {
 		
-		if ( !gameObject.renderer.hitTest( Systems.input.mousePosition ) ) {
+		if ( !gameObject.renderer.hitTest( core.io.pointer.get( pointerId ).position ) ) {
 			TextInput.getFromObject(gameObject).hasTextFocus = false;
 		}
 		

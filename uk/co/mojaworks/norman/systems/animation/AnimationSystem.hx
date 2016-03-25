@@ -14,7 +14,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  */
 
  
-class AnimationSystem
+class AnimationSystem extends SubSystem
 {
 
 	private var _animations : LinkedList<BaseAnimationComponent>;
@@ -22,6 +22,7 @@ class AnimationSystem
 	
 	public function new() 
 	{
+		super();
 		_animations = new LinkedList<BaseAnimationComponent>();
 	}
 	
@@ -34,7 +35,7 @@ class AnimationSystem
 	}
 	
 	
-	public function update( seconds : Float ) : Void {
+	override public function update( seconds : Float ) : Void {
 		
 		if ( !_paused ) {
 			for ( anim in _animations ) {

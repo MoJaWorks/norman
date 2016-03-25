@@ -29,7 +29,7 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 				new ShaderAttributeData( "aVertexUV", 6, 2 ),
 			];
 			
-			MaskedRenderTextureRenderer.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultMaskVertexSource(), ShaderUtils.getDefaultMaskFragSource(), atts );
+			MaskedRenderTextureRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultMaskVertexSource(), ShaderUtils.getDefaultMaskFragSource(), atts );
 		}
 		return MaskedRenderTextureRenderer.defaultShader;
 	}
@@ -57,10 +57,10 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 		super.setSize( width, height );
 		
 		if ( target != null ) {
-			Systems.renderer.unloadTexture( "@norman/maskedSprite/" + gameObject.id );
+			Core.instance.renderer.unloadTexture( "@norman/maskedSprite/" + gameObject.id );
 		}
 		
-		_textureArray[1] = Systems.renderer.createTexture( "@norman/maskedSprite/" + gameObject.id, width, height, 0 );
+		_textureArray[1] = Core.instance.renderer.createTexture( "@norman/maskedSprite/" + gameObject.id, width, height, 0 );
 		_textureArray[1].isRenderTexture = true;
 		
 	}
@@ -74,7 +74,7 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 			
 			canvas.pushRenderTarget( maskedTarget );
 			canvas.clear(0);
-			Systems.renderer.renderLevel( mask.transform );
+			Core.instance.renderer.renderLevel( mask.transform );
 			canvas.popRenderTarget();
 						
 			if ( _renderToCanvas ) {

@@ -3,8 +3,10 @@ import lime.ui.Mouse;
 import lime.ui.MouseCursor;
 import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
-import uk.co.mojaworks.norman.systems.input.InputSystem.MouseButton;
-import uk.co.mojaworks.norman.systems.ui.MouseEvent.MouseEventType;
+import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
+import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
+import uk.co.mojaworks.norman.systems.SubSystem;
+import uk.co.mojaworks.norman.systems.ui.PointerEvent.PointerEventType;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -12,7 +14,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * @author Simon
  */
 
-class UISystem
+class UISystem extends SubSystem
 {
 
 	#if mobile
@@ -25,6 +27,7 @@ class UISystem
 	
 	public function new() 
 	{
+		super();
 		_uiComponents = new LinkedList<BaseUIDelegate>();
 	}
 	
@@ -37,13 +40,11 @@ class UISystem
 		_uiComponents.remove( component );
 	}
 	
-	public function update( seconds : Float ) : Void {
-		
-		//trace("Update UI:", _uiComponents.length );
+	override public function update( seconds : Float ) : Void {
 		
 		var hasHit : Bool = false;
-		var events : Array<MouseEvent> = [];
-		var event : MouseEvent;
+		var events : Array<PointerEvent> = [];
+		var event : PointerEvent;
 		var hitTarget : BaseRenderer;
 		
 		// First reset all
@@ -63,13 +64,11 @@ class UISystem
 		// then find the active sprite
 		for ( ui in _uiComponents ) {
 			
-			//if ( ui.gameObject.id == "creditbutton" ) trace("Checking sprite" );
-			
 			if ( ui.isEnabled() && !hasHit ) {			
 				
 				hitTarget = ui.hitTarget.renderer;
 				
-				if ( hitTarget != null && hitTarget.hitTest( Systems.input.mousePosition ) ) {
+				if ( hitTarget != null && hitTarget.hitTest( core.io.pointer.get(0).position ) ) {
 					
 					ui.isMouseOver = true;
 					
@@ -78,32 +77,32 @@ class UISystem
 					#end
 					
 					if ( !ui.wasMouseOverLastFrame ) {
-						for ( i in 0...3 ) {
-							if ( Systems.input.mouseIsDown[i] && Systems.input.mouseWasDownLastFrame[i] ) ui.wasMouseButtonDownElsewhere[i] = true;
+						for ( i in 0...PointerInput.MAX_BUTTONS ) {
+							if ( core.io.pointer.get(0).buttonIsDown(i) && core.io.pointer.get(0).buttonWasDownLastFrame(i) ) ui.wasMouseButtonDownElsewhere[i] = true;
 						}
 						
-						events.push( new MouseEvent( MouseEventType.Over, ui, MouseButton.None ) );
+						events.push( new PointerEvent( PointerEventType.Over, ui, 0, MouseButton.None ) );
 						
 					}
 					
-					for ( i in 0...3 ) {
-						if ( Systems.input.mouseIsDown[i] ) {
+					for ( i in 0...PointerInput.MAX_BUTTONS ) {
+						if ( core.io.pointer.get(0).buttonIsDown(i) ) {
 							
 							ui.isMouseButtonDown[i] = true;
 							if ( !ui.wasMouseButtonDownLastFrame[i] && !ui.wasMouseButtonDownElsewhere[i] ) 
 							{
-								events.push( new MouseEvent( MouseEventType.Down, ui, i ) );
+								events.push( new PointerEvent( PointerEventType.Down, ui, 0, i ) );
 							}
 							
 						}else {
 
 							if ( ui.wasMouseButtonDownLastFrame[i] )
 							{
-								events.push( new MouseEvent( MouseEventType.Up, ui, i ) );
+								events.push( new PointerEvent( PointerEventType.Up, ui, 0, i ) );
 
 								if ( !ui.wasMouseButtonDownElsewhere[i] )
 								{
-									events.push( new MouseEvent( MouseEventType.Click, ui, i ) );
+									events.push( new PointerEvent( PointerEventType.Click, ui, 0, i ) );
 								}
 							}
 							ui.wasMouseButtonDownElsewhere[i] = false;
@@ -116,10 +115,10 @@ class UISystem
 				}else {
 					
 					if ( ui.wasMouseOverLastFrame ) {
-						events.push( new MouseEvent( MouseEventType.Out, ui, MouseButton.None ) );
+						events.push( new PointerEvent( PointerEventType.Out, ui, 0, MouseButton.None ) );
 					}
 					
-					for ( i in 0...3 ) {
+					for ( i in 0...PointerInput.MAX_BUTTONS ) {
 						ui.wasMouseButtonDownElsewhere[i] = false;
 					}
 					
@@ -127,9 +126,9 @@ class UISystem
 			}else {
 				
 				if ( ui.wasMouseOverLastFrame ) {
-					events.push( new MouseEvent( MouseEventType.Out, ui, MouseButton.None ) );
+					events.push( new PointerEvent( PointerEventType.Out, ui, 0, MouseButton.None ) );
 				}
-				for ( i in 0...3 ) {
+				for ( i in 0...PointerInput.MAX_BUTTONS ) {
 					ui.wasMouseButtonDownElsewhere[i] = false;
 				}
 				

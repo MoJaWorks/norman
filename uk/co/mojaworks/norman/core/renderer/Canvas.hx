@@ -105,8 +105,8 @@ class Canvas
 		
 		_batch.reset();
 		
-		_context.viewport( 0, 0, Std.int(Core.instance.viewport.screenWidth), Std.int(Core.instance.viewport.screenHeight) );
-		_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.viewport.screenWidth, Core.instance.viewport.screenHeight, 0, -1000, 1000 );
+		_context.viewport( 0, 0, Std.int(Core.instance.view.screenWidth), Std.int(Core.instance.view.screenHeight) );
+		_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.view.screenWidth, Core.instance.view.screenHeight, 0, -1000, 1000 );
 		
 		_context.enable( GL.BLEND );
 		setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
@@ -270,8 +270,8 @@ class Canvas
 		}else {
 			// Back to stage
 			_context.bindFramebuffer( GL.FRAMEBUFFER, null );
-			_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.viewport.screenWidth, Core.instance.viewport.screenHeight, 0, -1000, 1000 );
-			_context.viewport( 0, 0, Std.int(Core.instance.viewport.screenWidth), Std.int(Core.instance.viewport.screenHeight) );
+			_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.view.screenWidth, Core.instance.view.screenHeight, 0, -1000, 1000 );
+			_context.viewport( 0, 0, Std.int(Core.instance.view.screenWidth), Std.int(Core.instance.view.screenHeight) );
 		}
 		
 	}

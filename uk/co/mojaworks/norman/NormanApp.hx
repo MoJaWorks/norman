@@ -8,7 +8,9 @@ import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
+import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.systems.script.ScriptRunner;
+import uk.co.mojaworks.norman.systems.ui.UISystem;
 
 
 /**
@@ -18,6 +20,12 @@ import uk.co.mojaworks.norman.systems.script.ScriptRunner;
 class NormanApp extends Application
 {
 
+	private var core( get, never ) : Core;
+	@:noCompletion private function get_core( ) : Core
+	{
+		return Core.instance;
+	}
+	
 	// This may only be valid at startup as it is not updated with changes and any changes made will not be reflected in the app
 	public var normanConfig( default, null ) : NormanConfigData;
 	
@@ -37,22 +45,25 @@ class NormanApp extends Application
 		
 	}
 	
+	private function createDefaultSystems() : Void 
+	{
+		Core.instance.governor.addSubject( new Director(), DefaultSystem.Director, 10 );
+		Core.instance.governor.addSubject( new ScriptRunner(), DefaultSystem.Scripting, 20 );
+		Core.instance.governor.addSubject( new UISystem(), DefaultSystem.UI, 30 );
+		Core.instance.governor.addSubject( new AnimationSystem(), DefaultSystem.Animation, 50 );
+	}
+	
 	override public function onWindowCreate(window:Window):Void
 	{
 
 		super.onWindowCreate( window );
 		
 		Core.instance.init();
-		Core.instance.viewport.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
+		Core.instance.view.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		Core.instance.renderer.init( window.renderer.context );
 		
-		Core.instance.governor.addSubject( new AnimationSystem(), Systems.ANIMATION, 50 );
-		Core.instance.governor.addSubject( new ScriptRunner(), Systems.SCRIPTING, 20 );
-				
 		//Custom commands
 		Core.instance.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
-		
-		initApp();
 	
 	}
 	
@@ -64,10 +75,6 @@ class NormanApp extends Application
 		onWindowResize( window, Std.int(window.width), Std.int(window.height) );
 		
 		return super.exec();
-	}
-	
-	private function initApp() : Void {
-		// Override for any additional init steps
 	}
 	
 	private function onStartupComplete() 
@@ -87,7 +94,7 @@ class NormanApp extends Application
 
 		trace("Window size: ", width, height, window.scale );
 		
-		Core.instance.viewport.resize( width * window.scale , height * window.scale );
+		Core.instance.view.resize( width * window.scale , height * window.scale );
 		//Core.instance.director.resize();
 		
 	}
@@ -109,37 +116,36 @@ class NormanApp extends Application
 		//Systems.animation.update( seconds );
 		
 		Core.instance.governor.update( seconds );
-		//Systems.renderer.render( Systems.director.rootObject.transform );
-		
-		//Systems.input.update( seconds );
+		Core.instance.renderer.render( Core.instance.view.root.transform );
+		Core.instance.io.pointer.endFrame();
 		
 	}
-	
-	/*override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
+		
+	override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
 	{
 		super.onMouseWheel(window, deltaX, deltaY);
-		Systems.input.onMouseScroll( deltaX, deltaY );
+		Core.instance.io.pointer.onMouseScroll( deltaX, deltaY );
 	}
 	
 	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseDown( window, x, y, button);
-		Systems.input.onMouseDown( x * window.scale, y * window.scale, button );
+		Core.instance.io.pointer.onMouseDown( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseUp( window, x, y, button);
-		Systems.input.onMouseUp( x * window.scale, y * window.scale, button );
+		Core.instance.io.pointer.onMouseUp( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseMove( window : Window, x : Float, y : Float ) : Void 
 	{
 		super.onMouseMove( window, x, y );
-		Systems.input.onMouseMove( x * window.scale, y * window.scale );
+		Core.instance.io.pointer.onMouseMove( x * window.scale, y * window.scale );
 	}
 	
-	override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
+	/*override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
 	{
 		//trace( "Key down", keyCode );
 		super.onKeyDown(window, keyCode, modifier);

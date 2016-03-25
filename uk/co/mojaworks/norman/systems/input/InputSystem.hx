@@ -14,37 +14,22 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * @author Simon
  */
 
-@:enum abstract MouseButton(Int) from Int to Int {
-	var None = -1;
-	var Left = 0;
-	var Middle = 1;
-	var Right = 2;
-}
+
  
 class InputSystem
 {
 
-	var _keyboardDelegates : LinkedList<BaseKeyboardDelegate>;
+	
 	var _accelerometer : Accelerometer;
-	var _scrollDelta : Vector2;
+	
 	
 	public var accelerationX : Float;
 	public var accelerationY : Float;
 	public var accelerationZ : Float;
 	
-	public var mouseIsDown : Array<Bool>;
-	public var mouseWasDownLastFrame : Array<Bool>;
-	public var mousePosition : Vector2;
 	
-	public var mouseScroll : Signal1<Vector2>;
-	public var mouseDown : Signal1<MouseButton>;
-	public var mouseUp : Signal1<MouseButton>;
 	
-	public var keyState : Map<String,Bool>;
-	public var keyUp : Signal2<KeyCode, KeyModifier>;
-	public var keyDown : Signal2<KeyCode, KeyModifier>;
-	public var textEntered : Signal1<String>;
-	public var textEditing : Signal1<String>;
+	
 	
 	public function new() 
 	{
@@ -60,29 +45,10 @@ class InputSystem
 			trace("No accelerometer...");
 		}
 		
-		mousePosition = new Vector2();
 		
-		// Only listen for 3 buttons
-		mouseIsDown = [false, false, false];
-		mouseWasDownLastFrame = [false, false, false];
-		mouseDown = new Signal1<MouseButton>();
-		mouseUp = new Signal1<MouseButton>();
-		mouseScroll = new Signal1<Vector2>();
-		_scrollDelta = new Vector2();
 		
-		_keyboardDelegates = new LinkedList<BaseKeyboardDelegate>( );
-		keyState = new Map<String,Bool>();
-		keyUp = new Signal2<KeyCode, KeyModifier>();
-		keyDown = new Signal2<KeyCode, KeyModifier>();
-		textEntered = new Signal1<String>();
-		textEditing = new Signal1<String>();
-	}
-	
-	public function update( seconds : Float ) : Void {
 		
-		for ( i in 0...3 ) {
-			mouseWasDownLastFrame[i] = mouseIsDown[i];
-		}
+		
 		
 	}
 	
@@ -97,91 +63,9 @@ class InputSystem
 		accelerationZ = e[2];
 	}
 	
-	/**
-	 * Mouse
-	 */
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseDown( x : Float, y : Float, button : Int ) : Void {
-		if ( button >= 0 && button < mouseIsDown.length ) {
-			mouseIsDown[button] = true;
-			mouseDown.dispatch( button );
-		}
-	}
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseUp( x : Float, y : Float, button : Int ) : Void {
-		if ( button >= 0 && button < mouseIsDown.length ) {
-			mouseIsDown[button] = false;
-			mouseUp.dispatch( button );
-		}
-	}
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseMove( x : Float, y : Float ) : Void {
-		mousePosition.setTo( x, y );
-	}
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseScroll( deltaX : Float, deltaY : Float ) : Void {
-		_scrollDelta.setTo( deltaX, deltaY );
-		mouseScroll.dispatch( _scrollDelta );
-	}
 	
 	
-	/**
-	 * Keyboard
-	 */
-	
-	public function addKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
-	{
-		_keyboardDelegates.push( kb );
-	}
-	
-	public function removeKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
-	{
-		_keyboardDelegates.remove( kb );
-	}
 	
 	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	public function onKeyUp( key : KeyCode, modifier : KeyModifier ) : Void {
-		keyState.set( Std.string(key), false );
-		keyUp.dispatch( key, modifier );
-		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyUp( key, modifier );
-	}
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	public function onKeyDown( key : KeyCode, modifier : KeyModifier ) : Void {
-		keyState.set( Std.string(key), true );
-		keyDown.dispatch( key, modifier );
-		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyDown( key, modifier );
-	}
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onTextEntry( str : String ) : Void {
-		textEntered.dispatch( str );
-		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onTextEntry( str );
-	}
-	
-	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onTextEdit( str : String ) : Void {
-		textEditing.dispatch( str );
-		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onTextEdit( str );
-	}
-	
-	public function isKeyDown( key : KeyCode ) : Bool
-	{
-		var key_str : String = Std.string( key );
-		
-		if ( keyState.exists( key_str ) )
-		{
-			return keyState.get( key_str );
-		}
-		else
-		{
-			return false;
-		}
-	}
 	
 }

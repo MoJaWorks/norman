@@ -1,10 +1,7 @@
 package uk.co.mojaworks.norman.factory;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
-import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
-import uk.co.mojaworks.norman.components.EventDispatcher;
-import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.components.Transform;
+import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -23,7 +20,6 @@ class GameObject implements IDisposable
 	
 	// Quick access
 	public var transform( default, null ) : Transform = null;
-	//public var eventDispatcher( get, never ) : EventDispatcher;
 	public var renderer( default, null ) : BaseRenderer = null;
 		
 	var components : LinkedList<Component>;
@@ -39,6 +35,14 @@ class GameObject implements IDisposable
 	public function getComponent( type : String ) : Component {
 		for ( component in components ) {
 			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) return component;
+		}
+		return null;
+	}
+	
+	#if !display @:generic #end public function getThing<T:Component>( type : Class<T> ) : T 
+	{
+		for ( component in components ) {
+			if ( Std.is( component, type ) ) return cast component;
 		}
 		return null;
 	}
@@ -145,22 +149,5 @@ class GameObject implements IDisposable
 	public function set_enabled( bool : Bool ) : Bool {
 		return this.enabled = bool;
 	}
-	
-	
-	/**
-	 * Quick access
-	 */
-	
-	/*private function get_transform() : Transform {
-		return cast getComponent( Transform.TYPE );
-	}
-	
-	private function get_renderer() : BaseRenderer {
-		return cast getComponent( BaseRenderer.TYPE );
-	}
-	
-	private function get_eventDispatcher() : EventDispatcher {
-		return cast getComponent( EventDispatcher.TYPE );
-	}*/
 	
 }

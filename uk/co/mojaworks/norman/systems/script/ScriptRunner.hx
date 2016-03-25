@@ -6,7 +6,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * ...
  * @author Simon
  */
-class ScriptRunner
+class ScriptRunner extends SubSystem
 {
 
 	var _autoId : Int = 0;
@@ -14,6 +14,7 @@ class ScriptRunner
 	
 	public function new() 
 	{
+		super();
 		_scripts = new LinkedList<IRunnable>();
 	}
 	
@@ -27,7 +28,7 @@ class ScriptRunner
 		
 	}
 	
-	public function update( seconds : Float ) : Void {
+	override public function update( seconds : Float ) : Void {
 		
 		for ( script in _scripts ) {
 			

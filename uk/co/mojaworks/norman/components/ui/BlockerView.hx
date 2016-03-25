@@ -20,10 +20,10 @@ class BlockerView extends BaseViewDelegate
 	{
 		super.resize();
 		
-		gameObject.transform.x = Systems.viewport.left;
-		gameObject.transform.y = Systems.viewport.top;
-		gameObject.transform.scaleX = Systems.viewport.totalWidth / gameObject.renderer.width;
-		gameObject.transform.scaleY = Systems.viewport.totalHeight / gameObject.renderer.height;
+		gameObject.transform.x = core.view.left;
+		gameObject.transform.y = core.view.top;
+		gameObject.transform.scaleX = core.view.totalWidth / gameObject.renderer.width;
+		gameObject.transform.scaleY = core.view.totalHeight / gameObject.renderer.height;
 		
 	}
 	

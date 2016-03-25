@@ -22,7 +22,7 @@ class RenderTextureRenderer extends BaseRenderer
 				new ShaderAttributeData( "aVertexColor", 2, 4 ),
 				new ShaderAttributeData( "aVertexUV", 6, 2 )
 			];
-			RenderTextureRenderer.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource(), atts );
+			RenderTextureRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource(), atts );
 		}
 		return RenderTextureRenderer.defaultShader;
 	}
@@ -40,10 +40,10 @@ class RenderTextureRenderer extends BaseRenderer
 	
 	public function setSize( width : Int, height : Int ) : Void {
 		if ( target != null ) {
-			Systems.renderer.unloadTexture( "@norman/renderSprite/" + gameObject.id );
+			Core.instance.renderer.unloadTexture( "@norman/renderSprite/" + gameObject.id );
 		}
 		
-		_textureArray[0] = Systems.renderer.createTexture( "@norman/renderSprite/" + gameObject.id, width, height, 0 );
+		_textureArray[0] = Core.instance.renderer.createTexture( "@norman/renderSprite/" + gameObject.id, width, height, 0 );
 		_textureArray[0].isRenderTexture = true;
 	}
 	
@@ -83,7 +83,7 @@ class RenderTextureRenderer extends BaseRenderer
 	 */
 	public function renderTexture() : Void {
 		_renderToCanvas = false;
-		Systems.renderer.renderLevel( this.gameObject.transform );
+		Core.instance.renderer.renderLevel( this.gameObject.transform );
 		_renderToCanvas = true;
 	}
 }

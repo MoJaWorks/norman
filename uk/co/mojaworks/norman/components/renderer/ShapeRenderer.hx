@@ -32,7 +32,7 @@ class ShapeRenderer extends BaseRenderer
 				new ShaderAttributeData( "aVertexColor", 2, 4 ),
 			];
 			
-			ShapeRenderer.defaultShader = Systems.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource(), atts );
+			ShapeRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource(), atts );
 		}
 		return ShapeRenderer.defaultShader;
 	}

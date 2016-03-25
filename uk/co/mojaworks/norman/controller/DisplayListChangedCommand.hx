@@ -26,7 +26,7 @@ class DisplayListChangedCommand extends SimpleCommand
 		
 		if ( action != DisplayListAction.Removed ) {
 			// For these it currently doesnt matter if items are removed - only added or moved
-			Systems.director.displayListChanged();
+			Core.instance.view.displayListChanged();
 			Systems.ui.displayListChanged();
 		}
 	}

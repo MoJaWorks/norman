@@ -5,9 +5,10 @@ import lime.ui.MouseCursor;
 import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
+import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.systems.ui.MouseEvent;
+import uk.co.mojaworks.norman.systems.ui.PointerEvent;
 
 /**
  * ...
@@ -24,17 +25,17 @@ class BaseUIDelegate extends Component
 	public var isCurrentTarget : Bool = false;
 	public var hitTarget( default, default ) : GameObject = null;
 	
-	public var clicked : Signal1<MouseEvent>;
+	public var clicked : Signal1<PointerEvent>;
 	public var cursor : MouseCursor = MouseCursor.DEFAULT;
 	
 	public function new( ) 
 	{
 		super( );
 		
-		clicked = new Signal1<MouseEvent>();
-		isMouseButtonDown = [false, false, false];
-		wasMouseButtonDownLastFrame = [false, false, false];
-		wasMouseButtonDownElsewhere = [false, false, false];
+		clicked = new Signal1<PointerEvent>();
+		isMouseButtonDown = [ for ( i in 0...PointerInput.MAX_BUTTONS ) false ];
+		wasMouseButtonDownLastFrame = [ for ( i in 0...PointerInput.MAX_BUTTONS ) false ];
+		wasMouseButtonDownElsewhere = [ for ( i in 0...PointerInput.MAX_BUTTONS ) false ];
 	}
 	
 	override public function onAdded( ) : Void {
@@ -49,18 +50,18 @@ class BaseUIDelegate extends Component
 		Systems.ui.remove( this );
 	}
 	
-	public function processEvent( e : MouseEvent ) : Void {
+	public function processEvent( e : PointerEvent ) : Void {
 		
 		switch( e.type ) {
-			case MouseEventType.Down:
+			case PointerEventType.Down:
 				onMouseDown( e );
-			case MouseEventType.Up:
+			case PointerEventType.Up:
 				onMouseUp( e );
-			case MouseEventType.Over:
+			case PointerEventType.Over:
 				onMouseOver( e );
-			case MouseEventType.Out:
+			case PointerEventType.Out:
 				onMouseOut( e );
-			case MouseEventType.Click:
+			case PointerEventType.Click:
 				onClick( e );				
 		}
 		
@@ -68,12 +69,12 @@ class BaseUIDelegate extends Component
 		
 	}
 	
-	public function onMouseDown( e : MouseEvent ) : Void {}
-	public function onMouseUp( e : MouseEvent ) : Void {}
-	public function onMouseOver( e : MouseEvent ) : Void {}
-	public function onMouseOut( e : MouseEvent ) : Void { }
+	public function onMouseDown( e : PointerEvent ) : Void {}
+	public function onMouseUp( e : PointerEvent ) : Void {}
+	public function onMouseOver( e : PointerEvent ) : Void {}
+	public function onMouseOut( e : PointerEvent ) : Void { }
 	
-	public function onClick( e : MouseEvent ) : Void { 
+	public function onClick( e : PointerEvent ) : Void { 
 		if ( enabled ) clicked.dispatch( e );
 	}
 	
