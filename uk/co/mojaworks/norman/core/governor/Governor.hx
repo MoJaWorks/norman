@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.core.governor;
-import uk.co.mojaworks.norman.systems.SubSystem;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**

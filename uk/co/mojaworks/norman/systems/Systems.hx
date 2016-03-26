@@ -1,5 +1,8 @@
 package uk.co.mojaworks.norman.systems;
+import uk.co.mojaworks.norman.core.governor.IGovernable;
+import uk.co.mojaworks.norman.factory.CoreObject;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
+import uk.co.mojaworks.norman.systems.director.Director;
 import uk.co.mojaworks.norman.systems.script.ScriptRunner;
 import uk.co.mojaworks.norman.systems.ui.UISystem;
 
@@ -28,6 +31,12 @@ class Systems
 		return cast Core.instance.governor.getSubjectById( DefaultSystem.Animation );
 	}
 	
+	public static var director( get, never ) : Director;
+	private static function get_director() : Director 
+	{
+		return cast Core.instance.governor.getSubjectById( DefaultSystem.Animation );
+	}
+	
 	public static var scripting( get, never ) : ScriptRunner;
 	private static function get_scripting() : ScriptRunner 
 	{
@@ -39,4 +48,30 @@ class Systems
 	{
 		return cast Core.instance.governor.getSubjectById( DefaultSystem.UI );
 	}
-}
+	
+}	
+
+
+	/**
+	 * Subsystem type
+	 **/
+	
+	class SubSystem extends CoreObject implements IGovernable
+	{
+	
+		public var priority : Int;	
+		public var id : String;
+
+		public function new( ) 
+		{
+			super();
+		}
+		
+		public function update( seconds : Float ) : Void 
+		{
+			
+		}
+		
+	}
+	
+	

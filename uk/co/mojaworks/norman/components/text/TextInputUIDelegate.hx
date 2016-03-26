@@ -23,13 +23,13 @@ class TextInputUIDelegate extends BaseUIDelegate
 	override public function onAdded():Void
 	{
 		super.onAdded();
-		core.io.pointer.pointerDown.add( onStageMouseDown );
+		core.io.pointer.down.add( onStageMouseDown );
 	}
 	
 	override public function onRemove():Void 
 	{
 		super.onRemove();
-		core.io.pointer.pointerDown.remove( onStageMouseDown );
+		core.io.pointer.down.remove( onStageMouseDown );
 	}
 	
 	override public function onClick( e : PointerEvent ):Void 

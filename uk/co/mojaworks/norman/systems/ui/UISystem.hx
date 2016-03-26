@@ -5,7 +5,7 @@ import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
-import uk.co.mojaworks.norman.systems.SubSystem;
+import uk.co.mojaworks.norman.systems.Systems.SubSystem;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent.PointerEventType;
 import uk.co.mojaworks.norman.utils.LinkedList;
 

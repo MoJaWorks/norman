@@ -62,6 +62,8 @@ class NormanApp extends Application
 		Core.instance.view.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
 		Core.instance.renderer.init( window.renderer.context );
 		
+		createDefaultSystems();
+		
 		//Custom commands
 		Core.instance.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
 	

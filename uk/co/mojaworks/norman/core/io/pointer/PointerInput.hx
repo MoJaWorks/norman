@@ -23,9 +23,9 @@ class PointerInput
 	public static inline var MAX_TOUCH_POINTS : Int = 5;
 	public static inline var MAX_BUTTONS : Int = 5;
 	
-	public var pointerScroll : Signal2<Int,Vector2>;
-	public var pointerDown : Signal2<Int,MouseButton>;
-	public var pointerUp : Signal2<Int,MouseButton>;
+	public var scroll : Signal2<Int,Vector2>;
+	public var down : Signal2<Int,MouseButton>;
+	public var up : Signal2<Int,MouseButton>;
 	
 	var _scrollDelta : Vector2;
 	var _pointers : Array<Pointer>;
@@ -38,9 +38,9 @@ class PointerInput
 			_pointers.push( new Pointer( i ) );
 		}
 		
-		pointerDown = new Signal2<Int,MouseButton>();
-		pointerUp = new Signal2<Int,MouseButton>();
-		pointerScroll = new Signal2<Int,Vector2>();
+		down = new Signal2<Int,MouseButton>();
+		up = new Signal2<Int,MouseButton>();
+		scroll = new Signal2<Int,Vector2>();
 	}
 	
 	public function get( id : Int ) : Pointer
@@ -60,7 +60,7 @@ class PointerInput
 	private function onMouseDown( x : Float, y : Float, button : Int ) : Void {
 		if ( button >= 0 && button < MAX_BUTTONS ) {
 			_pointers[0].updateButtonState( button, true );
-			pointerDown.dispatch( 0, button );
+			down.dispatch( 0, button );
 		}
 	}
 	
@@ -68,7 +68,7 @@ class PointerInput
 	private function onMouseUp( x : Float, y : Float, button : Int ) : Void {
 		if ( button >= 0 && button < MAX_BUTTONS ) {
 			_pointers[0].updateButtonState( button, false );
-			pointerUp.dispatch( 0, button );
+			up.dispatch( 0, button );
 		}
 	}
 	
@@ -80,7 +80,7 @@ class PointerInput
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onMouseScroll( deltaX : Float, deltaY : Float ) : Void {
 		_scrollDelta.setTo( deltaX, deltaY );
-		pointerScroll.dispatch( 0, _scrollDelta );
+		scroll.dispatch( 0, _scrollDelta );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
