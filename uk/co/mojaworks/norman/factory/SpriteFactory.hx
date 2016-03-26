@@ -9,11 +9,9 @@ import uk.co.mojaworks.norman.components.renderer.Scale9ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
-import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.renderer.TextureData;
-import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.text.BitmapFont;
 import uk.co.mojaworks.norman.utils.Color;
+import uk.co.mojaworks.norman.utils.ImagePath.ImageAssetPath;
 
 /**
  * ...
@@ -43,10 +41,10 @@ class SpriteFactory
 		return gameObject;
 	}
 	
-	public static function createImageSpriteFromAsset( assetId : String, ?subImageId : String = null, ?name : String = null ) : GameObject {
-		
+	public static function createImageSpriteFromAsset( image : ImageAssetPath, ?name : String = null ) : GameObject {
+			
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		gameObject.add( new ImageRenderer( Core.instance.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		gameObject.add( new ImageRenderer( Core.instance.renderer.createTextureFromAsset( image.asset ), image.subImageId ) );
 		
 		return gameObject;
 	}
@@ -60,10 +58,10 @@ class SpriteFactory
 		return gameObject;
 	}
 	
-	public static function createScale9ImageSpriteFromAsset( assetId : String, rect : Rectangle, ?subImageId : String = null, ?name : String = null ) : GameObject {
+	public static function createScale9ImageSpriteFromAsset( image : ImageAssetPath, rect : Rectangle, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		var renderer : Scale9ImageRenderer = cast gameObject.add( new Scale9ImageRenderer( Core.instance.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		var renderer : Scale9ImageRenderer = cast gameObject.add( new Scale9ImageRenderer( Core.instance.renderer.createTextureFromAsset( image.asset ), image.subImageId ) );
 		renderer.setScale9Rect( rect );
 		
 		return gameObject;
@@ -79,10 +77,10 @@ class SpriteFactory
 		return gameObject;
 	}
 	
-	public static function createScale3ImageSpriteFromAsset( assetId : String, rect : Rectangle, type : Scale3Type, ?subImageId : String = null, ?name : String = null ) : GameObject {
+	public static function createScale3ImageSpriteFromAsset( image : ImageAssetPath, rect : Rectangle, type : Scale3Type, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = ObjectFactory.createGameObject( name );
-		var renderer : Scale3ImageRenderer = cast gameObject.add( new Scale3ImageRenderer( Core.instance.renderer.createTextureFromAsset( assetId ), subImageId ) );
+		var renderer : Scale3ImageRenderer = cast gameObject.add( new Scale3ImageRenderer( Core.instance.renderer.createTextureFromAsset( image.asset ), image.subImageId ) );
 		renderer.setScale3Rect( rect );
 		renderer.setScale3Type( type );
 		

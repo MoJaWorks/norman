@@ -36,27 +36,27 @@ class GameObject implements IDisposable
 	#if !display @:generic #end
 	public function get<T:Component>( type : Class<T> ) : T 
 	{
-		var result : T = null;
+		//var result : T = null;
 		
 		for ( component in components ) 
 		{
-			result = cast component;
-			if ( result != null ) return result;
+			//result = cast component;
+			if ( Std.is( component, type ) ) return cast component;
 		}
 		
-		return result;
+		return null;
 	}
 	
 	#if !display @:generic #end
 	public function getAll<T:Component>( type : Class<T> ) : Array<T> 
 	{
 		var result : Array<T> = [];
-		var canCast : T = null;
+		//var canCast : T = null;
 		
 		for ( component in components ) 
 		{
-			canCast = cast component;
-			if ( canCast != null ) result.push( canCast );
+			//canCast = cast component;
+			if ( Std.is( component, type ) ) result.push( cast component );
 		}
 		
 		return result;
@@ -100,12 +100,12 @@ class GameObject implements IDisposable
 	#if !display @:generic #end
 	public function removeAllOf<T:Component>( type : Class<T>, destroyAfter : Bool = true ) : Void
 	{
-		var existing : T = null;
+		//var existing : T = null;
 	
 		for ( component in components ) 
 		{
-			existing = cast component;
-			if ( existing != null ) remove( component, destroyAfter );
+			//existing = cast component;
+			if ( Std.is( component, type ) ) remove( component, destroyAfter );
 		}
 	}
 	

@@ -2,6 +2,8 @@ package uk.co.mojaworks.norman;
 import lime.app.Application;
 import lime.graphics.RenderContext;
 import lime.graphics.Renderer;
+import lime.ui.KeyCode;
+import lime.ui.KeyModifier;
 import lime.ui.Window;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
@@ -47,10 +49,10 @@ class NormanApp extends Application
 	
 	private function createDefaultSystems() : Void 
 	{
-		Core.instance.governor.addSubject( new Director(), DefaultSystem.Director, 10 );
-		Core.instance.governor.addSubject( new ScriptRunner(), DefaultSystem.Scripting, 20 );
-		Core.instance.governor.addSubject( new UISystem(), DefaultSystem.UI, 30 );
-		Core.instance.governor.addSubject( new AnimationSystem(), DefaultSystem.Animation, 50 );
+		core.governor.addSubject( new Director(), DefaultSystem.Director, 10 );
+		core.governor.addSubject( new ScriptRunner(), DefaultSystem.Scripting, 20 );
+		core.governor.addSubject( new UISystem(), DefaultSystem.UI, 30 );
+		core.governor.addSubject( new AnimationSystem(), DefaultSystem.Animation, 50 );
 	}
 	
 	override public function onWindowCreate(window:Window):Void
@@ -58,14 +60,16 @@ class NormanApp extends Application
 
 		super.onWindowCreate( window );
 		
-		Core.instance.init();
-		Core.instance.view.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
-		Core.instance.renderer.init( window.renderer.context );
+		core.init();
+		core.view.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
+		core.renderer.init( window.renderer.context );
 		
 		createDefaultSystems();
 		
+		core.view.root.transform.addChild( Systems.director.container.transform );
+		
 		//Custom commands
-		Core.instance.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
+		core.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
 	
 	}
 	
@@ -96,8 +100,8 @@ class NormanApp extends Application
 
 		trace("Window size: ", width, height, window.scale );
 		
-		Core.instance.view.resize( width * window.scale , height * window.scale );
-		//Core.instance.director.resize();
+		core.view.resize( width * window.scale , height * window.scale );
+		Systems.director.resize();
 		
 	}
 	
@@ -112,67 +116,62 @@ class NormanApp extends Application
 		}
 			
 		var seconds : Float = deltaTime * 0.001;
-		//Systems.director.update( seconds );
-		//Systems.scripting.update( seconds );
-		//Systems.ui.update( seconds );
-		//Systems.animation.update( seconds );
 		
-		Core.instance.governor.update( seconds );
-		Core.instance.renderer.render( Core.instance.view.root.transform );
-		Core.instance.io.pointer.endFrame();
+		core.governor.update( seconds );
+		core.renderer.render( Core.instance.view.root.transform );
+		core.io.pointer.endFrame();
 		
 	}
 		
 	override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
 	{
 		super.onMouseWheel(window, deltaX, deltaY);
-		Core.instance.io.pointer.onMouseScroll( deltaX, deltaY );
+		core.io.pointer.onMouseScroll( deltaX, deltaY );
 	}
 	
 	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseDown( window, x, y, button);
-		Core.instance.io.pointer.onMouseDown( x * window.scale, y * window.scale, button );
+		core.io.pointer.onMouseDown( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
 	{
 		super.onMouseUp( window, x, y, button);
-		Core.instance.io.pointer.onMouseUp( x * window.scale, y * window.scale, button );
+		core.io.pointer.onMouseUp( x * window.scale, y * window.scale, button );
 	}
 	
 	override public function onMouseMove( window : Window, x : Float, y : Float ) : Void 
 	{
 		super.onMouseMove( window, x, y );
-		Core.instance.io.pointer.onMouseMove( x * window.scale, y * window.scale );
+		core.io.pointer.onMouseMove( x * window.scale, y * window.scale );
 	}
 	
-	/*override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
+	override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
 	{
-		//trace( "Key down", keyCode );
 		super.onKeyDown(window, keyCode, modifier);
-		Systems.input.onKeyDown( keyCode, modifier );
+		core.io.keyboard.onKeyDown( keyCode, modifier );
 	}
 	
 	override public function onKeyUp(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
 	{
 		super.onKeyUp(window, keyCode, modifier);
-		Systems.input.onKeyUp( keyCode, modifier );
+		core.io.keyboard.onKeyUp( keyCode, modifier );
 	}
 	
 	override public function onTextInput( window:Window, text:String ) : Void 
 	{
 		//trace("Text input", text );
 		super.onTextInput(window, text);
-		Systems.input.onTextEntry( text );
+		core.io.keyboard.onTextEntry( text );
 	}
 	
 	override public function onTextEdit(window:Window, text:String, start:Int, length:Int):Void 
 	{
 		//trace( "Text edit", text, start, length );
 		super.onTextEdit(window, text, start, length);
-		Systems.input.onTextEdit( text );
-	}*/
+		core.io.keyboard.onTextEdit( text );
+	}
 	
 	override public function onRenderContextRestored( renderer : Renderer, context:RenderContext ):Void 
 	{

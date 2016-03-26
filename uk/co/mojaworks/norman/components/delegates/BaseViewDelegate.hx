@@ -16,6 +16,10 @@ class BaseViewDelegate extends Component
 	public function new( ) 
 	{
 		super();
+	}
+	
+	public function build() : Void
+	{
 		
 	}
 	

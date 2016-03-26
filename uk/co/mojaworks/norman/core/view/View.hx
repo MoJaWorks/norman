@@ -38,6 +38,7 @@ class View
 	public function setTargetSize( width : Float, height : Float ) : Void {
 		stageWidth = width;
 		stageHeight = height;
+		trace("Initializing view ", stageWidth, stageHeight );
 		updateDimensions();
 	}
 	

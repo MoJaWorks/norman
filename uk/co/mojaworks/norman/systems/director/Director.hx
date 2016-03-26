@@ -12,23 +12,18 @@ import uk.co.mojaworks.norman.utils.Color;
  * @author Simon
  */
 
-enum DisplayListAction {
-	Added;
-	Removed;
-	Swapped;
-	All;
-}
- 
 class Director extends SubSystem
 {
-
-	var _container : GameObject;
+	
+	public var container( default, null ) : GameObject;
+	
 	var _displayStack : Array<BaseViewDelegate>;
 	
 	public function new() 
 	{
 		super();
 		_displayStack = [];
+		container = ObjectFactory.createGameObject( "director" );
 	}
 	
 	/**
@@ -43,7 +38,9 @@ class Director extends SubSystem
 		_displayStack = [];
 		_displayStack.push( cast view.get(BaseViewDelegate) );
 		
-		_container.transform.addChild( view.transform );
+		trace("Display stack", _displayStack );
+		
+		container.transform.addChild( view.transform );
 		
 	}
 	
@@ -55,7 +52,7 @@ class Director extends SubSystem
 		transition.transition( view.get(BaseViewDelegate), null, delay );
 		
 		_displayStack.push( view.get(BaseViewDelegate) );
-		_container.transform.addChild( view.transform );
+		container.transform.addChild( view.transform );
 		
 	}
 	
@@ -81,6 +78,23 @@ class Director extends SubSystem
 			_displayStack[_displayStack.length - 1].enabled = true;
 		}
 		
+	}
+	
+	public function resize() : Void 
+	{
+		for ( item in _displayStack ) 
+		{
+			item.resize();
+		}
+	}
+	
+	
+	override public function update( seconds : Float ) : Void 
+	{
+		for ( item in _displayStack )
+		{
+			item.update( seconds );
+		}
 	}
 	
 }

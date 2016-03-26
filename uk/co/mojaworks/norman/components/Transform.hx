@@ -1,10 +1,8 @@
 package uk.co.mojaworks.norman.components;
 import lime.math.Matrix3;
 import lime.math.Vector2;
-import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.systems.director.Director.DisplayListAction;
-import uk.co.mojaworks.norman.systems.Systems;
+import uk.co.mojaworks.norman.data.NormanMessages;
 import uk.co.mojaworks.norman.utils.LinkedList;
 import uk.co.mojaworks.norman.utils.MathUtils;
 
@@ -12,6 +10,13 @@ import uk.co.mojaworks.norman.utils.MathUtils;
  * ...
  * @author Simon
  */
+enum DisplayListAction {
+	Added;
+	Removed;
+	Swapped;
+	All;
+}
+ 
 class Transform extends Component
 {
 	

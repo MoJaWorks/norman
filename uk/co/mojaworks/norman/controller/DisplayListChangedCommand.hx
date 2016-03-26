@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.controller;
 
-import uk.co.mojaworks.norman.systems.director.Director.DisplayListAction;
+import uk.co.mojaworks.norman.components.Transform.DisplayListAction;
 import uk.co.mojaworks.norman.core.switchboard.MessageData;
 import uk.co.mojaworks.norman.core.switchboard.SimpleCommand;
 import uk.co.mojaworks.norman.systems.Systems;

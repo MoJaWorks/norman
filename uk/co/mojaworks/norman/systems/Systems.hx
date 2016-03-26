@@ -34,7 +34,7 @@ class Systems
 	public static var director( get, never ) : Director;
 	private static function get_director() : Director 
 	{
-		return cast Core.instance.governor.getSubjectById( DefaultSystem.Animation );
+		return cast Core.instance.governor.getSubjectById( DefaultSystem.Director );
 	}
 	
 	public static var scripting( get, never ) : ScriptRunner;

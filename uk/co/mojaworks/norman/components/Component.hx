@@ -29,18 +29,10 @@ import uk.co.mojaworks.norman.factory.IDisposable;
 	
 	public function onRemove() : Void {
 	}
-	
-	public function getComponentType() : String {
-		return "Component";
-	}
-	
-	public function getBaseComponentType() : String {
-		return "Component";
-	}
-	
+		
 	public function isEnabled() : Bool {
 		if ( gameObject != null ) {
-			return gameObject.isEnabled();
+			return enabled && gameObject.isEnabled();
 		}else {
 			return enabled;
 		}
