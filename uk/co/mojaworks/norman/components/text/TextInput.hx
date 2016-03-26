@@ -40,7 +40,7 @@ class TextInput extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		text = TextRenderer.getFromObject( gameObject ).text;
+		text = gameObject.get(TextRenderer).text;
 		cursorPosition = text.length;
 	}
 	
@@ -57,7 +57,7 @@ class TextInput extends Component
 			
 			// Create a caret
 			caret = SpriteFactory.createFilledSprite( textRenderer.color, Math.max(textRenderer.fontSize * 0.05, 2), textRenderer.fontSize );
-			caret.addComponent( new TextInputCaretAnimation() );
+			caret.add( new TextInputCaretAnimation() );
 			caret.transform.anchorX = caret.renderer.width;
 			gameObject.transform.addChild( caret.transform );
 			
@@ -86,7 +86,7 @@ class TextInput extends Component
 	private function set_text( str : String ) : String 
 	{
 		textDisplay = str;
-		TextRenderer.getFromObject( gameObject ).text = str;
+		gameObject.get(TextRenderer).text = str;
 		this.text = str;
 		
 		changed.dispatch( this );
@@ -108,7 +108,7 @@ class TextInput extends Component
 		this.cursorPosition = Math.floor(MathUtils.clamp( 0, text.length, pos ));
 		
 		if ( caret != null ) {
-			var pos : Vector2 = TextRenderer.getFromObject( gameObject ).getPositionOfCharacterAtIndex( cursorPosition );
+			var pos : Vector2 = gameObject.get(TextRenderer).getPositionOfCharacterAtIndex( cursorPosition );
 			caret.transform.x = pos.x;
 			caret.transform.y = pos.y;
 		}
@@ -156,7 +156,7 @@ class TextInput extends Component
 	
 	public function setCursorAtPosition( global : Vector2 ) : Void 
 	{
-		cursorPosition = TextRenderer.getFromObject( gameObject ).getIndexOfCharacterAtPosition( global );
+		cursorPosition = gameObject.get(TextRenderer).getIndexOfCharacterAtPosition( global );
 	}
 	
 	override public function destroy():Void 

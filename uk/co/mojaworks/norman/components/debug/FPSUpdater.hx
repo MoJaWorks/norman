@@ -21,7 +21,7 @@ class FPSUpdater extends BaseAnimationComponent
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		TextRenderer.getFromObject( gameObject ).fontSize = 32;
+		gameObject.get(TextRenderer).fontSize = 32;
 	}
 	
 	override public function update( seconds : Float ) : Void {
@@ -29,7 +29,7 @@ class FPSUpdater extends BaseAnimationComponent
 		framesPassed++;
 		timePassed += seconds;
 		
-		TextRenderer.getFromObject( gameObject ).text = Math.round( framesPassed / timePassed) + " fps";
+		gameObject.get(TextRenderer).text = Math.round( framesPassed / timePassed) + " fps";
 		
 		if ( timePassed > 2 ) {
 			timePassed = 0;

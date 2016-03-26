@@ -56,7 +56,7 @@ class ComponentBuilder {
 					args:[ {name:"obj",type:macro:uk.co.mojaworks.norman.factory.GameObject}],
 					expr: {
 						expr: EReturn( {
-							expr: Context.parse( "cast obj.getComponent(TYPE)", Context.currentPos() ).expr,
+							expr: Context.parse( "cast obj.getComponent(TYPE, BASE_TYPE)", Context.currentPos() ).expr,
 							pos: Context.currentPos()
 						}),
 						pos: Context.currentPos()

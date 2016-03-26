@@ -22,7 +22,7 @@ class TextInputKeyboardDelegate extends BaseKeyboardDelegate
 	{
 		super.onTextEntry(text);
 		
-		var input : TextInput = TextInput.getFromObject( gameObject );
+		var input : TextInput = gameObject.get(TextInput);
 		
 		if ( input.hasTextFocus ) {
 			input.addTextAtCursor( text );
@@ -32,7 +32,7 @@ class TextInputKeyboardDelegate extends BaseKeyboardDelegate
 	override public function onKeyDown(keyCode:KeyCode, modifier:KeyModifier):Void 
 	{
 		super.onKeyDown(keyCode, modifier);
-		var input : TextInput = TextInput.getFromObject( gameObject );
+		var input : TextInput = gameObject.get(TextInput);
 		
 		if ( input.hasTextFocus ) {
 			switch( keyCode ) {

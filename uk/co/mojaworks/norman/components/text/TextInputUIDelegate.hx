@@ -36,7 +36,7 @@ class TextInputUIDelegate extends BaseUIDelegate
 	{
 		super.onClick(e);
 		
-		var input : TextInput = TextInput.getFromObject(gameObject);
+		var input : TextInput = gameObject.get(TextInput);
 		input.hasTextFocus = true;
 		input.setCursorAtPosition( core.io.pointer.get( e.pointerId ).position );
 		
@@ -45,7 +45,7 @@ class TextInputUIDelegate extends BaseUIDelegate
 	private function onStageMouseDown( pointerId : Int, button : MouseButton ) : Void {
 		
 		if ( !gameObject.renderer.hitTest( core.io.pointer.get( pointerId ).position ) ) {
-			TextInput.getFromObject(gameObject).hasTextFocus = false;
+			gameObject.get(TextInput).hasTextFocus = false;
 		}
 		
 	}

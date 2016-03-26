@@ -32,54 +32,88 @@ class GameObject implements IDisposable
 		components = new LinkedList<Component>();
 	}
 		
-	public function getComponent( type : String ) : Component {
-		for ( component in components ) {
-			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) return component;
-		}
-		return null;
-	}
 	
-	#if !display @:generic #end public function getThing<T:Component>( type : Class<T> ) : T 
+	#if !display @:generic #end
+	public function get<T:Component>( type : Class<T> ) : T 
 	{
-		for ( component in components ) {
-			if ( Std.is( component, type ) ) return cast component;
+		var result : T = null;
+		
+		for ( component in components ) 
+		{
+			result = cast component;
+			if ( result != null ) return result;
 		}
-		return null;
+		
+		return result;
 	}
 	
-	public function addComponent( component : Component ) : Component {
+	#if !display @:generic #end
+	public function getAll<T:Component>( type : Class<T> ) : Array<T> 
+	{
+		var result : Array<T> = [];
+		var canCast : T = null;
+		
+		for ( component in components ) 
+		{
+			canCast = cast component;
+			if ( canCast != null ) result.push( canCast );
+		}
+		
+		return result;
+	}
+	
+	public function add( component : Component ) : Component {
 		component.gameObject = this;
 		components.push( component );
 		
-		switch ( component.getBaseComponentType() ) {
-			case BaseRenderer.TYPE:
-				this.renderer = cast component;
-			case Transform.TYPE:
-				this.transform = cast component;
+		// Replace quick access types
+		if ( Std.is( component, BaseRenderer ) )
+		{
+			this.renderer = cast component;
+		}
+		else if ( Std.is( component, Transform ) )
+		{
+			this.transform = cast component;
 		}
 		
 		component.onAdded();
 		return component;
 	}
 	
-	public function removeComponent( component : Component ) : Void {
+	public function remove( component : Component, destroyAfter : Bool = true ) : Void {
 		component.onRemove();
 		components.remove( component );
 		component.gameObject = null;
 		
-		switch ( component.getBaseComponentType() ) {
-			case BaseRenderer.TYPE:
-				this.renderer = cast getComponent( BaseRenderer.TYPE );
-			case Transform.TYPE:
-				this.transform = cast getComponent( Transform.TYPE );
+		if ( component == this.renderer )
+		{
+			this.renderer = cast get( BaseRenderer );
 		}
+		else if ( component == this.transform )
+		{
+			this.transform = cast get( Transform );
+		}
+		
+		if ( destroyAfter ) component.destroy();
 	}
 		
-	public function removeAllComponentsOfType( type : String ) : Void {
-		for ( component in components ) {
-			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) {
-				removeComponent( component );
-			}
+	#if !display @:generic #end
+	public function removeAllOf<T:Component>( type : Class<T>, destroyAfter : Bool = true ) : Void
+	{
+		var existing : T = null;
+	
+		for ( component in components ) 
+		{
+			existing = cast component;
+			if ( existing != null ) remove( component, destroyAfter );
+		}
+	}
+	
+	public function removeAll( destroyAfter : Bool = true ) : Void 
+	{
+		for ( component in components ) 
+		{
+			remove( component, destroyAfter );
 		}
 	}
 	
@@ -94,8 +128,7 @@ class GameObject implements IDisposable
 			destroyed = true;
 			
 			for ( component in components ) {
-				removeComponent( component );
-				component.destroy();
+				remove( component, true );
 			}
 			
 			components = null;
@@ -104,19 +137,15 @@ class GameObject implements IDisposable
 		}
 		
 	}
+		
+	/**
+	 * Finding components in children
+	 */
 	
-	public function getAllComponentsOfType( type : String ) : Array<Component> 
+	/*#if !display @:generic #end
+	public function getAllOfTypeFromChildren<T:Component>( type : Class<T>, includeThisObject : Bool = true, useArray : Array<T> = null ) : Array<T> 
 	{
-		var result : Array<Component> = [];
-		for ( component in components ) {
-			if ( component.getComponentType() == type || component.getBaseComponentType() == type ) result.push( component );
-		}
-		return result;
-	}
-	
-	public function getAllComponentsOfTypeFromChildren( type : String, includeThisObject : Bool = true, useArray : Array<Component> = null ) : Array<Component> 
-	{
-		var result : Array<Component>;
+		var result : Array<T>;
 		
 		if ( useArray != null ) {
 			result = useArray;
@@ -125,17 +154,15 @@ class GameObject implements IDisposable
 		}
 		
 		if ( includeThisObject ) {
-			for ( component in components ) {
-				if ( component.getComponentType() == type || component.getBaseComponentType() == type ) result.push( component );
-			}
+			result.concat( getAll( type ) );
 		}
 		
 		for ( child in transform.children ) {
-			child.gameObject.getAllComponentsOfTypeFromChildren( type, true, result );
+			child.gameObject.getAllOfTypeFromChildren( type, true, result );
 		}
 		
 		return result;
-	}
+	}*/
 	
 	public function isEnabled() : Bool {
 		

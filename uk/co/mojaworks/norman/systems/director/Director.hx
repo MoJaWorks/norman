@@ -38,10 +38,10 @@ class Director extends SubSystem
 	public function moveToView( view : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( BaseViewDelegate.getFromObject( view ), _displayStack, delay );
+		transition.transition( view.get( BaseViewDelegate ), _displayStack, delay );
 		
 		_displayStack = [];
-		_displayStack.push( cast view.getComponent(BaseViewDelegate.TYPE) );
+		_displayStack.push( cast view.get(BaseViewDelegate) );
 		
 		_container.transform.addChild( view.transform );
 		
@@ -52,9 +52,9 @@ class Director extends SubSystem
 		if ( _displayStack.length > 0 ) _displayStack[_displayStack.length - 1].enabled = false;
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( BaseViewDelegate.getFromObject( view ), null, delay );
+		transition.transition( view.get(BaseViewDelegate), null, delay );
 		
-		_displayStack.push( BaseViewDelegate.getFromObject(view) );
+		_displayStack.push( view.get(BaseViewDelegate) );
 		_container.transform.addChild( view.transform );
 		
 	}

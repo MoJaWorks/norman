@@ -28,7 +28,7 @@ class UIFactory
 		
 		var gameObject : GameObject = SpriteFactory.createImageSprite( texture, subTextureId, name );
 		delegate.hitTarget = gameObject;
-		gameObject.addComponent( delegate );
+		gameObject.add( delegate );
 		
 		return gameObject;
 		
@@ -38,7 +38,7 @@ class UIFactory
 		
 		var font : BitmapFont = FontUtils.createFontFromAsset( "default/arial.fnt" );
 		var gameObject = SpriteFactory.createTextSprite( "-- fps", new TextFormat(font), "fps" );
-		gameObject.addComponent( new FPSUpdater() );
+		gameObject.add( new FPSUpdater() );
 		
 		return gameObject;
 		
@@ -47,9 +47,9 @@ class UIFactory
 	public static function createTextInput( text : String, format : TextFormat, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = SpriteFactory.createTextSprite( text, format, name );
-		gameObject.addComponent( new TextInput() );
-		gameObject.addComponent( new TextInputUIDelegate() );
-		gameObject.addComponent( new TextInputKeyboardDelegate() );
+		gameObject.add( new TextInput() );
+		gameObject.add( new TextInputUIDelegate() );
+		gameObject.add( new TextInputKeyboardDelegate() );
 		
 		return gameObject;
 		
@@ -58,8 +58,8 @@ class UIFactory
 	public static function createBlocker( color : Color ) : GameObject {
 		
 		var gameObject : GameObject = SpriteFactory.createFilledSprite( color, 100, 100, FillShape.Rectangle, "blocker" );
-		var view : BlockerView = cast gameObject.addComponent( new BlockerView() );
-		gameObject.addComponent( new BaseUIDelegate() ); // Absorb clicks
+		var view : BlockerView = cast gameObject.add( new BlockerView() );
+		gameObject.add( new BaseUIDelegate() ); // Absorb clicks
 		
 		view.resize();
 		

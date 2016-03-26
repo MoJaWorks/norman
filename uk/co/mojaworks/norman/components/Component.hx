@@ -8,7 +8,6 @@ import uk.co.mojaworks.norman.factory.IDisposable;
  * @author Simon
  */
 	
- #if !macro @:autoBuild( uk.co.mojaworks.norman.components.ComponentBuilder.build() ) #end
  class Component extends CoreObject implements IDisposable {
 	 
 	public var enabled( default, set ) : Bool = true;
@@ -21,7 +20,7 @@ import uk.co.mojaworks.norman.factory.IDisposable;
 	
 	public function destroy() : Void {
 		destroyed = true;
-		if ( gameObject != null ) gameObject.removeComponent( this );
+		if ( gameObject != null ) gameObject.remove( this );
 	}
 	
 	public function onAdded() : Void {

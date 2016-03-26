@@ -26,10 +26,7 @@ class BaseRenderer extends Component
 	public function render( canvas : Canvas ) : Void {};
 	public function postRender( canvas : Canvas ) : Void {};
 	public function dispose() : Void {};
-	
-	//public function getWidth() : Float { return 0; };
-	//public function getHeight() : Float { return 0; };
-	
+		
 	public function new( ) { 
 		super( );
 	}

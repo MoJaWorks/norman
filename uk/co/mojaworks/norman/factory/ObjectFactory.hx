@@ -20,7 +20,7 @@ class ObjectFactory
 		// All objects need a transform and event dispastcher
 		// The rest is up to individual objects
 		var gameObject : GameObject = new GameObject( name );
-		gameObject.addComponent( new Transform() );
+		gameObject.add( new Transform() );
 				
 		return gameObject;
 	}
