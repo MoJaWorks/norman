@@ -10,6 +10,15 @@ import uk.co.mojaworks.norman.utils.Color;
  * @author Simon
  */
 
+enum AnchorAlign
+{
+	Left;
+	Right;
+	Top;
+	Bottom;
+	Center;
+}
+ 
 class BaseRenderer extends Component
 {
 	
@@ -94,6 +103,29 @@ class BaseRenderer extends Component
 			return gameObject.transform.scaleY = val / height;
 		}else {
 			return 0;
+		}
+	}
+	
+	public function alignAnchor( ?horizontal : AnchorAlign, ?vertical : AnchorAlign ) : Void 
+	{
+		switch( horizontal )
+		{
+			case Left:
+				gameObject.transform.anchorX = 0;
+			case Right:
+				gameObject.transform.anchorX = width;
+			default:
+				gameObject.transform.anchorX = width * 0.5;
+		}
+		
+		switch( vertical )
+		{
+			case Top:
+				gameObject.transform.anchorY = 0;
+			case Bottom:
+				gameObject.transform.anchorY = height;
+			default:
+				gameObject.transform.anchorY = height * 0.5;
 		}
 	}
 }

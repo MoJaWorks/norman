@@ -3,7 +3,7 @@ import lime.ui.KeyModifier;
 
 import lime.ui.KeyCode;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.components.delegates.BaseKeyboardDelegate;
+import uk.co.mojaworks.norman.components.io.BaseKeyboardDelegate;
 import uk.co.mojaworks.norman.systems.Systems;
 
 /**

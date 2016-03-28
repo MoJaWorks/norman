@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.delegates;
+package uk.co.mojaworks.norman.components.director;
 
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.factory.GameObject;
@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.factory.GameObject;
  * ...
  * @author Simon
  */
-class BaseViewDelegate extends Component
+class BaseViewDelegate extends Component implements IViewDelegate
 {
 	
 	// Active controls animations and if the screen should be "alive"

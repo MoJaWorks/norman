@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.factory;
 import uk.co.mojaworks.norman.components.debug.FPSUpdater;
-import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer.TextFormat;
 import uk.co.mojaworks.norman.components.text.TextInput;

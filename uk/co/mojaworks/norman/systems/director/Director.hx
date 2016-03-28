@@ -1,10 +1,9 @@
 package uk.co.mojaworks.norman.systems.director;
-import uk.co.mojaworks.norman.systems.Systems.SubSystem;
-import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
+import uk.co.mojaworks.norman.components.director.IViewDelegate;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 import uk.co.mojaworks.norman.factory.UIFactory;
+import uk.co.mojaworks.norman.systems.Systems.SubSystem;
 import uk.co.mojaworks.norman.utils.Color;
 
 /**
@@ -17,7 +16,7 @@ class Director extends SubSystem
 	
 	public var container( default, null ) : GameObject;
 	
-	var _displayStack : Array<BaseViewDelegate>;
+	var _displayStack : Array<IViewDelegate>;
 	
 	public function new() 
 	{
@@ -33,10 +32,10 @@ class Director extends SubSystem
 	public function moveToView( view : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( view.get( BaseViewDelegate ), _displayStack, delay );
+		transition.transition( view.get( IViewDelegate ), _displayStack, delay );
 		
 		_displayStack = [];
-		_displayStack.push( cast view.get(BaseViewDelegate) );
+		_displayStack.push( cast view.get(IViewDelegate) );
 		
 		trace("Display stack", _displayStack );
 		
@@ -49,9 +48,9 @@ class Director extends SubSystem
 		if ( _displayStack.length > 0 ) _displayStack[_displayStack.length - 1].enabled = false;
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( view.get(BaseViewDelegate), null, delay );
+		transition.transition( view.get(IViewDelegate), null, delay );
 		
-		_displayStack.push( view.get(BaseViewDelegate) );
+		_displayStack.push( view.get(IViewDelegate) );
 		container.transform.addChild( view.transform );
 		
 	}

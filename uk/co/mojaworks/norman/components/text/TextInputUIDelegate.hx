@@ -2,7 +2,7 @@ package uk.co.mojaworks.norman.components.text;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 
 import lime.ui.MouseCursor;
-import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent;

@@ -3,7 +3,7 @@ import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
 import msignal.Signal.Signal1;
 import msignal.Signal.Signal2;
-import uk.co.mojaworks.norman.components.delegates.BaseKeyboardDelegate;
+import uk.co.mojaworks.norman.components.io.IKeyboardDelegate;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -13,7 +13,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class KeyboardInput
 {
 
-	var _keyboardDelegates : LinkedList<BaseKeyboardDelegate>;
+	var _keyboardDelegates : LinkedList<IKeyboardDelegate>;
 	
 	public var keyState : Map<String,Bool>;
 	public var keyUp : Signal2<KeyCode, KeyModifier>;
@@ -23,7 +23,7 @@ class KeyboardInput
 	
 	public function new() 
 	{
-		_keyboardDelegates = new LinkedList<BaseKeyboardDelegate>( );
+		_keyboardDelegates = new LinkedList<IKeyboardDelegate>( );
 		keyState = new Map<String,Bool>();
 		keyUp = new Signal2<KeyCode, KeyModifier>();
 		keyDown = new Signal2<KeyCode, KeyModifier>();
@@ -35,12 +35,12 @@ class KeyboardInput
 	 * Keyboard
 	 */
 	
-	public function addKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
+	public function addKeyboardDelegate( kb : IKeyboardDelegate ) : Void 
 	{
 		_keyboardDelegates.push( kb );
 	}
 	
-	public function removeKeyboardDelegate( kb : BaseKeyboardDelegate ) : Void 
+	public function removeKeyboardDelegate( kb : IKeyboardDelegate ) : Void 
 	{
 		_keyboardDelegates.remove( kb );
 	}

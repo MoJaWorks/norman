@@ -1,8 +1,9 @@
 package uk.co.mojaworks.norman.systems.ui;
 import lime.ui.Mouse;
 import lime.ui.MouseCursor;
-import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
+import uk.co.mojaworks.norman.components.ui.IUIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
@@ -23,20 +24,20 @@ class UISystem extends SubSystem
 	public var isMobile : Bool = false;
 	#end
 	
-	var _uiComponents : LinkedList<BaseUIDelegate>;
+	var _uiComponents : LinkedList<IUIDelegate>;
 	
 	public function new() 
 	{
 		super();
-		_uiComponents = new LinkedList<BaseUIDelegate>();
+		_uiComponents = new LinkedList<IUIDelegate>();
 	}
 	
-	public function add( component : BaseUIDelegate ) : Void {
+	public function add( component : IUIDelegate ) : Void {
 		_uiComponents.push( component );
 		displayListChanged();
 	}
 	
-	public function remove( component : BaseUIDelegate ) : Void {
+	public function remove( component : IUIDelegate ) : Void {
 		_uiComponents.remove( component );
 	}
 	

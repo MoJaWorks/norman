@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.components.ui;
 
-import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
+import uk.co.mojaworks.norman.components.director.BaseViewDelegate;
 import uk.co.mojaworks.norman.systems.Systems;
 
 /**

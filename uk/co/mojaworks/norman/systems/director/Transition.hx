@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.systems.director;
-import uk.co.mojaworks.norman.components.delegates.BaseViewDelegate;
+import uk.co.mojaworks.norman.components.director.IViewDelegate;
 import uk.co.mojaworks.norman.systems.script.Call;
 import uk.co.mojaworks.norman.systems.script.Delay;
 import uk.co.mojaworks.norman.systems.script.Sequence;
@@ -15,7 +15,7 @@ class Transition
 	{
 	}
 	
-	public function transition( to : BaseViewDelegate, from : Array<BaseViewDelegate> = null, delay : Float = 0, callback : Void->Void = null ) : Void {
+	public function transition( to : IViewDelegate, from : Array<IViewDelegate> = null, delay : Float = 0, callback : Void->Void = null ) : Void {
 		
 		// Override this
 		Systems.scripting.run( new Sequence([

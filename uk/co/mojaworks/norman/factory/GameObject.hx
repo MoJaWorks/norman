@@ -34,7 +34,7 @@ class GameObject implements IDisposable
 		
 	
 	#if !display @:generic #end
-	public function get<T:Component>( type : Class<T> ) : T 
+	public function get<T>( type : Class<T> ) : T 
 	{
 		//var result : T = null;
 		
@@ -44,11 +44,13 @@ class GameObject implements IDisposable
 			if ( Std.is( component, type ) ) return cast component;
 		}
 		
+		trace("No component found for type ", type );
+		
 		return null;
 	}
 	
 	#if !display @:generic #end
-	public function getAll<T:Component>( type : Class<T> ) : Array<T> 
+	public function getAll<T>( type : Class<T> ) : Array<T> 
 	{
 		var result : Array<T> = [];
 		//var canCast : T = null;
@@ -98,7 +100,7 @@ class GameObject implements IDisposable
 	}
 		
 	#if !display @:generic #end
-	public function removeAllOf<T:Component>( type : Class<T>, destroyAfter : Bool = true ) : Void
+	public function removeAllOf<T>( type : Class<T>, destroyAfter : Bool = true ) : Void
 	{
 		//var existing : T = null;
 	

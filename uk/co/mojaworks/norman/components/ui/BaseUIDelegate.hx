@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.delegates;
+package uk.co.mojaworks.norman.components.ui;
 
 import haxe.CallStack;
 import lime.ui.MouseCursor;
@@ -14,7 +14,7 @@ import uk.co.mojaworks.norman.systems.ui.PointerEvent;
  * ...
  * @author Simon
  */
-class BaseUIDelegate extends Component
+class BaseUIDelegate extends Component implements IUIDelegate
 {
 	
 	public var isMouseButtonDown : Array<Bool>;
@@ -23,7 +23,7 @@ class BaseUIDelegate extends Component
 	public var isMouseOver : Bool = false;
 	public var wasMouseOverLastFrame : Bool = false;
 	public var isCurrentTarget : Bool = false;
-	public var hitTarget( default, default ) : GameObject = null;
+	public var hitTarget : GameObject = null;
 	
 	public var clicked : Signal1<PointerEvent>;
 	public var cursor : MouseCursor = MouseCursor.DEFAULT;

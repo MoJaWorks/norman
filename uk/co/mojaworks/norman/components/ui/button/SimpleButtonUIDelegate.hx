@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.components.ui.button;
-import uk.co.mojaworks.norman.components.delegates.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent;
 import uk.co.mojaworks.norman.utils.Color;

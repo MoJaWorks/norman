@@ -1,4 +1,4 @@
-package uk.co.mojaworks.norman.components.delegates;
+package uk.co.mojaworks.norman.components.io;
 
 import lime.ui.KeyCode;
 import lime.ui.KeyModifier;
@@ -9,7 +9,7 @@ import uk.co.mojaworks.norman.systems.Systems;
  * ...
  * @author Simon
  */
-class BaseKeyboardDelegate extends Component
+class BaseKeyboardDelegate extends Component implements IKeyboardDelegate
 {
 
 	public function new() 
