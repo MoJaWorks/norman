@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * ...
  * @author Simon
  */
-class ActuateAnimationWrapper extends BaseAnimationComponent
+class ActuateAnimationWrapper extends BaseAnimation
 {
 
 	private var _actuators : LinkedList<IGenericActuator>;

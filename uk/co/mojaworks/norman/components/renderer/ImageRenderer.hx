@@ -58,7 +58,10 @@ class ImageRenderer extends BaseRenderer
 		
 		if ( this.texture != texture ) {
 			
-			if ( this.texture != null ) this.texture.useCount--;			
+			if ( this.texture != null ) {
+				this.texture.useCount--;			
+				if ( this.texture.useCount <= 0 ) core.renderer.unloadTexture( this.texture.id );
+			}
 			_textureArray[0] = texture;
 			if ( this.texture != null ) this.texture.useCount++;
 		}

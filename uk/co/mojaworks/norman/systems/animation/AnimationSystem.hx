@@ -1,11 +1,6 @@
 package uk.co.mojaworks.norman.systems.animation;
-import motion.Actuate;
-import uk.co.mojaworks.norman.components.animation.BaseAnimationComponent;
-import uk.co.mojaworks.norman.components.Transform;
-import uk.co.mojaworks.norman.factory.GameObject;
-import uk.co.mojaworks.norman.systems.script.Call;
-import uk.co.mojaworks.norman.systems.script.Sequence;
-import uk.co.mojaworks.norman.systems.Systems;
+import uk.co.mojaworks.norman.components.animation.IAnimation;
+import uk.co.mojaworks.norman.systems.Systems.SubSystem;
 import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
@@ -17,20 +12,20 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class AnimationSystem extends SubSystem
 {
 
-	private var _animations : LinkedList<BaseAnimationComponent>;
+	private var _animations : LinkedList<IAnimation>;
 	private var _paused : Bool = false;
 	
 	public function new() 
 	{
 		super();
-		_animations = new LinkedList<BaseAnimationComponent>();
+		_animations = new LinkedList<IAnimation>();
 	}
 	
-	public function addAnimation( anim : BaseAnimationComponent ) : Void {
+	public function addAnimation( anim : IAnimation ) : Void {
 		_animations.push( anim );
 	}
 	
-	public function removeAnimation( anim : BaseAnimationComponent ) : Void {
+	public function removeAnimation( anim : IAnimation ) : Void {
 		_animations.remove( anim );
 	}
 	

@@ -1,13 +1,13 @@
 package uk.co.mojaworks.norman.components.debug;
 
-import uk.co.mojaworks.norman.components.animation.BaseAnimationComponent;
+import uk.co.mojaworks.norman.components.animation.BaseAnimation;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
 
 /**
  * ...
  * @author ...
  */
-class FPSUpdater extends BaseAnimationComponent
+class FPSUpdater extends BaseAnimation
 {
 
 	public var framesPassed : Int = 0;
