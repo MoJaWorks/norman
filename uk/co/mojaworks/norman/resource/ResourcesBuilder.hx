@@ -42,7 +42,7 @@ class ResourcesBuilder
 		var fields : Array<Field> = Context.getBuildFields();
 		var listing = getDirectoryListing( "assets" );
 			
-		trace( listing );
+		//trace( listing );
 		
 		for ( file in listing.keys() ) 
 		{

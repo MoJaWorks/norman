@@ -1,4 +1,6 @@
 package uk.co.mojaworks.norman.components ;
+import haxe.macro.Context;
+import haxe.macro.Expr.ExprOf;
 import uk.co.mojaworks.norman.factory.CoreObject;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.IDisposable;
@@ -8,7 +10,10 @@ import uk.co.mojaworks.norman.factory.IDisposable;
  * @author Simon
  */
 	
- class Component extends CoreObject implements IDisposable {
+ #if !macro @:autoBuild( uk.co.mojaworks.norman.components.ComponentBuilder.build() ) #end
+ class Component extends CoreObject 
+ implements IDisposable 
+ implements IComponent {
 	 
 	public var enabled( default, set ) : Bool = true;
 	public var gameObject : GameObject;
@@ -40,5 +45,15 @@ import uk.co.mojaworks.norman.factory.IDisposable;
 	
 	public function set_enabled( bool : Bool ) : Bool {
 		return this.enabled = bool;
+	}
+	
+	public function _identifiesAs( type : String ) : Bool
+	{
+		return false;
+	}
+	
+	private function __identifiesAs( type : String, thisTypes : String ) : Bool
+	{
+		return thisTypes.indexOf( "^" + type + "$" ) > -1;
 	}
 }

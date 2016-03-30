@@ -10,6 +10,8 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class ActuateAnimationWrapper extends BaseAnimation
 {
 
+	public static var HELLO : String = "Hello";
+	
 	private var _actuators : LinkedList<IGenericActuator>;
 	
 	public function new() 
@@ -28,7 +30,6 @@ class ActuateAnimationWrapper extends BaseAnimation
 	{
 		_actuators.remove( actuator );
 		if ( callback != null ) callback();
-		
 	}
 	
 	override public function onRemove():Void 

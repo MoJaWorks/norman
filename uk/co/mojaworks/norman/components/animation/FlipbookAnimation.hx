@@ -82,7 +82,7 @@ class FlipbookAnimation extends BaseAnimation
 	private function set_currentFrame( frame : Int ) : Int 
 	{
 		this.currentFrame = frame % _frames.length;
-		gameObject.get( ImageRenderer ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
+		//gameObject.get( ImageRenderer ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
 		return currentFrame;
 	}
 	

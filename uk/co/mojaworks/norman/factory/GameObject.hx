@@ -1,5 +1,7 @@
 package uk.co.mojaworks.norman.factory;
-import uk.co.mojaworks.norman.components.Component;
+import haxe.macro.Context;
+import haxe.macro.Expr;
+import uk.co.mojaworks.norman.components.IComponent;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.utils.LinkedList;
@@ -22,16 +24,26 @@ class GameObject implements IDisposable
 	public var transform( default, null ) : Transform = null;
 	public var renderer( default, null ) : BaseRenderer = null;
 		
-	var components : LinkedList<Component>;
+	var components : LinkedList<IComponent>;
 	
 	@:allow( uk.co.mojaworks.norman.factory.ObjectFactory )
 	private function new( name : String )
 	{
 		this.id = autoId++;
 		this.name = name;
-		components = new LinkedList<Component>();
+		components = new LinkedList<IComponent>();
 	}
+	
+	public function _getComponent( type : String ) : IComponent
+	{
+		for ( component in components ) 
+		{
+			if ( component._identifiesAs( type ) ) return component;
+		}
 		
+		return null;
+	}
+	
 	
 	#if !display @:generic #end
 	public function get<T>( type : Class<T> ) : T 
@@ -64,7 +76,7 @@ class GameObject implements IDisposable
 		return result;
 	}
 	
-	public function add( component : Component ) : Component {
+	public function add( component : IComponent ) : IComponent {
 		component.gameObject = this;
 		components.push( component );
 		
@@ -82,7 +94,7 @@ class GameObject implements IDisposable
 		return component;
 	}
 	
-	public function remove( component : Component, destroyAfter : Bool = true ) : Void {
+	public function remove( component : IComponent, destroyAfter : Bool = true ) : Void {
 		component.onRemove();
 		components.remove( component );
 		component.gameObject = null;
