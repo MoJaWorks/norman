@@ -1,12 +1,12 @@
 package uk.co.mojaworks.norman.components.text;
-import uk.co.mojaworks.norman.components.animation.BaseAnimation;
+import uk.co.mojaworks.norman.components.animation.Animation;
 import uk.co.mojaworks.norman.components.Component;
 
 /**
  * ...
  * @author Simon
  */
-class TextInputCaretAnimation extends BaseAnimation
+class TextInputCaretAnimation extends Animation
 {
 
 	var _on : Bool = true;

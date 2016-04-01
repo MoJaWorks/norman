@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.factory;
 import uk.co.mojaworks.norman.components.debug.FPSUpdater;
-import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer.TextFormat;
 import uk.co.mojaworks.norman.components.text.TextInput;
@@ -24,7 +24,7 @@ class UIFactory
 		
 	}
 	
-	public static function createImageButton( delegate : BaseUIDelegate, texture : TextureData, ?subTextureId : String = null, ?name : String = null ) : GameObject {
+	public static function createImageButton( delegate : UIDelegate, texture : TextureData, ?subTextureId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = SpriteFactory.createImageSprite( texture, subTextureId, name );
 		delegate.hitTarget = gameObject;
@@ -59,7 +59,7 @@ class UIFactory
 		
 		var gameObject : GameObject = SpriteFactory.createFilledSprite( color, 100, 100, FillShape.Rectangle, "blocker" );
 		var view : BlockerView = cast gameObject.add( new BlockerView() );
-		gameObject.add( new BaseUIDelegate() ); // Absorb clicks
+		gameObject.add( new UIDelegate() ); // Absorb clicks
 		
 		view.resize();
 		

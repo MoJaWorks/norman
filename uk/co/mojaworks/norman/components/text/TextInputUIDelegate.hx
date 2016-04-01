@@ -2,7 +2,7 @@ package uk.co.mojaworks.norman.components.text;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 
 import lime.ui.MouseCursor;
-import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent;
@@ -11,7 +11,7 @@ import uk.co.mojaworks.norman.systems.ui.PointerEvent;
  * ...
  * @author Simon
  */
-class TextInputUIDelegate extends BaseUIDelegate
+class TextInputUIDelegate extends UIDelegate
 {
 	
 	public function new() 
@@ -36,7 +36,7 @@ class TextInputUIDelegate extends BaseUIDelegate
 	{
 		super.onClick(e);
 		
-		var input : TextInput = gameObject.get(TextInput);
+		var input : TextInput = TextInput.getFrom( gameObject );
 		input.hasTextFocus = true;
 		input.setCursorAtPosition( core.io.pointer.get( e.pointerId ).position );
 		
@@ -45,7 +45,7 @@ class TextInputUIDelegate extends BaseUIDelegate
 	private function onStageMouseDown( pointerId : Int, button : MouseButton ) : Void {
 		
 		if ( !gameObject.renderer.hitTest( core.io.pointer.get( pointerId ).position ) ) {
-			gameObject.get(TextInput).hasTextFocus = false;
+			TextInput.getFrom( gameObject ).hasTextFocus = false;
 		}
 		
 	}

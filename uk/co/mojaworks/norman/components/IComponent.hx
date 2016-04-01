@@ -20,5 +20,5 @@ interface IComponent extends IDisposable
 	
 	private function set_enabled( bool : Bool ) : Bool;
 	
-	public function _identifiesAs( type : String ) : Bool;
+	public function is( type : String ) : Bool;
 }

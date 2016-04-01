@@ -3,14 +3,14 @@ import lime.ui.KeyModifier;
 
 import lime.ui.KeyCode;
 import uk.co.mojaworks.norman.components.Component;
-import uk.co.mojaworks.norman.components.io.BaseKeyboardDelegate;
+import uk.co.mojaworks.norman.components.io.KeyboardDelegate;
 import uk.co.mojaworks.norman.systems.Systems;
 
 /**
  * ...
  * @author Simon
  */
-class TextInputKeyboardDelegate extends BaseKeyboardDelegate
+class TextInputKeyboardDelegate extends KeyboardDelegate
 {
 
 	public function new() 
@@ -22,7 +22,7 @@ class TextInputKeyboardDelegate extends BaseKeyboardDelegate
 	{
 		super.onTextEntry(text);
 		
-		var input : TextInput = gameObject.get(TextInput);
+		var input : TextInput = TextInput.getFrom( gameObject );
 		
 		if ( input.hasTextFocus ) {
 			input.addTextAtCursor( text );
@@ -32,7 +32,7 @@ class TextInputKeyboardDelegate extends BaseKeyboardDelegate
 	override public function onKeyDown(keyCode:KeyCode, modifier:KeyModifier):Void 
 	{
 		super.onKeyDown(keyCode, modifier);
-		var input : TextInput = gameObject.get(TextInput);
+		var input : TextInput = TextInput.getFrom( gameObject );
 		
 		if ( input.hasTextFocus ) {
 			switch( keyCode ) {

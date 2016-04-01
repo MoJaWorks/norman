@@ -40,7 +40,7 @@ class TextInput extends Component
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		text = gameObject.get(TextRenderer).text;
+		text = TextRenderer.getFrom( gameObject ).text;
 		cursorPosition = text.length;
 	}
 	
@@ -86,7 +86,7 @@ class TextInput extends Component
 	private function set_text( str : String ) : String 
 	{
 		textDisplay = str;
-		gameObject.get(TextRenderer).text = str;
+		TextRenderer.getFrom( gameObject ).text = str;
 		this.text = str;
 		
 		changed.dispatch( this );
@@ -108,7 +108,7 @@ class TextInput extends Component
 		this.cursorPosition = Math.floor(MathUtils.clamp( 0, text.length, pos ));
 		
 		if ( caret != null ) {
-			var pos : Vector2 = gameObject.get(TextRenderer).getPositionOfCharacterAtIndex( cursorPosition );
+			var pos : Vector2 = TextRenderer.getFrom( gameObject ).getPositionOfCharacterAtIndex( cursorPosition );
 			caret.transform.x = pos.x;
 			caret.transform.y = pos.y;
 		}
@@ -156,7 +156,7 @@ class TextInput extends Component
 	
 	public function setCursorAtPosition( global : Vector2 ) : Void 
 	{
-		cursorPosition = gameObject.get(TextRenderer).getIndexOfCharacterAtPosition( global );
+		cursorPosition = TextRenderer.getFrom( gameObject ).getIndexOfCharacterAtPosition( global );
 	}
 	
 	override public function destroy():Void 

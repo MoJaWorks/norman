@@ -7,7 +7,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
  * ...
  * @author Simon
  */
-class ActuateAnimationWrapper extends BaseAnimation
+class ActuateAnimationWrapper extends Animation
 {
 
 	public static var HELLO : String = "Hello";

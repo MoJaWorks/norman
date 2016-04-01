@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.components.ui.button;
-import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent;
 import uk.co.mojaworks.norman.utils.Color;
@@ -8,7 +8,7 @@ import uk.co.mojaworks.norman.utils.Color;
  * ...
  * @author Simon
  */
-class SimpleButtonUIDelegate extends BaseUIDelegate
+class SimpleButtonUIDelegate extends UIDelegate
 {
 
 	public function new() 

@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.systems.director;
 import uk.co.mojaworks.norman.components.director.IViewDelegate;
+import uk.co.mojaworks.norman.components.director.ViewDelegate;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 import uk.co.mojaworks.norman.factory.UIFactory;
@@ -32,10 +33,10 @@ class Director extends SubSystem
 	public function moveToView( view : GameObject, transition : Transition = null, delay : Float = 0 ) : Void {
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( view.get( IViewDelegate ), _displayStack, delay );
+		transition.transition( ViewDelegate.getFrom( view ), _displayStack, delay );
 		
 		_displayStack = [];
-		_displayStack.push( cast view.get(IViewDelegate) );
+		_displayStack.push( ViewDelegate.getFrom( view ) );
 		
 		trace("Display stack", _displayStack );
 		
@@ -48,9 +49,9 @@ class Director extends SubSystem
 		if ( _displayStack.length > 0 ) _displayStack[_displayStack.length - 1].enabled = false;
 		
 		if ( transition == null ) transition = new Transition();
-		transition.transition( view.get(IViewDelegate), null, delay );
+		transition.transition( ViewDelegate.getFrom( view ), null, delay );
 		
-		_displayStack.push( view.get(IViewDelegate) );
+		_displayStack.push( ViewDelegate.getFrom( view ) );
 		container.transform.addChild( view.transform );
 		
 	}

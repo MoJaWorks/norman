@@ -28,16 +28,23 @@ class ComponentBuilder
 		var fields : Array<Field> = Context.getBuildFields();
 		
 		fields.push( {
-			name: "_IdentifiesAs",
+			name: "FullType",
 			pos: Context.currentPos(),
 			kind: FVar(macro: String, Context.makeExpr( subclasses.join("|"), Context.currentPos() )),
-			access: [APublic, AStatic]
+			access: [APublic, AStatic, AInline]
+		} );
+		
+		fields.push( {
+			name: "Type",
+			pos: Context.currentPos(),
+			kind: FVar(macro: String, Context.makeExpr( "^" + local + "$", Context.currentPos() )),
+			access: [APublic, AStatic, AInline]
 		} );
 				
 		//trace("Will return", local + "._IdentifiesAs.indexOf( type ) > -1" );
 		
 		fields.push( {
-			name: "_identifiesAs",
+			name: "is",
 			pos: Context.currentPos(),
 			access: [APublic, AOverride],
 			kind: FFun( {
@@ -46,7 +53,7 @@ class ComponentBuilder
 				args: [ { name: "type", type: macro: String } ],
 				expr: {
 					expr: EReturn( {
-						expr: Context.parse( "__identifiesAs( type, " + local + "._IdentifiesAs )", Context.currentPos() ).expr,
+						expr: Context.parse( local + ".Type.indexOf( type ) > -1", Context.currentPos() ).expr,
 						pos: Context.currentPos()
 					}),
 					pos: Context.currentPos()
@@ -55,10 +62,8 @@ class ComponentBuilder
 		});
 		
 		
-		
-		
 		fields.push( {
-			name: "getFromObject",
+			name: "getFrom",
 			pos: Context.currentPos(),
 			access: [APublic, AStatic],
 			kind: FFun( {
@@ -67,7 +72,26 @@ class ComponentBuilder
 				args: [{name: "object", type: macro:uk.co.mojaworks.norman.factory.GameObject}],
 				expr: {
 					expr: EReturn( {
-						expr: Context.parse( "cast object._getComponent( \"" + local + "\" )", Context.currentPos() ).expr,
+						expr: Context.parse( "cast object.get( \"" + local + "\" )", Context.currentPos() ).expr,
+						pos: Context.currentPos()
+					}),
+					pos: Context.currentPos()
+				}
+			})
+		});
+		
+		
+		fields.push( {
+			name: "toString",
+			pos: Context.currentPos(),
+			access: [APublic, AStatic],
+			kind: FFun( {
+				ret: macro : String,
+				params: [],
+				args: [],
+				expr: {
+					expr: EReturn( {
+						expr: Context.parse( "\"{" + local + "}\"", Context.currentPos() ).expr,
 						pos: Context.currentPos()
 					}),
 					pos: Context.currentPos()

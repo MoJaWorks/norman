@@ -1,13 +1,13 @@
 package uk.co.mojaworks.norman.components.debug;
 
-import uk.co.mojaworks.norman.components.animation.BaseAnimation;
+import uk.co.mojaworks.norman.components.animation.Animation;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
 
 /**
  * ...
  * @author ...
  */
-class FPSUpdater extends BaseAnimation
+class FPSUpdater extends Animation
 {
 
 	public var framesPassed : Int = 0;
@@ -21,7 +21,7 @@ class FPSUpdater extends BaseAnimation
 	override public function onAdded():Void 
 	{
 		super.onAdded();
-		gameObject.get(TextRenderer).fontSize = 32;
+		TextRenderer.getFrom( gameObject ).fontSize = 32;
 	}
 	
 	override public function update( seconds : Float ) : Void {
@@ -29,7 +29,7 @@ class FPSUpdater extends BaseAnimation
 		framesPassed++;
 		timePassed += seconds;
 		
-		gameObject.get(TextRenderer).text = Math.round( framesPassed / timePassed) + " fps";
+		TextRenderer.getFrom( gameObject ).text = Math.round( framesPassed / timePassed) + " fps";
 		
 		if ( timePassed > 2 ) {
 			timePassed = 0;

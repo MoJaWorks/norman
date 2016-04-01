@@ -1,13 +1,13 @@
 package uk.co.mojaworks.norman.components.ui;
 
-import uk.co.mojaworks.norman.components.director.BaseViewDelegate;
+import uk.co.mojaworks.norman.components.director.ViewDelegate;
 import uk.co.mojaworks.norman.systems.Systems;
 
 /**
  * ...
  * @author Simon
  */
-class BlockerView extends BaseViewDelegate
+class BlockerView extends ViewDelegate
 {
 
 	public function new() 

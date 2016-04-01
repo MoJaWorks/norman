@@ -20,7 +20,7 @@ class FlipbookFrame
 	}
 }
  
-class FlipbookAnimation extends BaseAnimation
+class FlipbookAnimation extends Animation
 {
 
 	public var fps( get, set ) : Float;
@@ -63,7 +63,7 @@ class FlipbookAnimation extends BaseAnimation
 				}
 			}
 			
-			gameObject.get( ImageRenderer ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
+			ImageRenderer.getFrom( gameObject ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
 		}
 		
 	}
@@ -82,7 +82,7 @@ class FlipbookAnimation extends BaseAnimation
 	private function set_currentFrame( frame : Int ) : Int 
 	{
 		this.currentFrame = frame % _frames.length;
-		//gameObject.get( ImageRenderer ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
+		ImageRenderer.getFrom( gameObject ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
 		return currentFrame;
 	}
 	

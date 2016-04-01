@@ -14,7 +14,7 @@ import uk.co.mojaworks.norman.systems.ui.PointerEvent;
  * ...
  * @author Simon
  */
-class BaseUIDelegate extends Component implements IUIDelegate
+class UIDelegate extends Component implements IUIDelegate
 {
 	
 	public var isMouseButtonDown : Array<Bool>;

@@ -9,7 +9,7 @@ import uk.co.mojaworks.norman.systems.Systems;
  * ...
  * @author Simon
  */
-class BaseKeyboardDelegate extends Component implements IKeyboardDelegate
+class KeyboardDelegate extends Component implements IKeyboardDelegate
 {
 
 	public function new() 

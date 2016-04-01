@@ -8,7 +8,7 @@ import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
  * ...
  * @author Simon
  */
-class BaseAnimation extends Component implements IAnimation
+class Animation extends Component implements IAnimation
 {
 
 	public var paused( default, null ) : Bool = false;

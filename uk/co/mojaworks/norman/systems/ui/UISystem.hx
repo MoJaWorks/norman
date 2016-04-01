@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.systems.ui;
 import lime.ui.Mouse;
 import lime.ui.MouseCursor;
-import uk.co.mojaworks.norman.components.ui.BaseUIDelegate;
+import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.components.ui.IUIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;

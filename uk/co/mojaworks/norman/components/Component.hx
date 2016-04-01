@@ -47,13 +47,11 @@ import uk.co.mojaworks.norman.factory.IDisposable;
 		return this.enabled = bool;
 	}
 	
-	public function _identifiesAs( type : String ) : Bool
+	public function is( type : String ) : Bool
 	{
 		return false;
 	}
 	
-	private function __identifiesAs( type : String, thisTypes : String ) : Bool
-	{
-		return thisTypes.indexOf( "^" + type + "$" ) > -1;
-	}
+	
+
 }
