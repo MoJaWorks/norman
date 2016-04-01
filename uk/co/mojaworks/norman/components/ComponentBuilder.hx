@@ -53,7 +53,7 @@ class ComponentBuilder
 				args: [ { name: "type", type: macro: String } ],
 				expr: {
 					expr: EReturn( {
-						expr: Context.parse( local + ".Type.indexOf( type ) > -1", Context.currentPos() ).expr,
+						expr: Context.parse( local + ".FullType.indexOf( type ) > -1", Context.currentPos() ).expr,
 						pos: Context.currentPos()
 					}),
 					pos: Context.currentPos()
@@ -72,7 +72,7 @@ class ComponentBuilder
 				args: [{name: "object", type: macro:uk.co.mojaworks.norman.factory.GameObject}],
 				expr: {
 					expr: EReturn( {
-						expr: Context.parse( "cast object.get( \"" + local + "\" )", Context.currentPos() ).expr,
+						expr: Context.parse( "cast object.get( Type )", Context.currentPos() ).expr,
 						pos: Context.currentPos()
 					}),
 					pos: Context.currentPos()
