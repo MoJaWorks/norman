@@ -17,12 +17,7 @@ class ViewDelegate extends Component implements IViewDelegate
 	{
 		super();
 	}
-	
-	public function build() : Void
-	{
 		
-	}
-	
 	public function set_active( bool : Bool ) : Bool {
 		return this.active = bool;
 	}

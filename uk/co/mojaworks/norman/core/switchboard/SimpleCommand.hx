@@ -1,16 +1,18 @@
 package uk.co.mojaworks.norman.core.switchboard ;
+import uk.co.mojaworks.norman.factory.CoreObject;
 
 /**
  * ...
  * @author Simon
  */
-class SimpleCommand implements ICommand
+class SimpleCommand extends CoreObject implements ICommand
 {
 
 	public var message : String;
 	
 	public function new() 
 	{
+		super();
 	}
 	
 	public function execute( messageData : MessageData ) : Void 
@@ -18,7 +20,8 @@ class SimpleCommand implements ICommand
 		action( messageData );
 	}
 	
-	private function action( messageData : MessageData ) : Void {
+	private function action( messageData : MessageData ) : Void 
+	{
 		// Override this
 	}
 	
