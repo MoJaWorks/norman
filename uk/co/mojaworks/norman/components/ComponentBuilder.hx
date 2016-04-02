@@ -79,26 +79,7 @@ class ComponentBuilder
 				}
 			})
 		});
-		
-		
-		fields.push( {
-			name: "toString",
-			pos: Context.currentPos(),
-			access: [APublic, AStatic],
-			kind: FFun( {
-				ret: macro : String,
-				params: [],
-				args: [],
-				expr: {
-					expr: EReturn( {
-						expr: Context.parse( "\"{" + local + "}\"", Context.currentPos() ).expr,
-						pos: Context.currentPos()
-					}),
-					pos: Context.currentPos()
-				}
-			})
-		});
-		
+				
 		return fields;
 	}
 	

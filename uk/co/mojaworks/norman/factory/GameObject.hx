@@ -48,8 +48,6 @@ class GameObject implements IDisposable
 		component.gameObject = this;
 		components.push( component );
 		
-		trace("Adding component ", component.is( BaseRenderer.Type ), component, BaseRenderer.Type );
-		
 		// Replace quick access types
 		if ( component.is( BaseRenderer.Type ) )
 		{

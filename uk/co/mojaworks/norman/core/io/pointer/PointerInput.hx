@@ -52,6 +52,19 @@ class PointerInput
 		return null;
 	}
 	
+	public function anyPointerIsDown() 
+	{
+		for ( pointer in _pointers ) 
+		{
+			if ( pointer.buttonIsDown( MouseButton.Left ) )
+			{
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * Get mouse input from system events
 	 */

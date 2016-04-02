@@ -4,7 +4,6 @@
 	<config:android permission="android.permission.VIBRATE"/>
 	
 	<dependency name="norman-android-extensions" path="dependencies/android" if="android" />
-	<android extension="uk.co.mojaworks.norman.Accelerometer" />
 	<android extension="uk.co.mojaworks.norman.Vibration" />
 	
 	<haxelib name="lime" />

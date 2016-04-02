@@ -40,7 +40,22 @@ class FlipbookAnimation extends Animation
 	
 	public function setFrames( frames : Array<FlipbookFrame> ) : Void 
 	{
+		if ( _frames != null )
+		{
+			for ( frame in _frames ) 
+			{
+				frame.texture.useCount--;
+				if ( frame.texture.useCount < 0 ) core.renderer.unloadTexture( frame.texture.id );
+			}
+		}
+		
 		_frames = frames;
+		
+		for ( frame in _frames ) 
+		{
+			frame.texture.useCount++;
+		}
+		
 		currentFrame = 0;
 	}
 	
@@ -80,10 +95,22 @@ class FlipbookAnimation extends Animation
 	}
 	
 	private function set_currentFrame( frame : Int ) : Int 
+	{				
+		if ( gameObject != null && _frames != null ) {
+			this.currentFrame = frame % _frames.length;
+			ImageRenderer.getFrom( gameObject ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
+			return currentFrame;
+		}
+		else
+		{
+			return this.currentFrame = frame;
+		}
+	}
+	
+	override public function destroy():Void 
 	{
-		this.currentFrame = frame % _frames.length;
-		ImageRenderer.getFrom( gameObject ).setTexture( _frames[currentFrame].texture, _frames[currentFrame].subtextureId );
-		return currentFrame;
+		setFrames( null );
+		super.destroy();
 	}
 	
 	
