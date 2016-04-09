@@ -20,11 +20,11 @@ class DatabaseProxy extends Proxy
 	
 	public var db:SQLiteDB;
 
-	public function new( asset : String ) 
+	public function new( asset : String, overwriteIfExists : Bool = true ) 
 	{
 		super( ID );
 		
-		var filename : String = copyDBToLocal( asset, "main", true );
+		var filename : String = copyDBToLocal( asset, "main", overwriteIfExists );
 		db = new SQLiteDB( filename );
 		
 	}
