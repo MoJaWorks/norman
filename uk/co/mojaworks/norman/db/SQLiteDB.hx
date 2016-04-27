@@ -77,19 +77,19 @@ class SQLiteDB
 	 * 
 	 */
 	
-	public function select( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "", limit : String = "" ) : Array<SQLDBResult>
+	public function select( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "", limit : String = "", groupBy : String = "" ) : Array<SQLDBResult>
 	{
 		var action : String = "SELECT " + fields.join(",") + " FROM " + from;
-		var sql : String = buildQuery( action, where, whereVars, orderBy, limit );
+		var sql : String = buildQuery( action, where, whereVars, groupBy, orderBy, limit );
 		
 		return queryResult( sql );
 		
 	}
 	
 		
-	public function selectSingle( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "" ) : SQLDBResult
+	public function selectSingle( fields : Array<String>, from : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "", groupBy : String = "" ) : SQLDBResult
 	{
-		var result : Array<Map<String,String>> = select( fields, from, where, whereVars, orderBy, "1" );
+		var result : Array<Map<String,String>> = select( fields, from, where, whereVars, orderBy, "1", groupBy );
 		if ( result.length > 0 ) {
 			return result[0];
 		}else {
@@ -97,10 +97,16 @@ class SQLiteDB
 		}
 	}
 	
-	public function count( from : String, where : String, whereVars : String ) : Int 
+	public function count( from : String, where : String = "", whereVars : Array<Dynamic> = null, groupBy : String = "" ) : Int 
 	{
-		var result : SQLDBResult = selectSingle( ["count(*) as count"], from, where, whereVars );
+		var result : SQLDBResult = selectSingle( ["count(*) as count"], from, where, whereVars, "", groupBy );
 		return Std.parseInt(result.get("count"));
+	}
+	
+	public function sum( column : String, from : String, where : String = "", whereVars : Array<Dynamic> = null, groupBy : String = "" ) : Float
+	{
+		var result : SQLDBResult = select( ["SUM(" + column + ") as total"], from, where, whereVars, "", "", groupBy )[0];
+		return Std.parseFloat( result.get( "total" ) );
 	}
 	
 	/**
@@ -223,7 +229,7 @@ class SQLiteDB
 	 * 
 	 */
 	
-	private function buildQuery( action : String, where : String = "", whereVars : Array<Dynamic> = null, orderBy : String = "", limit : String = "" ) : String 
+	private function buildQuery( action : String, where : String = "", whereVars : Array<Dynamic> = null, groupBy : String = "", orderBy : String = "", limit : String = "" ) : String 
 	{
 		var sql : String = action;
 				
@@ -238,6 +244,7 @@ class SQLiteDB
 			sql += " WHERE " + where;
 		}
 		
+		if ( groupBy != "" ) sql += " GROUP BY " + groupBy;
 		if ( orderBy != "" ) sql += " ORDER BY " + orderBy;
 		if ( limit != "" ) sql += " LIMIT " + limit;
 		sql += ";";
