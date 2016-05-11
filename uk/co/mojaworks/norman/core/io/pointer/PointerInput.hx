@@ -41,6 +41,8 @@ class PointerInput
 		down = new Signal2<Int,MouseButton>();
 		up = new Signal2<Int,MouseButton>();
 		scroll = new Signal2<Int,Vector2>();
+		
+		_scrollDelta = new Vector2();
 	}
 	
 	public function get( id : Int ) : Pointer
