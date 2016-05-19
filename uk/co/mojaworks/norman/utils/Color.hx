@@ -85,8 +85,8 @@ abstract Color( Int ) to Int from Int
 	public static function lerp( a : Color, b : Color, t : Float ) {
 		return Color.rgba( 
 			Std.int(a.r + ( ( b.r - a.r ) * t )),
-			Std.int(a.b + ( ( b.b - a.b ) * t )),
 			Std.int(a.g + ( ( b.g - a.g ) * t )),
+			Std.int(a.b + ( ( b.b - a.b ) * t )),
 			MathUtils.clamp01( a.a + ( ( b.a - a.a ) * t ))
 		);
 			
