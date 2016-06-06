@@ -1,4 +1,7 @@
 package uk.co.mojaworks.norman.core.renderer;
+import geoff.math.Matrix3;
+import geoff.math.Rect;
+import geoff.math.Vector2;
 import geoff.renderer.IRenderContext;
 import geoff.renderer.RenderBatch;
 import geoff.renderer.Shader;
@@ -122,7 +125,7 @@ class Canvas
 				
 	}
 	
-	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3x3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
+	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
 		var points : Array<Vector2> = [
 			new Vector2( width, height),
@@ -146,7 +149,7 @@ class Canvas
 		
 	}
 	
-	public function buildShapeVertexData( points : Array<Vector2>, transform : Matrix3x3, r : Float, g : Float, b : Float, a : Float, useArray : Array<Float> = null ) : Array<Float> {
+	public function buildShapeVertexData( points : Array<Vector2>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, useArray : Array<Float> = null ) : Array<Float> {
 				
 		var vertexData : Array<Float>;
 		if ( useArray != null ) vertexData = useArray;
@@ -171,7 +174,7 @@ class Canvas
 	
 	
 	
-	public function buildTexturedQuadVertexData( texture : Texture, sourceRect : Rect, transform : Matrix3x3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
+	public function buildTexturedQuadVertexData( texture : Texture, sourceRect : Rect, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
 		var points : Array<Vector2> = [
 			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),

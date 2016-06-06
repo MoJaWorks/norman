@@ -1,8 +1,9 @@
 package uk.co.mojaworks.norman.components.renderer;
+import geoff.math.Vector2;
+import geoff.utils.Color;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * Incomplete/Abstract class should not be instantiated

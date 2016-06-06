@@ -1,14 +1,11 @@
 package uk.co.mojaworks.norman.components.renderer;
-import lime.math.Matrix3;
-import lime.math.Rectangle;
+import geoff.math.Rect;
+import geoff.renderer.Shader;
+import geoff.renderer.Texture;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
-import uk.co.mojaworks.norman.core.renderer.ShaderAttributeData;
-import uk.co.mojaworks.norman.core.renderer.ShaderData;
-import uk.co.mojaworks.norman.core.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.ShaderUtils;
 
 /**
@@ -17,15 +14,15 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  */
 class ImageRenderer extends BaseRenderer
 {
-	public static var defaultShader( get, null ) : ShaderData = null;
-	private static function get_defaultShader( ) : ShaderData {
+	public static var defaultShader( get, null ) : Shader = null;
+	private static function get_defaultShader( ) : Shader {
 		if ( ImageRenderer.defaultShader == null ) {
 			trace("Creating default image shader");
 			
-			var atts : Array<ShaderAttributeData> = [
-				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
-				new ShaderAttributeData( "aVertexColor", 2, 4 ),
-				new ShaderAttributeData( "aVertexUV", 6, 2 )
+			var atts : Array<ShaderAttribute> = [
+				new ShaderAttribute( "aVertexPosition", 0, 2 ),
+				new ShaderAttribute( "aVertexColor", 2, 4 ),
+				new ShaderAttribute( "aVertexUV", 6, 2 )
 			];
 			ImageRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource(), atts );
 			
@@ -33,15 +30,15 @@ class ImageRenderer extends BaseRenderer
 		return ImageRenderer.defaultShader;
 	}
 	
-	public var texture( get, null ) : TextureData;
+	public var texture( get, null ) : Texture;
 	public var subTextureId( default, set ) : String;
 	
-	public var imageRect( default, null ) : Rectangle = null;
-	public var imageUVRect( default, null ) : Rectangle = null;
+	public var imageRect( default, null ) : Rect = null;
+	public var imageUVRect( default, null ) : Rect = null;
 	
-	var _textureArray : Array<TextureData>;
+	var _textureArray : Array<Texture>;
 	
-	public function new( texture : TextureData, subTextureId : String = null ) 
+	public function new( texture : Texture, subTextureId : String = null ) 
 	{
 		super();
 		_textureArray = [null];
@@ -50,11 +47,11 @@ class ImageRenderer extends BaseRenderer
 		
 	}
 	
-	inline private function get_texture() : TextureData {
+	inline private function get_texture() : Texture {
 		return _textureArray[0];
 	}
 	
-	public function setTexture( texture : TextureData, subTextureId : String = null ) : Void {
+	public function setTexture( texture : Texture, subTextureId : String = null ) : Void {
 		
 		if ( this.texture != texture ) {
 			

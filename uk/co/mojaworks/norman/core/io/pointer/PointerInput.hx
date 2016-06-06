@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core.io.pointer;
+import geoff.math.Vector2;
 import msignal.Signal.Signal2;
 import uk.co.mojaworks.norman.core.io.pointer.Pointer;
 

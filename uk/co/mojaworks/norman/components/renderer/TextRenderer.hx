@@ -1,6 +1,9 @@
 package uk.co.mojaworks.norman.components.renderer;
-import hxmath.geom.Rect;
-import hxmath.math.Vector2;
+import geoff.math.Matrix3;
+import geoff.math.Rect;
+import geoff.math.Vector2;
+import geoff.renderer.Texture;
+import geoff.utils.Color;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
 import uk.co.mojaworks.norman.text.BitmapFont;
@@ -67,7 +70,7 @@ class TextRenderer extends BaseRenderer
 		
 	var _layoutDirty : Bool = true;
 	
-	public function new( text : String, textFormat : TextFormat ) //font : BitmapFont ) 
+	public function new( text : String, textFormat : TextFormat )
 	{
 		super( );
 		
@@ -250,7 +253,7 @@ class TextRenderer extends BaseRenderer
 					x += letterSpacing;
 				}
 				
-				var texture : TextureData = font.pages[ char.pageId ];
+				var texture : Texture = font.pages[ char.pageId ];
 				m.identity();
 				m.scale( _fontMultiplier, _fontMultiplier );
 				m.translate( x + (char.xOffset * _fontMultiplier), y + (char.yOffset * _fontMultiplier) );

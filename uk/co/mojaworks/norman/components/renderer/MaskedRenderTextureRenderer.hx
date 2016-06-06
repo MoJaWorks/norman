@@ -1,13 +1,10 @@
 package uk.co.mojaworks.norman.components.renderer;
-import lime.math.Rectangle;
-import lime.math.Vector2;
+import geoff.renderer.Shader;
+import geoff.renderer.Texture;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 import uk.co.mojaworks.norman.factory.SpriteFactory;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
-import uk.co.mojaworks.norman.core.renderer.ShaderAttributeData;
-import uk.co.mojaworks.norman.core.renderer.ShaderData;
-import uk.co.mojaworks.norman.core.renderer.TextureData;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.utils.ShaderUtils;
 
@@ -18,15 +15,15 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
 class MaskedRenderTextureRenderer extends RenderTextureRenderer
 {
 
-	public static var defaultShader( get, null ) : ShaderData = null;
-	private static function get_defaultShader( ) : ShaderData {
+	public static var defaultShader( get, null ) : Shader = null;
+	private static function get_defaultShader( ) : Shader {
 		if ( MaskedRenderTextureRenderer.defaultShader == null ) {
 			trace("Creating default mask shader");
 			
-			var atts : Array<ShaderAttributeData> = [
-				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
-				new ShaderAttributeData( "aVertexColor", 2, 4 ),
-				new ShaderAttributeData( "aVertexUV", 6, 2 ),
+			var atts : Array<ShaderAttribute> = [
+				new ShaderAttribute( "aVertexPosition", 0, 2 ),
+				new ShaderAttribute( "aVertexColor", 2, 4 ),
+				new ShaderAttribute( "aVertexUV", 6, 2 ),
 			];
 			
 			MaskedRenderTextureRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultMaskVertexSource(), ShaderUtils.getDefaultMaskFragSource(), atts );
@@ -35,8 +32,8 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 	}
 	
 	public var mask( default, null ) : GameObject;
-	public var maskedTarget( get, null ) : TextureData;
-	private var _textures : Array<TextureData>;
+	public var maskedTarget( get, null ) : Texture;
+	private var _textures : Array<Texture>;
 	
 	public var renderMask : Bool = false;
 	public var maskEnabled : Bool = true;
@@ -93,7 +90,7 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 		
 	}
 	
-	public function get_maskedTarget() : TextureData {
+	public function get_maskedTarget() : Texture {
 		return _textureArray[1];
 	}
 	

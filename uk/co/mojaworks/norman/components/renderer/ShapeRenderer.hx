@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.components.renderer;
+import geoff.math.Vector2;
 import geoff.renderer.Shader;
 import geoff.utils.Color;
-import hxmath.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
 import uk.co.mojaworks.norman.utils.ShaderUtils;

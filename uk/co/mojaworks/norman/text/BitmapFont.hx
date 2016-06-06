@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.text;
-import uk.co.mojaworks.norman.core.renderer.NormanTexture;
+import geoff.renderer.Texture;
 
 /**
  * ...
@@ -42,7 +42,7 @@ class BitmapFont
 	public var lineHeight : Int;
 	public var base : Int;
 	public var numPages : Int;
-	public var pages : Array<NormanTexture>;
+	public var pages : Array<Texture>;
 	public var characters : Map<Int,CharacterData>;
 	public var kernings : Map<Int,Map<Int,KerningData>>;
 		
