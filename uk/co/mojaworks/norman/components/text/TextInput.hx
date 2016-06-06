@@ -1,13 +1,12 @@
 package uk.co.mojaworks.norman.components.text;
 
-import lime.math.Vector2;
-import msignal.Signal;
+import geoff.utils.MathUtils;
+import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
 import uk.co.mojaworks.norman.components.text.TextInputCaretAnimation;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.SpriteFactory;
-import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...

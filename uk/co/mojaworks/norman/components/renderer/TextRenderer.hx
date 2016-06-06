@@ -1,14 +1,9 @@
 package uk.co.mojaworks.norman.components.renderer;
-import lime.graphics.console.TextureFormat;
-import lime.math.Matrix3;
-import lime.math.Rectangle;
-import lime.math.Vector2;
+import hxmath.geom.Rect;
+import hxmath.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
-import uk.co.mojaworks.norman.core.renderer.TextureData;
 import uk.co.mojaworks.norman.text.BitmapFont;
-import uk.co.mojaworks.norman.utils.Color;
-import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -66,7 +61,7 @@ class TextRenderer extends BaseRenderer
 	
 	// results
 	private var _lineStops : Array<Int>;
-	private var _bounds : Rectangle;
+	private var _bounds : Rect;
 	private var _fontMultiplier : Float = 1;
 	
 		
@@ -77,7 +72,7 @@ class TextRenderer extends BaseRenderer
 		super( );
 		
 		_lineStops = [];
-		_bounds = new Rectangle();
+		_bounds = new Rect();
 		
 		color = Color.WHITE;
 		wrapWidth = 0;

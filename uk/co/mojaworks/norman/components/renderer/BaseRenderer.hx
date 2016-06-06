@@ -1,5 +1,4 @@
 package uk.co.mojaworks.norman.components.renderer;
-import lime.math.Vector2;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
 import uk.co.mojaworks.norman.systems.Systems;

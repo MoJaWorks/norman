@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.components.ui;
 
 import haxe.CallStack;
-import lime.ui.MouseCursor;
 import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
@@ -26,7 +25,7 @@ class UIDelegate extends Component implements IUIDelegate
 	public var hitTarget : GameObject = null;
 	
 	public var clicked : Signal1<PointerEvent>;
-	public var cursor : MouseCursor = MouseCursor.DEFAULT;
+	//public var cursor : MouseCursor = MouseCursor.DEFAULT;
 	
 	public function new( ) 
 	{

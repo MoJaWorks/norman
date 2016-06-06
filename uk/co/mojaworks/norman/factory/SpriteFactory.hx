@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.factory;
-import lime.math.Rectangle;
+import geoff.utils.Color;
 import uk.co.mojaworks.norman.components.renderer.ImageRenderer;
 import uk.co.mojaworks.norman.components.renderer.MaskedRenderTextureRenderer;
 import uk.co.mojaworks.norman.components.renderer.RenderTextureRenderer;
@@ -10,7 +10,6 @@ import uk.co.mojaworks.norman.components.renderer.ShapeRenderer;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer;
 import uk.co.mojaworks.norman.core.renderer.TextureData;
-import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.ImagePath.ImageAssetPath;
 
 /**

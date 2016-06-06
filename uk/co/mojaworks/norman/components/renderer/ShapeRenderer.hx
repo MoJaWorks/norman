@@ -1,11 +1,9 @@
 package uk.co.mojaworks.norman.components.renderer;
-import lime.math.Vector2;
+import geoff.renderer.Shader;
+import geoff.utils.Color;
+import hxmath.math.Vector2;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
-import uk.co.mojaworks.norman.core.renderer.ShaderAttributeData;
-import uk.co.mojaworks.norman.core.renderer.ShaderData;
-import uk.co.mojaworks.norman.systems.Systems;
-import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.ShaderUtils;
 
 /**
@@ -22,8 +20,8 @@ class ShapeRenderer extends BaseRenderer
 {
 
 	// Set up default shader
-	public static var defaultShader( get, null ) : ShaderData = null;
-	private static function get_defaultShader( ) : ShaderData {
+	public static var defaultShader( get, null ) : Shader = null;
+	private static function get_defaultShader( ) : Shader {
 		if ( ShapeRenderer.defaultShader == null ) {
 			trace("Creating default fill shader");
 			

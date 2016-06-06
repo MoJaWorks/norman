@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.systems.animation;
+import geoff.utils.LinkedList;
 import uk.co.mojaworks.norman.components.animation.IAnimation;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
-import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...

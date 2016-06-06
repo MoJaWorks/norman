@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.core.io.pointer;
-import lime.math.Vector2;
+import hxmath.math.Vector2;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 
 /**

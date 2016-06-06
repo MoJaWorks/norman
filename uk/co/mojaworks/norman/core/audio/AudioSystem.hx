@@ -1,12 +1,4 @@
 package uk.co.mojaworks.norman.core.audio;
-import haxe.Timer;
-import lime.app.Event;
-import lime.Assets;
-import lime.audio.AudioBuffer;
-import lime.audio.AudioSource;
-import motion.Actuate;
-import uk.co.mojaworks.norman.core.audio.AudioInstance.AudioType;
-import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -15,7 +7,7 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class AudioSystem
 {
 
-	public var masterVolume( get, set ) : Float;
+	/*public var masterVolume( get, set ) : Float;
 	public var musicVolume( get, set ) : Float;
 	public var sfxVolume( get, set ) : Float;
 	
@@ -188,7 +180,7 @@ class AudioSystem
 	 */
 	
 	
-	public function pause( id : Int ) : Void {
+	/*public function pause( id : Int ) : Void {
 		
 		for ( sound in _playingAudio ) {
 			if ( sound.instanceId == id ) sound.source.pause();
@@ -212,5 +204,5 @@ class AudioSystem
 				_playingAudio.remove( sound );
 			}
 		}
-	}
+	}*/
 }

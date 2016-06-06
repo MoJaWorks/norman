@@ -1,17 +1,9 @@
 package uk.co.mojaworks.norman.core.renderer;
-
-import lime.graphics.GLRenderContext;
-import lime.graphics.opengl.GL;
-import lime.graphics.opengl.GLBuffer;
-import lime.graphics.opengl.GLProgram;
-import lime.math.Matrix3;
-import lime.math.Matrix4;
-import lime.math.Rectangle;
-import lime.math.Vector2;
-import lime.utils.Float32Array;
-import lime.utils.UInt16Array;
-import uk.co.mojaworks.norman.core.renderer.ShaderData;
-import uk.co.mojaworks.norman.utils.Color;
+import geoff.renderer.IRenderContext;
+import geoff.renderer.RenderBatch;
+import geoff.renderer.Shader;
+import geoff.renderer.Texture;
+import geoff.utils.Color;
 
 /**
  * ...
@@ -20,17 +12,11 @@ import uk.co.mojaworks.norman.utils.Color;
 class Canvas
 {
 
-	public static var WHOLE_IMAGE : Rectangle = new Rectangle( 0, 0, 1, 1 );
+	public static var WHOLE_IMAGE : Rect = new Rect( 0, 0, 1, 1 );
 	public static var QUAD_INDICES : Array<Int> = [ 0, 1, 2, 1, 3, 2 ];
 	
-	var _context : GLRenderContext;
+	private var _context : IRenderContext;
 	var _batch : RenderBatch;
-	
-	var _vertexBuffer : GLBuffer;
-	var _indexBuffer : GLBuffer;
-	var _projectionMatrix : Matrix4;
-	
-	var _frameBufferStack : Array<FrameBuffer>;
 	
 	public var sourceBlendFactor( default, null ) : Int;
 	public var sourceAlphaBlendFactor( default, null ) : Int;
@@ -41,6 +27,7 @@ class Canvas
 	private var _cachedQuadVertexData : Array<Float>;
 	private var _cachedTexturedQuadVertexData : Array<Float>;
 	
+	
 	public function new() 
 	{
 		
@@ -48,17 +35,13 @@ class Canvas
 	
 	public function init() : Void {
 		_batch = new RenderBatch();
-		_frameBufferStack = [];
 		_cachedQuadVertexData = [for (i in 0...24) 0 ];
 		_cachedTexturedQuadVertexData = [for (i in 0...32) 0];
 		
 	}
 	
-	public function onContextCreated( gl : GLRenderContext ) : Void {
-		//trace("Setting up gl context");
-		_context = gl;
-		_vertexBuffer = _context.createBuffer();
-		_indexBuffer = _context.createBuffer();
+	public function onContextCreated( context : IRenderContext ) : Void {
+		_context = context;
 	}
 	
 	public function resize() : Void {
@@ -67,12 +50,11 @@ class Canvas
 	}
 	
 	public function clear( color : Color ) : Void {
-		_context.clearColor( color.r / 255, color.g / 255, color.b / 255, color.a );
-		_context.clear( GL.COLOR_BUFFER_BIT );
+		_context.clear( color );
 	}
 	
 	public function setBlendMode( sourceFactor : Int, destinationFactor : Int ) : Void {
-		if ( sourceFactor != sourceBlendFactor || sourceFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destinationFactor != destinationAlphaBlendFactor ) {
+		/*if ( sourceFactor != sourceBlendFactor || sourceFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destinationFactor != destinationAlphaBlendFactor ) {
 			
 			// Setting blend mode modifies state
 			if ( _batch.started ) renderBatch();
@@ -83,11 +65,11 @@ class Canvas
 			destinationAlphaBlendFactor = destinationFactor;
 			_context.blendFunc( sourceFactor, destinationFactor );
 			
-		}
+		}*/
 	}
 	
 	public function setBlendModeSeparate( sourceFactor : Int, destinationFactor : Int, sourceAlphaFactor : Int, destAlphaFactor : Int ) : Void {
-		if ( sourceFactor != sourceBlendFactor || sourceAlphaFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destAlphaFactor != destinationAlphaBlendFactor ) {
+		/*if ( sourceFactor != sourceBlendFactor || sourceAlphaFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destAlphaFactor != destinationAlphaBlendFactor ) {
 			
 			// Setting blend mode modifies state
 			if ( _batch.started ) renderBatch();
@@ -98,18 +80,13 @@ class Canvas
 			destinationAlphaBlendFactor = destAlphaFactor;
 			_context.blendFuncSeparate( sourceFactor, destinationFactor, sourceAlphaFactor, destAlphaFactor );
 			
-		}
+		}*/
 	}
 	
 	public function begin() : Void {
 		
 		_batch.reset();
-		
-		_context.viewport( 0, 0, Std.int(Core.instance.view.screenWidth), Std.int(Core.instance.view.screenHeight) );
-		_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.view.screenWidth, Core.instance.view.screenHeight, 0, -1000, 1000 );
-		
-		_context.enable( GL.BLEND );
-		setBlendMode( GL.ONE, GL.ONE_MINUS_SRC_ALPHA );
+		_context.beginRender( Std.int(Core.instance.view.screenWidth), Std.int(Core.instance.view.screenHeight) );
 		
 	}
 	
@@ -117,11 +94,12 @@ class Canvas
 		if ( _batch.started ) {
 			renderBatch();
 		}
+		_context.endRender();
 	}
 		
-	public function draw( textures : Array<TextureData>, shader : ShaderData, shaderVertexData : Array<Float>, indices : Array<Int> ) {
+	public function draw( textures : Array<Texture>, shader : Shader, shaderVertexData : Array<Float>, indices : Array<Int> ) {
 		
-		if ( !_batch.isCompatible( shader, textures )  ) {
+		if ( !_batch.isCompatible( shader, cast textures )  ) {
 			
 			if ( _batch.started ) {
 				renderBatch();
@@ -139,12 +117,12 @@ class Canvas
 		}
 		
 		for ( index in indices ) {
-			_batch.indices.push( startIndex + index );
+			_batch.indexes.push( startIndex + index );
 		}
 				
 	}
 	
-	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
+	public function buildQuadVertexData( width : Float, height : Float, transform : Matrix3x3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
 		var points : Array<Vector2> = [
 			new Vector2( width, height),
@@ -168,7 +146,7 @@ class Canvas
 		
 	}
 	
-	public function buildShapeVertexData( points : Array<Vector2>, transform : Matrix3, r : Float, g : Float, b : Float, a : Float, useArray : Array<Float> = null ) : Array<Float> {
+	public function buildShapeVertexData( points : Array<Vector2>, transform : Matrix3x3, r : Float, g : Float, b : Float, a : Float, useArray : Array<Float> = null ) : Array<Float> {
 				
 		var vertexData : Array<Float>;
 		if ( useArray != null ) vertexData = useArray;
@@ -193,7 +171,7 @@ class Canvas
 	
 	
 	
-	public function buildTexturedQuadVertexData( texture : TextureData, sourceRect : Rectangle, transform : Matrix3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
+	public function buildTexturedQuadVertexData( texture : Texture, sourceRect : Rect, transform : Matrix3x3, r : Float, g : Float, b : Float, a : Float ) : Array<Float> {
 		
 		var points : Array<Vector2> = [
 			new Vector2( texture.width * sourceRect.width, texture.height * sourceRect.height),
@@ -227,13 +205,13 @@ class Canvas
 	}
 	
 	
-	public function pushRenderTarget( target : TextureData ) : Void {
+	public function pushRenderTarget( target : Texture ) : Void {
 		
 		if ( _batch.started ) {
 			renderBatch();
 		}
 		
-		var frameBuffer : FrameBuffer = new FrameBuffer();
+		/*var frameBuffer : FrameBuffer = new FrameBuffer();
 		
 		frameBuffer.buffer = _context.createFramebuffer();
 		frameBuffer.texture = target;
@@ -244,13 +222,13 @@ class Canvas
 		_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.width, 0, frameBuffer.texture.height, -1000, 1000 );
 		_context.viewport( 0, 0, Std.int(frameBuffer.texture.width), Std.int(frameBuffer.texture.height) );
 		
-		_frameBufferStack.push( frameBuffer );
+		_frameBufferStack.push( frameBuffer );*/
 		
 	}
 	
 	public function popRenderTarget( ) : Void {
 		
-		var frameBuffer : FrameBuffer = _frameBufferStack.pop();
+		//var frameBuffer : FrameBuffer = _frameBufferStack.pop();
 		
 		// Render the last batch to the frameBuffer
 		if ( _batch.started ) {
@@ -258,7 +236,7 @@ class Canvas
 		}
 		
 		// destroy this framebuffer - it was nice while it lasted
-		_context.deleteFramebuffer( frameBuffer.buffer );
+		/*_context.deleteFramebuffer( frameBuffer.buffer );
 		frameBuffer.texture = null;
 		
 		// Go back to the previous buffer
@@ -272,7 +250,7 @@ class Canvas
 			_context.bindFramebuffer( GL.FRAMEBUFFER, null );
 			_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.view.screenWidth, Core.instance.view.screenHeight, 0, -1000, 1000 );
 			_context.viewport( 0, 0, Std.int(Core.instance.view.screenWidth), Std.int(Core.instance.view.screenHeight) );
-		}
+		}*/
 		
 	}
 	
@@ -280,62 +258,9 @@ class Canvas
 	
 	private function renderBatch() : Void {
 		
-		
-		if ( _batch.vertices.length > 0 ) {
-			
-			//trace("Rendering verts", _batch.vertices );
-			//trace("Rendering indices", _batch.indices );
-			
-			_context.bindBuffer( GL.ARRAY_BUFFER, _vertexBuffer );
-			_context.bufferData( GL.ARRAY_BUFFER, new Float32Array( _batch.vertices ), GL.STREAM_DRAW );
-			
-			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, _indexBuffer );
-			_context.bufferData( GL.ELEMENT_ARRAY_BUFFER, new UInt16Array( _batch.indices ), GL.STREAM_DRAW );
-			
-			var program : GLProgram = _batch.shader.glProgram;
-			_context.useProgram( program );
-			
-			var projectionUniform = _context.getUniformLocation( program, "uProjectionMatrix");
-
-			if ( _batch.textures != null ) {
-				for ( i in 0..._batch.textures.length ) {
-					
-					//trace("Drawing with texture", _batch.texture.id, _batch.texture.texture );
-					var uTexture = _context.getUniformLocation( program, "uTexture" + i );
-					_context.activeTexture( GL.TEXTURE0 + i );
-					_context.bindTexture( GL.TEXTURE_2D, _batch.textures[i].texture );
-					_context.uniform1i( uTexture, i );
-					
-				}
-			}
-			
-			var customAttributes : Array<Int> = [];
-			for ( attribute in _batch.shader.attributes ) {
-				var att : Int = _context.getAttribLocation( program, attribute.name );
-				_context.enableVertexAttribArray( att );
-				_context.vertexAttribPointer( att, attribute.size, GL.FLOAT, false, _batch.shader.vertexSize * 4, (attribute.start) * 4 );
-				customAttributes.push( att );
-			}
-			
-			_context.uniformMatrix4fv( projectionUniform, false, _projectionMatrix );
-			_context.drawElements( GL.TRIANGLES, _batch.indices.length, GL.UNSIGNED_SHORT, 0 );
-			
-			
-			for ( att in customAttributes ) {
-				_context.disableVertexAttribArray( att );
-			}
-			
-			_context.useProgram( null );
-			_context.bindBuffer( GL.ARRAY_BUFFER, null );
-			_context.bindBuffer( GL.ELEMENT_ARRAY_BUFFER, null );
-			
-			if ( _batch.textures != null ) {
-				for ( i in 0..._batch.textures.length ) {
-					_context.activeTexture( GL.TEXTURE0 + i );
-					_context.bindTexture( GL.TEXTURE_2D, null );
-				}
-			}
-			
+		if ( _batch.vertices.length > 0 ) 
+		{
+			_context.renderBatch( _batch );
 		}
 		
 		_batch.reset();

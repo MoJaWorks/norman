@@ -1,10 +1,5 @@
 package uk.co.mojaworks.norman;
-import lime.app.Application;
-import lime.graphics.RenderContext;
-import lime.graphics.Renderer;
-import lime.ui.KeyCode;
-import lime.ui.KeyModifier;
-import lime.ui.Window;
+import geoff.AppDelegate;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
@@ -19,7 +14,7 @@ import uk.co.mojaworks.norman.systems.ui.UISystem;
  * ...
  * @author Simon
  */
-class NormanApp extends Application
+class NormanApp extends AppDelegate
 {
 
 	private var core( get, never ) : Core;

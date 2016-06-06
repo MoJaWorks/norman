@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.core.governor;
-import uk.co.mojaworks.norman.utils.LinkedList;
+import geoff.utils.LinkedList;
 
 /**
  * ...

@@ -4,10 +4,12 @@
   "license": "Apachev2",
   "tags": [],
   "description": "Internal framework used by MoJaWorks Games",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "releasenote": "",
   "contributors": ["Simon Morris"],
   "dependencies": {
-    "lime": ""
+    "geoff": "",
+	"actuate": "",
+	"msignal": ""
   }
 }

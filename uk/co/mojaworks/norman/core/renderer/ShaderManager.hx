@@ -1,9 +1,7 @@
 package uk.co.mojaworks.norman.core.renderer;
+import geoff.renderer.IRenderContext;
+import geoff.renderer.Shader;
 
-import lime.graphics.GLRenderContext;
-import lime.graphics.opengl.GL;
-import lime.graphics.opengl.GLProgram;
-import uk.co.mojaworks.norman.core.renderer.ShaderData;
 
 /**
  * Responsible for uploading and maintaing shaders
@@ -13,8 +11,8 @@ import uk.co.mojaworks.norman.core.renderer.ShaderData;
 class ShaderManager
 {
 
-	var _context : GLRenderContext;
-	var _shaders : Array<ShaderData>;
+	var _context : IRenderContext;
+	var _shaders : Array<Shader>;
 	
 	public function new() 
 	{
@@ -25,7 +23,7 @@ class ShaderManager
 		_shaders = [];
 	}
 	
-	public function onContextCreated( context : GLRenderContext ) : Void {
+	public function onContextCreated( context : IRenderContext ) : Void {
 		
 		_context = context;
 		
@@ -36,10 +34,10 @@ class ShaderManager
 		
 	}
 	
-	public function createShader( vs : String, fs : String, attributes : Array<ShaderAttributeData> = null ) : ShaderData 
+	public function createShader( vs : String, fs : String, attributes : Array<ShaderAttribute> = null ) : Shader 
 	{
 				
-		var shader : ShaderData = new ShaderData( vs, fs, attributes );
+		var shader : Shader = new Shader( vs, fs, attributes );
 		
 		_shaders.push( shader );
 		if ( _context != null ) {
@@ -51,7 +49,7 @@ class ShaderManager
 	}
 
 	
-	private function uploadShader( shader : ShaderData ) : Void {
+	private function uploadShader( shader : Shader ) : Void {
 	
 		var vs = _context.createShader( GL.VERTEX_SHADER );
 		_context.shaderSource( vs, shader.vertexSource );

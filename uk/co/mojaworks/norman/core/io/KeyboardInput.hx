@@ -1,10 +1,9 @@
 package uk.co.mojaworks.norman.core.io;
-import lime.ui.KeyCode;
-import lime.ui.KeyModifier;
+import geoff.event.Key;
+import geoff.utils.LinkedList;
 import msignal.Signal.Signal1;
 import msignal.Signal.Signal2;
 import uk.co.mojaworks.norman.components.io.IKeyboardDelegate;
-import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -16,8 +15,8 @@ class KeyboardInput
 	var _keyboardDelegates : LinkedList<IKeyboardDelegate>;
 	
 	public var keyState : Map<String,Bool>;
-	public var keyUp : Signal2<KeyCode, KeyModifier>;
-	public var keyDown : Signal2<KeyCode, KeyModifier>;
+	public var keyUp : Signal2<Int, Int>;
+	public var keyDown : Signal2<Int, Int>;
 	public var textEntered : Signal1<String>;
 	public var textEditing : Signal1<String>;
 	
@@ -25,8 +24,8 @@ class KeyboardInput
 	{
 		_keyboardDelegates = new LinkedList<IKeyboardDelegate>( );
 		keyState = new Map<String,Bool>();
-		keyUp = new Signal2<KeyCode, KeyModifier>();
-		keyDown = new Signal2<KeyCode, KeyModifier>();
+		keyUp = new Signal2<Int, Int>();
+		keyDown = new Signal2<Int, Int>();
 		textEntered = new Signal1<String>();
 		textEditing = new Signal1<String>();
 	}
@@ -45,7 +44,7 @@ class KeyboardInput
 		_keyboardDelegates.remove( kb );
 	}
 		
-	public function isKeyDown( key : KeyCode ) : Bool
+	public function isKeyDown( key : Int ) : Bool
 	{
 		var key_str : String = Std.string( key );
 		
@@ -64,14 +63,14 @@ class KeyboardInput
 	 */
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	public function onKeyUp( key : KeyCode, modifier : KeyModifier ) : Void {
+	public function onKeyUp( key : Int, modifier : Int ) : Void {
 		keyState.set( Std.string(key), false );
 		keyUp.dispatch( key, modifier );
 		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyUp( key, modifier );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	public function onKeyDown( key : KeyCode, modifier : KeyModifier ) : Void {
+	public function onKeyDown( key : Int, modifier : Int ) : Void {
 		keyState.set( Std.string(key), true );
 		keyDown.dispatch( key, modifier );
 		for ( kb in _keyboardDelegates ) if ( kb.enabled ) kb.onKeyDown( key, modifier );
