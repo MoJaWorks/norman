@@ -4,6 +4,7 @@ import geoff.math.Rect;
 import geoff.math.Vector2;
 import geoff.renderer.Texture;
 import geoff.utils.Color;
+import geoff.utils.MathUtils;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
 import uk.co.mojaworks.norman.text.BitmapFont;
@@ -264,7 +265,7 @@ class TextRenderer extends BaseRenderer
 				if ( char.id != 10 && char.id != 32 ) {
 										 
 					var vertexData : Array<Float> = canvas.buildTexturedQuadVertexData(  texture, 
-														 new Rectangle( 
+														 new Rect( 
 															char.x / texture.width, 
 															char.y / texture.width, 
 															char.width / texture.width,

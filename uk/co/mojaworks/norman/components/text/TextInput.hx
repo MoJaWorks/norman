@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.text;
 
+import geoff.math.Vector2;
 import geoff.utils.MathUtils;
 import msignal.Signal.Signal1;
 import uk.co.mojaworks.norman.components.Component;

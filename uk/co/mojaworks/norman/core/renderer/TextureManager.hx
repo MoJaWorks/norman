@@ -2,7 +2,9 @@ package uk.co.mojaworks.norman.core.renderer;
 import geoff.renderer.IRenderContext;
 import geoff.renderer.Texture;
 import geoff.utils.Assets;
+import geoff.utils.Color;
 import haxe.Json;
+import haxe.io.UInt8Array;
 
 /**
  * ...
@@ -35,7 +37,7 @@ class TextureManager
 			
 		}else{
 				
-			var texture : Texture = _context.createTexture( path );
+			var texture : Texture = _context.createTextureFromAsset( path );
 			
 			if ( _context != null ) {
 				_context.uploadTexture( texture );
@@ -48,6 +50,21 @@ class TextureManager
 		}
 		
 	}
+	
+	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : UInt8Array ) : Texture {
+		
+		var texture : Texture = _context.createTextureFromPixels( width, height, pixels );
+			
+		if ( _context != null ) {
+			_context.uploadTexture( texture );
+		}
+		
+		_textures.set( id, texture );
+		
+		return texture;
+		
+	}
+	
 		
 	///
 	
@@ -62,13 +79,20 @@ class TextureManager
 	}
 	
 	///
+	
+	public function uploadTexture( id : String ) : Void 
+	{
+		if ( _textures.exists( id ) )
+			_context.uploadTexture( _textures.get( id ) );
+	}
+	
 		
 	public function unloadTexture( id : String ) : Void {
 		
 		var data : Texture = _textures.get( id );
 		if ( data != null ) {
 			
-			if ( data.id != 0 && _context != null ) {
+			if ( data.textureId != 0 && _context != null ) {
 				_context.destroyTexture( data );
 			}
 			

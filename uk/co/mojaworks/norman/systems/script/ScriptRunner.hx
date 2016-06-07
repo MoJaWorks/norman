@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.systems.script;
+import geoff.utils.LinkedList;
 import haxe.Timer;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
-import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...

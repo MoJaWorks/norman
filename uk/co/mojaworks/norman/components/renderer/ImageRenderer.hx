@@ -2,6 +2,8 @@ package uk.co.mojaworks.norman.components.renderer;
 import geoff.math.Rect;
 import geoff.renderer.Shader;
 import geoff.renderer.Texture;
+import geoff.utils.Color;
+import geoff.utils.TextureUtils;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
@@ -72,8 +74,8 @@ class ImageRenderer extends BaseRenderer
 		this.subTextureId = id;
 		
 		if ( texture != null ) {
-			imageRect = texture.getRectFor( subTextureId );
-			imageUVRect = texture.getUVFor( subTextureId );
+			imageRect = TextureUtils.getRect( texture, subTextureId );
+			imageUVRect = TextureUtils.getUV( texture, subTextureId );
 		}else {
 			imageRect = null;
 			imageUVRect = null;

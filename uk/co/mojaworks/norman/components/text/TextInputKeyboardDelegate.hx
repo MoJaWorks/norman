@@ -1,10 +1,6 @@
 package uk.co.mojaworks.norman.components.text;
-import lime.ui.KeyModifier;
-
-import lime.ui.KeyCode;
-import uk.co.mojaworks.norman.components.Component;
+import geoff.event.Key;
 import uk.co.mojaworks.norman.components.io.KeyboardDelegate;
-import uk.co.mojaworks.norman.systems.Systems;
 
 /**
  * ...
@@ -29,24 +25,24 @@ class TextInputKeyboardDelegate extends KeyboardDelegate
 		}
 	}
 	
-	override public function onKeyDown(keyCode:KeyCode, modifier:KeyModifier):Void 
+	override public function onKeyDown(keyCode:Int, modifier:Int):Void 
 	{
 		super.onKeyDown(keyCode, modifier);
 		var input : TextInput = TextInput.getFrom( gameObject );
 		
 		if ( input.hasTextFocus ) {
 			switch( keyCode ) {
-				case KeyCode.DELETE:
+				case Key.DELETE:
 					input.removeCharacterAfterCursor();
-				case KeyCode.BACKSPACE:
+				case Key.BACKSPACE:
 					input.removeCharacterBeforeCursor();
-				case KeyCode.LEFT:
+				case Key.LEFT:
 					input.moveCursor( -1);
-				case KeyCode.RIGHT:
+				case Key.RIGHT:
 					input.moveCursor(1);
-				case KeyCode.RETURN:
+				case Key.ENTER:
 					input.addTextAtCursor("\n");
-				case KeyCode.ESCAPE:
+				case Key.ESCAPE:
 					input.hasTextFocus = false;
 				default:
 					// Do nothing

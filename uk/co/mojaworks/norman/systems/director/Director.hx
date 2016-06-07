@@ -1,11 +1,11 @@
 package uk.co.mojaworks.norman.systems.director;
+import geoff.utils.Color;
 import uk.co.mojaworks.norman.components.director.IViewDelegate;
 import uk.co.mojaworks.norman.components.director.ViewDelegate;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 import uk.co.mojaworks.norman.factory.UIFactory;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
-import uk.co.mojaworks.norman.utils.Color;
 
 /**
  * ...

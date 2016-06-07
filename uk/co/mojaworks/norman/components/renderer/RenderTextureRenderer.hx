@@ -1,9 +1,7 @@
 package uk.co.mojaworks.norman.components.renderer;
+import geoff.renderer.Shader;
+import geoff.renderer.Texture;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
-import uk.co.mojaworks.norman.core.renderer.ShaderAttributeData;
-import uk.co.mojaworks.norman.core.renderer.ShaderData;
-import uk.co.mojaworks.norman.core.renderer.TextureData;
-import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.utils.ShaderUtils;
 
 /**
@@ -12,23 +10,23 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  */
 class RenderTextureRenderer extends BaseRenderer
 {
-	public static var defaultShader( get, null ) : ShaderData = null;
-	private static function get_defaultShader( ) : ShaderData {
+	public static var defaultShader( get, null ) : Shader = null;
+	private static function get_defaultShader( ) : Shader {
 		if ( RenderTextureRenderer.defaultShader == null ) {
 			trace("Creating default render shader");
 			
-			var atts : Array<ShaderAttributeData> = [
-				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
-				new ShaderAttributeData( "aVertexColor", 2, 4 ),
-				new ShaderAttributeData( "aVertexUV", 6, 2 )
+			var atts : Array<ShaderAttribute> = [
+				new ShaderAttribute( "aVertexPosition", 0, 2 ),
+				new ShaderAttribute( "aVertexColor", 2, 4 ),
+				new ShaderAttribute( "aVertexUV", 6, 2 )
 			];
 			RenderTextureRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultRenderTextureFragSource(), atts );
 		}
 		return RenderTextureRenderer.defaultShader;
 	}
 	
-	public var target( get, null ) : TextureData;
-	var _textureArray : Array<TextureData>;
+	public var target( get, null ) : Texture;
+	var _textureArray : Array<Texture>;
 	var _renderToCanvas : Bool = true;
 	
 	
@@ -43,8 +41,8 @@ class RenderTextureRenderer extends BaseRenderer
 			Core.instance.renderer.unloadTexture( "@norman/renderSprite/" + gameObject.id );
 		}
 		
-		_textureArray[0] = Core.instance.renderer.createTexture( "@norman/renderSprite/" + gameObject.id, width, height, 0 );
-		_textureArray[0].isRenderTexture = true;
+		_textureArray[0] = Core.instance.renderer.createBlankTexture( "@norman/renderSprite/" + gameObject.id, width, height, 0 );
+		_textureArray[0].smoothing = false;
 	}
 	
 	override public function preRender(canvas:Canvas):Void 
@@ -64,7 +62,7 @@ class RenderTextureRenderer extends BaseRenderer
 		}
 	}
 	
-	inline private function get_target() : TextureData {
+	inline private function get_target() : Texture {
 		return _textureArray[0];
 	}
 	

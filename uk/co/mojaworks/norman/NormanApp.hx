@@ -1,5 +1,7 @@
 package uk.co.mojaworks.norman;
 import geoff.AppDelegate;
+import geoff.event.PointerButton;
+import geoff.renderer.IRenderContext;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
@@ -50,7 +52,7 @@ class NormanApp extends AppDelegate
 		core.governor.addSubject( new AnimationSystem(), DefaultSystem.Animation, 50 );
 	}
 	
-	override public function onWindowCreate(window:Window):Void
+	override public function init( context : IRenderContext ):Void
 	{
 
 		super.onWindowCreate( window );
@@ -65,18 +67,11 @@ class NormanApp extends AppDelegate
 		
 		//Custom commands
 		core.switchboard.addCommand( NormanMessages.DISPLAY_LIST_CHANGED, new DisplayListChangedCommand() );
-	
-	}
-	
-	override public function exec():Int 
-	{
-		// Called after html5 preloader finishes
 		
 		onStartupComplete();
-		onWindowResize( window, Std.int(window.width), Std.int(window.height) );
-		
-		return super.exec();
+	
 	}
+
 	
 	private function onStartupComplete() 
 	{
@@ -88,19 +83,17 @@ class NormanApp extends AppDelegate
 	 * Ongoing
 	 */
 	
-	override public function onWindowResize( window : Window, width:Int, height:Int):Void 
+	override public function resize( width:Int, height:Int ):Void 
 	{
 		
 		super.onWindowResize( window, width, height );
 
-		trace("Window size: ", width, height, window.scale );
-		
-		core.view.resize( width * window.scale , height * window.scale );
+		core.view.resize( width, height );
 		Systems.director.resize();
 		
 	}
 	
-	override public function update( deltaTime : Int ) : Void 
+	override public function update( context : IRenderContext, seconds : Float ) : Void 
 	{
 		super.update( deltaTime );
 		
@@ -118,43 +111,38 @@ class NormanApp extends AppDelegate
 		
 	}
 		
-	override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
+	/*override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
 	{
 		super.onMouseWheel(window, deltaX, deltaY);
 		core.io.pointer.onMouseScroll( deltaX, deltaY );
+	}*/
+	
+	override public function onPointerDown( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
+	{
+		core.io.pointer.onMouseDown( x, y, button );
 	}
 	
-	override public function onMouseDown( window : Window, x : Float, y : Float, button : Int ) : Void 
+	override public function onPointerUp( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
 	{
-		super.onMouseDown( window, x, y, button);
-		core.io.pointer.onMouseDown( x * window.scale, y * window.scale, button );
+		core.io.pointer.onMouseUp( x, y, button );
 	}
 	
-	override public function onMouseUp( window : Window, x : Float, y : Float, button : Int ) : Void 
+	override public function onMouseMove( pointerId : Int, x : Int, y : Int ) : Void 
 	{
-		super.onMouseUp( window, x, y, button);
-		core.io.pointer.onMouseUp( x * window.scale, y * window.scale, button );
+		core.io.pointer.onMouseMove( x, y );
 	}
 	
-	override public function onMouseMove( window : Window, x : Float, y : Float ) : Void 
+	override public function onKeyDown( keyCode:Int, modifier:Int ):Void 
 	{
-		super.onMouseMove( window, x, y );
-		core.io.pointer.onMouseMove( x * window.scale, y * window.scale );
-	}
-	
-	override public function onKeyDown(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
-	{
-		super.onKeyDown(window, keyCode, modifier);
 		core.io.keyboard.onKeyDown( keyCode, modifier );
 	}
 	
-	override public function onKeyUp(window:Window, keyCode:KeyCode, modifier:KeyModifier):Void 
+	override public function onKeyUp( keyCode:Int, modifier:Int ):Void 
 	{
-		super.onKeyUp(window, keyCode, modifier);
 		core.io.keyboard.onKeyUp( keyCode, modifier );
 	}
 	
-	override public function onTextInput( window:Window, text:String ) : Void 
+	/*override public function onTextInput( window:Window, text:String ) : Void 
 	{
 		//trace("Text input", text );
 		super.onTextInput(window, text);
@@ -184,6 +172,6 @@ class NormanApp extends AppDelegate
 	{
 		super.onWindowDeactivate(window);
 		_windowHasBeenDeactivated = true;
-	}
+	}*/
 		
 }

@@ -1,7 +1,6 @@
 package uk.co.mojaworks.norman.components.text;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 
-import lime.ui.MouseCursor;
 import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems;
@@ -17,7 +16,7 @@ class TextInputUIDelegate extends UIDelegate
 	public function new() 
 	{
 		super();
-		cursor = MouseCursor.TEXT;
+		//cursor = MouseCursor.TEXT;
 	}
 	
 	override public function onAdded():Void

@@ -1,10 +1,10 @@
 package uk.co.mojaworks.norman.components.renderer;
 
-import lime.math.Matrix3;
-import lime.math.Rectangle;
-import lime.math.Vector2;
+import geoff.math.Matrix3;
+import geoff.math.Rect;
+import geoff.math.Vector2;
+import geoff.renderer.Texture;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
-import uk.co.mojaworks.norman.core.renderer.TextureData;
 
 /**
  * ...
@@ -19,15 +19,15 @@ enum Scale3Type {
 class Scale3ImageRenderer extends ImageRenderer
 {
 
-	public var scale3Rect( default, default ) : Rectangle = null;
+	public var scale3Rect( default, default ) : Rect = null;
 	public var scale3Type( default, default ) : Scale3Type = Horizontal;
 	
-	public function new(texture:TextureData, subTextureId:String=null) 
+	public function new(texture:Texture, subTextureId:String=null) 
 	{
 		super(texture, subTextureId);
 	}
 	
-	public function setScale3Rect( rect : Rectangle ) : Void 
+	public function setScale3Rect( rect : Rect ) : Void 
 	{
 		this.scale3Rect = rect;
 	}
@@ -53,7 +53,7 @@ class Scale3ImageRenderer extends ImageRenderer
 				var vertexData : Array<Float> = [];
 				var m = new Matrix3();
 				
-				var centerUV : Rectangle = new Rectangle( 
+				var centerUV : Rect = new Rect( 
 					imageUVRect.x + ( ( scale3Rect.left / width ) * imageUVRect.width ),
 					imageUVRect.y + ( ( scale3Rect.top / height ) * imageUVRect.height ),
 					( scale3Rect.width / width ) * imageUVRect.width,

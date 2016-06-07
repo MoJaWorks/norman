@@ -25,9 +25,9 @@ class ShapeRenderer extends BaseRenderer
 		if ( ShapeRenderer.defaultShader == null ) {
 			trace("Creating default fill shader");
 			
-			var atts : Array<ShaderAttributeData> = [
-				new ShaderAttributeData( "aVertexPosition", 0, 2 ),
-				new ShaderAttributeData( "aVertexColor", 2, 4 ),
+			var atts : Array<ShaderAttribute> = [
+				new ShaderAttribute( "aVertexPosition", 0, 2 ),
+				new ShaderAttribute( "aVertexColor", 2, 4 ),
 			];
 			
 			ShapeRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource(), atts );

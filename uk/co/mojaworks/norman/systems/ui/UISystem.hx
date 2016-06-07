@@ -1,14 +1,11 @@
 package uk.co.mojaworks.norman.systems.ui;
-import lime.ui.Mouse;
-import lime.ui.MouseCursor;
-import uk.co.mojaworks.norman.components.ui.UIDelegate;
+import geoff.utils.LinkedList;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.components.ui.IUIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent.PointerEventType;
-import uk.co.mojaworks.norman.utils.LinkedList;
 
 /**
  * ...
@@ -74,7 +71,7 @@ class UISystem extends SubSystem
 					ui.isMouseOver = true;
 					
 					#if !mobile 
-						Mouse.cursor = ui.cursor;
+						//Mouse.cursor = ui.cursor;
 					#end
 					
 					if ( !ui.wasMouseOverLastFrame ) {
@@ -144,7 +141,7 @@ class UISystem extends SubSystem
 		}
 		
 		if ( !hasHit ) {
-			Mouse.cursor = MouseCursor.DEFAULT;
+			//Mouse.cursor = MouseCursor.DEFAULT;
 		}
 		
 		

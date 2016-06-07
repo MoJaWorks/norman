@@ -57,8 +57,8 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 			Core.instance.renderer.unloadTexture( "@norman/maskedSprite/" + gameObject.id );
 		}
 		
-		_textureArray[1] = Core.instance.renderer.createTexture( "@norman/maskedSprite/" + gameObject.id, width, height, 0 );
-		_textureArray[1].isRenderTexture = true;
+		_textureArray[1] = Core.instance.renderer.createBlankTexture( "@norman/maskedSprite/" + gameObject.id, width, height, 0 );
+		_textureArray[1].smoothing = false;
 		
 	}
 		

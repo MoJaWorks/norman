@@ -4,6 +4,7 @@ import geoff.renderer.Shader;
 import geoff.renderer.Shader.ShaderAttribute;
 import geoff.renderer.Texture;
 import geoff.utils.Color;
+import haxe.io.UInt8Array;
 import uk.co.mojaworks.norman.components.Transform;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.core.renderer.Canvas;
@@ -104,7 +105,30 @@ class Renderer
 	public function createTextureFromAsset( id : String ) : Texture {
 		return textureManager.createTextureFromAsset( id );
 	}
+	
+	public function createBlankTexture( id : String, width : Int, height : Int, fill : Color ) : Texture {
 		
+		var pixels : UInt8Array = new UInt8Array( width * height * 4 );
+		for ( i in 0...(width * height) )
+		{
+			var j : Int = i * 4;
+			pixels.set( j, fill.r );
+			pixels.set( j + 1, fill.g );
+			pixels.set( j + 2, fill.b );
+			pixels.set( j + 3, Std.int(fill.a * 255) );
+		}
+		
+		return textureManager.createTextureFromPixels( id, width, height, pixels );
+	}
+	
+	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : UInt8Array ) : Texture {
+		return textureManager.createTextureFromPixels( id, width, height, pixels );
+	}
+		
+	public function reuploadTexture( id : String ) : Void {
+		return textureManager.uploadTexture( id );
+	}
+	
 	public function unloadTexture( id : String ) : Void {
 		return textureManager.unloadTexture( id );
 	}

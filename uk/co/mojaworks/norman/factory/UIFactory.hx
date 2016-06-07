@@ -1,15 +1,15 @@
 package uk.co.mojaworks.norman.factory;
+import geoff.renderer.Texture;
+import geoff.utils.Color;
 import uk.co.mojaworks.norman.components.debug.FPSUpdater;
-import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;
 import uk.co.mojaworks.norman.components.renderer.TextRenderer.TextFormat;
 import uk.co.mojaworks.norman.components.text.TextInput;
 import uk.co.mojaworks.norman.components.text.TextInputKeyboardDelegate;
 import uk.co.mojaworks.norman.components.text.TextInputUIDelegate;
 import uk.co.mojaworks.norman.components.ui.BlockerView;
-import uk.co.mojaworks.norman.core.renderer.TextureData;
+import uk.co.mojaworks.norman.components.ui.UIDelegate;
 import uk.co.mojaworks.norman.text.BitmapFont;
-import uk.co.mojaworks.norman.utils.Color;
 import uk.co.mojaworks.norman.utils.FontUtils;
 
 /**
@@ -24,7 +24,7 @@ class UIFactory
 		
 	}
 	
-	public static function createImageButton( delegate : UIDelegate, texture : TextureData, ?subTextureId : String = null, ?name : String = null ) : GameObject {
+	public static function createImageButton( delegate : UIDelegate, texture : Texture, ?subTextureId : String = null, ?name : String = null ) : GameObject {
 		
 		var gameObject : GameObject = SpriteFactory.createImageSprite( texture, subTextureId, name );
 		delegate.hitTarget = gameObject;

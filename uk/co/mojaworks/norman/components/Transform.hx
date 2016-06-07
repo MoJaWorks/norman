@@ -1,8 +1,9 @@
 package uk.co.mojaworks.norman.components;
+import geoff.math.Matrix3;
+import geoff.math.Vector2;
+import geoff.utils.LinkedList;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.data.NormanMessages;
-import uk.co.mojaworks.norman.utils.LinkedList;
-import uk.co.mojaworks.norman.utils.MathUtils;
 
 /**
  * ...
@@ -36,9 +37,9 @@ class Transform extends Component
 	public var rotation( get, set ) : Float;
 	public var rotationDegrees( get, set ) : Float;
 	
-	public var worldMatrix( get, never ) : Matrix3x3;
-	public var inverseWorldMatrix( get, never ) : Matrix3x3;
-	public var localMatrix( get, never ) : Matrix3x3;
+	public var worldMatrix( get, never ) : Matrix3;
+	public var inverseWorldMatrix( get, never ) : Matrix3;
+	public var localMatrix( get, never ) : Matrix3;
 	
 	public var isLocalDirty( default, null ) : Bool = true;
 	public var isWorldDirty( default, null ) : Bool = true;
@@ -46,7 +47,7 @@ class Transform extends Component
 	
 	// A special matrix used when rendering and is concated up to nearest root parent
 	// Used for render textures
-	public var renderMatrix( get, never ) : Matrix3x3;
+	public var renderMatrix( get, never ) : Matrix3;
 	
 	// Separate variables so reflection works with setters
 	var _anchorX : Float = 0;
@@ -56,10 +57,10 @@ class Transform extends Component
 	var _scaleX : Float = 1;
 	var _scaleY : Float = 1;
 	var _rotation : Float = 0;
-	var _localMatrix : Matrix3x3;
-	var _worldMatrix : Matrix3x3;
-	var _inverseWorldMatrix : Matrix3x3;
-	var _renderMatrix : Matrix3x3;
+	var _localMatrix : Matrix3;
+	var _worldMatrix : Matrix3;
+	var _inverseWorldMatrix : Matrix3;
+	var _renderMatrix : Matrix3;
 	var _width : Float = 0;
 	var _height : Float = 0;
 	
@@ -71,10 +72,10 @@ class Transform extends Component
 		
 		children = new LinkedList<Transform>();
 		
-		_worldMatrix = new Matrix3x3();
-		_localMatrix = new Matrix3x3();
-		_renderMatrix = new Matrix3x3();
-		_inverseWorldMatrix = new Matrix3x3();
+		_worldMatrix = new Matrix3();
+		_localMatrix = new Matrix3();
+		_renderMatrix = new Matrix3();
+		_inverseWorldMatrix = new Matrix3();
 	}
 	
 	/**
@@ -219,15 +220,15 @@ class Transform extends Component
 		if ( isWorldDirty || isLocalDirty ) return recalculateWorldMatrix();
 		else return _worldMatrix;
 	}
-	private function get_inverseWorldMatrix( ) : Matrix3x3 {
+	private function get_inverseWorldMatrix( ) : Matrix3 {
 		if ( isWorldDirty || isLocalDirty ) recalculateWorldMatrix();
 		return _inverseWorldMatrix;
 	}
-	private function get_localMatrix( ) : Matrix3x3 {
+	private function get_localMatrix( ) : Matrix3 {
 		if ( isLocalDirty ) return recalculateLocalMatrix();
 		else return _localMatrix;
 	}
-	private function get_renderMatrix( ) : Matrix3x3 {
+	private function get_renderMatrix( ) : Matrix3 {
 		if ( isRenderDirty ) return recalculateRenderMatrix();
 		else return _renderMatrix;
 	}
