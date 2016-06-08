@@ -51,9 +51,9 @@ class TextureManager
 		
 	}
 	
-	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : UInt8Array ) : Texture {
+	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : Array<Int> ) : Texture {
 		
-		var texture : Texture = _context.createTextureFromPixels( width, height, pixels );
+		var texture : Texture = _context.createTextureFromPixels( id, width, height, pixels );
 			
 		if ( _context != null ) {
 			_context.uploadTexture( texture );

@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.components;
 import geoff.math.Matrix3;
 import geoff.math.Vector2;
 import geoff.utils.LinkedList;
+import geoff.utils.MathUtils;
 import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.data.NormanMessages;
 

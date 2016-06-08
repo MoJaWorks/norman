@@ -108,20 +108,20 @@ class Renderer
 	
 	public function createBlankTexture( id : String, width : Int, height : Int, fill : Color ) : Texture {
 		
-		var pixels : UInt8Array = new UInt8Array( width * height * 4 );
+		var pixels : Array<Int> = [ for ( i in 0...( width * height * 4 )) 0 ];
 		for ( i in 0...(width * height) )
 		{
 			var j : Int = i * 4;
-			pixels.set( j, fill.r );
-			pixels.set( j + 1, fill.g );
-			pixels.set( j + 2, fill.b );
-			pixels.set( j + 3, Std.int(fill.a * 255) );
+			pixels[j] = fill.r;
+			pixels[j + 1] = fill.g;
+			pixels[j + 2] = fill.b;
+			pixels[j + 3] = Std.int(fill.a * 255);
 		}
 		
 		return textureManager.createTextureFromPixels( id, width, height, pixels );
 	}
 	
-	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : UInt8Array ) : Texture {
+	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : Array<Int> ) : Texture {
 		return textureManager.createTextureFromPixels( id, width, height, pixels );
 	}
 		

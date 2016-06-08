@@ -55,11 +55,9 @@ class NormanApp extends AppDelegate
 	override public function init( context : IRenderContext ):Void
 	{
 
-		super.onWindowCreate( window );
-		
 		core.init();
 		core.view.setTargetSize( normanConfig.targetScreenWidth, normanConfig.targetScreenHeight );
-		core.renderer.init( window.renderer.context );
+		core.renderer.init( context );
 		
 		createDefaultSystems();
 		
@@ -85,25 +83,17 @@ class NormanApp extends AppDelegate
 	
 	override public function resize( width:Int, height:Int ):Void 
 	{
-		
-		super.onWindowResize( window, width, height );
-
 		core.view.resize( width, height );
 		Systems.director.resize();
-		
 	}
 	
 	override public function update( context : IRenderContext, seconds : Float ) : Void 
 	{
-		super.update( deltaTime );
-		
 		// Ignore the first update after activation as its time delta is huge
 		if ( _windowHasBeenDeactivated ) {
 			_windowHasBeenDeactivated = false;
 			return;
 		}
-			
-		var seconds : Float = deltaTime * 0.001;
 		
 		core.governor.update( seconds );
 		core.renderer.render( Core.instance.view.root.transform );
@@ -127,7 +117,7 @@ class NormanApp extends AppDelegate
 		core.io.pointer.onMouseUp( x, y, button );
 	}
 	
-	override public function onMouseMove( pointerId : Int, x : Int, y : Int ) : Void 
+	override public function onPointerMove( pointerId : Int, x : Int, y : Int ) : Void 
 	{
 		core.io.pointer.onMouseMove( x, y );
 	}

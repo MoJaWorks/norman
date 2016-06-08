@@ -36,7 +36,7 @@ class Scale9ImageRenderer extends ImageRenderer
 			}else {
 			
 				var t : Transform = gameObject.transform;
-				var centerUV : Rectangle = new Rectangle( 
+				var centerUV : Rect = new Rect( 
 					imageUVRect.x + ( ( scale9Rect.left / width ) * imageUVRect.width ),
 					imageUVRect.y + ( ( scale9Rect.top / height ) * imageUVRect.height ),
 					( scale9Rect.width / width ) * imageUVRect.width,

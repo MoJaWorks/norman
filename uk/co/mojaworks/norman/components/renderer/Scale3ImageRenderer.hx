@@ -49,7 +49,7 @@ class Scale3ImageRenderer extends ImageRenderer
 			}else {
 			
 				var t : Transform = gameObject.transform;
-				var uvRect : Rectangle = new Rectangle();
+				var uvRect : Rect = new Rect();
 				var vertexData : Array<Float> = [];
 				var m = new Matrix3();
 				
@@ -83,7 +83,7 @@ class Scale3ImageRenderer extends ImageRenderer
 					m.rotate( t.rotation );
 					m.translate( t.x , t.y );
 					if ( t.parent != null && !t.parent.isRoot ) m.concat( t.parent.renderMatrix );
-					uvRect = new Rectangle( centerUV.left, imageUVRect.y, centerUV.width, imageUVRect.bottom );
+					uvRect.setTo( centerUV.left, imageUVRect.y, centerUV.width, imageUVRect.bottom );
 					vertexData = vertexData.concat( canvas.buildTexturedQuadVertexData( texture, uvRect, m, color.r, color.g, color.b, color.a * getCompositeAlpha() ) );
 					
 					// top right
@@ -93,7 +93,7 @@ class Scale3ImageRenderer extends ImageRenderer
 					m.rotate( t.rotation );
 					m.translate( t.x, t.y );
 					if ( t.parent != null && !t.parent.isRoot ) m.concat( t.parent.renderMatrix );
-					uvRect = new Rectangle( centerUV.right, imageUVRect.top, imageUVRect.right - centerUV.right, imageUVRect.bottom );
+					uvRect.setTo( centerUV.right, imageUVRect.top, imageUVRect.right - centerUV.right, imageUVRect.bottom );
 					vertexData = vertexData.concat( canvas.buildTexturedQuadVertexData( texture, uvRect, m, color.r, color.g, color.b, color.a * getCompositeAlpha() ) );
 				
 				}else {
