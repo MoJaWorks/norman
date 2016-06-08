@@ -4,6 +4,7 @@ import geoff.renderer.Texture;
 import geoff.utils.Assets;
 import geoff.utils.Color;
 import haxe.Json;
+import haxe.io.Bytes;
 import haxe.io.UInt8Array;
 
 /**
@@ -51,7 +52,7 @@ class TextureManager
 		
 	}
 	
-	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : Array<Int> ) : Texture {
+	public function createTextureFromPixels( id : String, width : Int, height : Int, pixels : Bytes ) : Texture {
 		
 		var texture : Texture = _context.createTextureFromPixels( id, width, height, pixels );
 			

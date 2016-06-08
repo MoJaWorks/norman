@@ -121,7 +121,7 @@ class ShapeRenderer extends BaseRenderer
 	override public function render(canvas:Canvas):Void 
 	{
 		super.render( canvas );
-		canvas.draw( null, ShapeRenderer.defaultShader, canvas.buildShapeVertexData( _vertices, gameObject.transform.renderMatrix, color.r, color.g, color.b, color.a * getCompositeAlpha()), _indices );
+		canvas.draw( Canvas.NO_TEXTURES, ShapeRenderer.defaultShader, canvas.buildShapeVertexData( _vertices, gameObject.transform.renderMatrix, color.r, color.g, color.b, color.a * getCompositeAlpha()), _indices );
 	}
 	
 	override private function get_width():Float 

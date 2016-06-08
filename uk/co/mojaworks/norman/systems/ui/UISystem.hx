@@ -1,9 +1,9 @@
 package uk.co.mojaworks.norman.systems.ui;
+import geoff.event.PointerButton;
 import geoff.utils.LinkedList;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
 import uk.co.mojaworks.norman.components.ui.IUIDelegate;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
-import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent.PointerEventType;
 
@@ -79,7 +79,7 @@ class UISystem extends SubSystem
 							if ( core.io.pointer.get(0).buttonIsDown(i) && core.io.pointer.get(0).buttonWasDownLastFrame(i) ) ui.wasMouseButtonDownElsewhere[i] = true;
 						}
 						
-						events.push( new PointerEvent( PointerEventType.Over, ui, 0, MouseButton.None ) );
+						events.push( new PointerEvent( PointerEventType.Over, ui, 0, PointerButton.None ) );
 						
 					}
 					
@@ -113,7 +113,7 @@ class UISystem extends SubSystem
 				}else {
 					
 					if ( ui.wasMouseOverLastFrame ) {
-						events.push( new PointerEvent( PointerEventType.Out, ui, 0, MouseButton.None ) );
+						events.push( new PointerEvent( PointerEventType.Out, ui, 0, PointerButton.None ) );
 					}
 					
 					for ( i in 0...PointerInput.MAX_BUTTONS ) {
@@ -124,7 +124,7 @@ class UISystem extends SubSystem
 			}else {
 				
 				if ( ui.wasMouseOverLastFrame ) {
-					events.push( new PointerEvent( PointerEventType.Out, ui, 0, MouseButton.None ) );
+					events.push( new PointerEvent( PointerEventType.Out, ui, 0, PointerButton.None ) );
 				}
 				for ( i in 0...PointerInput.MAX_BUTTONS ) {
 					ui.wasMouseButtonDownElsewhere[i] = false;

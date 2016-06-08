@@ -16,7 +16,7 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 		
@@ -39,7 +39,7 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 		
@@ -61,7 +61,7 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 		
@@ -87,7 +87,7 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 
@@ -110,7 +110,7 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 
@@ -130,7 +130,7 @@ class ShaderUtils
 	{
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 		
@@ -156,7 +156,7 @@ class ShaderUtils
 		
 		var str : String = "";
 		
-		#if !mac
+		#if mobile
 			str += "precision mediump float;";
 		#end
 

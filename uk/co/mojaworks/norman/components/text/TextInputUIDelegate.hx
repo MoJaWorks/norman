@@ -1,8 +1,8 @@
 package uk.co.mojaworks.norman.components.text;
+import geoff.event.PointerButton;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 
 import uk.co.mojaworks.norman.components.ui.UIDelegate;
-import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 import uk.co.mojaworks.norman.systems.Systems;
 import uk.co.mojaworks.norman.systems.ui.PointerEvent;
 
@@ -41,7 +41,7 @@ class TextInputUIDelegate extends UIDelegate
 		
 	}
 	
-	private function onStageMouseDown( pointerId : Int, button : MouseButton ) : Void {
+	private function onStageMouseDown( pointerId : Int, button : PointerButton ) : Void {
 		
 		if ( !gameObject.renderer.hitTest( core.io.pointer.get( pointerId ).position ) ) {
 			TextInput.getFrom( gameObject ).hasTextFocus = false;

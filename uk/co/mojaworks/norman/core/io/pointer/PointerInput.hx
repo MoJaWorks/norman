@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core.io.pointer;
+import geoff.event.PointerButton;
 import geoff.math.Vector2;
 import msignal.Signal.Signal2;
 import uk.co.mojaworks.norman.core.io.pointer.Pointer;
@@ -7,15 +8,6 @@ import uk.co.mojaworks.norman.core.io.pointer.Pointer;
  * ...
  * @author Simon
  */
-
-@:enum abstract MouseButton(Int) from Int to Int {
-	var None = -1;
-	var Left = 0;
-	var Middle = 1;
-	var Right = 2;
-	var Button4 = 3;
-	var Button5 = 4;
-}
  
 class PointerInput
 {
@@ -24,8 +16,8 @@ class PointerInput
 	public static inline var MAX_BUTTONS : Int = 5;
 	
 	public var scroll : Signal2<Int,Vector2>;
-	public var down : Signal2<Int,MouseButton>;
-	public var up : Signal2<Int,MouseButton>;
+	public var down : Signal2<Int,PointerButton>;
+	public var up : Signal2<Int,PointerButton>;
 	
 	var _scrollDelta : Vector2;
 	var _pointers : Array<Pointer>;
@@ -38,8 +30,8 @@ class PointerInput
 			_pointers.push( new Pointer( i ) );
 		}
 		
-		down = new Signal2<Int,MouseButton>();
-		up = new Signal2<Int,MouseButton>();
+		down = new Signal2<Int,PointerButton>();
+		up = new Signal2<Int,PointerButton>();
 		scroll = new Signal2<Int,Vector2>();
 		
 		_scrollDelta = new Vector2();
@@ -58,7 +50,7 @@ class PointerInput
 	{
 		for ( pointer in _pointers ) 
 		{
-			if ( pointer.buttonIsDown( MouseButton.Left ) )
+			if ( pointer.buttonIsDown( PointerButton.Left ) )
 			{
 				return true;
 			}
@@ -72,19 +64,15 @@ class PointerInput
 	 */
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseDown( x : Float, y : Float, button : Int ) : Void {
-		if ( button >= 0 && button < MAX_BUTTONS ) {
-			_pointers[0].updateButtonState( button, true );
-			down.dispatch( 0, button );
-		}
+	private function onMouseDown( x : Float, y : Float, button : PointerButton ) : Void {
+		_pointers[0].updateButtonState( button, true );
+		down.dispatch( 0, button );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseUp( x : Float, y : Float, button : Int ) : Void {
-		if ( button >= 0 && button < MAX_BUTTONS ) {
-			_pointers[0].updateButtonState( button, false );
-			up.dispatch( 0, button );
-		}
+	private function onMouseUp( x : Float, y : Float, button : PointerButton ) : Void {
+		_pointers[0].updateButtonState( button, false );
+		up.dispatch( 0, button );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )

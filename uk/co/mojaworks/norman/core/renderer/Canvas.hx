@@ -17,6 +17,7 @@ class Canvas
 
 	public static var WHOLE_IMAGE : Rect = new Rect( 0, 0, 1, 1 );
 	public static var QUAD_INDICES : Array<Int> = [ 0, 1, 2, 1, 3, 2 ];
+	public static var NO_TEXTURES : Array<Texture> = [];
 	
 	private var _context : IRenderContext;
 	var _batch : RenderBatch;

@@ -197,8 +197,8 @@ class TextRenderer extends BaseRenderer
 		if ( _layoutDirty ) regenerateLayout();
 		
 		if ( drawDebug ) {
-			canvas.draw( null, ShapeRenderer.defaultShader, canvas.buildQuadVertexData( wrapWidth, height, gameObject.transform.renderMatrix, 0, 255, 0, 1 ), Canvas.QUAD_INDICES );
-			canvas.draw( null, ShapeRenderer.defaultShader, canvas.buildQuadVertexData( _bounds.width, _bounds.height, gameObject.transform.renderMatrix, 255, 0, 0, 1 ), Canvas.QUAD_INDICES );
+			canvas.draw( Canvas.NO_TEXTURES, ShapeRenderer.defaultShader, canvas.buildQuadVertexData( wrapWidth, height, gameObject.transform.renderMatrix, 0, 255, 0, 1 ), Canvas.QUAD_INDICES );
+			canvas.draw( Canvas.NO_TEXTURES, ShapeRenderer.defaultShader, canvas.buildQuadVertexData( _bounds.width, _bounds.height, gameObject.transform.renderMatrix, 255, 0, 0, 1 ), Canvas.QUAD_INDICES );
 		}
 		
 		var lineStart : Int = 0;

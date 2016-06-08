@@ -1,6 +1,6 @@
 package uk.co.mojaworks.norman.core.io.pointer;
+import geoff.event.PointerButton;
 import geoff.math.Vector2;
-import uk.co.mojaworks.norman.core.io.pointer.PointerInput.MouseButton;
 
 /**
  * ...
@@ -30,7 +30,7 @@ class Pointer
 		}
 	}
 	
-	public function buttonIsDown( button : MouseButton ) : Bool 
+	public function buttonIsDown( button : PointerButton ) : Bool 
 	{
 		var button_id : Int = button;
 		
@@ -41,7 +41,7 @@ class Pointer
 		return false;
 	}
 	
-	public function buttonWasDownLastFrame( button : MouseButton ) : Bool 
+	public function buttonWasDownLastFrame( button : PointerButton ) : Bool 
 	{
 		var button_id : Int = button;
 		
@@ -53,7 +53,7 @@ class Pointer
 	}
 	
 	@:allow( uk.co.mojaworks.norman.core.io.pointer.PointerInput )
-	private function updateButtonState( button : MouseButton, isDown : Bool ) : Void 
+	private function updateButtonState( button : PointerButton, isDown : Bool ) : Void 
 	{
 		_buttonIsDown[button] = isDown;
 	}
