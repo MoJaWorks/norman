@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.core.renderer;
 import geoff.math.Matrix3;
 import geoff.math.Rect;
 import geoff.math.Vector2;
+import geoff.renderer.FrameBuffer;
 import geoff.renderer.IRenderContext;
 import geoff.renderer.RenderBatch;
 import geoff.renderer.Shader;
@@ -30,7 +31,7 @@ class Canvas
 	// These arrays are constantly reused to avoid recreating multiple times every frame
 	private var _cachedQuadVertexData : Array<Float>;
 	private var _cachedTexturedQuadVertexData : Array<Float>;
-	
+	private var _frameBufferStack : Array<FrameBuffer>;
 	
 	public function new() 
 	{
@@ -39,6 +40,7 @@ class Canvas
 	
 	public function init() : Void {
 		_batch = new RenderBatch();
+		_frameBufferStack = [];
 		_cachedQuadVertexData = [for (i in 0...24) 0 ];
 		_cachedTexturedQuadVertexData = [for (i in 0...32) 0];
 		
@@ -215,52 +217,43 @@ class Canvas
 			renderBatch();
 		}
 		
-		/*var frameBuffer : FrameBuffer = new FrameBuffer();
+		var frameBuffer : FrameBuffer = _context.createFrameBuffer( target );
+		_context.bindFrameBuffer( frameBuffer );
 		
-		frameBuffer.buffer = _context.createFramebuffer();
-		frameBuffer.texture = target;
-		
-		_context.bindFramebuffer( GL.FRAMEBUFFER, frameBuffer.buffer );
-		_context.framebufferTexture2D( GL.FRAMEBUFFER, GL.COLOR_ATTACHMENT0, GL.TEXTURE_2D, frameBuffer.texture.texture, 0 );
-		
-		_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.width, 0, frameBuffer.texture.height, -1000, 1000 );
-		_context.viewport( 0, 0, Std.int(frameBuffer.texture.width), Std.int(frameBuffer.texture.height) );
-		
-		_frameBufferStack.push( frameBuffer );*/
+		_frameBufferStack.push( frameBuffer );
 		
 	}
 	
 	public function popRenderTarget( ) : Void {
 		
-		//var frameBuffer : FrameBuffer = _frameBufferStack.pop();
 		
 		// Render the last batch to the frameBuffer
 		if ( _batch.started ) {
 			renderBatch();
 		}
-		
-		// destroy this framebuffer - it was nice while it lasted
-		/*_context.deleteFramebuffer( frameBuffer.buffer );
+
+		// Destroy the last framebuffer
+		var frameBuffer : FrameBuffer = _frameBufferStack.pop();
 		frameBuffer.texture = null;
+		_context.destroyFrameBuffer( frameBuffer );
 		
-		// Go back to the previous buffer
 		if ( _frameBufferStack.length > 0 ) {
+			// Go back to the previous buffer
 			frameBuffer = _frameBufferStack[ _frameBufferStack.length - 1 ];
-			_context.bindFramebuffer( GL.FRAMEBUFFER, frameBuffer.buffer );
-			_projectionMatrix = Matrix4.createOrtho( 0, frameBuffer.texture.width, 0, frameBuffer.texture.height, -1000, 1000 );
-			_context.viewport( 0, 0, Std.int(frameBuffer.texture.width), Std.int(frameBuffer.texture.height) );
+			_context.bindFrameBuffer( frameBuffer );
 		}else {
-			// Back to stage
-			_context.bindFramebuffer( GL.FRAMEBUFFER, null );
-			_projectionMatrix = Matrix4.createOrtho( 0, Core.instance.view.screenWidth, Core.instance.view.screenHeight, 0, -1000, 1000 );
-			_context.viewport( 0, 0, Std.int(Core.instance.view.screenWidth), Std.int(Core.instance.view.screenHeight) );
-		}*/
+			// Or back to stage
+			_context.bindFrameBuffer( null );
+		}
 		
 	}
 	
 	
 	
 	private function renderBatch() : Void {
+		
+		trace( _batch.textures[0].width );
+		trace( _batch.textures[0].height );
 		
 		if ( _batch.vertices.length > 0 ) 
 		{
