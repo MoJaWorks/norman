@@ -135,6 +135,13 @@ class Renderer
 	}
 	
 	
+	public function onContextCreated( context : IRenderContext ) : Void 
+	{
+		textureManager.onContextCreated( context );
+		shaderManager.onContextCreated( context );
+	}
+	
+	
 	//////////////
 	///  SHADERS
 	/////////////

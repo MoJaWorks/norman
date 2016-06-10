@@ -131,6 +131,11 @@ class NormanApp extends AppDelegate
 		core.io.keyboard.onKeyUp( keyCode, modifier );
 	}
 	
+	override public function onContextCreated( context : IRenderContext ):Void 
+	{
+		core.renderer.onContextCreated( context );
+	}
+	
 	/*override public function onTextInput( window:Window, text:String ) : Void 
 	{
 		//trace("Text input", text );
