@@ -252,9 +252,6 @@ class Canvas
 	
 	private function renderBatch() : Void {
 		
-		trace( _batch.textures[0].width );
-		trace( _batch.textures[0].height );
-		
 		if ( _batch.vertices.length > 0 ) 
 		{
 			_context.renderBatch( _batch );
