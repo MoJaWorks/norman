@@ -42,7 +42,7 @@ class FontUtils
 		var page_root : String = id.substring(0, id.lastIndexOf("/") );
 		trace("Font root is", page_root);
 		for ( page in fast.node.pages.nodes.page ) {
-			data.pages.push( Core.instance.renderer.createTextureFromAsset( page_root + "/" + page.att.file ) );
+			data.pages.push( Core.instance.renderer.createTextureFromAsset( Assets.getPath( page_root + "/" + page.att.file )) );
 		}
 		
 		trace("Setting up characters");

@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.factory;
 import geoff.renderer.Texture;
+import geoff.utils.Assets;
 import geoff.utils.Color;
 import uk.co.mojaworks.norman.components.debug.FPSUpdater;
 import uk.co.mojaworks.norman.components.renderer.ShapeRenderer.FillShape;

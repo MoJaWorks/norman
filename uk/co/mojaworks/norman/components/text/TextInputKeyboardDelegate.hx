@@ -34,8 +34,6 @@ class TextInputKeyboardDelegate extends KeyboardDelegate
 			switch( keyCode ) {
 				case Key.DELETE:
 					input.removeCharacterAfterCursor();
-				case Key.BACKSPACE:
-					input.removeCharacterBeforeCursor();
 				case Key.LEFT:
 					input.moveCursor( -1);
 				case Key.RIGHT:
@@ -44,6 +42,12 @@ class TextInputKeyboardDelegate extends KeyboardDelegate
 					input.addTextAtCursor("\n");
 				case Key.ESCAPE:
 					input.hasTextFocus = false;
+				
+				#if !android
+				case Key.BACKSPACE:
+					input.removeCharacterBeforeCursor();
+				#end
+				
 				default:
 					// Do nothing
 			}
