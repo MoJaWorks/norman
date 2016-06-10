@@ -107,6 +107,12 @@ class UISystem extends SubSystem
 
 						}
 					}
+					
+					if ( core.io.pointer.get(0).scrollDelta.distanceSquared() > 0 )
+					{
+						events.push( new PointerEvent( PointerEventType.Scroll, ui, 0, PointerButton.None ) );
+					}
+					
 					ui.isCurrentTarget = !hasHit;
 					hasHit = true;
 					

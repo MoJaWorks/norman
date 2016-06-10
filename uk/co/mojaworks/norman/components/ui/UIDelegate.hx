@@ -61,7 +61,9 @@ class UIDelegate extends Component implements IUIDelegate
 			case PointerEventType.Out:
 				onMouseOut( e );
 			case PointerEventType.Click:
-				onClick( e );				
+				onClick( e );
+			case PointerEventType.Scroll:
+				onMouseScroll( e );
 		}
 		
 		//TODO: Bubble the event if it's not stopped
@@ -72,6 +74,7 @@ class UIDelegate extends Component implements IUIDelegate
 	public function onMouseUp( e : PointerEvent ) : Void {}
 	public function onMouseOver( e : PointerEvent ) : Void {}
 	public function onMouseOut( e : PointerEvent ) : Void { }
+	public function onMouseScroll( e : PointerEvent ) : Void { }
 	
 	public function onClick( e : PointerEvent ) : Void { 
 		if ( enabled ) clicked.dispatch( e );

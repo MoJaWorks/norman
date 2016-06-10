@@ -101,11 +101,10 @@ class NormanApp extends AppDelegate
 		
 	}
 		
-	/*override public function onMouseWheel(window:Window, deltaX:Float, deltaY:Float):Void 
+	override public function onPointerScroll( pointerId : Int, deltaX : Int, deltaY : Int ) : Void 
 	{
-		super.onMouseWheel(window, deltaX, deltaY);
 		core.io.pointer.onMouseScroll( deltaX, deltaY );
-	}*/
+	}
 	
 	override public function onPointerDown( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
 	{

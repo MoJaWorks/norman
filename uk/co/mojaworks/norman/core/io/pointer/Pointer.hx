@@ -11,10 +11,10 @@ class Pointer
 
 	public var id : Int;
 	public var position( default, null ) : Vector2;
+	public var scrollDelta( default, null ) : Vector2;
 	
 	var _buttonIsDown : Array<Bool>;
 	var _buttonWasDownLastFrame : Array<Bool>;
-	
 	
 	public function new( id : Int ) 
 	{
@@ -28,6 +28,8 @@ class Pointer
 			_buttonIsDown.push( false );
 			_buttonWasDownLastFrame.push( false );
 		}
+		
+		scrollDelta = new Vector2();
 	}
 	
 	public function buttonIsDown( button : PointerButton ) : Bool 
@@ -65,6 +67,7 @@ class Pointer
 		{
 			_buttonWasDownLastFrame[button] = _buttonIsDown[button];
 		}
+		scrollDelta.setTo(0, 0);
 	}
 	
 	

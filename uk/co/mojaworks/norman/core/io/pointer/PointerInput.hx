@@ -19,7 +19,6 @@ class PointerInput
 	public var down : Signal2<Int,PointerButton>;
 	public var up : Signal2<Int,PointerButton>;
 	
-	var _scrollDelta : Vector2;
 	var _pointers : Array<Pointer>;
 	
 	public function new() 
@@ -34,7 +33,6 @@ class PointerInput
 		up = new Signal2<Int,PointerButton>();
 		scroll = new Signal2<Int,Vector2>();
 		
-		_scrollDelta = new Vector2();
 	}
 	
 	public function get( id : Int ) : Pointer
@@ -81,9 +79,10 @@ class PointerInput
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
-	private function onMouseScroll( deltaX : Float, deltaY : Float ) : Void {
-		_scrollDelta.setTo( deltaX, deltaY );
-		scroll.dispatch( 0, _scrollDelta );
+	private function onMouseScroll( deltaX : Float, deltaY : Float ) : Void {	
+		_pointers[0].scrollDelta.x += deltaX;
+		_pointers[0].scrollDelta.y += deltaY;
+		scroll.dispatch( 0, _pointers[0].scrollDelta );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )

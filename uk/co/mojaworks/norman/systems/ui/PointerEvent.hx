@@ -14,6 +14,7 @@ import uk.co.mojaworks.norman.systems.ui.PointerEvent.PointerEventType;
 	var Over = "PointerOver";
 	var Out = "PointerOut";
 	var Click = "PointerClick";
+	var Scroll = "PointerScroll";
 }
  
 class PointerEvent
