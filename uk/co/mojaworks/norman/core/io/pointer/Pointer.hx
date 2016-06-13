@@ -15,6 +15,7 @@ class Pointer
 	
 	var _buttonIsDown : Array<Bool>;
 	var _buttonWasDownLastFrame : Array<Bool>;
+	var _buttonWasDownThisFrame : Array<Bool>;
 	
 	public function new( id : Int ) 
 	{
@@ -23,10 +24,12 @@ class Pointer
 						
 		_buttonIsDown = [];
 		_buttonWasDownLastFrame = [];
+		_buttonWasDownThisFrame = [];
 		for ( i in 0...PointerInput.MAX_BUTTONS )
 		{
 			_buttonIsDown.push( false );
 			_buttonWasDownLastFrame.push( false );
+			_buttonWasDownThisFrame.push( false );
 		}
 		
 		scrollDelta = new Vector2();
@@ -54,10 +57,23 @@ class Pointer
 		return false;
 	}
 	
+	public function buttonWasDownThisFrame( button : PointerButton ) : Bool 
+	{
+		var button_id : Int = button;
+		
+		if ( button_id >= 0 && button_id < PointerInput.MAX_BUTTONS ) {
+			return _buttonWasDownThisFrame[button_id];
+		}
+		
+		return false;
+	}
+
+	
 	@:allow( uk.co.mojaworks.norman.core.io.pointer.PointerInput )
 	private function updateButtonState( button : PointerButton, isDown : Bool ) : Void 
 	{
 		_buttonIsDown[button] = isDown;
+		if ( isDown ) _buttonWasDownThisFrame[button] = true;
 	}
 	
 	@:allow( uk.co.mojaworks.norman.core.io.pointer.PointerInput )
@@ -66,6 +82,7 @@ class Pointer
 		for ( button in 0...PointerInput.MAX_BUTTONS ) 
 		{
 			_buttonWasDownLastFrame[button] = _buttonIsDown[button];
+			_buttonWasDownThisFrame[button] = false;
 		}
 		scrollDelta.setTo(0, 0);
 	}

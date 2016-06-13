@@ -1,6 +1,7 @@
 {
 	"defines":
 	[
-		"actuate_manual_time"
+		"actuate_manual_time",
+		"actuate_manual_update"
 	]
 }

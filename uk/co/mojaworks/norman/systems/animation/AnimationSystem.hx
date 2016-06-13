@@ -42,9 +42,7 @@ class AnimationSystem extends SubSystem
 			}
 		}
 		
-		#if geoff_cpp
-			untyped SimpleActuator.stage_onEnterFrame();
-		#end
+		SimpleActuator.stage_onEnterFrame();
 		
 	}
 	

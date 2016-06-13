@@ -3,7 +3,6 @@ import geoff.App;
 import geoff.AppDelegate;
 import geoff.event.PointerButton;
 import geoff.renderer.IRenderContext;
-import motion.actuators.SimpleActuator;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
@@ -110,11 +109,13 @@ class NormanApp extends AppDelegate
 	
 	override public function onPointerDown( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
 	{
+		trace("Pointer down", App.current.platform.getTime(), x, y );
 		core.io.pointer.onMouseDown( x, y, button );
 	}
 	
 	override public function onPointerUp( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
 	{
+		trace("Pointer up", App.current.platform.getTime(), x, y );
 		core.io.pointer.onMouseUp( x, y, button );
 	}
 	

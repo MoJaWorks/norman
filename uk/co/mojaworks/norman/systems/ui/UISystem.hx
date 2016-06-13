@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems.ui;
+import geoff.App;
 import geoff.event.PointerButton;
 import geoff.utils.LinkedList;
 import uk.co.mojaworks.norman.components.renderer.BaseRenderer;
@@ -40,7 +41,7 @@ class UISystem extends SubSystem
 	
 	override public function update( seconds : Float ) : Void {
 		
-		trace("UISystem update");
+		//trace("UISystem update", App.current.platform.getTime() );
 		
 		var hasHit : Bool = false;
 		var events : Array<PointerEvent> = [];
@@ -86,12 +87,18 @@ class UISystem extends SubSystem
 					}
 					
 					for ( i in 0...PointerInput.MAX_BUTTONS ) {
-						if ( core.io.pointer.get(0).buttonIsDown(i) ) {
+						if ( core.io.pointer.get(0).buttonIsDown(i) || core.io.pointer.get(0).buttonWasDownThisFrame(i) ) {
 							
 							ui.isMouseButtonDown[i] = true;
 							if ( !ui.wasMouseButtonDownLastFrame[i] && !ui.wasMouseButtonDownElsewhere[i] ) 
 							{
 								events.push( new PointerEvent( PointerEventType.Down, ui, 0, i ) );
+								if ( !core.io.pointer.get(0).buttonIsDown(i) ) 
+								{
+									// Button press was too fast to process - count it as a click
+									events.push( new PointerEvent( PointerEventType.Up, ui, 0, i ) );
+									events.push( new PointerEvent( PointerEventType.Click, ui, 0, i ) );
+								}
 							}
 							
 						}else {

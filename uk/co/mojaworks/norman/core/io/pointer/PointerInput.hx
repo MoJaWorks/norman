@@ -64,12 +64,14 @@ class PointerInput
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onMouseDown( x : Float, y : Float, button : PointerButton ) : Void {
 		_pointers[0].updateButtonState( button, true );
+		_pointers[0].position.setTo( x, y );
 		down.dispatch( 0, button );
 	}
 	
 	@:allow( uk.co.mojaworks.norman.NormanApp )
 	private function onMouseUp( x : Float, y : Float, button : PointerButton ) : Void {
 		_pointers[0].updateButtonState( button, false );
+		_pointers[0].position.setTo( x, y );
 		up.dispatch( 0, button );
 	}
 	
