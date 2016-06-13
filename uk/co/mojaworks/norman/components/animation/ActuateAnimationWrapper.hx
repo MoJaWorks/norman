@@ -1,7 +1,8 @@
 package uk.co.mojaworks.norman.components.animation;
+import geoff.utils.LinkedList;
 import motion.Actuate;
 import motion.actuators.IGenericActuator;
-import uk.co.mojaworks.norman.utils.LinkedList;
+import motion.actuators.SimpleActuator;
 
 /**
  * ...
@@ -10,8 +11,6 @@ import uk.co.mojaworks.norman.utils.LinkedList;
 class ActuateAnimationWrapper extends Animation
 {
 
-	public static var HELLO : String = "Hello";
-	
 	private var _actuators : LinkedList<IGenericActuator>;
 	
 	public function new() 
@@ -31,6 +30,7 @@ class ActuateAnimationWrapper extends Animation
 		_actuators.remove( actuator );
 		if ( callback != null ) callback();
 	}
+	
 	
 	override public function onRemove():Void 
 	{

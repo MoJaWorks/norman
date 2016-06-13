@@ -51,6 +51,8 @@ class UIDelegate extends Component implements IUIDelegate
 	
 	public function processEvent( e : PointerEvent ) : Void {
 		
+		trace("Processing UI Event", e.type );
+		
 		switch( e.type ) {
 			case PointerEventType.Down:
 				onMouseDown( e );
@@ -70,13 +72,16 @@ class UIDelegate extends Component implements IUIDelegate
 		
 	}
 	
-	public function onMouseDown( e : PointerEvent ) : Void {}
+	public function onMouseDown( e : PointerEvent ) : Void {
+		trace("MouseDown Base");
+	}
 	public function onMouseUp( e : PointerEvent ) : Void {}
 	public function onMouseOver( e : PointerEvent ) : Void {}
 	public function onMouseOut( e : PointerEvent ) : Void { }
 	public function onMouseScroll( e : PointerEvent ) : Void { }
 	
 	public function onClick( e : PointerEvent ) : Void { 
+		trace("Onclick");
 		if ( enabled ) clicked.dispatch( e );
 	}
 	

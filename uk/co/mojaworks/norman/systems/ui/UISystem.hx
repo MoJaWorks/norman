@@ -40,6 +40,8 @@ class UISystem extends SubSystem
 	
 	override public function update( seconds : Float ) : Void {
 		
+		trace("UISystem update");
+		
 		var hasHit : Bool = false;
 		var events : Array<PointerEvent> = [];
 		var event : PointerEvent;

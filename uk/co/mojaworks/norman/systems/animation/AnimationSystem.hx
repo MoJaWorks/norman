@@ -1,5 +1,7 @@
 package uk.co.mojaworks.norman.systems.animation;
+import geoff.App;
 import geoff.utils.LinkedList;
+import motion.actuators.SimpleActuator;
 import uk.co.mojaworks.norman.components.animation.IAnimation;
 import uk.co.mojaworks.norman.systems.Systems.SubSystem;
 
@@ -17,6 +19,8 @@ class AnimationSystem extends SubSystem
 	
 	public function new() 
 	{
+		SimpleActuator.getTime = App.current.platform.getTime;
+		
 		super();
 		_animations = new LinkedList<IAnimation>();
 	}
@@ -37,6 +41,10 @@ class AnimationSystem extends SubSystem
 				if ( anim.enabled && !anim.paused ) anim.update( seconds );
 			}
 		}
+		
+		#if geoff_cpp
+			untyped SimpleActuator.stage_onEnterFrame();
+		#end
 		
 	}
 	

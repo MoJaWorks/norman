@@ -1,7 +1,9 @@
 package uk.co.mojaworks.norman;
+import geoff.App;
 import geoff.AppDelegate;
 import geoff.event.PointerButton;
 import geoff.renderer.IRenderContext;
+import motion.actuators.SimpleActuator;
 import uk.co.mojaworks.norman.controller.DisplayListChangedCommand;
 import uk.co.mojaworks.norman.data.NormanConfigData;
 import uk.co.mojaworks.norman.data.NormanMessages;
