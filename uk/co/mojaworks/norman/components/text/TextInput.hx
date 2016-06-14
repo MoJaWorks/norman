@@ -1,5 +1,6 @@
 package uk.co.mojaworks.norman.components.text;
 
+import geoff.App;
 import geoff.math.Vector2;
 import geoff.utils.MathUtils;
 import msignal.Signal.Signal1;
@@ -65,9 +66,16 @@ class TextInput extends Component
 			caret.transform.x = pos.x;
 			caret.transform.y = pos.y;
 			
+			#if mobile 
+				App.current.platform.showKeyboard();
+			#end
+			
 		}else if ( hasTextFocus && !bool ) {
 			
 			if ( caret != null ) caret.destroy();
+			#if mobile 
+				App.current.platform.hideKeyboard();
+			#end
 			
 		}
 		

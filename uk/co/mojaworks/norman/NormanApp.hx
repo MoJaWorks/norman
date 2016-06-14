@@ -109,13 +109,11 @@ class NormanApp extends AppDelegate
 	
 	override public function onPointerDown( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
 	{
-		trace("Pointer down", App.current.platform.getTime(), x, y );
 		core.io.pointer.onMouseDown( x, y, button );
 	}
 	
 	override public function onPointerUp( pointerId : Int, button : PointerButton, x : Int, y : Int ) : Void 
 	{
-		trace("Pointer up", App.current.platform.getTime(), x, y );
 		core.io.pointer.onMouseUp( x, y, button );
 	}
 	
@@ -126,6 +124,7 @@ class NormanApp extends AppDelegate
 	
 	override public function onKeyDown( keyCode:Int, modifier:Int ):Void 
 	{
+		super.onKeyDown( keyCode, modifier );
 		core.io.keyboard.onKeyDown( keyCode, modifier );
 	}
 	
@@ -139,14 +138,13 @@ class NormanApp extends AppDelegate
 		core.renderer.onContextCreated( context );
 	}
 	
-	/*override public function onTextInput( window:Window, text:String ) : Void 
+	override public function onTextInput( text:String ) : Void 
 	{
-		//trace("Text input", text );
-		super.onTextInput(window, text);
+		super.onTextInput( text );
 		core.io.keyboard.onTextEntry( text );
 	}
 	
-	override public function onTextEdit(window:Window, text:String, start:Int, length:Int):Void 
+	/*override public function onTextEdit(window:Window, text:String, start:Int, length:Int):Void 
 	{
 		//trace( "Text edit", text, start, length );
 		super.onTextEdit(window, text, start, length);

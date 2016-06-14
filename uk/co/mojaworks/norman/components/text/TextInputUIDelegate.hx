@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.components.text;
+import geoff.App;
 import geoff.event.PointerButton;
 import uk.co.mojaworks.norman.core.io.pointer.PointerInput;
 

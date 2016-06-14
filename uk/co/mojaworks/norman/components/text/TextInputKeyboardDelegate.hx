@@ -33,19 +33,24 @@ class TextInputKeyboardDelegate extends KeyboardDelegate
 		if ( input.hasTextFocus ) {
 			switch( keyCode ) {
 				case Key.DELETE:
-					input.removeCharacterAfterCursor();
+					#if android
+						input.removeCharacterBeforeCursor();
+					#else
+						input.removeCharacterAfterCursor();
+					#end
+					
 				case Key.LEFT:
-					input.moveCursor( -1);
+					input.moveCursor(-1);
 				case Key.RIGHT:
 					input.moveCursor(1);
-				case Key.ENTER:
-					input.addTextAtCursor("\n");
-				case Key.ESCAPE:
+				case Key.ESCAPE, Key.BACK:
 					input.hasTextFocus = false;
 				
 				#if !android
-				case Key.BACKSPACE:
-					input.removeCharacterBeforeCursor();
+					case Key.BACKSPACE:
+						input.removeCharacterBeforeCursor();
+					case Key.ENTER:
+						input.addTextAtCursor("\n");
 				#end
 				
 				default:
