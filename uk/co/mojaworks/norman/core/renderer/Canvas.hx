@@ -2,6 +2,7 @@ package uk.co.mojaworks.norman.core.renderer;
 import geoff.math.Matrix3;
 import geoff.math.Rect;
 import geoff.math.Vector2;
+import geoff.renderer.BlendFactor;
 import geoff.renderer.FrameBuffer;
 import geoff.renderer.IRenderContext;
 import geoff.renderer.RenderBatch;
@@ -59,8 +60,8 @@ class Canvas
 		_context.clear( color );
 	}
 	
-	public function setBlendMode( sourceFactor : Int, destinationFactor : Int ) : Void {
-		/*if ( sourceFactor != sourceBlendFactor || sourceFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destinationFactor != destinationAlphaBlendFactor ) {
+	public function setBlendMode( sourceFactor : BlendFactor, destinationFactor : BlendFactor ) : Void {
+		if ( sourceFactor != sourceBlendFactor || sourceFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destinationFactor != destinationAlphaBlendFactor ) {
 			
 			// Setting blend mode modifies state
 			if ( _batch.started ) renderBatch();
@@ -69,13 +70,13 @@ class Canvas
 			sourceAlphaBlendFactor = sourceFactor;
 			destinationBlendFactor = destinationFactor;
 			destinationAlphaBlendFactor = destinationFactor;
-			_context.blendFunc( sourceFactor, destinationFactor );
-			
-		}*/
+			_context.setBlendMode( sourceFactor, destinationFactor );
+		
+		}
 	}
 	
-	public function setBlendModeSeparate( sourceFactor : Int, destinationFactor : Int, sourceAlphaFactor : Int, destAlphaFactor : Int ) : Void {
-		/*if ( sourceFactor != sourceBlendFactor || sourceAlphaFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destAlphaFactor != destinationAlphaBlendFactor ) {
+	public function setBlendModeSeparate( sourceFactor : BlendFactor, destinationFactor : BlendFactor, sourceAlphaFactor : BlendFactor, destAlphaFactor : BlendFactor ) : Void {
+		if ( sourceFactor != sourceBlendFactor || sourceAlphaFactor != sourceAlphaBlendFactor || destinationFactor != destinationBlendFactor || destAlphaFactor != destinationAlphaBlendFactor ) {
 			
 			// Setting blend mode modifies state
 			if ( _batch.started ) renderBatch();
@@ -84,9 +85,9 @@ class Canvas
 			sourceAlphaBlendFactor = sourceAlphaFactor;
 			destinationBlendFactor = destinationFactor;
 			destinationAlphaBlendFactor = destAlphaFactor;
-			_context.blendFuncSeparate( sourceFactor, destinationFactor, sourceAlphaFactor, destAlphaFactor );
+			_context.setBlendModeSeparate( sourceFactor, destinationFactor, sourceAlphaFactor, destAlphaFactor );
 			
-		}*/
+		}
 	}
 	
 	public function begin() : Void {
