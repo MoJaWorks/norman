@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.utils;
-import geoff.utils.Assets;
+import geoff.assets.Assets;
 import haxe.xml.Fast;
 import uk.co.mojaworks.norman.text.BitmapFont;
 

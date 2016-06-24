@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.core.renderer;
 import geoff.renderer.IRenderContext;
 import geoff.renderer.Texture;
-import geoff.utils.Assets;
+import geoff.assets.Assets;
 import geoff.utils.Color;
 import haxe.Json;
 import haxe.io.Bytes;
