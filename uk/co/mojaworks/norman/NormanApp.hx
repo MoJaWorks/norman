@@ -96,6 +96,7 @@ class NormanApp extends AppDelegate
 			return;
 		}
 		
+		core.audio.update( seconds );
 		core.governor.update( seconds );
 		core.renderer.render( Core.instance.view.root.transform );
 		core.io.pointer.endFrame();

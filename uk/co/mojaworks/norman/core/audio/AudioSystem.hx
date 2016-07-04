@@ -1,4 +1,9 @@
 package uk.co.mojaworks.norman.core.audio;
+import geoff.App;
+import geoff.audio.AudioChannel;
+import geoff.utils.LinkedList;
+import motion.Actuate;
+import uk.co.mojaworks.norman.core.audio.AudioInstance.AudioType;
 
 /**
  * ...
@@ -7,7 +12,7 @@ package uk.co.mojaworks.norman.core.audio;
 class AudioSystem
 {
 
-	/*public var masterVolume( get, set ) : Float;
+	public var masterVolume( get, set ) : Float;
 	public var musicVolume( get, set ) : Float;
 	public var sfxVolume( get, set ) : Float;
 	
@@ -23,40 +28,40 @@ class AudioSystem
 		_playingAudio = new LinkedList<AudioInstance>();
 	}
 	
-	public function playOneShotWithResourceId( id : String, volume : Float ) : Int {
+	public function loadAsset( id : String, asset : String )
+	{
+		App.current.platform.audio.loadAsset( id, asset );
+	}
+	
+	public function playOneShot( id : String, volume : Float = 1 ) : Int {
 		
-		var instance : AudioInstance = new AudioInstance( id, volume, AudioType.SFX );
-		instance.source.onComplete.add( function() {
-			onSoundComplete( instance );
-		});
-		instance.source.play();
+		
+		var channel : AudioChannel = App.current.platform.audio.playOneShot( id, volume );		
+		var instance : AudioInstance = new AudioInstance( channel, AudioType.SFX );
+		instance.volume = volume;
 		_playingAudio.push( instance );
 		return instance.instanceId;
 		
 	}
 	
-	public function playLoopingWithResourceId( id : String, volume : Float ) : Int {
+	public function playLooping( id : String, volume : Float = 1 ) : Int {
 		
-		var instance : AudioInstance = new AudioInstance( id, volume, AudioType.LoopingSFX );
-		instance.source.onComplete.add( function() {
-			onSoundComplete( instance );
-		});
-		instance.source.play();
+		var channel : AudioChannel = App.current.platform.audio.playLooping( id, volume );
+		var instance : AudioInstance = new AudioInstance( channel, AudioType.LoopingSFX );
+		instance.volume = volume;
 		_playingAudio.push( instance );
 		return instance.instanceId;
 		
 	}
 	
-	public function playMusicWithResourceId( id : String, volume : Float, crossFadeLength : Float = 0 ) : Int {
+	public function playMusic( id : String, volume : Float = 1, crossFadeLength : Float = 0 ) : Int {
 		
 		var startVolume : Float = ( crossFadeLength > 0 ) ? 0 : volume;
-		var instance : AudioInstance = new AudioInstance( id, startVolume, AudioType.Music );
 		
-		instance.source.onComplete.add( function() {
-			onSoundComplete( instance );
-		});
+		var channel : AudioChannel = App.current.platform.audio.playLooping( id, startVolume );
+		var instance : AudioInstance = new AudioInstance( channel, AudioType.Music );
+		instance.volume = startVolume;
 		_playingAudio.push( instance );
-		instance.source.play();
 				
 		if ( crossFadeLength > 0 ) {
 			// Tween the volumes
@@ -83,6 +88,19 @@ class AudioSystem
 		return instance.instanceId;
 		
 	}
+	
+	
+	public function update( seconds : Float ) : Void
+	{
+		for ( sound in _playingAudio ) 
+		{
+			if ( sound.channel.complete )
+			{
+				_playingAudio.remove( sound );
+			}
+		}
+	}
+	
 	
 	private function set_masterVolume( val : Float ) : Float {
 		
@@ -119,28 +137,11 @@ class AudioSystem
 			sound.updateVolume();
 		}
 	}
-	
-	private function onSoundComplete( instance : AudioInstance ) : Void {
 		
-		trace("Sound complete", instance.resourceId );
-		
-		switch( instance.type ) {
-			
-			case SFX:
-				instance.destroy();
-				_playingAudio.remove( instance );
-				
-			case LoopingSFX, Music:
-				instance.source.play();
-				
-		}
-		
-	}
-	
 	public function pauseAll() : Void {
 		
 		for ( sound in _playingAudio ) {
-			sound.source.pause();
+			sound.channel.paused = true;
 		}
 		
 	}
@@ -148,7 +149,7 @@ class AudioSystem
 	public function resumeAll() : Void {
 		
 		for ( sound in _playingAudio ) {
-			sound.source.play();
+			sound.channel.paused = false;
 		}
 		
 	}
@@ -166,7 +167,7 @@ class AudioSystem
 	public function stopAllWithResourceId( resourceId : String ) : Void {
 		
 		for ( sound in _playingAudio ) {
-			if ( sound.resourceId == resourceId ) {
+			if ( sound.channel.source.assetId == resourceId ) {
 				sound.destroy();
 				_playingAudio.remove( sound );
 			}
@@ -180,10 +181,10 @@ class AudioSystem
 	 */
 	
 	
-	/*public function pause( id : Int ) : Void {
+	public function pause( id : Int ) : Void {
 		
 		for ( sound in _playingAudio ) {
-			if ( sound.instanceId == id ) sound.source.pause();
+			if ( sound.instanceId == id ) sound.channel.paused = true;
 		}
 		
 	}
@@ -191,7 +192,7 @@ class AudioSystem
 	public function resume( id : Int ) : Void {
 		
 		for ( sound in _playingAudio ) {
-			if ( sound.instanceId == id ) sound.source.play();
+			if ( sound.instanceId == id ) sound.channel.paused = false;
 		}
 		
 	}
@@ -204,5 +205,5 @@ class AudioSystem
 				_playingAudio.remove( sound );
 			}
 		}
-	}*/
+	}
 }

@@ -1,7 +1,7 @@
 package uk.co.mojaworks.norman.core.audio;
-import lime.Assets;
-import lime.audio.AudioBuffer;
-import lime.audio.AudioSource;
+import geoff.App;
+import geoff.audio.AudioChannel;
+import geoff.audio.AudioSource;
 import motion.Actuate;
 import uk.co.mojaworks.norman.factory.IDisposable;
 
@@ -19,28 +19,22 @@ enum AudioType {
 class AudioInstance implements IDisposable
 {
 
-	public static var _autoInstanceId : Int = 0;
+	private static var _autoInstanceId : Int = 0;
 	
-	public var source : AudioSource;
-	public var buffer : AudioBuffer;
-	public var resourceId : String;
-	public var instanceId : Int;
+	public var channel : AudioChannel;
 	public var volume( get, set ) : Float;
 	public var type : AudioType;
-	public var looping : Bool;
 	public var destroyed : Bool = false;
+	public var instanceId : Int;
 	
 	var _volume : Float = 1;
 	
-	public function new( resourceId : String, volume : Float, type : AudioType ) 
+	public function new( channel : AudioChannel, type : AudioType ) 
 	{
 		this.instanceId = _autoInstanceId++;
-		this.resourceId = resourceId;
-		this.buffer = Assets.getAudioBuffer( resourceId );
-		this.source = new AudioSource( buffer );	
-		this.volume = volume;
+		this.channel = channel;
+		this.volume = channel.volume;
 		this.type = type;
-		this.looping = type != SFX;
 	}
 	
 	private function set_volume( val : Float ) : Float 
@@ -58,11 +52,11 @@ class AudioInstance implements IDisposable
 	
 	public function updateVolume() : Void 
 	{
-		source.gain = volume * Core.instance.audio.masterVolume;
+		channel.volume = volume * Core.instance.audio.masterVolume;
 		if ( type == Music ) {
-			source.gain *= Core.instance.audio.musicVolume;
+			channel.volume *= Core.instance.audio.musicVolume;
 		}else {
-			source.gain *= Core.instance.audio.sfxVolume;
+			channel.volume *= Core.instance.audio.sfxVolume;
 		}
 	}
 	
@@ -70,8 +64,7 @@ class AudioInstance implements IDisposable
 	{
 		if ( ! destroyed ) 
 		{
-			if ( source != null ) source.stop();
-			source.dispose();
+			if ( channel != null ) App.current.platform.audio.stopChannel( channel );
 			destroyed = true;
 		}
 		
