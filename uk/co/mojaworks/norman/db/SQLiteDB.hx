@@ -3,10 +3,10 @@ import sys.db.Connection;
 import sys.db.ResultSet;
 import sys.db.Sqlite;
 
-#if android
+//#if android
 	// Make SQLite work on android by statically compiling the library
 	import hxcpp.StaticSqlite;
-#end
+//#end
 
 /**
  * ...

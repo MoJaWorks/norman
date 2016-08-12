@@ -1,9 +1,9 @@
 package uk.co.mojaworks.norman.model;
 
+import geoff.App;
+import geoff.assets.Assets;
 import haxe.ds.StringMap;
-import lime.Assets;
-import lime.system.System;
-import lime.utils.Bytes;
+import haxe.io.Bytes;
 import sys.FileSystem;
 import sys.io.File;
 import sys.io.FileOutput;
@@ -31,7 +31,10 @@ class DatabaseProxy extends Proxy
 	
 	private function copyDBToLocal( asset : String, dbName : String, overwriteIfExists : Bool ) : String 
 	{
-		var filename : String = System.applicationStorageDirectory + dbName + ".db";
+		var filename : String = App.current.platform.storageDirectory + dbName + ".db";
+		
+		trace( "Copying db to", filename ); 
+		
 		
 		if ( overwriteIfExists || !FileSystem.exists( filename ) ) {
 			var dbGame : Bytes = Assets.getBytes( asset );
