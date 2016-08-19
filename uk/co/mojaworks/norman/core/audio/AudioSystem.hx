@@ -206,4 +206,13 @@ class AudioSystem
 			}
 		}
 	}
+	
+	public function fadeAndStop( id : Int, duration: Float ) : Void {
+		
+		for ( sound in _playingAudio ) {
+			if ( sound.instanceId == id ) {
+				Actuate.tween( sound, duration, {volume:0} ).onComplete( stop, [id] );
+			}
+		}
+	}
 }
