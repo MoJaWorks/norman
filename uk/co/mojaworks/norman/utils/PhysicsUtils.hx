@@ -1,5 +1,5 @@
 package uk.co.mojaworks.norman.utils;
-import lime.math.Vector2;
+import geoff.math.Vector2;
 
 /**
  * ...

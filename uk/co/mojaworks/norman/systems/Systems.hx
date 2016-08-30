@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems;
+import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.governor.IGovernable;
 import uk.co.mojaworks.norman.factory.CoreObject;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
@@ -72,6 +73,29 @@ class SubSystem extends CoreObject implements IGovernable
 		
 	}
 	
+}
+
+class ComponentSystem<T:Component> extends SubSystem
+{
+	private var _targets : Array<T>;
+	
+	public function new( ) 
+	{
+		super();
+		_targets = [];
+	}
+	
+	public function addTarget( target : T ) : T
+	{
+		_targets.push( target );
+		return target;
+	}
+	
+	public function removeTarget( target : T ) : T
+	{
+		_targets.remove( target );
+		return target;
+	}
 }
 	
 	
