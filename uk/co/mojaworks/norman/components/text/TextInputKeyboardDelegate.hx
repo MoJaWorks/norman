@@ -9,54 +9,62 @@ import uk.co.mojaworks.norman.components.io.KeyboardDelegate;
 class TextInputKeyboardDelegate extends KeyboardDelegate
 {
 
-	public function new() 
+	public function new()
 	{
 		super();
 	}
-	
-	override public function onTextEntry(text:String):Void 
+
+	override public function onTextEntry(text:String):Void
 	{
 		super.onTextEntry(text);
-		
+
 		var input : TextInput = TextInput.getFrom( gameObject );
-		
+
 		if ( input.hasTextFocus ) {
 			input.addTextAtCursor( text );
 		}
 	}
-	
-	override public function onKeyDown(keyCode:Int, modifier:Int):Void 
+
+	override public function onKeyDown(keyCode:Int, modifier:Int):Void
 	{
 		super.onKeyDown(keyCode, modifier);
 		var input : TextInput = TextInput.getFrom( gameObject );
-		
+
 		if ( input.hasTextFocus ) {
-			switch( keyCode ) {
-				case Key.DELETE:
-					#if android
-						input.removeCharacterBeforeCursor();
-					#else
-						input.removeCharacterAfterCursor();
-					#end
-					
-				case Key.LEFT:
-					input.moveCursor(-1);
-				case Key.RIGHT:
-					input.moveCursor(1);
-				case Key.ESCAPE, Key.BACK:
-					input.hasTextFocus = false;
-				
-				#if !android
-					case Key.BACKSPACE:
-						input.removeCharacterBeforeCursor();
-					case Key.ENTER:
-						input.addTextAtCursor("\n");
+
+			if ( keyCode == Key.DELETE )
+			{
+				#if android
+					input.removeCharacterBeforeCursor();
+				#else
+					input.removeCharacterAfterCursor();
 				#end
-				
-				default:
-					// Do nothing
 			}
+			else if ( keyCode == Key.LEFT )
+			{
+				input.moveCursor(-1);
+			}
+			else if ( keyCode == Key.RIGHT )
+			{
+				input.moveCursor(1);
+			}
+			else if ( keyCode == Key.ESCAPE || keyCode == Key.BACK )
+			{
+				input.hasTextFocus = false;
+			}
+
+			#if !android
+			else if ( keyCode == Key.BACKSPACE )
+			{
+				input.removeCharacterBeforeCursor();
+			}
+			else if ( keyCode == Key.ENTER )
+			{
+				input.addTextAtCursor("\n");
+			}
+			#end
+			
 		}
 	}
-	
+
 }
