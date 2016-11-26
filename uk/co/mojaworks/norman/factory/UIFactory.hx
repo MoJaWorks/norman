@@ -37,7 +37,7 @@ class UIFactory
 	
 	public static function createFPS( ) : GameObject {
 		
-		var font : BitmapFont = FontUtils.createFontFromAsset( "default/arial.fnt" );
+		var font : BitmapFont = FontUtils.createFontFromAsset( Assets.getPath( "default/arial.fnt" ) );
 		var gameObject = SpriteFactory.createTextSprite( "-- fps", new TextFormat(font), "fps" );
 		gameObject.add( new FPSUpdater() );
 		

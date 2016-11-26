@@ -20,6 +20,8 @@ import uk.co.mojaworks.norman.systems.ui.UISystem;
 class NormanApp extends AppDelegate
 {
 
+	var _isFirstFrame : Bool = true;
+	
 	private var core( get, never ) : Core;
 	@:noCompletion private function get_core( ) : Core
 	{
@@ -82,14 +84,16 @@ class NormanApp extends AppDelegate
 	 * Ongoing
 	 */
 	
-	override public function resize( width:Int, height:Int ):Void 
+	override public function resize( width:Int, height:Int ) : Void 
 	{
 		core.view.resize( width, height );
 		Systems.director.resize();
 	}
 	
-	override public function update( context : IRenderContext, seconds : Float ) : Void 
+	override public function update( seconds : Float ) : Void 
 	{
+		core.io.pointer.endFrame();
+		
 		// Ignore the first update after activation as its time delta is huge
 		if ( _windowHasBeenDeactivated ) {
 			_windowHasBeenDeactivated = false;
@@ -98,9 +102,13 @@ class NormanApp extends AppDelegate
 		
 		core.audio.update( seconds );
 		core.governor.update( seconds );
-		core.renderer.render( Core.instance.view.root.transform );
-		core.io.pointer.endFrame();
 		
+	}
+	
+	override public function render( context : IRenderContext ) : Void 
+	{
+		trace( Core.instance.view.root.transform.children.length );
+		core.renderer.render( Core.instance.view.root.transform );
 	}
 		
 	override public function onPointerScroll( pointerId : Int, deltaX : Int, deltaY : Int ) : Void 

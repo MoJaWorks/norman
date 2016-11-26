@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.core.view;
+import msignal.Signal.Signal0;
 import uk.co.mojaworks.norman.factory.GameObject;
 import uk.co.mojaworks.norman.factory.ObjectFactory;
 
@@ -9,6 +10,8 @@ import uk.co.mojaworks.norman.factory.ObjectFactory;
 class View
 {
 	public var root( default, null ) : GameObject;
+	
+	public var resized : Signal0;
 	
 	// This is the rectangle of the "safe" area of the screen. This will always be scaled to fit
 	public var stageWidth( default, null ) : Float = 1024;	
@@ -33,6 +36,7 @@ class View
 	public function new() 
 	{
 		root = ObjectFactory.createGameObject("root");
+		resized = new Signal0();
 	}	
 	
 	public function setTargetSize( width : Float, height : Float ) : Void {
@@ -51,6 +55,8 @@ class View
 		root.transform.scaleY = scale;
 		root.transform.x = marginLeft * scale;
 		root.transform.y = marginTop * scale;
+		
+		resized.dispatch();
 	}
 	
 	private function updateDimensions() : Void {
