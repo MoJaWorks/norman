@@ -59,6 +59,8 @@ class Renderer
 		
 		//trace("Render begin");
 		canvas.clear( clearColor );
+		textureManager.uploadNewTextures();
+		shaderManager.uploadNewShaders();
 		
 		canvas.begin();
 			renderLevel( root );

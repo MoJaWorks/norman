@@ -13,23 +13,27 @@ class ShaderManager
 
 	var _context : IRenderContext;
 	var _shaders : Array<Shader>;
+	var _newShaders : Array<Shader>;
 	
 	public function new() 
 	{
+		_newShaders = [];
+		_shaders = [];
 	}
 	
 	public function init(  ) : Void {
 		
-		_shaders = [];
 	}
 	
 	public function onContextCreated( context : IRenderContext ) : Void {
 		
 		_context = context;
+		_newShaders = [];
 		
 		// Make sure all shaders are compiled and uploaded
 		for ( shader in _shaders ) {
-			uploadShader( shader );
+			///uploadShader( shader );
+			_newShaders.push( shader );
 		}
 		
 	}
@@ -40,12 +44,21 @@ class ShaderManager
 		var shader : Shader = new Shader( vs, fs, attributes );
 		
 		_shaders.push( shader );
-		if ( _context != null ) {
-			uploadShader( shader );
-		}
+		//if ( _context != null ) {
+		//	uploadShader( shader );
+		//}
+		_newShaders.push( shader );
 		
 		return shader;
 		
+	}
+	
+	public function uploadNewShaders() : Void 
+	{
+		while ( _newShaders.length > 0 )
+		{
+			uploadShader( _newShaders.pop() );
+		}
 	}
 
 	

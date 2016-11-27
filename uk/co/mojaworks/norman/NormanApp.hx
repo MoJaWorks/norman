@@ -107,7 +107,7 @@ class NormanApp extends AppDelegate
 	
 	override public function render( context : IRenderContext ) : Void 
 	{
-		trace( Core.instance.view.root.transform.children.length );
+		//trace( Core.instance.view.root.transform.children.length );
 		core.renderer.render( Core.instance.view.root.transform );
 	}
 		

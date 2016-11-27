@@ -16,9 +16,11 @@ class TextureManager
 
 	var _context : IRenderContext;
 	var _textures : Map<String,Texture>;
+	var _newTextures : Array<String>;
 	
 	public function new() 
 	{
+		_newTextures = [];
 	}
 	
 	public function init() : Void {
@@ -40,12 +42,12 @@ class TextureManager
 				
 			var texture : Texture = _context.createTextureFromAsset( path );
 			
-			if ( _context != null ) {
-				_context.uploadTexture( texture );
-			}
+			//if ( _context != null ) {
+			//	_context.uploadTexture( texture );
+			//}
 			
-			_textures.set( path, texture );
-			
+			_newTextures.push( texture.id );
+			_textures.set( path, texture );			
 			return texture;
 			
 		}
@@ -56,10 +58,10 @@ class TextureManager
 		
 		var texture : Texture = _context.createTextureFromPixels( id, width, height, pixels );
 			
-		if ( _context != null ) {
-			_context.uploadTexture( texture );
-		}
-		
+		//if ( _context != null ) {
+		//	_context.uploadTexture( texture );
+		//}
+		_newTextures.push( texture.id );
 		_textures.set( id, texture );
 		
 		return texture;
@@ -72,14 +74,21 @@ class TextureManager
 	public function onContextCreated( context : IRenderContext ) : Void {
 		
 		_context = context;
+		_newTextures = [];
 		
 		for ( texture in _textures ) {
-			_context.uploadTexture( texture );
+			//_context.uploadTexture( texture );
+			_newTextures.push( texture.id );
 		}
 		
 	}
 	
 	///
+	
+	public function queueUploadTexture( id : String ) : Void 
+	{
+		_newTextures.push( id );
+	}
 	
 	public function uploadTexture( id : String ) : Void 
 	{
@@ -102,6 +111,14 @@ class TextureManager
 			
 		}
 		
+	}
+	
+	public function uploadNewTextures() : Void 
+	{
+		while ( _newTextures.length > 0 )
+		{
+			uploadTexture( _newTextures.pop() );
+		}
 	}
 	
 }
