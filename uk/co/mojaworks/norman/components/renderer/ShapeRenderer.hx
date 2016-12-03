@@ -20,9 +20,16 @@ class ShapeRenderer extends BaseRenderer
 {
 
 	// Set up default shader
-	public static var defaultShader( get, null ) : Shader = null;
+	private static var _defaultShader : Shader = null;
+	public static var defaultShader( get, never ) : Shader;
 	private static function get_defaultShader( ) : Shader {
-		if ( ShapeRenderer.defaultShader == null ) {
+		if ( ShapeRenderer._defaultShader == null ) ShapeRenderer._initShader();
+		return ShapeRenderer._defaultShader;
+	}
+	
+	private static function _initShader()
+	{
+		if ( ShapeRenderer._defaultShader == null ) {
 			trace("Creating default fill shader");
 			
 			var atts : Array<ShaderAttribute> = [
@@ -30,9 +37,8 @@ class ShapeRenderer extends BaseRenderer
 				new ShaderAttribute( "aVertexColor", 2, 4 ),
 			];
 			
-			ShapeRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource(), atts );
+			ShapeRenderer._defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultFillVertexSource(), ShaderUtils.getDefaultFillFragSource(), atts );
 		}
-		return ShapeRenderer.defaultShader;
 	}
 	
 	public var shape( get, set ) : FillShape;
@@ -46,6 +52,7 @@ class ShapeRenderer extends BaseRenderer
 	public function new( color : Color, width : Float, height : Float, ?shape : FillShape = null ) 
 	{
 		super( );
+		if ( ShapeRenderer._defaultShader == null ) ShapeRenderer._initShader();
 				
 		this.color = color;
 		

@@ -15,9 +15,16 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
 class MaskedRenderTextureRenderer extends RenderTextureRenderer
 {
 
-	public static var defaultShader( get, null ) : Shader = null;
+	private static var _defaultShader : Shader = null;
+	public static var defaultShader( get, never ) : Shader;
 	private static function get_defaultShader( ) : Shader {
-		if ( MaskedRenderTextureRenderer.defaultShader == null ) {
+		if ( MaskedRenderTextureRenderer._defaultShader == null ) MaskedRenderTextureRenderer._initShader();
+		return MaskedRenderTextureRenderer._defaultShader;
+	}
+	
+	private static function _initShader() 
+	{
+		if ( MaskedRenderTextureRenderer._defaultShader == null ) {
 			trace("Creating default mask shader");
 			
 			var atts : Array<ShaderAttribute> = [
@@ -26,9 +33,8 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 				new ShaderAttribute( "aVertexUV", 6, 2 ),
 			];
 			
-			MaskedRenderTextureRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultMaskVertexSource(), ShaderUtils.getDefaultMaskFragSource(), atts );
+			MaskedRenderTextureRenderer._defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultMaskVertexSource(), ShaderUtils.getDefaultMaskFragSource(), atts );
 		}
-		return MaskedRenderTextureRenderer.defaultShader;
 	}
 	
 	public var mask( default, null ) : GameObject;
@@ -42,6 +48,7 @@ class MaskedRenderTextureRenderer extends RenderTextureRenderer
 	public function new( ) : Void {
 		
 		super();
+		if ( MaskedRenderTextureRenderer._defaultShader == null ) MaskedRenderTextureRenderer._initShader();
 		_textureArray.push( null );
 		
 		mask = ObjectFactory.createGameObject("mask");

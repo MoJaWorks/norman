@@ -16,20 +16,23 @@ import uk.co.mojaworks.norman.utils.ShaderUtils;
  */
 class ImageRenderer extends BaseRenderer
 {
-	public static var defaultShader( get, null ) : Shader = null;
+	private static var _defaultShader : Shader = null;
+	public static var defaultShader( get, never ) : Shader;
 	private static function get_defaultShader( ) : Shader {
-		if ( ImageRenderer.defaultShader == null ) {
+		if ( ImageRenderer._defaultShader == null ) ImageRenderer._initShader();
+		return ImageRenderer._defaultShader;
+	}
+	
+	private static function _initShader() : Void {
+		if ( ImageRenderer._defaultShader == null ) {
 			trace("Creating default image shader");
-			
 			var atts : Array<ShaderAttribute> = [
 				new ShaderAttribute( "aVertexPosition", 0, 2 ),
 				new ShaderAttribute( "aVertexColor", 2, 4 ),
 				new ShaderAttribute( "aVertexUV", 6, 2 )
 			];
-			ImageRenderer.defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource(), atts );
-			
+			ImageRenderer._defaultShader = Core.instance.renderer.createShader( ShaderUtils.getDefaultImageVertexSource(), ShaderUtils.getDefaultImageFragSource(), atts );
 		}
-		return ImageRenderer.defaultShader;
 	}
 	
 	public var texture( get, null ) : Texture;
@@ -43,11 +46,13 @@ class ImageRenderer extends BaseRenderer
 	public function new( texture : Texture, subTextureId : String = null ) 
 	{
 		super();
+		if ( ImageRenderer._defaultShader == null ) ImageRenderer._initShader();
 		_textureArray = [null];
 		color = Color.WHITE;
 		setTexture( texture, subTextureId );
-		
 	}
+	
+	
 	
 	inline private function get_texture() : Texture {
 		return _textureArray[0];

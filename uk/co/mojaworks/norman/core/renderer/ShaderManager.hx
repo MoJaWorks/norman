@@ -38,16 +38,18 @@ class ShaderManager
 		
 	}
 	
-	public function createShader( vs : String, fs : String, attributes : Array<ShaderAttribute> = null ) : Shader 
+	public function createShader( vs : String, fs : String, attributes : Array<ShaderAttribute> = null, immediate : Bool = false ) : Shader 
 	{
 				
 		var shader : Shader = new Shader( vs, fs, attributes );
 		
 		_shaders.push( shader );
-		//if ( _context != null ) {
-		//	uploadShader( shader );
-		//}
-		_newShaders.push( shader );
+		
+		if ( immediate ) {
+			uploadShader( shader );
+		} else {
+			_newShaders.push( shader );
+		}
 		
 		return shader;
 		
