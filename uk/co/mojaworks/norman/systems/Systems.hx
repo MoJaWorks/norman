@@ -1,4 +1,5 @@
 package uk.co.mojaworks.norman.systems;
+import uk.co.mojaworks.norman.components.Component;
 import uk.co.mojaworks.norman.core.governor.IGovernable;
 import uk.co.mojaworks.norman.factory.CoreObject;
 import uk.co.mojaworks.norman.systems.animation.AnimationSystem;
