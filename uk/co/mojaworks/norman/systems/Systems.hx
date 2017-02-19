@@ -73,5 +73,28 @@ class SubSystem extends CoreObject implements IGovernable
 	}
 	
 }
+
+class ComponentSystem<T:Component> extends SubSystem
+{
+	private var _targets : Array<T>;
+	
+	public function new( ) 
+	{
+		super();
+		_targets = [];
+	}
+	
+	public function addTarget( target : T ) : T
+	{
+		_targets.push( target );
+		return target;
+	}
+	
+	public function removeTarget( target : T ) : T
+	{
+		_targets.remove( target );
+		return target;
+	}
+}
 	
 	
