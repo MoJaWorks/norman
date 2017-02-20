@@ -118,7 +118,7 @@ class NormanApp extends Application
 		var seconds : Float = deltaTime * 0.001;
 		
 		core.governor.update( seconds );
-		core.renderer.render( Core.instance.view.root.transform );
+		core.renderer.render( core.view.root.transform );
 		core.io.pointer.endFrame();
 		
 	}

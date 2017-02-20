@@ -18,7 +18,7 @@ class Core
 
 	@:isVar public static var instance( get, null ) : Core;
 	
-	public var root : GameObject;
+	public var root( get, never ) : GameObject;
 	public var audio : AudioSystem;
 	public var io : IOSystems;
 	public var governor : Governor;
@@ -45,7 +45,6 @@ class Core
 	
 	public function init()
 	{
-		root = ObjectFactory.createGameObject("root");
 		audio = new AudioSystem();
 		io = new IOSystems();
 		governor = new Governor();
@@ -53,6 +52,11 @@ class Core
 		renderer = new Renderer();
 		switchboard = new Switchboard();
 		view = new View();
+	}
+
+	public function get_root() : GameObject
+	{
+		return view.root;
 	}
 	
 }
